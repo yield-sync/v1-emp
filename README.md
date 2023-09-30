@@ -1,4 +1,4 @@
-# YieldSync V1 Vaults
+# YieldSync Optimizer
 
 ## Get Started
 
