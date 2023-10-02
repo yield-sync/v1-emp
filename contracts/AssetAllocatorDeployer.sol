@@ -1,20 +1,31 @@
-pragma solidity 0.8.20;
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.18;
 
 
-contract AssetAllocatorDeployer
+import { AssetAllocator } from "./AssetAllocator.sol";
+import { IAssetAllocatorDeployer } from "./interface/IAssetAllocatorDeployer.sol";
+
+
+contract AssetAllocatorDeployer is
+	IAssetAllocatorDeployer
 {
-	event AssetAllocatorDeployed();
+	address public immutable YieldSyncGovernance;
 
 
-	constructor()
-		public
-	{}
+	constructor (address _YieldSyncGovernance)
+	{
+		YieldSyncGovernance = _YieldSyncGovernance;
+	}
 
 
 	function AssetAllocatorDeploy()
 		public
-		returns (address)
+		returns (address deployedAssetAllocator)
 	{
-		emit AssetAllocatorDeployed();
+		AssetAllocator assetAllocator = new AssetAllocator();
+
+		emit AssetAllocatorDeployed(address(assetAllocator));
+
+		return address(assetAllocator);
 	}
 }
