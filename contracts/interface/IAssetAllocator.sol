@@ -2,24 +2,17 @@
 pragma solidity 0.8.18;
 
 
-import { IAssetAllocator } from "./interface/IAssetAllocator.sol";
-
-
-contract AssetAllocator is
-	IAssetAllocator
+interface IAssetAllocator
 {
-	constructor ()
-	{}
-
 	function allocate(address strategy)
-		public
-	{}
+		external
+	;
 
 	function deallocate(address strategy)
-		public
-	{}
+		external
+	;
 
 	function withdrawalRequestCreate()
-		public
-	{}
+		external
+	;
 }
