@@ -11,15 +11,35 @@ contract AssetAllocator is
 	constructor ()
 	{}
 
-	function allocate(address strategy)
+
+	modifier accessManager()
+	{
+		_;
+	}
+
+
+	function allocate()
 		public
+		override
 	{}
 
-	function deallocate(address strategy)
+	function strategyAllocationSet(address strategy, uint256 numerator, uint256 denominator)
 		public
+		override
+	{}
+
+	function strategyAdd(address strategy)
+		public
+		override
+	{}
+
+	function strategySubtract(address strategy)
+		public
+		override
 	{}
 
 	function withdrawalRequestCreate()
 		public
+		override
 	{}
 }
