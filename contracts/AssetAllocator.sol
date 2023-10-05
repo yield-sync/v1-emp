@@ -21,7 +21,12 @@ contract AssetAllocator is
 	function allocate()
 		public
 		override
-	{}
+	{
+		// Move funds from this smart contract into
+			// Calculate how much needs to be transferred
+
+
+	}
 
 	function strategyAllocationSet(address strategy, uint256 numerator, uint256 denominator)
 		public
