@@ -15,7 +15,7 @@ struct Allocation
 contract AssetAllocator is
 	IAssetAllocator
 {
-	mapping (address strategy => Allocation allocation) strategy_Allocation;
+	mapping (address strategy => Allocation allocation) strategy_allocation;
 
 
 	constructor ()
