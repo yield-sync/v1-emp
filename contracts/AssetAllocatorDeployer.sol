@@ -2,30 +2,32 @@
 pragma solidity 0.8.18;
 
 
-import { AssetAllocator } from "./AssetAllocator.sol";
-import { IAssetAllocatorDeployer } from "./interface/IAssetAllocatorDeployer.sol";
-
-
-contract AssetAllocatorDeployer is
-	IAssetAllocatorDeployer
+contract AssetAllocatorFactory
 {
+	receive ()
+		external
+		payable
+	{}
+
+
+	fallback ()
+		external
+		payable
+	{}
+
+
+	uint256 public fee;
+	uint256 public YieldSyncAssetAllocatorIdTracker;
+
+
 	address public immutable YieldSyncGovernance;
 
 
 	constructor (address _YieldSyncGovernance)
 	{
+		fee = 0;
+		YieldSyncAssetAllocatorIdTracker = 0;
+
 		YieldSyncGovernance = _YieldSyncGovernance;
-	}
-
-
-	function AssetAllocatorDeploy()
-		public
-		returns (address deployedAssetAllocator)
-	{
-		AssetAllocator assetAllocator = new AssetAllocator();
-
-		emit AssetAllocatorDeployed(address(assetAllocator));
-
-		return address(assetAllocator);
 	}
 }
