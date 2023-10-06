@@ -1,6 +1,6 @@
 # Yield Sync V1 AMP
 
-AMP (Asset Management Protocol) is a manager for assets. Whether it be for yield optimization or public goods funding, this protocol allows developers to create their own automated asset allocators.
+AMP (Asset Management Protocol) is a protocol that allows automated allocations for managing assets. Whether it be for yield optimization or public goods funding, this protocol allows developers to create the tool they need to automate asset handling.
 
 ## Note
 
