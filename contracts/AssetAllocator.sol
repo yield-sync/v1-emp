@@ -7,15 +7,15 @@ import { IAssetAllocator } from "./interface/IAssetAllocator.sol";
 
 struct Allocation
 {
-	numerator uint8;
-	numerator uint8;
+	uint8 denominator;
+	uint8 numerator;
 }
 
 
 contract AssetAllocator is
 	IAssetAllocator
 {
-	mapping (address strategy => Allocation allocation) strategy_Allocation;
+	mapping (address strategy => Allocation allocation) internal _strategy_allocation;
 
 
 	constructor ()
@@ -45,10 +45,15 @@ contract AssetAllocator is
 		override
 	{}
 
-	function strategyAdd(address strategy)
+	function strategyAdd(address strategy, uint8 denominator, uint8 numerator)
 		public
 		override
-	{}
+	{
+		_strategy_allocation[strategy] = Allocation({
+			denominator: denominator,
+			numerator: numerator
+		});
+	}
 
 	function strategySubtract(address strategy)
 		public

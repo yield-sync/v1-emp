@@ -21,7 +21,7 @@ interface IAssetAllocator
 	/**
 	* @notice Add a strategy
 	*/
-	function strategyAdd(address strategy)
+	function strategyAdd(address strategy, uint8 denominator, uint8 numerator)
 		external
 	;
 
