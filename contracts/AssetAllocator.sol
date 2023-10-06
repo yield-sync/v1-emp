@@ -15,6 +15,8 @@ struct Allocation
 contract AssetAllocator is
 	IAssetAllocator
 {
+	address[] public strategy;
+
 	mapping (address strategy => Allocation allocation) internal _strategy_allocation;
 
 
@@ -40,22 +42,24 @@ contract AssetAllocator is
 
 	}
 
-	function strategyAllocationSet(address strategy, uint256 numerator, uint256 denominator)
+	function strategyAllocationSet(address _strategy, uint256 numerator, uint256 denominator)
 		public
 		override
 	{}
 
-	function strategyAdd(address strategy, uint8 denominator, uint8 numerator)
+	function strategyAdd(address _strategy, uint8 denominator, uint8 numerator)
 		public
 		override
 	{
-		_strategy_allocation[strategy] = Allocation({
+		_strategy_allocation[_strategy] = Allocation({
 			denominator: denominator,
 			numerator: numerator
 		});
+
+		strategy.push(_strategy);
 	}
 
-	function strategySubtract(address strategy)
+	function strategySubtract(address _strategy)
 		public
 		override
 	{}
