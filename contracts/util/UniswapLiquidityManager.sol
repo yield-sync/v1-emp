@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.18;
 
 
 interface IERC20
@@ -35,20 +35,20 @@ interface IUniswapV2Router02
 
 contract UniswapLiquidityManager
 {
-    address private owner;
+    address private _owner;
     IUniswapV2Router02 public uniswapRouter;
 
 
     constructor (address _uniswapRouter)
 	{
-        owner = msg.sender;
+        _owner = msg.sender;
         uniswapRouter = IUniswapV2Router02(_uniswapRouter);
     }
 
 
     modifier onlyOwner()
 	{
-        require(msg.sender == owner, "Not the contract owner");
+        require(msg.sender == _owner, "Not the contract owner");
 
         _;
     }

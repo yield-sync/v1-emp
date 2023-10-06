@@ -1,4 +1,10 @@
-# YieldSync Optimizer
+# Yield Sync V1 AMP
+
+AMP (Asset Management Protocol) is a manager for assets. Whether it be for yield optimization or public goods funding, this protocol allows developers to create their own automated asset allocators.
+
+## Note
+
+This protocol complies to the [yield-sync/specifications](https://github.com/yield-sync/specifications/tree/master/v1-amp)
 
 ## Get Started
 
