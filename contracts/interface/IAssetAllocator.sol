@@ -22,23 +22,27 @@ interface IAssetAllocator
 	;
 
 	/**
-	* @notice Add a strategy
+	* @notice Update a strategy allocation
+	* @param __strategy {address}
+	* @param numerator {uint8}
+	* @param denominator {uint8}
 	*/
-	function strategyAllocationSet(address _strategy, uint256 numerator, uint256 denominator)
+	function strategyAllocationUpdate(address __strategy, uint8 denominator, uint8 numerator)
 		external
 	;
 
 	/**
 	* @notice Add a strategy
 	*/
-	function strategyAdd(address _strategy, uint8 denominator, uint8 numerator)
+	function strategyAdd(address __strategy, uint8 denominator, uint8 numerator)
 		external
 	;
 
 	/**
 	* @notice Subtract a strategy
+	* @param __strategy {address}
 	*/
-	function strategySubtract(address _strategy)
+	function strategySubtract(address __strategy)
 		external
 	;
 

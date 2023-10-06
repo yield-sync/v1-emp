@@ -15,7 +15,7 @@ struct Allocation
 contract AssetAllocator is
 	IAssetAllocator
 {
-	address[] public strategy;
+	address[] internal _strategy;
 
 	mapping (address strategy => Allocation allocation) internal _strategy_allocation;
 
@@ -32,6 +32,16 @@ contract AssetAllocator is
 	}
 
 
+	function strategy()
+		public
+		view
+		override
+		returns (address[] memory)
+	{
+		return _strategy;
+	}
+
+
 	function allocate()
 		public
 		override
@@ -42,27 +52,51 @@ contract AssetAllocator is
 
 	}
 
-	function strategyAllocationSet(address _strategy, uint256 numerator, uint256 denominator)
-		public
-		override
-	{}
-
-	function strategyAdd(address _strategy, uint8 denominator, uint8 numerator)
+	function strategyAllocationUpdate(address __strategy, uint8 denominator, uint8 numerator)
 		public
 		override
 	{
-		_strategy_allocation[_strategy] = Allocation({
+		_strategy_allocation[__strategy] = Allocation({
 			denominator: denominator,
 			numerator: numerator
 		});
-
-		strategy.push(_strategy);
 	}
 
-	function strategySubtract(address _strategy)
+	function strategyAdd(address __strategy, uint8 denominator, uint8 numerator)
 		public
 		override
-	{}
+	{
+		_strategy.push(__strategy);
+
+		_strategy_allocation[__strategy] = Allocation({
+			denominator: denominator,
+			numerator: numerator
+		});
+	}
+
+	function strategySubtract(address __strategy)
+		public
+		override
+	{
+		// [update] _strategy
+		for (uint256 i = 0; i < _strategy.length; i++)
+		{
+			if (_strategy[i] == __strategy)
+			{
+				_strategy[i] = _strategy[_strategy.length - 1];
+
+				_strategy.pop();
+
+				break;
+			}
+		}
+
+		// [update] _strategy_allocation
+		_strategy_allocation[__strategy] = Allocation({
+			denominator: _strategy_allocation[__strategy].denominator,
+			numerator: 0
+		});
+	}
 
 	function withdrawalRequestCreate()
 		public
