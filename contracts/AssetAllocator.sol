@@ -15,13 +15,17 @@ struct Allocation
 contract AssetAllocator is
 	IAssetAllocator
 {
+	address internal _manager;
+
 	address[] internal _strategy;
 
 	mapping (address strategy => Allocation allocation) internal _strategy_allocation;
 
 
-	constructor ()
-	{}
+	constructor (address __manager)
+	{
+		_manager = __manager;
+	}
 
 
 	modifier accessManager()
