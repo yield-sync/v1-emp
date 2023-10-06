@@ -5,15 +5,27 @@ pragma solidity 0.8.18;
 import { IAssetAllocator } from "./interface/IAssetAllocator.sol";
 
 
+struct Allocation
+{
+	numerator uint8;
+	numerator uint8;
+}
+
+
 contract AssetAllocator is
 	IAssetAllocator
 {
+	mapping (address strategy => Allocation allocation) strategy_Allocation;
+
+
 	constructor ()
 	{}
 
 
 	modifier accessManager()
 	{
+		require(true, "!manager");
+
 		_;
 	}
 

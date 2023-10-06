@@ -38,11 +38,13 @@ contract UniswapLiquidityManager
     address private owner;
     IUniswapV2Router02 public uniswapRouter;
 
+
     constructor (address _uniswapRouter)
 	{
         owner = msg.sender;
         uniswapRouter = IUniswapV2Router02(_uniswapRouter);
     }
+
 
     modifier onlyOwner()
 	{
@@ -50,6 +52,7 @@ contract UniswapLiquidityManager
 
         _;
     }
+
 
     function addLiquidity(
         address tokenA,
