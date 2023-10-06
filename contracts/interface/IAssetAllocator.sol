@@ -7,6 +7,16 @@ interface IAssetAllocator
 	/**
 	* @notice Allocate funds to strategies
 	*/
+	function strategy()
+		external
+		view
+		returns (address[] memory)
+	;
+
+
+	/**
+	* @notice Allocate funds to strategies
+	*/
 	function allocate()
 		external
 	;
@@ -14,21 +24,21 @@ interface IAssetAllocator
 	/**
 	* @notice Add a strategy
 	*/
-	function strategyAllocationSet(address strategy, uint256 numerator, uint256 denominator)
+	function strategyAllocationSet(address _strategy, uint256 numerator, uint256 denominator)
 		external
 	;
 
 	/**
 	* @notice Add a strategy
 	*/
-	function strategyAdd(address strategy, uint8 denominator, uint8 numerator)
+	function strategyAdd(address _strategy, uint8 denominator, uint8 numerator)
 		external
 	;
 
 	/**
 	* @notice Subtract a strategy
 	*/
-	function strategySubtract(address strategy)
+	function strategySubtract(address _strategy)
 		external
 	;
 
