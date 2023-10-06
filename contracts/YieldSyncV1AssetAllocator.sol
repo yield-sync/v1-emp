@@ -2,7 +2,7 @@
 pragma solidity 0.8.18;
 
 
-import { IAssetAllocator } from "./interface/IAssetAllocator.sol";
+import { IYieldSyncV1AssetAllocator } from "./interface/IYieldSyncV1AssetAllocator.sol";
 
 
 struct Allocation
@@ -12,8 +12,8 @@ struct Allocation
 }
 
 
-contract AssetAllocator is
-	IAssetAllocator
+contract YieldSyncV1AssetAllocator is
+	IYieldSyncV1AssetAllocator
 {
 	address internal _manager;
 

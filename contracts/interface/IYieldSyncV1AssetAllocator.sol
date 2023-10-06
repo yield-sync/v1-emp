@@ -2,7 +2,7 @@
 pragma solidity 0.8.18;
 
 
-interface IAssetAllocator
+interface IYieldSyncV1AssetAllocator
 {
 	/**
 	* @notice Allocate funds to strategies
