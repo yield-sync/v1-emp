@@ -35,7 +35,7 @@ contract YieldSyncV1AssetAllocatorDeployer
 	}
 
 
-	function deployYieldSyncV1AssetAllocator()
+	function deployYieldSyncV1AssetAllocator(string memory name, string memory symbol)
 		public
 		payable
 		returns (address deployedYieldSyncV1Vault)
@@ -43,7 +43,9 @@ contract YieldSyncV1AssetAllocatorDeployer
 		require(msg.value >= fee, "!msg.value");
 
 		YieldSyncV1AssetAllocator yieldSyncV1AssetAllocator = new YieldSyncV1AssetAllocator(
-			msg.sender
+			msg.sender,
+			name,
+			symbol
 		);
 
 		return address(yieldSyncV1AssetAllocator);
