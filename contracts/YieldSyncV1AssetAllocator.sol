@@ -2,6 +2,8 @@
 pragma solidity 0.8.18;
 
 
+import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+
 import { IYieldSyncV1AssetAllocator } from "./interface/IYieldSyncV1AssetAllocator.sol";
 
 
@@ -13,6 +15,7 @@ struct Allocation
 
 
 contract YieldSyncV1AssetAllocator is
+	ERC20,
 	IYieldSyncV1AssetAllocator
 {
 	address internal _manager;
@@ -22,7 +25,8 @@ contract YieldSyncV1AssetAllocator is
 	mapping (address strategy => Allocation allocation) internal _strategy_allocation;
 
 
-	constructor (address __manager)
+	constructor (address __manager, string memory name, string memory symbol)
+		ERC20(name, symbol)
 	{
 		_manager = __manager;
 	}
@@ -106,4 +110,6 @@ contract YieldSyncV1AssetAllocator is
 		public
 		override
 	{}
+
+
 }

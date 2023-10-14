@@ -2,7 +2,11 @@
 pragma solidity 0.8.18;
 
 
-interface IYieldSyncV1AssetAllocator
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
+
+interface IYieldSyncV1AssetAllocator is
+	IERC20
 {
 	/**
 	* @notice Allocate funds to strategies
