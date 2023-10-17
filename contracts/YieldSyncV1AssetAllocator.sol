@@ -42,7 +42,6 @@ contract YieldSyncV1AssetAllocator is
 	function activeStrategy()
 		public
 		view
-		//override
 		returns (address[] memory)
 	{
 		return _activeStrategy;
@@ -51,7 +50,6 @@ contract YieldSyncV1AssetAllocator is
 
 	function allocate()
 		public
-		//override
 	{}
 
 	function isDeficientStrategy(address strategy)
@@ -78,55 +76,51 @@ contract YieldSyncV1AssetAllocator is
 
 	function withdrawalRequestCreate()
 		public
-		//override
 	{}
 
 
-	function strategyAllocationUpdate(address __strategy, uint8 denominator, uint8 numerator)
+	function strategyAllocationUpdate(address strategy, uint8 denominator, uint8 numerator)
 		public
-		//override
 		accessManager()
 	{
-		_strategy_allocation[__strategy] = Allocation({
+		_strategy_allocation[strategy] = Allocation({
 			denominator: denominator,
 			numerator: numerator
 		});
 	}
 
-	function strategyAdd(address __strategy, uint8 denominator, uint8 numerator)
+	function strategyAdd(address strategy, uint8 denominator, uint8 numerator)
 		public
-		//override
 		accessManager()
 	{
-		_strategy.push(__strategy);
+		_activeStrategy.push(strategy);
 
-		_strategy_allocation[__strategy] = Allocation({
+		_strategy_allocation[strategy] = Allocation({
 			denominator: denominator,
 			numerator: numerator
 		});
 	}
 
-	function strategySubtract(address __strategy)
+	function strategySubtract(address strategy)
 		public
-		//override
 		accessManager()
 	{
 		// [update] _strategy
-		for (uint256 i = 0; i < _strategy.length; i++)
+		for (uint256 i = 0; i < _activeStrategy.length; i++)
 		{
-			if (_strategy[i] == __strategy)
+			if (_activeStrategy[i] == strategy)
 			{
-				_strategy[i] = _strategy[_strategy.length - 1];
+				_activeStrategy[i] = _activeStrategy[_activeStrategy.length - 1];
 
-				_strategy.pop();
+				_activeStrategy.pop();
 
 				break;
 			}
 		}
 
 		// [update] _strategy_allocation
-		_strategy_allocation[__strategy] = Allocation({
-			denominator: _strategy_allocation[__strategy].denominator,
+		_strategy_allocation[strategy] = Allocation({
+			denominator: _strategy_allocation[strategy].denominator,
 			numerator: 0
 		});
 	}
