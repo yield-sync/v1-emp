@@ -4,7 +4,7 @@ pragma solidity 0.8.18;
 
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-import { IYieldSyncV1AssetAllocator } from "./interface/IYieldSyncV1AssetAllocator.sol";
+import { IERC20, IYieldSyncV1AssetAllocator } from "./interface/IYieldSyncV1AssetAllocator.sol";
 
 
 struct Allocation
@@ -15,12 +15,11 @@ struct Allocation
 
 
 contract YieldSyncV1AssetAllocator is
-	ERC20,
-	IYieldSyncV1AssetAllocator
+	ERC20
 {
 	address internal _manager;
 
-	address[] internal _strategy;
+	address[] internal _activeStrategy;
 
 	mapping (address strategy => Allocation allocation) internal _strategy_allocation;
 
@@ -34,35 +33,59 @@ contract YieldSyncV1AssetAllocator is
 
 	modifier accessManager()
 	{
-		require(true, "!manager");
+		require(msg.sender == _manager, "!manager");
 
 		_;
 	}
 
 
-	function strategy()
+	function activeStrategy()
 		public
 		view
-		override
+		//override
 		returns (address[] memory)
 	{
-		return _strategy;
+		return _activeStrategy;
 	}
 
 
 	function allocate()
 		public
-		override
-	{
-		// Move funds from this smart contract into
-			// Calculate how much needs to be transferred
+		//override
+	{}
 
+	function isDeficientStrategy(address strategy)
+		public
+		returns (bool)
+	{
 
 	}
 
+	function deposit(address strategy, address token, uint256 amount)
+		public
+	{
+		// Check if this AssetAllocator is utilizing the strategy
+		require(_strategy_allocation[strategy].numerator > 0, "_strategy_allocation[strategy].numerator == 0");
+
+		// Check if their is an deficiency
+		require(isDeficientStrategy(strategy), "isDeficientStrategy(strategy) = false");
+
+		// Transfer tokens to strategy
+		IERC20(token).transfer(address(strategy), amount);
+
+		_mint(msg.sender, amount);
+	}
+
+	function withdrawalRequestCreate()
+		public
+		//override
+	{}
+
+
 	function strategyAllocationUpdate(address __strategy, uint8 denominator, uint8 numerator)
 		public
-		override
+		//override
+		accessManager()
 	{
 		_strategy_allocation[__strategy] = Allocation({
 			denominator: denominator,
@@ -72,7 +95,8 @@ contract YieldSyncV1AssetAllocator is
 
 	function strategyAdd(address __strategy, uint8 denominator, uint8 numerator)
 		public
-		override
+		//override
+		accessManager()
 	{
 		_strategy.push(__strategy);
 
@@ -84,7 +108,8 @@ contract YieldSyncV1AssetAllocator is
 
 	function strategySubtract(address __strategy)
 		public
-		override
+		//override
+		accessManager()
 	{
 		// [update] _strategy
 		for (uint256 i = 0; i < _strategy.length; i++)
@@ -105,11 +130,4 @@ contract YieldSyncV1AssetAllocator is
 			numerator: 0
 		});
 	}
-
-	function withdrawalRequestCreate()
-		public
-		override
-	{}
-
-
 }
