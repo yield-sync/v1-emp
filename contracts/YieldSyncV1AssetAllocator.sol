@@ -5,6 +5,7 @@ pragma solidity 0.8.18;
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 import { IERC20, IYieldSyncV1AssetAllocator } from "./interface/IYieldSyncV1AssetAllocator.sol";
+import { IYieldSyncV1Strategy } from "./interface/IYieldSyncV1Strategy.sol";
 
 
 struct Allocation
@@ -52,11 +53,11 @@ contract YieldSyncV1AssetAllocator is
 		public
 	{}
 
-	function isDeficientStrategy(address strategy)
+	function largestStrategyAllocationCurrentToTargetDelta()
 		public
 		returns (bool)
 	{
-
+		return true;
 	}
 
 	function deposit(address strategy, address token, uint256 amount)

@@ -19,9 +19,21 @@ contract Strategy is
 	{}
 
 
+	/// @inheritdoc IYieldSyncV1Strategy
+	function positionValueInEth()
+		public
+		view
+		override
+		returns (uint256 positionValueInEth_)
+	{
+		return balanceOf(msg.sender);
+	}
+
+	/// @inheritdoc IYieldSyncV1Strategy
 	function utilizedToken()
 		public
 		view
+		override
 		returns (address[] memory)
 	{
 		return _utilizedToken;

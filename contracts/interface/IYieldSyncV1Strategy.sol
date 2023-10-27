@@ -9,7 +9,18 @@ interface IYieldSyncV1Strategy is
 	IERC20
 {
 	/**
+	* @notice Value of position denominated in ETH
+	* @return positionValueInEth_ {uint256}
+	*/
+	function positionValueInEth()
+		external
+		view
+		returns (uint256 positionValueInEth_)
+	;
+
+	/**
 	* @notice Tokens utilized
+	* @return {address[]}
 	*/
 	function utilizedToken()
 		external
