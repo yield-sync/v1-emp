@@ -53,26 +53,38 @@ contract YieldSyncV1AssetAllocator is
 		public
 	{}
 
-	function largestStrategyAllocationCurrentToTargetDelta()
+	function greatestDeficientStrategy()
 		public
-		returns (bool)
+		view
+		returns (address strategy_)
 	{
-		return true;
+		address strategy = address(0);
+
+		uint256 greatestStrategyDeficiency = 0;
+		uint256 totalValueInEth = 0;
+
+		for (uint256 i = 0; i < _activeStrategy.length; i++)
+		{
+			totalValueInEth += IYieldSyncV1Strategy(_activeStrategy[i]).positionValueInEth();
+		}
+
+		for (uint256 i = 0; i < _activeStrategy.length; i++)
+		{
+			uint256 strategyAllocation = IYieldSyncV1Strategy(_activeStrategy[i]).positionValueInEth() / totalValueInEth;
+
+			if (strategyAllocation < greatestStrategyDeficiency)
+			{
+				greatestStrategyDeficiency = strategyAllocation;
+				strategy = _activeStrategy[i];
+			}
+		}
+
+		return strategy;
 	}
 
-	function deposit(address strategy, address token, uint256 amount)
+	function deposit()
 		public
 	{
-		// Check if this AssetAllocator is utilizing the strategy
-		require(_strategy_allocation[strategy].numerator > 0, "_strategy_allocation[strategy].numerator == 0");
-
-		// Check if their is an deficiency
-		require(isDeficientStrategy(strategy), "isDeficientStrategy(strategy) = false");
-
-		// Transfer tokens to strategy
-		IERC20(token).transfer(address(strategy), amount);
-
-		_mint(msg.sender, amount);
 	}
 
 	function withdrawalRequestCreate()
