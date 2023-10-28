@@ -27,26 +27,29 @@ interface IYieldSyncV1AssetAllocator is
 
 	/**
 	* @notice Update a strategy allocation
-	* @param strategy {address}
-	* @param numerator {uint8}
-	* @param denominator {uint8}
+	* @param _strategy {address}
+	* @param _numerator {uint8}
+	* @param _denominator {uint8}
 	*/
-	function strategyAllocationUpdate(address strategy, uint8 denominator, uint8 numerator)
+	function strategyAllocationUpdate(address _strategy, uint8 _denominator, uint8 _numerator)
 		external
 	;
 
 	/**
 	* @notice Add a strategy
+	* @param _strategy {address}
+	* @param _numerator {uint8}
+	* @param _denominator {uint8}
 	*/
-	function strategyAdd(address strategy, uint8 denominator, uint8 numerator)
+	function strategyAdd(address _strategy, uint8 _denominator, uint8 _numerator)
 		external
 	;
 
 	/**
 	* @notice Subtract a strategy
-	* @param strategy {address}
+	* @param _strategy {address}
 	*/
-	function strategySubtract(address strategy)
+	function strategySubtract(address _strategy)
 		external
 	;
 

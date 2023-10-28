@@ -29,8 +29,8 @@ contract YieldSyncV1AssetAllocator is
 	mapping (address strategy => Allocation allocation) internal _strategy_allocation;
 
 
-	constructor (address __manager, string memory name, string memory symbol)
-		ERC20(name, symbol)
+	constructor (address __manager, string memory _name, string memory _symbol)
+		ERC20(_name, _symbol)
 	{
 		_manager = __manager;
 	}
@@ -101,7 +101,7 @@ contract YieldSyncV1AssetAllocator is
 	}
 
 
-	function depositTokens(address strategy, address[] memory utilizedToken)
+	function depositTokens(address strategy, address[] memory _utilizedToken)
 		public
 	{
 		if (_onlyPrioritizedStrategy)
@@ -109,51 +109,51 @@ contract YieldSyncV1AssetAllocator is
 			require(strategy == prioritizedStrategy(), "!prioritizedStrategy");
 		}
 
-		require(utilizedToken.length == IYieldSyncV1Strategy(strategy).utilizedToken().length, "!utilizedToken.length");
+		require(_utilizedToken.length == IYieldSyncV1Strategy(strategy).utilizedToken().length, "!utilizedToken.length");
 
-		for (uint256 i = 0; i < utilizedToken.length; i++)
+		for (uint256 i = 0; i < _utilizedToken.length; i++)
 		{
 			require(
-				IYieldSyncV1Strategy(strategy).token_utilized(utilizedToken[i]),
-				"!IYieldSyncV1Strategy(strategy).token_utilized(utilizedToken[i])"
+				IYieldSyncV1Strategy(strategy).token_utilized(_utilizedToken[i]),
+				"!IYieldSyncV1Strategy(strategy).token_utilized(_utilizedToken[i])"
 			);
 		}
 	}
 
-	function strategyAllocationUpdate(address strategy, uint8 denominator, uint8 numerator)
+	function strategyAllocationUpdate(address _strategy, uint8 _denominator, uint8 _numerator)
 		public
 		accessManager()
 	{
-		_strategy_allocation[strategy] = Allocation({
-			denominator: denominator,
-			numerator: numerator
+		_strategy_allocation[_strategy] = Allocation({
+			denominator: _denominator,
+			numerator: _numerator
 		});
 	}
 
-	function strategyAdd(address strategy, uint8 denominator, uint8 numerator)
+	function strategyAdd(address _strategy, uint8 _denominator, uint8 _numerator)
 		public
 		accessManager()
 	{
-		_activeStrategy.push(strategy);
+		_activeStrategy.push(_strategy);
 
-		_strategy_allocation[strategy] = Allocation({
-			denominator: denominator,
-			numerator: numerator
+		_strategy_allocation[_strategy] = Allocation({
+			denominator: _denominator,
+			numerator: _numerator
 		});
 	}
 
-	function strategySubtract(address strategy)
+	function strategySubtract(address _strategy)
 		public
 		accessManager()
 	{
-		_strategy_allocation[strategy] = Allocation({
-			denominator: _strategy_allocation[strategy].denominator,
+		_strategy_allocation[_strategy] = Allocation({
+			denominator: _strategy_allocation[_strategy].denominator,
 			numerator: 0
 		});
 
 		for (uint256 i = 0; i < _activeStrategy.length; i++)
 		{
-			if (_activeStrategy[i] == strategy)
+			if (_activeStrategy[i] == _strategy)
 			{
 				_activeStrategy[i] = _activeStrategy[_activeStrategy.length - 1];
 
