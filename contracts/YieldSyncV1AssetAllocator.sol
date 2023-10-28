@@ -3,6 +3,7 @@ pragma solidity 0.8.18;
 
 
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 import { IERC20, IYieldSyncV1AssetAllocator } from "./interface/IYieldSyncV1AssetAllocator.sol";
 import { IYieldSyncV1Strategy } from "./interface/IYieldSyncV1Strategy.sol";
@@ -48,12 +49,12 @@ contract YieldSyncV1AssetAllocator is
 		return _activeStrategy;
 	}
 
-	function greatestDeficientStrategy()
+	function prioritizedStrategy()
 		public
 		view
 		returns (address strategy_)
 	{
-		address strategy = address(0);
+		address strategy;
 
 		uint256 greatestStrategyDeficiency = 0;
 		uint256 totalValueInEth = 0;
@@ -65,9 +66,12 @@ contract YieldSyncV1AssetAllocator is
 
 		for (uint256 i = 0; i < _activeStrategy.length; i++)
 		{
-			uint256 strategyAllocation = IYieldSyncV1Strategy(_activeStrategy[i]).positionValueInEth() / totalValueInEth;
+			(, uint256 strategyAllocation) = SafeMath.tryDiv(
+				IYieldSyncV1Strategy(_activeStrategy[i]).positionValueInEth(),
+				totalValueInEth
+			);
 
-			if (strategyAllocation < greatestStrategyDeficiency)
+			if (strategyAllocation <= greatestStrategyDeficiency)
 			{
 				greatestStrategyDeficiency = strategyAllocation;
 				strategy = _activeStrategy[i];
