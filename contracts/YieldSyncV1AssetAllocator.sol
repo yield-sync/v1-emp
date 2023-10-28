@@ -108,13 +108,11 @@ contract YieldSyncV1AssetAllocator is
 		public
 		accessManager()
 	{
-		// [update] _strategy_allocation
 		_strategy_allocation[strategy] = Allocation({
 			denominator: _strategy_allocation[strategy].denominator,
 			numerator: 0
 		});
 
-		// [update] _strategy
 		for (uint256 i = 0; i < _activeStrategy.length; i++)
 		{
 			if (_activeStrategy[i] == strategy)
