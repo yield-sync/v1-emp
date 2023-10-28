@@ -96,12 +96,12 @@ contract YieldSyncV1AssetAllocator is
 		public
 		accessManager()
 	{
+		_activeStrategy.push(strategy);
+
 		_strategy_allocation[strategy] = Allocation({
 			denominator: denominator,
 			numerator: numerator
 		});
-
-		_activeStrategy.push(strategy);
 	}
 
 	function strategySubtract(address strategy)
