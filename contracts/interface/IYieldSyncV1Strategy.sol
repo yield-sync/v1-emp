@@ -19,7 +19,17 @@ interface IYieldSyncV1Strategy is
 	;
 
 	/**
-	* @notice Tokens utilized
+	* @notice
+	* @return utilized_ {bool}
+	*/
+	function token_utilized(address _token)
+		external
+		view
+		returns (bool utilized_)
+	;
+
+	/**
+	* @notice
 	* @return {address[]}
 	*/
 	function utilizedToken()

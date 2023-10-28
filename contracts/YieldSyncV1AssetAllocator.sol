@@ -23,6 +23,9 @@ contract YieldSyncV1AssetAllocator is
 
 	address[] internal _activeStrategy;
 
+	bool internal _onlyPrioritizedStrategy;
+
+
 	mapping (address strategy => Allocation allocation) internal _strategy_allocation;
 
 
@@ -44,9 +47,25 @@ contract YieldSyncV1AssetAllocator is
 	function activeStrategy()
 		public
 		view
-		returns (address[] memory)
+		returns (address[] memory activeStrategy_)
 	{
 		return _activeStrategy;
+	}
+
+	function manager()
+		public
+		view
+		returns (address manager_)
+	{
+		return _manager;
+	}
+
+	function onlyPrioritizedStrategy()
+		public
+		view
+		returns (bool onlyPrioritizedStrategy_)
+	{
+		return _onlyPrioritizedStrategy;
 	}
 
 	function prioritizedStrategy()
@@ -81,6 +100,25 @@ contract YieldSyncV1AssetAllocator is
 		return strategy;
 	}
 
+
+	function depositTokens(address strategy, address[] memory utilizedToken)
+		public
+	{
+		if (_onlyPrioritizedStrategy)
+		{
+			require(strategy == prioritizedStrategy(), "!prioritizedStrategy");
+		}
+
+		require(utilizedToken.length == IYieldSyncV1Strategy(strategy).utilizedToken().length, "!utilizedToken.length");
+
+		for (uint256 i = 0; i < utilizedToken.length; i++)
+		{
+			require(
+				IYieldSyncV1Strategy(strategy).token_utilized(utilizedToken[i]),
+				"!IYieldSyncV1Strategy(strategy).token_utilized(utilizedToken[i])"
+			);
+		}
+	}
 
 	function strategyAllocationUpdate(address strategy, uint8 denominator, uint8 numerator)
 		public
