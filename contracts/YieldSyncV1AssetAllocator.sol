@@ -48,11 +48,6 @@ contract YieldSyncV1AssetAllocator is
 		return _activeStrategy;
 	}
 
-
-	function allocate()
-		public
-	{}
-
 	function greatestDeficientStrategy()
 		public
 		view
@@ -82,15 +77,6 @@ contract YieldSyncV1AssetAllocator is
 		return strategy;
 	}
 
-	function deposit()
-		public
-	{
-	}
-
-	function withdrawalRequestCreate()
-		public
-	{}
-
 
 	function strategyAllocationUpdate(address strategy, uint8 denominator, uint8 numerator)
 		public
@@ -106,18 +92,24 @@ contract YieldSyncV1AssetAllocator is
 		public
 		accessManager()
 	{
-		_activeStrategy.push(strategy);
-
 		_strategy_allocation[strategy] = Allocation({
 			denominator: denominator,
 			numerator: numerator
 		});
+
+		_activeStrategy.push(strategy);
 	}
 
 	function strategySubtract(address strategy)
 		public
 		accessManager()
 	{
+		// [update] _strategy_allocation
+		_strategy_allocation[strategy] = Allocation({
+			denominator: _strategy_allocation[strategy].denominator,
+			numerator: 0
+		});
+
 		// [update] _strategy
 		for (uint256 i = 0; i < _activeStrategy.length; i++)
 		{
@@ -130,11 +122,5 @@ contract YieldSyncV1AssetAllocator is
 				break;
 			}
 		}
-
-		// [update] _strategy_allocation
-		_strategy_allocation[strategy] = Allocation({
-			denominator: _strategy_allocation[strategy].denominator,
-			numerator: 0
-		});
 	}
 }
