@@ -5,9 +5,26 @@ pragma solidity 0.8.18;
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 
+struct Allocation
+{
+	uint8 denominator;
+	uint8 numerator;
+}
+
+
 interface IYieldSyncV1Strategy is
 	IERC20
 {
+	/**
+	* @return {Allocation}
+	*/
+	function token_allocation()
+		external
+		view
+		returns (Allocation memory)
+	;
+
+
 	/**
 	* @notice Value of position denominated in ETH
 	* @return positionValueInEth_ {uint256}
@@ -20,6 +37,7 @@ interface IYieldSyncV1Strategy is
 
 	/**
 	* @notice
+	* @param _token {address}
 	* @return utilized_ {bool}
 	*/
 	function token_utilized(address _token)
@@ -29,12 +47,12 @@ interface IYieldSyncV1Strategy is
 	;
 
 	/**
-	* @notice
-	* @return {address[]}
+	* @notice Array of utilized tokens
+	* @return utilizedToken_ {address[]}
 	*/
 	function utilizedToken()
 		external
 		view
-		returns (address[] memory)
+		returns (address[] memory utilizedToken_)
 	;
 }

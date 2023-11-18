@@ -7,6 +7,22 @@ import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { IYieldSyncV1Strategy } from "../interface/IYieldSyncV1Strategy.sol";
 
 
+interface IUniswapV2Router {
+    function addLiquidity(
+        address tokenA,
+        address tokenB,
+        uint amountADesired,
+        uint amountBDesired,
+        uint amountAMin,
+        uint amountBMin,
+        address to,
+        uint deadline
+    ) external returns (uint amountA, uint amountB, uint liquidity);
+}
+
+/**
+* @notice This strategy adds liquidity to a uniswap pool
+*/
 contract Strategy is
 	IYieldSyncV1Strategy,
 	ERC20
