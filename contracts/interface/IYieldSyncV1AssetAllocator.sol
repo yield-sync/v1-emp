@@ -14,19 +14,64 @@ interface IYieldSyncV1AssetAllocator is
 	IERC20
 {
 	/**
-	* @notice Allocate funds to strategies
+	* @notice
+	* @dev [view-uint256]
+	* @return {uint256}
 	*/
-	function strategy()
+	function INITIAL_MINT_RATE()
 		external
 		view
-		returns (address[] memory)
+		returns (uint256)
 	;
 
 
 	/**
-	* @notice Allocate funds to strategies
+	* @notice
+	* @return {address[]}
 	*/
-	function allocate()
+	function activeStrategy()
+		external
+		view
+		returns (address[] memory activeStrategy_)
+	;
+
+	/**
+	* @notice
+	* @return {address}
+	*/
+	function manager()
+		external
+		view
+		returns (address manager_)
+	;
+
+	/**
+	* @notice
+	* @return onlyPrioritizedStrategy_ {bool}
+	*/
+	function onlyPrioritizedStrategy()
+		external
+		view
+		returns (bool onlyPrioritizedStrategy_)
+	;
+
+	/**
+	* @notice
+	* @return strategy_ {address}
+	*/
+	function prioritizedStrategy()
+		external
+		view
+		returns (address strategy_)
+	;
+
+	/**
+	* @notice
+	* @param _strategy {address}
+	* @param _utilizedToken {address[]}
+	* @param _amounts {uint256[]}
+	*/
+	function depositTokens(address strategy, address[] memory _utilizedToken,  uint256[] memory _amounts)
 		external
 	;
 
@@ -55,13 +100,6 @@ interface IYieldSyncV1AssetAllocator is
 	* @param _strategy {address}
 	*/
 	function strategySubtract(address _strategy)
-		external
-	;
-
-	/**
-	* @notice Make withdrawal request
-	*/
-	function withdrawalRequestCreate()
 		external
 	;
 

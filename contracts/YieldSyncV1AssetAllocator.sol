@@ -21,9 +21,10 @@ struct Allocation
 
 
 contract YieldSyncV1AssetAllocator is
-	ERC20
+	ERC20,
+	IYieldSyncV1AssetAllocator
 {
-	uint256 public constant INITIAL_MINT_RATE = 100;
+	uint256 public constant override INITIAL_MINT_RATE = 100;
 
 	address internal _manager;
 
@@ -35,10 +36,11 @@ contract YieldSyncV1AssetAllocator is
 	mapping (address strategy => Allocation allocation) internal _strategy_allocation;
 
 
-	constructor (address __manager, string memory _name, string memory _symbol)
+	constructor (address __manager, bool __onlyPrioritizedStrategy, string memory _name, string memory _symbol)
 		ERC20(_name, _symbol)
 	{
 		_manager = __manager;
+		_onlyPrioritizedStrategy = __onlyPrioritizedStrategy;
 	}
 
 
@@ -53,6 +55,7 @@ contract YieldSyncV1AssetAllocator is
 	function activeStrategy()
 		public
 		view
+		override
 		returns (address[] memory activeStrategy_)
 	{
 		return _activeStrategy;
@@ -61,6 +64,7 @@ contract YieldSyncV1AssetAllocator is
 	function manager()
 		public
 		view
+		override
 		returns (address manager_)
 	{
 		return _manager;
@@ -69,6 +73,7 @@ contract YieldSyncV1AssetAllocator is
 	function onlyPrioritizedStrategy()
 		public
 		view
+		override
 		returns (bool onlyPrioritizedStrategy_)
 	{
 		return _onlyPrioritizedStrategy;
