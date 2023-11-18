@@ -10,6 +10,13 @@ import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 using SafeERC20 for IERC20;
 
 
+struct Allocation
+{
+	uint8 denominator;
+	uint8 numerator;
+}
+
+
 interface IYieldSyncV1AssetAllocator is
 	IERC20
 {
@@ -76,6 +83,18 @@ interface IYieldSyncV1AssetAllocator is
 	;
 
 	/**
+	* @notice strategy to allocation
+	* @dev [view-mapping]
+	* @param strategy {address}
+	* @return {Allocation}
+	*/
+	function strategy_allocation(address strategy)
+		external
+		view
+		returns (Allocation memory)
+	;
+
+	/**
 	* @notice Update a strategy allocation
 	* @param _strategy {address}
 	* @param _numerator {uint8}
@@ -104,9 +123,10 @@ interface IYieldSyncV1AssetAllocator is
 	;
 
 	/**
+	* @notice Return the Total Value of Assets in WETH
 	* @return {uint256}
 	*/
-	function totalValueInWETH()
+	function totalValueOfAssetsInWETH()
 		external
 		view
 		returns (uint256)

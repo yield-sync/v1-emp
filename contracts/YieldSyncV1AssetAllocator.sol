@@ -6,18 +6,11 @@ import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-import { IYieldSyncV1AssetAllocator } from "./interface/IYieldSyncV1AssetAllocator.sol";
+import { Allocation, IYieldSyncV1AssetAllocator } from "./interface/IYieldSyncV1AssetAllocator.sol";
 import { IYieldSyncV1Strategy } from "./interface/IYieldSyncV1Strategy.sol";
 
 
 using SafeERC20 for ERC20;
-
-
-struct Allocation
-{
-	uint8 denominator;
-	uint8 numerator;
-}
 
 
 contract YieldSyncV1AssetAllocator is
@@ -52,6 +45,7 @@ contract YieldSyncV1AssetAllocator is
 	}
 
 
+	/// @inheritdoc IYieldSyncV1AssetAllocator
 	function activeStrategy()
 		public
 		view
@@ -61,6 +55,7 @@ contract YieldSyncV1AssetAllocator is
 		return _activeStrategy;
 	}
 
+	/// @inheritdoc IYieldSyncV1AssetAllocator
 	function manager()
 		public
 		view
@@ -70,6 +65,7 @@ contract YieldSyncV1AssetAllocator is
 		return _manager;
 	}
 
+	/// @inheritdoc IYieldSyncV1AssetAllocator
 	function onlyPrioritizedStrategy()
 		public
 		view
@@ -79,21 +75,23 @@ contract YieldSyncV1AssetAllocator is
 		return _onlyPrioritizedStrategy;
 	}
 
+	/// @inheritdoc IYieldSyncV1AssetAllocator
 	function prioritizedStrategy()
 		public
 		view
+		override
 		returns (address strategy_)
 	{
 		address strategy;
 
 		uint256 greatestStrategyDeficiency = 0;
-		uint256 _totalValueInWETH = totalValueInWETH();
+		uint256 _totalValueOfAssetsInWETH = totalValueOfAssetsInWETH();
 
 		for (uint256 i = 0; i < _activeStrategy.length; i++)
 		{
 			(, uint256 strategyAllocation) = SafeMath.tryDiv(
 				IYieldSyncV1Strategy(_activeStrategy[i]).positionValueInWETH(msg.sender),
-				_totalValueInWETH
+				_totalValueOfAssetsInWETH
 			);
 
 			if (strategyAllocation <= greatestStrategyDeficiency)
@@ -106,7 +104,7 @@ contract YieldSyncV1AssetAllocator is
 		return strategy;
 	}
 
-
+	/// @inheritdoc IYieldSyncV1AssetAllocator
 	function depositTokens(address strategy, address[] memory _utilizedToken,  uint256[] memory _amounts)
 		public
 	{
@@ -136,7 +134,7 @@ contract YieldSyncV1AssetAllocator is
 
 		uint256 tokensToMint;
 
-		if (totalSupply() == 0 || totalValueInWETH() == 0)
+		if (totalSupply() == 0 || totalValueOfAssetsInWETH() == 0)
 		{
 			// Initial mint
 			tokensToMint = totalDepositValue * INITIAL_MINT_RATE;
@@ -144,13 +142,24 @@ contract YieldSyncV1AssetAllocator is
 		else
 		{
 			// Calculate proportion of deposit value to total asset value
-			tokensToMint = totalDepositValue * totalSupply() / totalValueInWETH();
+			tokensToMint = totalDepositValue * totalSupply() / totalValueOfAssetsInWETH();
 		}
 
 		// Mint the allocator tokens to the sender
 		_mint(msg.sender, tokensToMint);
 	}
 
+	/// @inheritdoc IYieldSyncV1AssetAllocator
+	function strategy_allocation(address strategy)
+		public
+		view
+		override
+		returns (Allocation memory)
+	{
+		return _strategy_allocation[strategy];
+	}
+
+	/// @inheritdoc IYieldSyncV1AssetAllocator
 	function strategyAllocationUpdate(address _strategy, uint8 _denominator, uint8 _numerator)
 		public
 		accessManager()
@@ -161,6 +170,7 @@ contract YieldSyncV1AssetAllocator is
 		});
 	}
 
+	/// @inheritdoc IYieldSyncV1AssetAllocator
 	function strategyAdd(address _strategy, uint8 _denominator, uint8 _numerator)
 		public
 		accessManager()
@@ -173,6 +183,7 @@ contract YieldSyncV1AssetAllocator is
 		});
 	}
 
+	/// @inheritdoc IYieldSyncV1AssetAllocator
 	function strategySubtract(address _strategy)
 		public
 		accessManager()
@@ -195,7 +206,8 @@ contract YieldSyncV1AssetAllocator is
 		}
 	}
 
-	function totalValueInWETH()
+	/// @inheritdoc IYieldSyncV1AssetAllocator
+	function totalValueOfAssetsInWETH()
 		public
 		view
 		returns (uint256 totalValueInWETH_)
