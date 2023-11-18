@@ -3,10 +3,14 @@ pragma solidity 0.8.18;
 
 
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-import { IERC20, IYieldSyncV1AssetAllocator } from "./interface/IYieldSyncV1AssetAllocator.sol";
+import { IYieldSyncV1AssetAllocator } from "./interface/IYieldSyncV1AssetAllocator.sol";
 import { IYieldSyncV1Strategy } from "./interface/IYieldSyncV1Strategy.sol";
+
+
+using SafeERC20 for ERC20;
 
 
 struct Allocation
@@ -101,7 +105,7 @@ contract YieldSyncV1AssetAllocator is
 	}
 
 
-	function depositTokens(address strategy, address[] memory _utilizedToken)
+	function depositTokens(address strategy, address[] memory _utilizedToken,  uint256[] memory _amounts)
 		public
 	{
 		if (_onlyPrioritizedStrategy)
@@ -117,6 +121,8 @@ contract YieldSyncV1AssetAllocator is
 				IYieldSyncV1Strategy(strategy).token_utilized(_utilizedToken[i]),
 				"!IYieldSyncV1Strategy(strategy).token_utilized(_utilizedToken[i])"
 			);
+
+			ERC20(_utilizedToken[i]).safeTransferFrom(msg.sender, address(this), _amounts[i]);
 		}
 	}
 

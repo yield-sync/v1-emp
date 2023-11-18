@@ -4,7 +4,7 @@ pragma solidity 0.8.18;
 
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-import { IYieldSyncV1Strategy } from "../interface/IYieldSyncV1Strategy.sol";
+import { Allocation, IYieldSyncV1Strategy } from "../interface/IYieldSyncV1Strategy.sol";
 
 
 interface IUniswapV2Router {
@@ -32,11 +32,24 @@ contract Strategy is
 
 	mapping (address token => bool utilized) internal _token_utilized;
 
+	mapping (address token => Allocation allocation) internal _token_allocation;
+
 
 	constructor (string memory name, string memory symbol)
 		ERC20(name, symbol)
 	{}
 
+
+	/**
+	* @return allocation_ {Allocation}
+	*/
+	function token_allocation(address _token)
+		external
+		view
+		returns (Allocation memory allocation_)
+	{
+		return _token_allocation[_token];
+	}
 
 	/// @inheritdoc IYieldSyncV1Strategy
 	function positionValueInEth()

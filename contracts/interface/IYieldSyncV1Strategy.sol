@@ -16,12 +16,12 @@ interface IYieldSyncV1Strategy is
 	IERC20
 {
 	/**
-	* @return {Allocation}
+	* @return allocation_ {Allocation}
 	*/
-	function token_allocation()
+	function token_allocation(address _token)
 		external
 		view
-		returns (Allocation memory)
+		returns (Allocation memory allocation_)
 	;
 
 
