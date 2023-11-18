@@ -23,6 +23,8 @@ struct Allocation
 contract YieldSyncV1AssetAllocator is
 	ERC20
 {
+	uint256 public constant INITIAL_MINT_RATE = 100;
+
 	address internal _manager;
 
 	address[] internal _activeStrategy;
@@ -80,18 +82,13 @@ contract YieldSyncV1AssetAllocator is
 		address strategy;
 
 		uint256 greatestStrategyDeficiency = 0;
-		uint256 totalValueInEth = 0;
-
-		for (uint256 i = 0; i < _activeStrategy.length; i++)
-		{
-			totalValueInEth += IYieldSyncV1Strategy(_activeStrategy[i]).positionValueInEth();
-		}
+		uint256 _totalValueInWETH = totalValueInWETH();
 
 		for (uint256 i = 0; i < _activeStrategy.length; i++)
 		{
 			(, uint256 strategyAllocation) = SafeMath.tryDiv(
-				IYieldSyncV1Strategy(_activeStrategy[i]).positionValueInEth(),
-				totalValueInEth
+				IYieldSyncV1Strategy(_activeStrategy[i]).positionValueInWETH(msg.sender),
+				_totalValueInWETH
 			);
 
 			if (strategyAllocation <= greatestStrategyDeficiency)
@@ -108,12 +105,16 @@ contract YieldSyncV1AssetAllocator is
 	function depositTokens(address strategy, address[] memory _utilizedToken,  uint256[] memory _amounts)
 		public
 	{
+		require(_utilizedToken.length > 0, "Must deposit at least one token");
+
+		require(_utilizedToken.length == IYieldSyncV1Strategy(strategy).utilizedToken().length, "!utilizedToken.length");
+
 		if (_onlyPrioritizedStrategy)
 		{
 			require(strategy == prioritizedStrategy(), "!prioritizedStrategy");
 		}
 
-		require(_utilizedToken.length == IYieldSyncV1Strategy(strategy).utilizedToken().length, "!utilizedToken.length");
+		uint256 totalDepositValue = 0;
 
 		for (uint256 i = 0; i < _utilizedToken.length; i++)
 		{
@@ -123,7 +124,26 @@ contract YieldSyncV1AssetAllocator is
 			);
 
 			ERC20(_utilizedToken[i]).safeTransferFrom(msg.sender, address(this), _amounts[i]);
+
+			// Calculate the value of the deposited tokens
+			totalDepositValue += IYieldSyncV1Strategy(strategy).utilizedTokenValueInWETH(_utilizedToken[i]) * _amounts[i];
 		}
+
+		uint256 tokensToMint;
+
+		if (totalSupply() == 0 || totalValueInWETH() == 0)
+		{
+			// Initial mint
+			tokensToMint = totalDepositValue * INITIAL_MINT_RATE;
+		}
+		else
+		{
+			// Calculate proportion of deposit value to total asset value
+			tokensToMint = totalDepositValue * totalSupply() / totalValueInWETH();
+		}
+
+		// Mint the allocator tokens to the sender
+		_mint(msg.sender, tokensToMint);
 	}
 
 	function strategyAllocationUpdate(address _strategy, uint8 _denominator, uint8 _numerator)
@@ -168,5 +188,20 @@ contract YieldSyncV1AssetAllocator is
 				break;
 			}
 		}
+	}
+
+	function totalValueInWETH()
+		public
+		view
+		returns (uint256 totalValueInWETH_)
+	{
+		uint256 _totalValueInWETH = 0;
+
+		for (uint256 i = 0; i < _activeStrategy.length; i++)
+		{
+			_totalValueInWETH += IYieldSyncV1Strategy(_activeStrategy[i]).positionValueInWETH(address(this));
+		}
+
+		return _totalValueInWETH;
 	}
 }

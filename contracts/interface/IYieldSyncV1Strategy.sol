@@ -16,23 +16,27 @@ interface IYieldSyncV1Strategy is
 	IERC20
 {
 	/**
-	* @return allocation_ {Allocation}
+	* @notice token to allocation
+	* @dev [view-mapping]
+	* @param token {address}
+	* @return {Allocation}
 	*/
-	function token_allocation(address _token)
+	function token_allocation(address token)
 		external
 		view
-		returns (Allocation memory allocation_)
+		returns (Allocation memory)
 	;
 
 
 	/**
-	* @notice Value of position denominated in ETH
-	* @return positionValueInEth_ {uint256}
+	* @notice Value of position denominated in WETH
+	* @param target {address}
+	* @return positionValueInWETH_ {uint256}
 	*/
-	function positionValueInEth()
+	function positionValueInWETH(address target)
 		external
 		view
-		returns (uint256 positionValueInEth_)
+		returns (uint256 positionValueInWETH_)
 	;
 
 	/**
@@ -54,5 +58,16 @@ interface IYieldSyncV1Strategy is
 		external
 		view
 		returns (address[] memory utilizedToken_)
+	;
+
+	/**
+	* @notice Return value of token denominated in WETH
+	* @param _token {uint256}
+	* @return tokenValueInWETH_ {uint256}
+	*/
+	function utilizedTokenValueInWETH(address _token)
+		external
+		view
+		returns (uint256 tokenValueInWETH_)
 	;
 }

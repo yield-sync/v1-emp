@@ -64,4 +64,13 @@ interface IYieldSyncV1AssetAllocator is
 	function withdrawalRequestCreate()
 		external
 	;
+
+	/**
+	* @return {uint256}
+	*/
+	function totalValueInWETH()
+		external
+		view
+		returns (uint256)
+	;
 }

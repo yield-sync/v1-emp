@@ -40,25 +40,24 @@ contract Strategy is
 	{}
 
 
-	/**
-	* @return allocation_ {Allocation}
-	*/
-	function token_allocation(address _token)
+	/// @inheritdoc IYieldSyncV1Strategy
+	function token_allocation(address token)
 		external
 		view
-		returns (Allocation memory allocation_)
+		returns (Allocation memory)
 	{
-		return _token_allocation[_token];
+		return _token_allocation[token];
 	}
 
 	/// @inheritdoc IYieldSyncV1Strategy
-	function positionValueInEth()
+	function positionValueInWETH(address target)
 		public
 		view
 		override
 		returns (uint256 positionValueInEth_)
 	{
-		return balanceOf(msg.sender);
+		// This is a placeholder until i have a proper way to calculate the position value
+		return balanceOf(target);
 	}
 
 	/// @inheritdoc IYieldSyncV1Strategy
@@ -79,6 +78,15 @@ contract Strategy is
 		returns (address[] memory)
 	{
 		return _utilizedToken;
+	}
+
+	function utilizedTokenValueInWETH(address _token)
+		public
+		view
+		returns (uint256 tokenValueInEth_)
+	{
+		// This is a placeholder until i have a proper way to calculate the position value
+		return 1;
 	}
 
 
