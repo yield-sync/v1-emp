@@ -23,7 +23,7 @@ interface IUniswapV2Router {
 /**
 * @notice This strategy adds liquidity to a uniswap pool
 */
-contract Strategy is
+contract StrategyUniswapV2LiquidityPool is
 	IYieldSyncV1Strategy,
 	ERC20
 {
@@ -44,6 +44,7 @@ contract Strategy is
 	function token_allocation(address token)
 		external
 		view
+		override
 		returns (Allocation memory)
 	{
 		return _token_allocation[token];
@@ -80,21 +81,20 @@ contract Strategy is
 		return _utilizedToken;
 	}
 
+	/// @inheritdoc IYieldSyncV1Strategy
 	function utilizedTokenValueInWETH(address _token)
 		public
 		view
+		override
 		returns (uint256 tokenValueInEth_)
 	{
 		// This is a placeholder until i have a proper way to calculate the position value
 		return 1;
 	}
 
-
-	function allocate()
+	/// @inheritdoc IYieldSyncV1Strategy
+	function withdraw(uint256 amount, address recipient)
 		public
-	{}
-
-	function deallocate()
-		public
+		override
 	{}
 }

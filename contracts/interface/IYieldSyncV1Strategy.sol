@@ -70,4 +70,13 @@ interface IYieldSyncV1Strategy is
 		view
 		returns (uint256 tokenValueInWETH_)
 	;
+
+	/**
+	* @notice Withdraw assets from the strategy
+	* @param amount {uint256} Amount to be withdrawn
+	* @param recipient {address}
+	*/
+	function withdraw(uint256 amount, address recipient)
+		external
+	;
 }
