@@ -21,33 +21,43 @@ interface IUniswapV2Factory
 }
 
 
+interface IUniswapV2Pair
+{
+    function getReserves()
+		external
+		view
+		returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast)
+	;
+}
+
+
 interface IUniswapV2Router
 {
 	function addLiquidity(
 		address tokenA,
 		address tokenB,
-		uint amountADesired,
-		uint amountBDesired,
-		uint amountAMin,
-		uint amountBMin,
+		uint256 amountADesired,
+		uint256 amountBDesired,
+		uint256 amountAMin,
+		uint256 amountBMin,
 		address to,
-		uint deadline
+		uint256 deadline
 	)
 		external
-		returns (uint amountA, uint amountB, uint liquidity)
+		returns (uint256 amountA, uint256 amountB, uint256 liquidity)
 	;
 
 	function removeLiquidity(
 		address tokenA,
 		address tokenB,
-		uint liquidity,
-		uint amountAMin,
-		uint amountBMin,
+		uint256 liquidity,
+		uint256 amountAMin,
+		uint256 amountBMin,
 		address to,
-		uint deadline
+		uint256 deadline
 	)
 		external
-		returns (uint amountA, uint amountB)
+		returns (uint256 amountA, uint256 amountB)
 	;
 }
 
@@ -59,6 +69,8 @@ contract StrategyUniswapV2LiquidityPool is
 	IYieldSyncV1Strategy,
 	ERC20
 {
+	address public immutable UNISWAP_V2_FACTORY;
+    address public immutable WETH;
 	address public manager;
 	uint256 public slippageTolerance;
 
@@ -75,16 +87,21 @@ contract StrategyUniswapV2LiquidityPool is
 
 
 	constructor (
-		string memory name,
-		string memory symbol,
+		address _UNISWAP_V2_FACTORY,
+		address _WETH,
 		address _tokenA,
 		address _tokenB,
 		address _uniswapV2Factory,
-		address _uniswapV2Router
+		address _uniswapV2Router,
+		string memory name,
+		string memory symbol
 	)
 		ERC20(name, symbol)
 	{
 		manager = msg.sender;
+
+		UNISWAP_V2_FACTORY = _UNISWAP_V2_FACTORY;
+		WETH = _WETH;
 
 		_utilizedToken.push(_tokenA);
 		_utilizedToken.push(_tokenB);
@@ -141,8 +158,23 @@ contract StrategyUniswapV2LiquidityPool is
 		override
 		returns (uint256 tokenValueInEth_)
 	{
-		// This is a placeholder until i have a proper way to calculate the position value
-		return 1;
+		address pair = IUniswapV2Factory(UNISWAP_V2_FACTORY).getPair(_token, WETH);
+
+		if (pair == address(0))
+		{
+			return 0; // Pair doesn't exist
+		}
+
+		(uint112 reserve0, uint112 reserve1, ) = IUniswapV2Pair(pair).getReserves();
+
+		if (_token < WETH)
+		{
+			return uint256(reserve1) * 1e18 / reserve0; // Token price in terms of ETH
+		}
+		else
+		{
+			return uint256(reserve0) * 1e18 / reserve1; // Token price in terms of ETH
+		}
 	}
 
 	/// @inheritdoc IYieldSyncV1Strategy
@@ -175,24 +207,31 @@ contract StrategyUniswapV2LiquidityPool is
 		public
 		override
 	{
-		IERC20(uniswapV2Factory.getPair(_utilizedToken[0], _utilizedToken[1])).safeApprove(
-			address(uniswapV2Router),
-			_amount[0]
-		);
+		IERC20 lpToken = IERC20(uniswapV2Factory.getPair(_utilizedToken[0], _utilizedToken[1]));
 
-		(uint amountA, uint amountB) = uniswapV2Router.removeLiquidity(
+		lpToken.safeApprove(address(uniswapV2Router), _amount[0]);
+
+		// Retrieve the current reserves to estimate the withdrawn amounts
+		(uint256 reserveA, uint256 reserveB, ) = IUniswapV2Pair(address(lpToken)).getReserves();
+
+		// Calculate amount of tokens to be withdrawn given liquidity amount
+		uint256 amountA = _amount[0] * reserveA / lpToken.totalSupply();
+		uint256 amountB = _amount[0] * reserveB / lpToken.totalSupply();
+
+		// Remove liquidity
+		(uint256 amountRemovedA, uint256 amountRemovedB) = uniswapV2Router.removeLiquidity(
 			_utilizedToken[0],
 			_utilizedToken[1],
 			_amount[0],
-			0, // amountAMin (set to 0 for simplicity)
-			0, // amountBMin (set to 0 for simplicity)
+			amountA * (10000 - slippageTolerance) / 10000,
+			amountB * (10000 - slippageTolerance) / 10000,
 			address(this),
 			block.timestamp
 		);
 
 		// Transfer the withdrawn tokens to the recipient
-		IERC20(_utilizedToken[0]).safeTransfer(msg.sender, amountA);
-		IERC20(_utilizedToken[1]).safeTransfer(msg.sender, amountB);
+		IERC20(_utilizedToken[0]).safeTransfer(msg.sender, amountRemovedA);
+		IERC20(_utilizedToken[1]).safeTransfer(msg.sender, amountRemovedB);
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
