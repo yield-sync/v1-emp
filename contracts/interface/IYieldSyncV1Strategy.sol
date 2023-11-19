@@ -73,17 +73,17 @@ interface IYieldSyncV1Strategy is
 
 	/**
 	* @notice Deposit into strategy
-	* @param _amounts {uint256[]} Amount to be deposited
+	* @param _amount {uint256[]} Amount to be deposited
 	*/
-	function utilizedTokensDeposit(uint256[] memory _amounts)
+	function utilizedTokensDeposit(uint256[] memory _amount)
 		external
 	;
 
 	/**
 	* @notice Withdraw from strategy
-	* @param _amounts {uint256[]} Amount to be withdrawn
+	* @param _amount {uint256[]} Amount to be withdrawn
 	*/
-	function utilizedTokensWithdraw(uint256[] memory _amounts)
+	function utilizedTokensWithdraw(uint256[] memory _amount)
 		external
 	;
 }

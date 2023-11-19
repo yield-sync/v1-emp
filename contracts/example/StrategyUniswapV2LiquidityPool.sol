@@ -11,7 +11,18 @@ import { Allocation, IYieldSyncV1Strategy } from "../interface/IYieldSyncV1Strat
 using SafeERC20 for IERC20;
 
 
-interface IUniswapV2Router {
+interface IUniswapV2Factory
+{
+	function getPair(address tokenA, address tokenB)
+		external
+		view
+		returns (address pair)
+	;
+}
+
+
+interface IUniswapV2Router
+{
 	function addLiquidity(
 		address tokenA,
 		address tokenB,
@@ -21,7 +32,23 @@ interface IUniswapV2Router {
 		uint amountBMin,
 		address to,
 		uint deadline
-	) external returns (uint amountA, uint amountB, uint liquidity);
+	)
+		external
+		returns (uint amountA, uint amountB, uint liquidity)
+	;
+
+	function removeLiquidity(
+		address tokenA,
+		address tokenB,
+		uint liquidity,
+		uint amountAMin,
+		uint amountBMin,
+		address to,
+		uint deadline
+	)
+		external
+		returns (uint amountA, uint amountB)
+	;
 }
 
 
@@ -32,8 +59,10 @@ contract StrategyUniswapV2LiquidityPool is
 	IYieldSyncV1Strategy,
 	ERC20
 {
+	address public manager;
+	uint256 public slippageTolerance;
+
 	address[] internal _utilizedToken;
-    IUniswapV2Router public uniswapRouter;
 
 
 	mapping (address token => bool utilized) internal _token_utilized;
@@ -41,13 +70,27 @@ contract StrategyUniswapV2LiquidityPool is
 	mapping (address token => Allocation allocation) internal _token_allocation;
 
 
-	constructor (string memory name, string memory symbol, address _tokenA, address _tokenB, address _uniswapRouter)
+	IUniswapV2Factory public immutable uniswapV2Factory;
+	IUniswapV2Router public immutable uniswapV2Router;
+
+
+	constructor (
+		string memory name,
+		string memory symbol,
+		address _tokenA,
+		address _tokenB,
+		address _uniswapV2Factory,
+		address _uniswapV2Router
+	)
 		ERC20(name, symbol)
 	{
+		manager = msg.sender;
+
 		_utilizedToken.push(_tokenA);
 		_utilizedToken.push(_tokenB);
 
-		uniswapRouter = IUniswapV2Router(_uniswapRouter);
+		uniswapV2Factory = IUniswapV2Factory(_uniswapV2Factory);
+		uniswapV2Router = IUniswapV2Router(_uniswapV2Router);
 	}
 
 	/// @inheritdoc IYieldSyncV1Strategy
@@ -103,33 +146,65 @@ contract StrategyUniswapV2LiquidityPool is
 	}
 
 	/// @inheritdoc IYieldSyncV1Strategy
-	function utilizedTokensDeposit(uint256[] memory _amounts)
+	function utilizedTokensDeposit(uint256[] memory _amount)
 		public
 		override
 	{
-		IERC20(_utilizedToken[0]).safeTransferFrom(msg.sender, address(this), _amounts[0]);
-        IERC20(_utilizedToken[1]).safeTransferFrom(msg.sender, address(this), _amounts[1]);
+		IERC20(_utilizedToken[0]).safeTransferFrom(msg.sender, address(this), _amount[0]);
+		IERC20(_utilizedToken[1]).safeTransferFrom(msg.sender, address(this), _amount[1]);
 
-        IERC20(_utilizedToken[0]).safeApprove(address(uniswapRouter), _amounts[0]);
-        IERC20(_utilizedToken[1]).safeApprove(address(uniswapRouter), _amounts[1]);
+		IERC20(_utilizedToken[0]).safeApprove(address(uniswapV2Router), _amount[0]);
+		IERC20(_utilizedToken[1]).safeApprove(address(uniswapV2Router), _amount[1]);
 
-        uniswapRouter.addLiquidity(
-            _utilizedToken[0],
-            _utilizedToken[1],
-            _amounts[0],
-            _amounts[1],
-            0, // amountAMin (set to 0 for simplicity, consider using a slippage mechanism in production)
-            0, // amountBMin (set to 0 for simplicity)
-            address(this),
-            block.timestamp
-        );
+		uniswapV2Router.addLiquidity(
+			_utilizedToken[0],
+			_utilizedToken[1],
+			_amount[0],
+			_amount[1],
+			_amount[0] * (10000 - slippageTolerance) / 10000,
+			_amount[1] * (10000 - slippageTolerance) / 10000,
+			address(this),
+			block.timestamp
+		);
 
-        // Handle the minting of strategy-specific tokens or other logic...
+		// Handle the minting of strategy-specific tokens or other logic...
 	}
 
 	/// @inheritdoc IYieldSyncV1Strategy
-	function utilizedTokensWithdraw(uint256[] memory _amounts)
+	function utilizedTokensWithdraw(uint256[] memory _amount)
 		public
 		override
-	{}
+	{
+		IERC20(uniswapV2Factory.getPair(_utilizedToken[0], _utilizedToken[1])).safeApprove(
+			address(uniswapV2Router),
+			_amount[0]
+		);
+
+		(uint amountA, uint amountB) = uniswapV2Router.removeLiquidity(
+			_utilizedToken[0],
+			_utilizedToken[1],
+			_amount[0],
+			0, // amountAMin (set to 0 for simplicity)
+			0, // amountBMin (set to 0 for simplicity)
+			address(this),
+			block.timestamp
+		);
+
+		// Transfer the withdrawn tokens to the recipient
+		IERC20(_utilizedToken[0]).safeTransfer(msg.sender, amountA);
+		IERC20(_utilizedToken[1]).safeTransfer(msg.sender, amountB);
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// Strategy Specific
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	function slippageToleranceUpdate(uint256 _slippageTolerance)
+		public
+	{
+		require(msg.sender == manager, "!manager");
+
+		// Add access control if necessary
+		slippageTolerance = _slippageTolerance;
+	}
 }
