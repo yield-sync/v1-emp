@@ -105,7 +105,7 @@ contract YieldSyncV1AssetAllocator is
 	}
 
 	/// @inheritdoc IYieldSyncV1AssetAllocator
-	function depositTokens(address strategy, address[] memory _utilizedToken,  uint256[] memory _amounts)
+	function depositTokens(address strategy, address[] memory _utilizedToken, uint256[] memory _amounts)
 		public
 	{
 		require(_utilizedToken.length > 0, "Must deposit at least one token");
