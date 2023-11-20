@@ -17,29 +17,28 @@ contract YieldSyncV1AssetAllocator is
 	ERC20,
 	IYieldSyncV1AssetAllocator
 {
-	uint256 public constant override INITIAL_MINT_RATE = 100;
-
-	address internal _manager;
-
+	address public override manager;
 	address[] internal _activeStrategy;
 
-	bool internal _onlyPrioritizedStrategy;
+	bool public override onlyPrioritizedStrategy;
+
+	uint256 public constant override INITIAL_MINT_RATE = 100;
 
 
 	mapping (address strategy => Allocation allocation) internal _strategy_allocation;
 
 
-	constructor (address __manager, bool __onlyPrioritizedStrategy, string memory _name, string memory _symbol)
+	constructor (address _manager, bool _onlyPrioritizedStrategy, string memory _name, string memory _symbol)
 		ERC20(_name, _symbol)
 	{
-		_manager = __manager;
-		_onlyPrioritizedStrategy = __onlyPrioritizedStrategy;
+		manager = _manager;
+		onlyPrioritizedStrategy = _onlyPrioritizedStrategy;
 	}
 
 
 	modifier accessManager()
 	{
-		require(msg.sender == _manager, "!manager");
+		require(msg.sender == manager, "!manager");
 
 		_;
 	}
@@ -47,33 +46,23 @@ contract YieldSyncV1AssetAllocator is
 
 	/// @inheritdoc IYieldSyncV1AssetAllocator
 	function activeStrategy()
-		public
+		external
 		view
-		override
-		returns (address[] memory activeStrategy_)
+		returns (address[] memory)
 	{
 		return _activeStrategy;
 	}
 
 	/// @inheritdoc IYieldSyncV1AssetAllocator
-	function manager()
+	function strategy_allocation(address _strategy)
 		public
 		view
 		override
-		returns (address manager_)
+		returns (Allocation memory allocation_)
 	{
-		return _manager;
+		return _strategy_allocation[_strategy];
 	}
 
-	/// @inheritdoc IYieldSyncV1AssetAllocator
-	function onlyPrioritizedStrategy()
-		public
-		view
-		override
-		returns (bool onlyPrioritizedStrategy_)
-	{
-		return _onlyPrioritizedStrategy;
-	}
 
 	/// @inheritdoc IYieldSyncV1AssetAllocator
 	function prioritizedStrategy()
@@ -105,16 +94,16 @@ contract YieldSyncV1AssetAllocator is
 	}
 
 	/// @inheritdoc IYieldSyncV1AssetAllocator
-	function depositTokens(address strategy, address[] memory _utilizedToken, uint256[] memory _amounts)
+	function depositTokens(address _strategy, address[] memory _utilizedToken, uint256[] memory _amounts)
 		public
 	{
 		require(_utilizedToken.length > 0, "Must deposit at least one token");
 
-		require(_utilizedToken.length == IYieldSyncV1Strategy(strategy).utilizedToken().length, "!utilizedToken.length");
+		require(_utilizedToken.length == IYieldSyncV1Strategy(_strategy).utilizedToken().length, "!utilizedToken.length");
 
-		if (_onlyPrioritizedStrategy)
+		if (onlyPrioritizedStrategy)
 		{
-			require(strategy == prioritizedStrategy(), "!prioritizedStrategy");
+			require(_strategy == prioritizedStrategy(), "!prioritizedStrategy");
 		}
 
 		uint256 totalDepositValue = 0;
@@ -122,14 +111,14 @@ contract YieldSyncV1AssetAllocator is
 		for (uint256 i = 0; i < _utilizedToken.length; i++)
 		{
 			require(
-				IYieldSyncV1Strategy(strategy).token_utilized(_utilizedToken[i]),
-				"!IYieldSyncV1Strategy(strategy).token_utilized(_utilizedToken[i])"
+				IYieldSyncV1Strategy(_strategy).token_utilized(_utilizedToken[i]),
+				"!IYieldSyncV1Strategy(_strategy).token_utilized(_utilizedToken[i])"
 			);
 
 			ERC20(_utilizedToken[i]).safeTransferFrom(msg.sender, address(this), _amounts[i]);
 
 			// Calculate the value of the deposited tokens
-			totalDepositValue += IYieldSyncV1Strategy(strategy).utilizedTokenValueInWETH(_utilizedToken[i]) * _amounts[i];
+			totalDepositValue += IYieldSyncV1Strategy(_strategy).utilizedTokenValueInWETH(_utilizedToken[i]) * _amounts[i];
 		}
 
 		uint256 tokensToMint;
@@ -147,16 +136,6 @@ contract YieldSyncV1AssetAllocator is
 
 		// Mint the allocator tokens to the sender
 		_mint(msg.sender, tokensToMint);
-	}
-
-	/// @inheritdoc IYieldSyncV1AssetAllocator
-	function strategy_allocation(address strategy)
-		public
-		view
-		override
-		returns (Allocation memory)
-	{
-		return _strategy_allocation[strategy];
 	}
 
 	/// @inheritdoc IYieldSyncV1AssetAllocator

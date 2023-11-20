@@ -22,6 +22,36 @@ interface IYieldSyncV1AssetAllocator is
 {
 	/**
 	* @notice
+	* @return {address}
+	*/
+	function manager()
+		external
+		view
+		returns (address)
+	;
+
+	/**
+	* @notice
+	* @return {address[]}
+	*/
+	function activeStrategy()
+		external
+		view
+		returns (address[] memory)
+	;
+
+	/**
+	* @notice
+	* @return onlyPrioritizedStrategy_ {bool}
+	*/
+	function onlyPrioritizedStrategy()
+		external
+		view
+		returns (bool)
+	;
+
+	/**
+	* @notice
 	* @dev [view-uint256]
 	* @return {uint256}
 	*/
@@ -33,34 +63,17 @@ interface IYieldSyncV1AssetAllocator is
 
 
 	/**
-	* @notice
-	* @return {address[]}
+	* @notice strategy to allocation
+	* @dev [view-mapping]
+	* @param _strategy {address}
+	* @return allocation_ {Allocation}
 	*/
-	function activeStrategy()
+	function strategy_allocation(address _strategy)
 		external
 		view
-		returns (address[] memory activeStrategy_)
+		returns (Allocation memory allocation_)
 	;
 
-	/**
-	* @notice
-	* @return {address}
-	*/
-	function manager()
-		external
-		view
-		returns (address manager_)
-	;
-
-	/**
-	* @notice
-	* @return onlyPrioritizedStrategy_ {bool}
-	*/
-	function onlyPrioritizedStrategy()
-		external
-		view
-		returns (bool onlyPrioritizedStrategy_)
-	;
 
 	/**
 	* @notice
@@ -80,18 +93,6 @@ interface IYieldSyncV1AssetAllocator is
 	*/
 	function depositTokens(address strategy, address[] memory _utilizedToken,  uint256[] memory _amounts)
 		external
-	;
-
-	/**
-	* @notice strategy to allocation
-	* @dev [view-mapping]
-	* @param strategy {address}
-	* @return {Allocation}
-	*/
-	function strategy_allocation(address strategy)
-		external
-		view
-		returns (Allocation memory)
 	;
 
 	/**
