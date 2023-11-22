@@ -35,7 +35,7 @@ contract YieldSyncV1AssetAllocatorDeployer
 	}
 
 
-	function deployYieldSyncV1AssetAllocator(string memory name, string memory symbol)
+	function deployYieldSyncV1AssetAllocator(string memory _name, bool _onlyPrioritizedStrategy, string memory _symbol)
 		public
 		payable
 		returns (address deployedYieldSyncV1Vault)
@@ -44,8 +44,9 @@ contract YieldSyncV1AssetAllocatorDeployer
 
 		YieldSyncV1AssetAllocator yieldSyncV1AssetAllocator = new YieldSyncV1AssetAllocator(
 			msg.sender,
-			name,
-			symbol
+			_onlyPrioritizedStrategy,
+			_name,
+			_symbol
 		);
 
 		return address(yieldSyncV1AssetAllocator);
