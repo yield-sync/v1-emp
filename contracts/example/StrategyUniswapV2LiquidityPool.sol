@@ -11,16 +11,6 @@ import { Allocation, IYieldSyncV1Strategy } from "../interface/IYieldSyncV1Strat
 using SafeERC20 for IERC20;
 
 
-interface IUniswapV2Factory
-{
-	function getPair(address tokenA, address tokenB)
-		external
-		view
-		returns (address pair)
-	;
-}
-
-
 interface IUniswapV2Pair
 {
     function getReserves()
@@ -75,13 +65,12 @@ contract StrategyUniswapV2LiquidityPool is
 	IYieldSyncV1Strategy,
 	ERC20
 {
-	address public immutable UNISWAP_V2_FACTORY;
+	address public immutable LIQUIDITY_POOL;
     address public immutable WETH;
-
 	address public manager;
-	uint256 public slippageTolerance;
-
 	address[] internal _utilizedToken;
+
+	uint256 public slippageTolerance;
 
 
 	mapping (address token => bool utilized) internal _token_utilized;
@@ -89,31 +78,41 @@ contract StrategyUniswapV2LiquidityPool is
 	mapping (address token => Allocation allocation) internal _token_allocation;
 
 
-	IUniswapV2Factory public immutable uniswapV2Factory;
+	IUniswapV2Pair public immutable uniswapV2Pair;
 	IUniswapV2Router public immutable uniswapV2Router;
 
 
 	constructor (
-		address _UNISWAP_V2_FACTORY,
+		address _LIQUIDITY_POOL,
 		address _WETH,
 		address _tokenA,
 		address _tokenB,
-		address _uniswapV2Factory,
+		address _uniswapV2Pair,
 		address _uniswapV2Router,
 		string memory name,
 		string memory symbol
 	)
 		ERC20(name, symbol)
 	{
+		require(_LIQUIDITY_POOL != address(0), "!_LIQUIDITY_POOL");
+		require(_WETH != address(0), "!WETH");
+		require(_tokenA != address(0), "!_tokenA");
+		require(_tokenB != address(0), "!_tokenB");
+		require(_uniswapV2Pair != address(0), "!_uniswapV2Pair");
+		require(_uniswapV2Router != address(0), "!_uniswapV2Router");
+
 		manager = msg.sender;
 
-		UNISWAP_V2_FACTORY = _UNISWAP_V2_FACTORY;
+		LIQUIDITY_POOL = _LIQUIDITY_POOL;
 		WETH = _WETH;
 
 		_utilizedToken.push(_tokenA);
 		_utilizedToken.push(_tokenB);
 
-		uniswapV2Factory = IUniswapV2Factory(_uniswapV2Factory);
+		_token_utilized[_tokenA] = true;
+		_token_utilized[_tokenB] = true;
+
+		uniswapV2Pair = IUniswapV2Pair(_uniswapV2Pair);
 		uniswapV2Router = IUniswapV2Router(_uniswapV2Router);
 	}
 
@@ -146,9 +145,7 @@ contract StrategyUniswapV2LiquidityPool is
 		override
 		returns (uint256 positionValueInEth_)
 	{
-		address liquidityPool = uniswapV2Factory.getPair(_utilizedToken[0], _utilizedToken[1]);
-
-		uint256 balance = IERC20(liquidityPool).balanceOf(_target);
+		uint256 balance = IERC20(LIQUIDITY_POOL).balanceOf(_target);
 
 		// No balance -> automatically worth 0
 		if (balance <= 0)
@@ -156,23 +153,23 @@ contract StrategyUniswapV2LiquidityPool is
 			return 0;
 		}
 
-		IUniswapV2Pair pair = IUniswapV2Pair(liquidityPool);
+		(uint112 reserve0, uint112 reserve1, ) = uniswapV2Pair.getReserves();
 
-		(uint112 reserve0, uint112 reserve1, ) = pair.getReserves();
+		uint256 totalSupply = uniswapV2Pair.totalSupply();
 
-		// If there is no liquidity then automatically the value will be 0
-		if (pair.totalSupply() == 0)
+		// If there is no liquidity then automatically the LP token value will be 0
+		if (totalSupply == 0)
 		{
 			return 0;
 		}
 
-		uint256 tokenAmount0PerLP = uint256(reserve0) / pair.totalSupply();
-		uint256 tokenAmount1PerLP = uint256(reserve1) / pair.totalSupply();
+		uint256 amount0PerLPToken = uint256(reserve0) / totalSupply;
+		uint256 amount1PerLPToken = uint256(reserve1) / totalSupply;
 
 		// Return total value of both output tokens denomintaed in WETH
-		return balance * tokenAmount0PerLP * utilizedTokenValueInWETH(
+		return balance * amount0PerLPToken * utilizedTokenValueInWETH(
 			_utilizedToken[0]
-		) + balance * tokenAmount1PerLP * utilizedTokenValueInWETH(
+		) + balance * amount1PerLPToken * utilizedTokenValueInWETH(
 			_utilizedToken[1]
 		);
 	}
@@ -194,20 +191,12 @@ contract StrategyUniswapV2LiquidityPool is
 		override
 		returns (uint256 tokenValueInEth_)
 	{
-		// TODO: Check that the token is utilized
+		require(_token_utilized[_token] == true, "!_token_utilized[_token]");
 
-		address liquidityPool = IUniswapV2Factory(UNISWAP_V2_FACTORY).getPair(_token, WETH);
-
-		// Liquidity Pool does NOT exist
-		if (liquidityPool == address(0))
-		{
-			return 0;
-		}
-
-		(uint112 reserve0, uint112 reserve1, ) = IUniswapV2Pair(liquidityPool).getReserves();
+		(uint112 reserve0, uint112 reserve1, ) = uniswapV2Pair.getReserves();
 
 		// If there is no liquidity then automatically the value will be 0
-		if (IUniswapV2Pair(liquidityPool).totalSupply() == 0)
+		if (uniswapV2Pair.totalSupply() == 0)
 		{
 			return 0;
 		}
@@ -253,16 +242,12 @@ contract StrategyUniswapV2LiquidityPool is
 		public
 		override
 	{
-		IERC20 lpToken = IERC20(uniswapV2Factory.getPair(_utilizedToken[0], _utilizedToken[1]));
-
-		lpToken.safeApprove(address(uniswapV2Router), _amount[0]);
-
 		// Retrieve the current reserves to estimate the withdrawn amounts
-		(uint256 reserveA, uint256 reserveB, ) = IUniswapV2Pair(address(lpToken)).getReserves();
+		(uint256 reserveA, uint256 reserveB, ) = uniswapV2Pair.getReserves();
 
-		// Calculate amount of tokens to be withdrawn given liquidity amount
-		uint256 amountA = _amount[0] * reserveA / lpToken.totalSupply();
-		uint256 amountB = _amount[0] * reserveB / lpToken.totalSupply();
+		// [calculate] Amount of tokens to be withdrawn given liquidity amount
+		uint256 amountA = _amount[0] * reserveA / IERC20(LIQUIDITY_POOL).totalSupply();
+		uint256 amountB = _amount[0] * reserveB / IERC20(LIQUIDITY_POOL).totalSupply();
 
 		// Remove liquidity
 		(uint256 amountRemovedA, uint256 amountRemovedB) = uniswapV2Router.removeLiquidity(

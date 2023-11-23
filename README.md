@@ -60,29 +60,6 @@ YIELD_SYNC_V1_B_TRANSFER_REQUEST_PROTOCOL_OP_GOERLI=
 YIELD_SYNC_V1_B_TRANSFER_REQUEST_PROTOCOL_SEPOLIA=
 ```
 
-## Smart Contract Layout & Ordering
+## Note
 
-### Variables
-
-1. Type (`address`, `bytes`, etc.)
-2. Visibility (`public` | `private` | `internal` | `external`)
-3. Mutability (`constant` | `immutable` | NA)
-4. Array
-5. Alphabetical
-
-### Mapping
-
-1. Visibility (`public` | `private` | `internal` | `external`)
-2. Type (`address`, `bytes`, etc.)
-3. Mutability (`constant` | `immutable` | NA)
-4. Struct
-5. Alphabetical
-
-### Function
-
-1. Interface Implementation
-2. Visibility (`public` | `private` | `internal` | `external`)
-3. State Interaction (`pure` | `view`)
-4. Restriction (`Access Control` etc. DEFAULT_ADMIN_ROLE first)
-5. Complexity (Calls to inherited functions, external functions, change state)
-6. Alphabetical
+Strategies must be very simple. They should be able to be changed. Tokens utilized must be immutable.
