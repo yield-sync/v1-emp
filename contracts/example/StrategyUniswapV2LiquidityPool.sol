@@ -28,6 +28,12 @@ interface IUniswapV2Pair
 		view
 		returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast)
 	;
+
+	function totalSupply()
+		external
+		view
+		returns (uint256)
+	;
 }
 
 
@@ -140,10 +146,35 @@ contract StrategyUniswapV2LiquidityPool is
 		override
 		returns (uint256 positionValueInEth_)
 	{
-		IERC20 lpToken = IERC20(uniswapV2Factory.getPair(_utilizedToken[0], _utilizedToken[1]));
+		address liquidityPool = uniswapV2Factory.getPair(_utilizedToken[0], _utilizedToken[1]);
 
-		// This is a placeholder until i have a proper way to calculate the position value
-		return lpToken.balanceOf(_target);
+		uint256 balance = IERC20(liquidityPool).balanceOf(_target);
+
+		// No balance -> automatically worth 0
+		if (balance <= 0)
+		{
+			return 0;
+		}
+
+		IUniswapV2Pair pair = IUniswapV2Pair(liquidityPool);
+
+		(uint112 reserve0, uint112 reserve1, ) = pair.getReserves();
+
+		// If there is no liquidity then automatically the value will be 0
+		if (pair.totalSupply() == 0)
+		{
+			return 0;
+		}
+
+		uint256 tokenAmount0PerLP = uint256(reserve0) / pair.totalSupply();
+		uint256 tokenAmount1PerLP = uint256(reserve1) / pair.totalSupply();
+
+		// Return total value of both output tokens denomintaed in WETH
+		return balance * tokenAmount0PerLP * utilizedTokenValueInWETH(
+			_utilizedToken[0]
+		) + balance * tokenAmount1PerLP * utilizedTokenValueInWETH(
+			_utilizedToken[1]
+		);
 	}
 
 	/// @inheritdoc IYieldSyncV1Strategy
@@ -165,15 +196,21 @@ contract StrategyUniswapV2LiquidityPool is
 	{
 		// TODO: Check that the token is utilized
 
-		address pair = IUniswapV2Factory(UNISWAP_V2_FACTORY).getPair(_token, WETH);
+		address liquidityPool = IUniswapV2Factory(UNISWAP_V2_FACTORY).getPair(_token, WETH);
 
-		// Pair does NOT exist
-		if (pair == address(0))
+		// Liquidity Pool does NOT exist
+		if (liquidityPool == address(0))
 		{
 			return 0;
 		}
 
-		(uint112 reserve0, uint112 reserve1, ) = IUniswapV2Pair(pair).getReserves();
+		(uint112 reserve0, uint112 reserve1, ) = IUniswapV2Pair(liquidityPool).getReserves();
+
+		// If there is no liquidity then automatically the value will be 0
+		if (IUniswapV2Pair(liquidityPool).totalSupply() == 0)
+		{
+			return 0;
+		}
 
 		// Return token price in terms of WETH
 		if (_token < WETH)
