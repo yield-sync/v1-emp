@@ -163,22 +163,26 @@ contract StrategyUniswapV2LiquidityPool is
 		override
 		returns (uint256 tokenValueInEth_)
 	{
+		// TODO: Check that the token is utilized
+
 		address pair = IUniswapV2Factory(UNISWAP_V2_FACTORY).getPair(_token, WETH);
 
+		// Pair does NOT exist
 		if (pair == address(0))
 		{
-			return 0; // Pair doesn't exist
+			return 0;
 		}
 
 		(uint112 reserve0, uint112 reserve1, ) = IUniswapV2Pair(pair).getReserves();
 
+		// Return token price in terms of WETH
 		if (_token < WETH)
 		{
-			return uint256(reserve1) * 1e18 / reserve0; // Token price in terms of ETH
+			return uint256(reserve1) * 1e18 / reserve0;
 		}
 		else
 		{
-			return uint256(reserve0) * 1e18 / reserve1; // Token price in terms of ETH
+			return uint256(reserve0) * 1e18 / reserve1;
 		}
 	}
 
