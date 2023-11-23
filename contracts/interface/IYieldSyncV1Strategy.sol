@@ -27,6 +27,18 @@ interface IYieldSyncV1Strategy is
 		returns (Allocation memory)
 	;
 
+	/**
+	* @notice token to utilized
+	* @dev [view-mapping]
+	* @param _token {address}
+	* @return utilized_ {bool}
+	*/
+	function token_utilized(address _token)
+		external
+		view
+		returns (bool utilized_)
+	;
+
 
 	/**
 	* @notice Value of position denominated in WETH
@@ -39,16 +51,6 @@ interface IYieldSyncV1Strategy is
 		returns (uint256 positionValueInWETH_)
 	;
 
-	/**
-	* @notice
-	* @param _token {address}
-	* @return utilized_ {bool}
-	*/
-	function token_utilized(address _token)
-		external
-		view
-		returns (bool utilized_)
-	;
 
 	/**
 	* @notice Array of utilized tokens

@@ -71,6 +71,7 @@ contract StrategyUniswapV2LiquidityPool is
 {
 	address public immutable UNISWAP_V2_FACTORY;
     address public immutable WETH;
+
 	address public manager;
 	uint256 public slippageTolerance;
 
@@ -110,6 +111,7 @@ contract StrategyUniswapV2LiquidityPool is
 		uniswapV2Router = IUniswapV2Router(_uniswapV2Router);
 	}
 
+
 	/// @inheritdoc IYieldSyncV1Strategy
 	function token_allocation(address token)
 		external
@@ -121,17 +123,6 @@ contract StrategyUniswapV2LiquidityPool is
 	}
 
 	/// @inheritdoc IYieldSyncV1Strategy
-	function positionValueInWETH(address target)
-		public
-		view
-		override
-		returns (uint256 positionValueInEth_)
-	{
-		// This is a placeholder until i have a proper way to calculate the position value
-		return balanceOf(target);
-	}
-
-	/// @inheritdoc IYieldSyncV1Strategy
 	function token_utilized(address _token)
 		public
 		view
@@ -139,6 +130,20 @@ contract StrategyUniswapV2LiquidityPool is
 		returns (bool utilized_)
 	{
 		return _token_utilized[_token];
+	}
+
+
+	/// @inheritdoc IYieldSyncV1Strategy
+	function positionValueInWETH(address _target)
+		public
+		view
+		override
+		returns (uint256 positionValueInEth_)
+	{
+		IERC20 lpToken = IERC20(uniswapV2Factory.getPair(_utilizedToken[0], _utilizedToken[1]));
+
+		// This is a placeholder until i have a proper way to calculate the position value
+		return lpToken.balanceOf(_target);
 	}
 
 	/// @inheritdoc IYieldSyncV1Strategy
