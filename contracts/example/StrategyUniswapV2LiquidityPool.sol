@@ -94,13 +94,6 @@ contract StrategyUniswapV2LiquidityPool is
 	)
 		ERC20(name, symbol)
 	{
-		require(_LIQUIDITY_POOL != address(0), "!_LIQUIDITY_POOL");
-		require(_WETH != address(0), "!WETH");
-		require(_tokenA != address(0), "!_tokenA");
-		require(_tokenB != address(0), "!_tokenB");
-		require(_uniswapV2Pair != address(0), "!_uniswapV2Pair");
-		require(_uniswapV2Router != address(0), "!_uniswapV2Router");
-
 		manager = msg.sender;
 
 		LIQUIDITY_POOL = _LIQUIDITY_POOL;
