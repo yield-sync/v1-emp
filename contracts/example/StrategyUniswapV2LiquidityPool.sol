@@ -68,9 +68,10 @@ contract StrategyUniswapV2LiquidityPool is
 	address public immutable LIQUIDITY_POOL;
     address public immutable WETH;
 	address public manager;
-	address[] internal _utilizedToken;
 
 	uint256 public slippageTolerance;
+
+	address[] internal _utilizedToken;
 
 
 	mapping (address token => bool utilized) internal _token_utilized;
