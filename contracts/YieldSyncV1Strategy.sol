@@ -8,7 +8,8 @@ import { IERC20, ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { Allocation, IYieldSyncV1Strategy } from "./interface/IYieldSyncV1Strategy.sol";
 
 
-contract YieldSyncV1Strategy
+contract YieldSyncV1Strategy is
+	IYieldSyncV1Strategy
 {
 	address public immutable STRATEGY;
 
@@ -38,8 +39,30 @@ contract YieldSyncV1Strategy
 	}
 
 
-	function deletegateCallUtilizedTokensDeposit(uint256[] memory _amount)
-		external
+	function utilizedTokensDeposit(uint256[] memory _amount)
+		public
+		override
+	{
+		// TODO: Make non-reenterance
+
+		require(_amount.length == _utilizedToken.length, "!_amount.length");
+
+		for (uint256 i = 0; i < _amount.length; i++)
+		{
+			// Approve the STRATEGY to spend each token
+			IERC20(_utilizedToken[i]).approve(STRATEGY, _amount[i]);
+		}
+
+		(bool success, ) = STRATEGY.delegatecall(
+			abi.encodeWithSignature("utilizedTokensDeposit(address[], uint256[])", _utilizedToken, _amount)
+		);
+
+		require(success, "!success");
+	}
+
+	function utilizedTokensWithdraw(uint256[] memory _amount)
+		public
+		override
 	{
 		// TODO: Make non-reenterance
 
