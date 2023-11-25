@@ -41,6 +41,8 @@ contract YieldSyncV1Strategy
 	function deletegateCallUtilizedTokensDeposit(uint256[] memory _amount)
 		external
 	{
+		// TODO: Make non-reenterance
+
 		require(_amount.length == _utilizedToken.length, "!_amount.length");
 
 		for (uint256 i = 0; i < _amount.length; i++)
@@ -49,7 +51,6 @@ contract YieldSyncV1Strategy
 			IERC20(_utilizedToken[i]).approve(STRATEGY, _amount[i]);
 		}
 
-		// Perform the delegatecall with the encoded function signature and parameters
 		(bool success, ) = STRATEGY.delegatecall(
 			abi.encodeWithSignature("utilizedTokensDeposit(address[], uint256[])", _utilizedToken, _amount)
 		);
