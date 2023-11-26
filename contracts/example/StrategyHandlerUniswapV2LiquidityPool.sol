@@ -59,8 +59,9 @@ interface IUniswapV2Router
 /**
 * @notice This strategy adds liquidity to a uniswap pool
 */
-contract StrategyUniswapV2LiquidityPool
+contract StrategyHandlerUniswapV2LiquidityPool
 {
+	address public immutable LIQUIDITY_POOL;
 	address public manager;
 
 	uint256 public slippageTolerance;
@@ -69,12 +70,15 @@ contract StrategyUniswapV2LiquidityPool
 	IUniswapV2Router public immutable uniswapV2Router;
 
 	constructor (
+		address _LIQUIDITY_POOL,
 		address _uniswapV2Pair,
 		address _uniswapV2Router,
 		uint256 _slippageTolerance
 	)
 	{
 		manager = msg.sender;
+
+		LIQUIDITY_POOL = _LIQUIDITY_POOL;
 
 		slippageTolerance = _slippageTolerance;
 
@@ -101,6 +105,32 @@ contract StrategyUniswapV2LiquidityPool
 			address(this),
 			block.timestamp
 		);
+	}
+
+	function utilizedTokensWithdraw(address[] memory _utilizedToken, uint256[] memory _amount)
+		public
+	{
+		// Retrieve the current reserves to estimate the withdrawn amounts
+		(uint256 reserveA, uint256 reserveB, ) = uniswapV2Pair.getReserves();
+
+		// [calculate] Amount of tokens to be withdrawn given liquidity amount
+		uint256 amountA = _amount[0] * reserveA / IERC20(LIQUIDITY_POOL).totalSupply();
+		uint256 amountB = _amount[0] * reserveB / IERC20(LIQUIDITY_POOL).totalSupply();
+
+		// Remove liquidity
+		(uint256 amountRemovedA, uint256 amountRemovedB) = uniswapV2Router.removeLiquidity(
+			_utilizedToken[0],
+			_utilizedToken[1],
+			_amount[0],
+			amountA * (10000 - slippageTolerance) / 10000,
+			amountB * (10000 - slippageTolerance) / 10000,
+			address(this),
+			block.timestamp
+		);
+
+		// Transfer the withdrawn tokens to the recipient
+		IERC20(_utilizedToken[0]).safeTransfer(msg.sender, amountRemovedA);
+		IERC20(_utilizedToken[1]).safeTransfer(msg.sender, amountRemovedB);
 	}
 
 	function slippageToleranceUpdate(uint256 _slippageTolerance)
