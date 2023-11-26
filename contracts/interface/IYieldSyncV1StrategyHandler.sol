@@ -41,6 +41,17 @@ interface IYieldSyncV1StrategyHandler is
 	IERC20
 {
 	/**
+	* @notice
+	* @dev [view-address]
+	* @return {address}
+	*/
+	function strategy()
+		external
+		view
+		returns (address)
+	;
+
+	/**
 	* @notice token to allocation
 	* @dev [view-mapping]
 	* @param token {address}

@@ -19,9 +19,8 @@ contract YieldSyncV1StrategyHandler is
 	IYieldSyncV1StrategyHandler,
 	ReentrancyGuard
 {
+	address public immutable override strategy;
 	address[] internal _utilizedToken;
-
-	IStrategy public immutable strategy;
 
 
 	mapping (address token => bool utilized) internal _token_utilized;
@@ -44,7 +43,7 @@ contract YieldSyncV1StrategyHandler is
 	constructor (address _strategy, string memory _name, string memory _symbol)
 		ERC20(_name, _symbol)
 	{
-		strategy = IStrategy(_strategy);
+		strategy = _strategy;
 	}
 
 
@@ -110,10 +109,10 @@ contract YieldSyncV1StrategyHandler is
 
 		for (uint256 i = 0; i < _amount.length; i++)
 		{
-			IERC20(_utilizedToken[i]).approve(address(strategy), _amount[i]);
+			IERC20(_utilizedToken[i]).approve(strategy, _amount[i]);
 		}
 
-		strategy.utilizedTokensDeposit(_utilizedToken, _amount);
+		IStrategy(strategy).utilizedTokensDeposit(_utilizedToken, _amount);
 	}
 
 	/// @inheritdoc IYieldSyncV1StrategyHandler
@@ -124,6 +123,6 @@ contract YieldSyncV1StrategyHandler is
 	{
 		require(_amount.length == _utilizedToken.length, "!_amount.length");
 
-		strategy.utilizedTokensWithdraw(_utilizedToken, _amount);
+		IStrategy(strategy).utilizedTokensWithdraw(_utilizedToken, _amount);
 	}
 }
