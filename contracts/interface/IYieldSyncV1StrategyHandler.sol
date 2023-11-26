@@ -12,7 +12,7 @@ struct Allocation
 }
 
 
-interface IYieldSyncV1Strategy is
+interface IYieldSyncV1StrategyHandler is
 	IERC20
 {
 	/**

@@ -7,7 +7,7 @@ import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuar
 import { IERC20, ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-import { Allocation, IYieldSyncV1Strategy } from "./interface/IYieldSyncV1Strategy.sol";
+import { Allocation, IYieldSyncV1StrategyHander } from "./interface/IYieldSyncV1StrategyHandler.sol";
 
 
 using SafeERC20 for IERC20;
