@@ -13,7 +13,7 @@ import { Allocation, IYieldSyncV1StrategyHandler } from "./interface/IYieldSyncV
 using SafeERC20 for IERC20;
 
 
-interface IStrategyHandler
+interface IStrategy
 {
 	function utilizedTokensDeposit(address[] memory _utilizedToken, uint256[] memory _amount)
 		external
@@ -32,7 +32,7 @@ contract YieldSyncV1Strategy is
 {
 	address[] internal _utilizedToken;
 
-	IStrategyHandler public immutable STRATEGY_HANDLER;
+	IStrategy public immutable STRATEGY;
 
 
 	mapping (address token => bool utilized) internal _token_utilized;
@@ -52,10 +52,10 @@ contract YieldSyncV1Strategy is
 	{}
 
 
-	constructor (address _STRATEGY_HANDLER, string memory name, string memory symbol)
+	constructor (address _STRATEGY, string memory name, string memory symbol)
 		ERC20(name, symbol)
 	{
-		STRATEGY_HANDLER = IStrategyHandler(_STRATEGY_HANDLER);
+		STRATEGY = IStrategy(_STRATEGY);
 	}
 
 
@@ -121,10 +121,10 @@ contract YieldSyncV1Strategy is
 
 		for (uint256 i = 0; i < _amount.length; i++)
 		{
-			IERC20(_utilizedToken[i]).approve(address(STRATEGY_HANDLER), _amount[i]);
+			IERC20(_utilizedToken[i]).approve(address(STRATEGY), _amount[i]);
 		}
 
-		STRATEGY_HANDLER.utilizedTokensDeposit(_utilizedToken, _amount);
+		STRATEGY.utilizedTokensDeposit(_utilizedToken, _amount);
 	}
 
 	/// @inheritdoc IYieldSyncV1StrategyHandler
@@ -135,6 +135,6 @@ contract YieldSyncV1Strategy is
 	{
 		require(_amount.length == _utilizedToken.length, "!_amount.length");
 
-		STRATEGY_HANDLER.utilizedTokensWithdraw(_utilizedToken, _amount);
+		STRATEGY.utilizedTokensWithdraw(_utilizedToken, _amount);
 	}
 }
