@@ -7,7 +7,7 @@ import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.s
 import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 import { Allocation, IYieldSyncV1AssetAllocator } from "./interface/IYieldSyncV1AssetAllocator.sol";
-import { IYieldSyncV1Strategy } from "./interface/IYieldSyncV1Strategy.sol";
+import { IYieldSyncV1StrategyHandler } from "./interface/IYieldSyncV1StrategyHandler.sol";
 
 
 using SafeERC20 for ERC20;
@@ -79,7 +79,7 @@ contract YieldSyncV1AssetAllocator is
 		for (uint256 i = 0; i < _activeStrategy.length; i++)
 		{
 			(, uint256 strategyAllocation) = SafeMath.tryDiv(
-				IYieldSyncV1Strategy(_activeStrategy[i]).positionValueInWETH(msg.sender),
+				IYieldSyncV1StrategyHandler(_activeStrategy[i]).positionValueInETH(msg.sender),
 				_totalValueOfAssetsInWETH
 			);
 
@@ -99,7 +99,9 @@ contract YieldSyncV1AssetAllocator is
 	{
 		require(_utilizedToken.length > 0, "Must deposit at least one token");
 
-		require(_utilizedToken.length == IYieldSyncV1Strategy(_strategy).utilizedToken().length, "!utilizedToken.length");
+		require(
+			_utilizedToken.length == IYieldSyncV1StrategyHandler(_strategy).utilizedToken().length, "!utilizedToken.length"
+		);
 
 		if (onlyPrioritizedStrategy)
 		{
@@ -111,14 +113,16 @@ contract YieldSyncV1AssetAllocator is
 		for (uint256 i = 0; i < _utilizedToken.length; i++)
 		{
 			require(
-				IYieldSyncV1Strategy(_strategy).token_utilized(_utilizedToken[i]),
+				IYieldSyncV1StrategyHandler(_strategy).token_utilized(_utilizedToken[i]),
 				"!IYieldSyncV1Strategy(_strategy).token_utilized(_utilizedToken[i])"
 			);
 
 			ERC20(_utilizedToken[i]).safeTransferFrom(msg.sender, address(this), _amounts[i]);
 
 			// Calculate the value of the deposited tokens
-			totalDepositValue += IYieldSyncV1Strategy(_strategy).utilizedTokenValueInWETH(_utilizedToken[i]) * _amounts[i];
+			totalDepositValue += IYieldSyncV1StrategyHandler(_strategy).utilizedTokenValueInETH(
+				_utilizedToken[i]
+			) * _amounts[i];
 		}
 
 		uint256 tokensToMint;
@@ -189,15 +193,15 @@ contract YieldSyncV1AssetAllocator is
 	function totalValueOfAssetsInWETH()
 		public
 		view
-		returns (uint256 totalValueInWETH_)
+		returns (uint256 totalValueInETH_)
 	{
-		uint256 _totalValueInWETH = 0;
+		uint256 _totalValueInETH = 0;
 
 		for (uint256 i = 0; i < _activeStrategy.length; i++)
 		{
-			_totalValueInWETH += IYieldSyncV1Strategy(_activeStrategy[i]).positionValueInWETH(address(this));
+			_totalValueInETH += IYieldSyncV1StrategyHandler(_activeStrategy[i]).positionValueInETH(address(this));
 		}
 
-		return _totalValueInWETH;
+		return _totalValueInETH;
 	}
 }

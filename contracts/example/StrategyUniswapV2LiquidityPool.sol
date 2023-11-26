@@ -89,7 +89,7 @@ contract StrategyHandlerUniswapV2LiquidityPool
 		uniswapV2Router = IUniswapV2Router(_uniswapV2Router);
 	}
 
-	function positionValueInWETH(address[] memory _utilizedToken, address _target)
+	function positionValueInETH(address[] memory _utilizedToken, address _target)
 		public
 		view
 		returns (uint256 positionValueInEth_)
@@ -116,13 +116,13 @@ contract StrategyHandlerUniswapV2LiquidityPool
 		uint256 amount1PerLPToken = uint256(reserve1) / totalSupply;
 
 		// Return total value of both output tokens denomintaed in WETH
-		return balance * amount0PerLPToken * utilizedTokenValueInWETH(
+		return balance * amount0PerLPToken * utilizedTokenValueInETH(
 			_utilizedToken[0]
-		) + balance * amount1PerLPToken * utilizedTokenValueInWETH(
+		) + balance * amount1PerLPToken * utilizedTokenValueInETH(
 			_utilizedToken[1]
 		);
 	}
-	function utilizedTokenValueInWETH(address _token)
+	function utilizedTokenValueInETH(address _token)
 		public
 		view
 		returns (uint256 tokenValueInEth_)
