@@ -9,7 +9,7 @@ import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {
 	Allocation,
 	IERC20,
-	IStrategy,
+	IYieldSyncV1Strategy,
 	IYieldSyncV1StrategyHandler
 } from "./interface/IYieldSyncV1StrategyHandler.sol";
 
@@ -112,7 +112,7 @@ contract YieldSyncV1StrategyHandler is
 			IERC20(_utilizedToken[i]).approve(strategy, _amount[i]);
 		}
 
-		IStrategy(strategy).utilizedTokensDeposit(_utilizedToken, _amount);
+		IYieldSyncV1Strategy(strategy).utilizedTokensDeposit(_utilizedToken, _amount);
 	}
 
 	/// @inheritdoc IYieldSyncV1StrategyHandler
@@ -123,6 +123,6 @@ contract YieldSyncV1StrategyHandler is
 	{
 		require(_amount.length == _utilizedToken.length, "!_amount.length");
 
-		IStrategy(strategy).utilizedTokensWithdraw(_utilizedToken, _amount);
+		IYieldSyncV1Strategy(strategy).utilizedTokensWithdraw(_utilizedToken, _amount);
 	}
 }

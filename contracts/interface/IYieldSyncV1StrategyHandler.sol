@@ -16,7 +16,7 @@ struct Allocation
 }
 
 
-interface IStrategy
+interface IYieldSyncV1Strategy
 {
 	/**
 	* @notice
