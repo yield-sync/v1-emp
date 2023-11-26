@@ -62,6 +62,7 @@ interface IUniswapV2Router
 contract StrategyHandlerUniswapV2LiquidityPool
 {
 	address public immutable LIQUIDITY_POOL;
+    address public immutable WETH;
 	address public manager;
 
 	uint256 public slippageTolerance;
@@ -71,6 +72,7 @@ contract StrategyHandlerUniswapV2LiquidityPool
 
 	constructor (
 		address _LIQUIDITY_POOL,
+		address _WETH,
 		address _uniswapV2Pair,
 		address _uniswapV2Router,
 		uint256 _slippageTolerance
@@ -79,11 +81,69 @@ contract StrategyHandlerUniswapV2LiquidityPool
 		manager = msg.sender;
 
 		LIQUIDITY_POOL = _LIQUIDITY_POOL;
+		WETH = _WETH;
 
 		slippageTolerance = _slippageTolerance;
 
 		uniswapV2Pair = IUniswapV2Pair(_uniswapV2Pair);
 		uniswapV2Router = IUniswapV2Router(_uniswapV2Router);
+	}
+
+	function positionValueInWETH(address[] memory _utilizedToken, address _target)
+		public
+		view
+		returns (uint256 positionValueInEth_)
+	{
+		uint256 balance = IERC20(LIQUIDITY_POOL).balanceOf(_target);
+
+		// No balance -> automatically worth 0
+		if (balance <= 0)
+		{
+			return 0;
+		}
+
+		(uint112 reserve0, uint112 reserve1, ) = uniswapV2Pair.getReserves();
+
+		uint256 totalSupply = uniswapV2Pair.totalSupply();
+
+		// If there is no liquidity then automatically the LP token value will be 0
+		if (totalSupply == 0)
+		{
+			return 0;
+		}
+
+		uint256 amount0PerLPToken = uint256(reserve0) / totalSupply;
+		uint256 amount1PerLPToken = uint256(reserve1) / totalSupply;
+
+		// Return total value of both output tokens denomintaed in WETH
+		return balance * amount0PerLPToken * utilizedTokenValueInWETH(
+			_utilizedToken[0]
+		) + balance * amount1PerLPToken * utilizedTokenValueInWETH(
+			_utilizedToken[1]
+		);
+	}
+	function utilizedTokenValueInWETH(address _token)
+		public
+		view
+		returns (uint256 tokenValueInEth_)
+	{
+		(uint112 reserve0, uint112 reserve1, ) = uniswapV2Pair.getReserves();
+
+		// If there is no liquidity then automatically the value will be 0
+		if (uniswapV2Pair.totalSupply() == 0)
+		{
+			return 0;
+		}
+
+		// Return token price in terms of WETH
+		if (_token < WETH)
+		{
+			return uint256(reserve1) * 1e18 / reserve0;
+		}
+		else
+		{
+			return uint256(reserve0) * 1e18 / reserve1;
+		}
 	}
 
 	function utilizedTokensDeposit(address[] memory _utilizedToken, uint256[] memory _amount)

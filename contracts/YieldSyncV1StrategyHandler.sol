@@ -75,6 +75,7 @@ contract YieldSyncV1StrategyHandler is
 		override
 		returns (uint256 positionValueInEth_)
 	{
+		return IYieldSyncV1Strategy(strategy).positionValueInWETH(_utilizedToken, _target);
 	}
 
 	/// @inheritdoc IYieldSyncV1StrategyHandler
@@ -96,7 +97,8 @@ contract YieldSyncV1StrategyHandler is
 	{
 		require(_token_utilized[_token] == true, "!_token_utilized[_token]");
 
-		return 0;
+		return IYieldSyncV1Strategy(strategy).utilizedTokenValueInWETH(_utilizedToken, _token);
+
 	}
 
 	/// @inheritdoc IYieldSyncV1StrategyHandler

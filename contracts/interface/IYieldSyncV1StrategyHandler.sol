@@ -18,6 +18,18 @@ struct Allocation
 
 interface IYieldSyncV1Strategy
 {
+	function positionValueInWETH(address[] memory _utilizedToken, address _target)
+		external
+		view
+		returns (uint256 positionValueInEth_)
+	;
+
+	function utilizedTokenValueInWETH(address _token)
+		external
+		view
+		returns (uint256 tokenValueInEth_)
+	;
+
 	/**
 	* @notice
 	* @param _utilizedToken {address[]}
