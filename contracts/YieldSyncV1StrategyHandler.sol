@@ -7,7 +7,7 @@ import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuar
 import { IERC20, ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-import { Allocation, IYieldSyncV1StrategyHander } from "./interface/IYieldSyncV1StrategyHandler.sol";
+import { Allocation, IYieldSyncV1StrategyHandler } from "./interface/IYieldSyncV1StrategyHandler.sol";
 
 
 using SafeERC20 for IERC20;
@@ -27,7 +27,7 @@ interface IStrategyHandler
 
 contract YieldSyncV1Strategy is
 	ERC20,
-	IYieldSyncV1Strategy,
+	IYieldSyncV1StrategyHandler,
 	ReentrancyGuard
 {
 	address[] internal _utilizedToken;
