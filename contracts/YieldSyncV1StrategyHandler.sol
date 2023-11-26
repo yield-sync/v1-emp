@@ -59,7 +59,7 @@ contract YieldSyncV1Strategy is
 	}
 
 
-	/// @inheritdoc IYieldSyncV1Strategy
+	/// @inheritdoc IYieldSyncV1StrategyHandler
 	function token_allocation(address token)
 		external
 		view
@@ -69,7 +69,7 @@ contract YieldSyncV1Strategy is
 		return _token_allocation[token];
 	}
 
-	/// @inheritdoc IYieldSyncV1Strategy
+	/// @inheritdoc IYieldSyncV1StrategyHandler
 	function token_utilized(address _token)
 		public
 		view
@@ -80,7 +80,7 @@ contract YieldSyncV1Strategy is
 	}
 
 
-	/// @inheritdoc IYieldSyncV1Strategy
+	/// @inheritdoc IYieldSyncV1StrategyHandler
 	function positionValueInWETH(address _target)
 		public
 		view
@@ -89,7 +89,7 @@ contract YieldSyncV1Strategy is
 	{
 	}
 
-	/// @inheritdoc IYieldSyncV1Strategy
+	/// @inheritdoc IYieldSyncV1StrategyHandler
 	function utilizedToken()
 		public
 		view
@@ -99,7 +99,7 @@ contract YieldSyncV1Strategy is
 		return _utilizedToken;
 	}
 
-	/// @inheritdoc IYieldSyncV1Strategy
+	/// @inheritdoc IYieldSyncV1StrategyHandler
 	function utilizedTokenValueInWETH(address _token)
 		public
 		view
@@ -111,6 +111,7 @@ contract YieldSyncV1Strategy is
 		return 0;
 	}
 
+	/// @inheritdoc IYieldSyncV1StrategyHandler
 	function utilizedTokensDeposit(uint256[] memory _amount)
 		public
 		override
@@ -126,6 +127,7 @@ contract YieldSyncV1Strategy is
 		STRATEGY_HANDLER.utilizedTokensDeposit(_utilizedToken, _amount);
 	}
 
+	/// @inheritdoc IYieldSyncV1StrategyHandler
 	function utilizedTokensWithdraw(uint256[] memory _amount)
 		public
 		override
