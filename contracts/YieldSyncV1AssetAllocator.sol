@@ -79,7 +79,7 @@ contract YieldSyncV1AssetAllocator is
 		for (uint256 i = 0; i < _activeStrategy.length; i++)
 		{
 			(, uint256 strategyAllocation) = SafeMath.tryDiv(
-				IYieldSyncV1StrategyHandler(_activeStrategy[i]).positionValueInETH(msg.sender),
+				IYieldSyncV1StrategyHandler(_activeStrategy[i]).positionETHValue(msg.sender),
 				_totalValueOfAssetsInWETH
 			);
 
@@ -120,7 +120,7 @@ contract YieldSyncV1AssetAllocator is
 			ERC20(_utilizedToken[i]).safeTransferFrom(msg.sender, address(this), _amounts[i]);
 
 			// Calculate the value of the deposited tokens
-			totalDepositValue += IYieldSyncV1StrategyHandler(_strategy).utilizedTokenValueInETH(
+			totalDepositValue += IYieldSyncV1StrategyHandler(_strategy).utilizedTokenETHValue(
 				_utilizedToken[i]
 			) * _amounts[i];
 		}
@@ -193,15 +193,15 @@ contract YieldSyncV1AssetAllocator is
 	function totalValueOfAssetsInWETH()
 		public
 		view
-		returns (uint256 totalValueInETH_)
+		returns (uint256 totalETHValue_)
 	{
-		uint256 _totalValueInETH = 0;
+		uint256 _totalETHValue = 0;
 
 		for (uint256 i = 0; i < _activeStrategy.length; i++)
 		{
-			_totalValueInETH += IYieldSyncV1StrategyHandler(_activeStrategy[i]).positionValueInETH(address(this));
+			_totalETHValue += IYieldSyncV1StrategyHandler(_activeStrategy[i]).positionETHValue(address(this));
 		}
 
-		return _totalValueInETH;
+		return _totalETHValue;
 	}
 }

@@ -69,13 +69,13 @@ contract YieldSyncV1StrategyHandler is
 
 
 	/// @inheritdoc IYieldSyncV1StrategyHandler
-	function positionValueInETH(address _target)
+	function positionETHValue(address _target)
 		public
 		view
 		override
-		returns (uint256 positionValueInEth_)
+		returns (uint256 positionETHValue_)
 	{
-		return IYieldSyncV1Strategy(strategy).positionValueInETH(_utilizedToken, _target);
+		return IYieldSyncV1Strategy(strategy).positionETHValue(_utilizedToken, _target);
 	}
 
 	/// @inheritdoc IYieldSyncV1StrategyHandler
@@ -89,15 +89,15 @@ contract YieldSyncV1StrategyHandler is
 	}
 
 	/// @inheritdoc IYieldSyncV1StrategyHandler
-	function utilizedTokenValueInETH(address _token)
+	function utilizedTokenETHValue(address _token)
 		public
 		view
 		override
-		returns (uint256 tokenValueInEth_)
+		returns (uint256 tokenETHValue_)
 	{
 		require(_token_utilized[_token] == true, "!_token_utilized[_token]");
 
-		return IYieldSyncV1Strategy(strategy).utilizedTokenValueInETH(_token);
+		return IYieldSyncV1Strategy(strategy).utilizedTokenETHValue(_token);
 	}
 
 	/// @inheritdoc IYieldSyncV1StrategyHandler

@@ -18,16 +18,16 @@ struct Allocation
 
 interface IYieldSyncV1Strategy
 {
-	function positionValueInETH(address[] memory _utilizedToken, address _target)
+	function positionETHValue(address[] memory _utilizedToken, address _target)
 		external
 		view
-		returns (uint256 positionValueInEth_)
+		returns (uint256 positionETHValue_)
 	;
 
-	function utilizedTokenValueInETH(address _token)
+	function utilizedTokenETHValue(address _token)
 		external
 		view
-		returns (uint256 tokenValueInEth_)
+		returns (uint256 tokenETHValue_)
 	;
 
 	/**
@@ -91,12 +91,12 @@ interface IYieldSyncV1StrategyHandler is
 	/**
 	* @notice Value of position denominated in WETH
 	* @param target {address}
-	* @return positionValueInETH_ {uint256}
+	* @return positionETHValue_ {uint256}
 	*/
-	function positionValueInETH(address target)
+	function positionETHValue(address target)
 		external
 		view
-		returns (uint256 positionValueInETH_)
+		returns (uint256 positionETHValue_)
 	;
 
 
@@ -113,12 +113,12 @@ interface IYieldSyncV1StrategyHandler is
 	/**
 	* @notice Return value of token denominated in WETH
 	* @param _token {uint256}
-	* @return tokenValueInETH_ {uint256}
+	* @return tokenETHValue_ {uint256}
 	*/
-	function utilizedTokenValueInETH(address _token)
+	function utilizedTokenETHValue(address _token)
 		external
 		view
-		returns (uint256 tokenValueInETH_)
+		returns (uint256 tokenETHValue_)
 	;
 
 	/**

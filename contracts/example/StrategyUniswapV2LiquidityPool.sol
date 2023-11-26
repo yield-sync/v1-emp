@@ -89,10 +89,10 @@ contract StrategyHandlerUniswapV2LiquidityPool
 		uniswapV2Router = IUniswapV2Router(_uniswapV2Router);
 	}
 
-	function positionValueInETH(address[] memory _utilizedToken, address _target)
+	function positionETHValue(address[] memory _utilizedToken, address _target)
 		public
 		view
-		returns (uint256 positionValueInEth_)
+		returns (uint256 positionETHValue_)
 	{
 		uint256 balance = IERC20(LIQUIDITY_POOL).balanceOf(_target);
 
@@ -116,16 +116,16 @@ contract StrategyHandlerUniswapV2LiquidityPool
 		uint256 amount1PerLPToken = uint256(reserve1) / totalSupply;
 
 		// Return total value of both output tokens denomintaed in WETH
-		return balance * amount0PerLPToken * utilizedTokenValueInETH(
+		return balance * amount0PerLPToken * utilizedTokenETHValue(
 			_utilizedToken[0]
-		) + balance * amount1PerLPToken * utilizedTokenValueInETH(
+		) + balance * amount1PerLPToken * utilizedTokenETHValue(
 			_utilizedToken[1]
 		);
 	}
-	function utilizedTokenValueInETH(address _token)
+	function utilizedTokenETHValue(address _token)
 		public
 		view
-		returns (uint256 tokenValueInEth_)
+		returns (uint256 tokenETHValue_)
 	{
 		(uint112 reserve0, uint112 reserve1, ) = uniswapV2Pair.getReserves();
 
