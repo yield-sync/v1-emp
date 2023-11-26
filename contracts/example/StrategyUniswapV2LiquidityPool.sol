@@ -5,7 +5,7 @@ pragma solidity 0.8.18;
 import { IERC20, ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-import { Allocation, IYieldSyncV1Strategy } from "../interface/IYieldSyncV1Strategy.sol";
+import { Allocation, IYieldSyncV1StrategyHandler } from "../interface/IYieldSyncV1StrategyHandler.sol";
 
 
 using SafeERC20 for IERC20;
@@ -62,7 +62,7 @@ interface IUniswapV2Router
 * @notice This strategy adds liquidity to a uniswap pool
 */
 contract StrategyUniswapV2LiquidityPool is
-	IYieldSyncV1Strategy,
+	IYieldSyncV1StrategyHandler,
 	ERC20
 {
 	address public immutable LIQUIDITY_POOL;
@@ -111,7 +111,7 @@ contract StrategyUniswapV2LiquidityPool is
 	}
 
 
-	/// @inheritdoc IYieldSyncV1StrategyHandler
+	/// @inheritdoc IYieldSyncV1StrategyHandlerHandler
 	function token_allocation(address token)
 		external
 		view
@@ -121,7 +121,7 @@ contract StrategyUniswapV2LiquidityPool is
 		return _token_allocation[token];
 	}
 
-	/// @inheritdoc IYieldSyncV1StrategyHandler
+	/// @inheritdoc IYieldSyncV1StrategyHandlerHandler
 	function token_utilized(address _token)
 		public
 		view
@@ -132,7 +132,7 @@ contract StrategyUniswapV2LiquidityPool is
 	}
 
 
-	/// @inheritdoc IYieldSyncV1StrategyHandler
+	/// @inheritdoc IYieldSyncV1StrategyHandlerHandler
 	function positionValueInWETH(address _target)
 		public
 		view
@@ -168,7 +168,7 @@ contract StrategyUniswapV2LiquidityPool is
 		);
 	}
 
-	/// @inheritdoc IYieldSyncV1StrategyHandler
+	/// @inheritdoc IYieldSyncV1StrategyHandlerHandler
 	function utilizedToken()
 		public
 		view
@@ -178,7 +178,7 @@ contract StrategyUniswapV2LiquidityPool is
 		return _utilizedToken;
 	}
 
-	/// @inheritdoc IYieldSyncV1StrategyHandler
+	/// @inheritdoc IYieldSyncV1StrategyHandlerHandler
 	function utilizedTokenValueInWETH(address _token)
 		public
 		view
@@ -206,7 +206,7 @@ contract StrategyUniswapV2LiquidityPool is
 		}
 	}
 
-	/// @inheritdoc IYieldSyncV1StrategyHandler
+	/// @inheritdoc IYieldSyncV1StrategyHandlerHandler
 	function utilizedTokensDeposit(uint256[] memory _amount)
 		public
 		override
@@ -231,7 +231,7 @@ contract StrategyUniswapV2LiquidityPool is
 		// Handle the minting of strategy-specific tokens or other logic...
 	}
 
-	/// @inheritdoc IYieldSyncV1StrategyHandler
+	/// @inheritdoc IYieldSyncV1StrategyHandlerHandler
 	function utilizedTokensWithdraw(uint256[] memory _amount)
 		public
 		override
