@@ -111,7 +111,7 @@ contract StrategyUniswapV2LiquidityPool is
 	}
 
 
-	/// @inheritdoc IYieldSyncV1StrategyHandlerHandler
+	/// @inheritdoc IYieldSyncV1StrategyHandler
 	function token_allocation(address token)
 		external
 		view
@@ -121,7 +121,7 @@ contract StrategyUniswapV2LiquidityPool is
 		return _token_allocation[token];
 	}
 
-	/// @inheritdoc IYieldSyncV1StrategyHandlerHandler
+	/// @inheritdoc IYieldSyncV1StrategyHandler
 	function token_utilized(address _token)
 		public
 		view
@@ -132,7 +132,7 @@ contract StrategyUniswapV2LiquidityPool is
 	}
 
 
-	/// @inheritdoc IYieldSyncV1StrategyHandlerHandler
+	/// @inheritdoc IYieldSyncV1StrategyHandler
 	function positionValueInWETH(address _target)
 		public
 		view
@@ -168,7 +168,7 @@ contract StrategyUniswapV2LiquidityPool is
 		);
 	}
 
-	/// @inheritdoc IYieldSyncV1StrategyHandlerHandler
+	/// @inheritdoc IYieldSyncV1StrategyHandler
 	function utilizedToken()
 		public
 		view
@@ -178,7 +178,7 @@ contract StrategyUniswapV2LiquidityPool is
 		return _utilizedToken;
 	}
 
-	/// @inheritdoc IYieldSyncV1StrategyHandlerHandler
+	/// @inheritdoc IYieldSyncV1StrategyHandler
 	function utilizedTokenValueInWETH(address _token)
 		public
 		view
@@ -206,7 +206,7 @@ contract StrategyUniswapV2LiquidityPool is
 		}
 	}
 
-	/// @inheritdoc IYieldSyncV1StrategyHandlerHandler
+	/// @inheritdoc IYieldSyncV1StrategyHandler
 	function utilizedTokensDeposit(uint256[] memory _amount)
 		public
 		override
@@ -231,7 +231,7 @@ contract StrategyUniswapV2LiquidityPool is
 		// Handle the minting of strategy-specific tokens or other logic...
 	}
 
-	/// @inheritdoc IYieldSyncV1StrategyHandlerHandler
+	/// @inheritdoc IYieldSyncV1StrategyHandler
 	function utilizedTokensWithdraw(uint256[] memory _amount)
 		public
 		override
