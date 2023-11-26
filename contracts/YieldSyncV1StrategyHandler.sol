@@ -7,32 +7,20 @@ import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuar
 import { IERC20, ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-import { Allocation, IYieldSyncV1StrategyHandler } from "./interface/IYieldSyncV1StrategyHandler.sol";
+import { Allocation, IStrategy, IYieldSyncV1StrategyHandler } from "./interface/IYieldSyncV1StrategyHandler.sol";
 
 
 using SafeERC20 for IERC20;
 
 
-interface IStrategy
-{
-	function utilizedTokensDeposit(address[] memory _utilizedToken, uint256[] memory _amount)
-		external
-	;
-
-	function utilizedTokensWithdraw(address[] memory _utilizedToken, uint256[] memory _amount)
-		external
-	;
-}
-
-
-contract YieldSyncV1Strategy is
+contract YieldSyncV1StrategyHandler is
 	ERC20,
 	IYieldSyncV1StrategyHandler,
 	ReentrancyGuard
 {
 	address[] internal _utilizedToken;
 
-	IStrategy public immutable STRATEGY;
+	IStrategy public immutable strategy;
 
 
 	mapping (address token => bool utilized) internal _token_utilized;
@@ -52,10 +40,10 @@ contract YieldSyncV1Strategy is
 	{}
 
 
-	constructor (address _STRATEGY, string memory name, string memory symbol)
-		ERC20(name, symbol)
+	constructor (address _strategy, string memory _name, string memory _symbol)
+		ERC20(_name, _symbol)
 	{
-		STRATEGY = IStrategy(_STRATEGY);
+		strategy = IStrategy(_strategy);
 	}
 
 
@@ -121,10 +109,10 @@ contract YieldSyncV1Strategy is
 
 		for (uint256 i = 0; i < _amount.length; i++)
 		{
-			IERC20(_utilizedToken[i]).approve(address(STRATEGY), _amount[i]);
+			IERC20(_utilizedToken[i]).approve(address(strategy), _amount[i]);
 		}
 
-		STRATEGY.utilizedTokensDeposit(_utilizedToken, _amount);
+		strategy.utilizedTokensDeposit(_utilizedToken, _amount);
 	}
 
 	/// @inheritdoc IYieldSyncV1StrategyHandler
@@ -135,6 +123,6 @@ contract YieldSyncV1Strategy is
 	{
 		require(_amount.length == _utilizedToken.length, "!_amount.length");
 
-		STRATEGY.utilizedTokensWithdraw(_utilizedToken, _amount);
+		strategy.utilizedTokensWithdraw(_utilizedToken, _amount);
 	}
 }

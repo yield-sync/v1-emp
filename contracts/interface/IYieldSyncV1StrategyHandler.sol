@@ -12,6 +12,27 @@ struct Allocation
 }
 
 
+interface IStrategy
+{
+	/**
+	* @notice
+	* @param _utilizedToken {address[]}
+	* @param _utilizedToken {uint256[]}
+	*/
+	function utilizedTokensDeposit(address[] memory _utilizedToken, uint256[] memory _amount)
+		external
+	;
+
+	/**
+	* @notice
+	* @param _utilizedToken {address[]}
+	* @param _utilizedToken {uint256[]}
+	*/
+	function utilizedTokensWithdraw(address[] memory _utilizedToken, uint256[] memory _amount)
+		external
+	;
+}
+
 interface IYieldSyncV1StrategyHandler is
 	IERC20
 {

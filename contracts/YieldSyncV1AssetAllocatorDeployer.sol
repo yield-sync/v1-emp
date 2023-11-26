@@ -19,17 +19,16 @@ contract YieldSyncV1AssetAllocatorDeployer
 	{}
 
 
-	uint256 public fee;
-	uint256 public YieldSyncAssetAllocatorIdTracker;
-
-
 	address public immutable YieldSyncGovernance;
+
+	uint256 public fee;
+	uint256 public yieldSyncAssetAllocatorIdTracker;
 
 
 	constructor (address _YieldSyncGovernance)
 	{
 		fee = 0;
-		YieldSyncAssetAllocatorIdTracker = 0;
+		yieldSyncAssetAllocatorIdTracker = 0;
 
 		YieldSyncGovernance = _YieldSyncGovernance;
 	}
@@ -38,7 +37,7 @@ contract YieldSyncV1AssetAllocatorDeployer
 	function deployYieldSyncV1AssetAllocator(string memory _name, bool _onlyPrioritizedStrategy, string memory _symbol)
 		public
 		payable
-		returns (address deployedYieldSyncV1Vault)
+		returns (address yieldSyncV1AssetAllocator_)
 	{
 		require(msg.value >= fee, "!msg.value");
 
@@ -50,6 +49,5 @@ contract YieldSyncV1AssetAllocatorDeployer
 		);
 
 		return address(yieldSyncV1AssetAllocator);
-
 	}
 }
