@@ -61,8 +61,8 @@ interface IUniswapV2Router
 */
 contract StrategyHandlerUniswapV2LiquidityPool
 {
-	address public immutable LIQUIDITY_POOL;
-    address public immutable WETH;
+	address public immutable liquidityPool;
+    address public immutable weth;
 	address public manager;
 
 	uint256 public slippageTolerance;
@@ -71,8 +71,8 @@ contract StrategyHandlerUniswapV2LiquidityPool
 	IUniswapV2Router public immutable uniswapV2Router;
 
 	constructor (
-		address _LIQUIDITY_POOL,
-		address _WETH,
+		address _liquidityPool,
+		address _weth,
 		address _uniswapV2Pair,
 		address _uniswapV2Router,
 		uint256 _slippageTolerance
@@ -80,8 +80,8 @@ contract StrategyHandlerUniswapV2LiquidityPool
 	{
 		manager = msg.sender;
 
-		LIQUIDITY_POOL = _LIQUIDITY_POOL;
-		WETH = _WETH;
+		liquidityPool = _liquidityPool;
+		weth = _weth;
 
 		slippageTolerance = _slippageTolerance;
 
@@ -94,7 +94,7 @@ contract StrategyHandlerUniswapV2LiquidityPool
 		view
 		returns (uint256 positionETHValue_)
 	{
-		uint256 balance = IERC20(LIQUIDITY_POOL).balanceOf(_target);
+		uint256 balance = IERC20(liquidityPool).balanceOf(_target);
 
 		// No balance -> automatically worth 0
 		if (balance <= 0)
@@ -115,7 +115,7 @@ contract StrategyHandlerUniswapV2LiquidityPool
 		uint256 amount0PerLPToken = uint256(reserve0) / totalSupply;
 		uint256 amount1PerLPToken = uint256(reserve1) / totalSupply;
 
-		// Return total value of both output tokens denomintaed in WETH
+		// Return total value of both output tokens denomintaed in weth
 		return balance * amount0PerLPToken * utilizedTokenETHValue(
 			_utilizedToken[0]
 		) + balance * amount1PerLPToken * utilizedTokenETHValue(
@@ -135,8 +135,8 @@ contract StrategyHandlerUniswapV2LiquidityPool
 			return 0;
 		}
 
-		// Return token price in terms of WETH
-		if (_token < WETH)
+		// Return token price in terms of weth
+		if (_token < weth)
 		{
 			return uint256(reserve1) * 1e18 / reserve0;
 		}
@@ -174,8 +174,8 @@ contract StrategyHandlerUniswapV2LiquidityPool
 		(uint256 reserveA, uint256 reserveB, ) = uniswapV2Pair.getReserves();
 
 		// [calculate] Amount of tokens to be withdrawn given liquidity amount
-		uint256 amountA = _amount[0] * reserveA / IERC20(LIQUIDITY_POOL).totalSupply();
-		uint256 amountB = _amount[0] * reserveB / IERC20(LIQUIDITY_POOL).totalSupply();
+		uint256 amountA = _amount[0] * reserveA / IERC20(liquidityPool).totalSupply();
+		uint256 amountB = _amount[0] * reserveB / IERC20(liquidityPool).totalSupply();
 
 		// Remove liquidity
 		(uint256 amountRemovedA, uint256 amountRemovedB) = uniswapV2Router.removeLiquidity(
