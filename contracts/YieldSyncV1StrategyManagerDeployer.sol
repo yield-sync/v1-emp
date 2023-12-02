@@ -2,10 +2,10 @@
 pragma solidity 0.8.18;
 
 
-import { YieldSyncV1StrategyHandler } from "./YieldSyncV1StrategyHandler.sol";
+import { YieldSyncV1StrategyManager } from "./YieldSyncV1StrategyManager.sol";
 
 
-contract YieldSyncV1StrategyHandlerDeployer
+contract YieldSyncV1StrategyManagerDeployer
 {
 	receive ()
 		external
@@ -34,21 +34,21 @@ contract YieldSyncV1StrategyHandlerDeployer
 	}
 
 
-	function deployYieldSyncV1StrategyHandler(address _STRATEGY, string memory _name, string memory _symbol)
+	function deployYieldSyncV1StrategyManager(string memory _name, string memory _symbol)
 		public
 		payable
-		returns (address yieldSyncV1StrategyHandler_)
+		returns (address yieldSyncV1StrategyManager_)
 	{
 		require(msg.value >= fee, "!msg.value");
 
 		yieldSyncStrategyHandlerIdTracker++;
 
-		YieldSyncV1StrategyHandler yieldSyncV1StrategyHandler = new YieldSyncV1StrategyHandler(
-			_STRATEGY,
+		YieldSyncV1StrategyManager yieldSyncV1StrategyManager = new YieldSyncV1StrategyManager(
+			msg.sender,
 			_name,
 			_symbol
 		);
 
-		return address(yieldSyncV1StrategyHandler);
+		return address(yieldSyncV1StrategyManager);
 	}
 }

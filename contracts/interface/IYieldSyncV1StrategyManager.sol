@@ -49,7 +49,7 @@ interface IYieldSyncV1Strategy
 	;
 }
 
-interface IYieldSyncV1StrategyHandler is
+interface IYieldSyncV1StrategyManager is
 	IERC20
 {
 	/**
@@ -66,10 +66,10 @@ interface IYieldSyncV1StrategyHandler is
 	/**
 	* @notice token to allocation
 	* @dev [view-mapping]
-	* @param token {address}
+	* @param _token {address}
 	* @return {Allocation}
 	*/
-	function token_allocation(address token)
+	function token_allocation(address _token)
 		external
 		view
 		returns (Allocation memory)

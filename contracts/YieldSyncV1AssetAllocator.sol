@@ -7,7 +7,7 @@ import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.s
 import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 import { Allocation, IYieldSyncV1AssetAllocator } from "./interface/IYieldSyncV1AssetAllocator.sol";
-import { IYieldSyncV1StrategyHandler } from "./interface/IYieldSyncV1StrategyHandler.sol";
+import { IYieldSyncV1StrategyManager } from "./interface/IYieldSyncV1StrategyManager.sol";
 
 
 using SafeERC20 for ERC20;
@@ -79,7 +79,7 @@ contract YieldSyncV1AssetAllocator is
 		for (uint256 i = 0; i < _activeStrategy.length; i++)
 		{
 			(, uint256 strategyAllocation) = SafeMath.tryDiv(
-				IYieldSyncV1StrategyHandler(_activeStrategy[i]).positionETHValue(msg.sender),
+				IYieldSyncV1StrategyManager(_activeStrategy[i]).positionETHValue(msg.sender),
 				_totalValueOfAssetsInWETH
 			);
 
@@ -100,7 +100,7 @@ contract YieldSyncV1AssetAllocator is
 		require(_utilizedToken.length > 0, "Must deposit at least one token");
 
 		require(
-			_utilizedToken.length == IYieldSyncV1StrategyHandler(_strategy).utilizedToken().length, "!utilizedToken.length"
+			_utilizedToken.length == IYieldSyncV1StrategyManager(_strategy).utilizedToken().length, "!utilizedToken.length"
 		);
 
 		if (onlyPrioritizedStrategy)
@@ -113,14 +113,14 @@ contract YieldSyncV1AssetAllocator is
 		for (uint256 i = 0; i < _utilizedToken.length; i++)
 		{
 			require(
-				IYieldSyncV1StrategyHandler(_strategy).token_utilized(_utilizedToken[i]),
+				IYieldSyncV1StrategyManager(_strategy).token_utilized(_utilizedToken[i]),
 				"!IYieldSyncV1Strategy(_strategy).token_utilized(_utilizedToken[i])"
 			);
 
 			ERC20(_utilizedToken[i]).safeTransferFrom(msg.sender, address(this), _amounts[i]);
 
 			// Calculate the value of the deposited tokens
-			totalDepositValue += IYieldSyncV1StrategyHandler(_strategy).utilizedTokenETHValue(
+			totalDepositValue += IYieldSyncV1StrategyManager(_strategy).utilizedTokenETHValue(
 				_utilizedToken[i]
 			) * _amounts[i];
 		}
@@ -199,7 +199,7 @@ contract YieldSyncV1AssetAllocator is
 
 		for (uint256 i = 0; i < _activeStrategy.length; i++)
 		{
-			_totalETHValue += IYieldSyncV1StrategyHandler(_activeStrategy[i]).positionETHValue(address(this));
+			_totalETHValue += IYieldSyncV1StrategyManager(_activeStrategy[i]).positionETHValue(address(this));
 		}
 
 		return _totalETHValue;
