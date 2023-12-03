@@ -71,11 +71,10 @@ contract YieldSyncV1StrategyManager is
 	/// @inheritdoc IYieldSyncV1StrategyManager
 	function positionETHValue(address _target)
 		public
-		view
 		override
 		returns (uint256 positionETHValue_)
 	{
-		uint256[] memory utilizedTokenAmount = tokenToUtilizedTokenAmounts(_target);
+		uint256[] memory utilizedTokenAmount = utilizedTokenAmountPerToken();
 
 		require(utilizedTokenAmount.length == _utilizedToken.length, "utilizedTokenAmount.length != _utilizedToken.length");
 
@@ -83,7 +82,9 @@ contract YieldSyncV1StrategyManager is
 
 		for (uint256 i = 0; i < _utilizedToken.length; i++)
 		{
-			calculatedPositionETHValue += utilizedTokenETHValue(_utilizedToken[i]) * utilizedTokenAmount[i];
+			calculatedPositionETHValue += utilizedTokenAmount[i] * utilizedTokenETHValue(_utilizedToken[i]) * balanceOf(
+				_target
+			);
 		}
 
 		return calculatedPositionETHValue;
@@ -100,22 +101,6 @@ contract YieldSyncV1StrategyManager is
 	}
 
 	/// @inheritdoc IYieldSyncV1StrategyManager
-	function tokenToUtilizedTokenAmounts(address _target)
-		public
-		view
-		override
-		returns (uint256[] memory utilizedTokenAmounts_)
-	{
-		uint256[] memory utilizedTokenAmounts;
-
-		// First thing would be to retrieve the TVL from the strategy interactor
-
-		// Give the TVL divide by total tokens for THIS and then multiply by balanceOf(msg.sender)
-
-		return utilizedTokenAmounts;
-	}
-
-	/// @inheritdoc IYieldSyncV1StrategyManager
 	function utilizedToken()
 		public
 		view
@@ -123,6 +108,24 @@ contract YieldSyncV1StrategyManager is
 		returns (address[] memory)
 	{
 		return _utilizedToken;
+	}
+
+	/// @inheritdoc IYieldSyncV1StrategyManager
+	function utilizedTokenAmountPerToken()
+		public
+		override
+		returns (uint256[] memory utilizedTokenAmount_)
+	{
+		uint256[] memory utilizedTokenAmount = IYieldSyncV1Strategy(strategy).utilizedTokenAmount();
+
+		require(utilizedTokenAmount.length == _utilizedToken.length, "utilizedTokenAmount.length != _utilizedToken.length");
+
+		for (uint256 i = 0; i < _utilizedToken.length; i++)
+		{
+			utilizedTokenAmount[i] = utilizedTokenAmount[i] / totalSupply();
+		}
+
+		return utilizedTokenAmount;
 	}
 
 	/// @inheritdoc IYieldSyncV1StrategyManager
@@ -138,34 +141,34 @@ contract YieldSyncV1StrategyManager is
 	}
 
 	/// @inheritdoc IYieldSyncV1StrategyManager
-	function utilizedTokenDeposit(uint256[] memory _utilizedTokenAmounts)
+	function utilizedTokenDeposit(uint256[] memory _utilizedTokenAmount)
 		public
 		override
 		nonReentrant()
 	{
-		require(_amount.length == _utilizedToken.length, "!_amount.length");
+		require(_utilizedTokenAmounts.length == _utilizedToken.length, "!_amount.length");
 
 		uint256 valueBefore = positionETHValue(msg.sender);
 
-		for (uint256 i = 0; i < _amount.length; i++)
+		for (uint256 i = 0; i < _utilizedTokenAmounts.length; i++)
 		{
-			IERC20(_utilizedToken[i]).approve(strategy, _amount[i]);
+			IERC20(_utilizedToken[i]).approve(strategy, _utilizedTokenAmounts[i]);
 		}
 
-		IYieldSyncV1Strategy(strategy).utilizedTokenDeposit(_utilizedToken, _amount);
+		IYieldSyncV1Strategy(strategy).utilizedTokenDeposit(_utilizedToken, _utilizedTokenAmounts);
 
 		// Mint the tokens accordingly
 		_mint(msg.sender, positionETHValue(msg.sender) - valueBefore);
 	}
 
 	/// @inheritdoc IYieldSyncV1StrategyManager
-	function utilizedTokenWithdraw(uint256[] memory _utilizedTokenAmounts)
+	function utilizedTokenWithdraw(uint256[] memory _utilizedTokenAmount)
 		public
 		override
 		nonReentrant()
 	{
-		require(_amount.length == _utilizedToken.length, "!_amount.length");
+		require(_utilizedTokenAmounts.length == _utilizedToken.length, "!_amount.length");
 
-		IYieldSyncV1Strategy(strategy).utilizedTokenWithdraw(_utilizedToken, _amount);
+		IYieldSyncV1Strategy(strategy).utilizedTokenWithdraw(_utilizedToken, _utilizedTokenAmounts);
 	}
 }

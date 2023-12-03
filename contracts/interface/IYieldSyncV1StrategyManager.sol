@@ -29,7 +29,7 @@ interface IYieldSyncV1Strategy
 	* @param _utilizedToken {address[]}
 	* @param _utilizedToken {uint256[]}
 	*/
-	function utilizedTokenDeposit(address[] memory _utilizedToken, uint256[] memory _utilizedTokenAmounts)
+	function utilizedTokenDeposit(address[] memory _utilizedToken, uint256[] memory _utilizedTokenAmount)
 		external
 	;
 
@@ -38,7 +38,7 @@ interface IYieldSyncV1Strategy
 	* @param _utilizedToken {address[]}
 	* @param _utilizedToken {uint256[]}
 	*/
-	function utilizedTokenWithdraw(address[] memory _utilizedToken, uint256[] memory _utilizedTokenAmounts)
+	function utilizedTokenWithdraw(address[] memory _utilizedToken, uint256[] memory _utilizedTokenAmount)
 		external
 	;
 
@@ -97,7 +97,6 @@ interface IYieldSyncV1StrategyManager is
 	*/
 	function positionETHValue(address target)
 		external
-		view
 		returns (uint256 positionETHValue_)
 	;
 
@@ -111,16 +110,6 @@ interface IYieldSyncV1StrategyManager is
 	;
 
 	/**
-	* @notice The objective of this function is to return the amount recievable for each token burned
-	* @param _target {address} Target Address
-	*/
-	function tokenToUtilizedTokenAmounts(address _target)
-		external
-		view
-		returns (uint256[] memory utilizedTokenAmounts_)
-	;
-
-	/**
 	* @notice Array of utilized tokens
 	* @return utilizedToken_ {address[]}
 	*/
@@ -128,6 +117,15 @@ interface IYieldSyncV1StrategyManager is
 		external
 		view
 		returns (address[] memory utilizedToken_)
+	;
+
+	/**
+	* @notice The objective of this function is to return the amount recievable for each token burned
+
+	*/
+	function utilizedTokenAmountPerToken()
+		external
+		returns (uint256[] memory utilizedTokenAmount_)
 	;
 
 	/**
@@ -143,17 +141,17 @@ interface IYieldSyncV1StrategyManager is
 
 	/**
 	* @notice Deposit into strategy
-	* @param _amount {uint256[]} Amount to be deposited
+	* @param _utilizedTokenAmounts {uint256[]} Amount to be deposited
 	*/
-	function utilizedTokenDeposit(uint256[] memory _utilizedTokenAmounts)
+	function utilizedTokenDeposit(uint256[] memory _utilizedTokenAmount)
 		external
 	;
 
 	/**
 	* @notice Withdraw from strategy
-	* @param _amount {uint256[]} Amount to be withdrawn
+	* @param _utilizedTokenAmounts {uint256[]} Amount to be withdrawn
 	*/
-	function utilizedTokenWithdraw(uint256[] memory _utilizedTokenAmounts)
+	function utilizedTokenWithdraw(uint256[] memory _utilizedTokenAmount)
 		external
 	;
 }

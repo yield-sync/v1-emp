@@ -94,7 +94,7 @@ contract YieldSyncV1AssetAllocator is
 	}
 
 	/// @inheritdoc IYieldSyncV1AssetAllocator
-	function depositTokens(address _strategy, address[] memory _utilizedToken, uint256[] memory _utilizedTokenAmountss)
+	function depositTokens(address _strategy, address[] memory _utilizedToken, uint256[] memory _utilizedTokenAmount)
 		public
 	{
 		require(_utilizedToken.length > 0, "Must deposit at least one token");
@@ -117,12 +117,12 @@ contract YieldSyncV1AssetAllocator is
 				"!IYieldSyncV1Strategy(_strategy).token_utilized(_utilizedToken[i])"
 			);
 
-			ERC20(_utilizedToken[i]).safeTransferFrom(msg.sender, address(this), _amounts[i]);
+			ERC20(_utilizedToken[i]).safeTransferFrom(msg.sender, address(this), _utilizedTokenAmount[i]);
 
 			// Calculate the value of the deposited tokens
 			totalDepositValue += IYieldSyncV1StrategyManager(_strategy).utilizedTokenETHValue(
 				_utilizedToken[i]
-			) * _amounts[i];
+			) * _utilizedTokenAmount[i];
 		}
 
 		uint256 tokensToMint;

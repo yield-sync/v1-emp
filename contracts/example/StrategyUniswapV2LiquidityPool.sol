@@ -113,42 +113,42 @@ contract StrategyHandlerUniswapV2LiquidityPool
 		}
 	}
 
-	function utilizedTokenDeposit(address[] memory _utilizedToken, uint256[] memory _utilizedTokenAmounts)
+	function utilizedTokenDeposit(address[] memory _utilizedToken, uint256[] memory _utilizedTokenAmount)
 		public
 	{
-		IERC20(_utilizedToken[0]).safeTransferFrom(msg.sender, address(this), _amount[0]);
-		IERC20(_utilizedToken[1]).safeTransferFrom(msg.sender, address(this), _amount[1]);
+		IERC20(_utilizedToken[0]).safeTransferFrom(msg.sender, address(this), _utilizedTokenAmount[0]);
+		IERC20(_utilizedToken[1]).safeTransferFrom(msg.sender, address(this), _utilizedTokenAmount[1]);
 
-		IERC20(_utilizedToken[0]).safeApprove(address(uniswapV2Router), _amount[0]);
-		IERC20(_utilizedToken[1]).safeApprove(address(uniswapV2Router), _amount[1]);
+		IERC20(_utilizedToken[0]).safeApprove(address(uniswapV2Router), _utilizedTokenAmount[0]);
+		IERC20(_utilizedToken[1]).safeApprove(address(uniswapV2Router), _utilizedTokenAmount[1]);
 
 		uniswapV2Router.addLiquidity(
 			_utilizedToken[0],
 			_utilizedToken[1],
-			_amount[0],
-			_amount[1],
-			_amount[0] * (10000 - slippageTolerance) / 10000,
-			_amount[1] * (10000 - slippageTolerance) / 10000,
+			_utilizedTokenAmount[0],
+			_utilizedTokenAmount[1],
+			_utilizedTokenAmount[0] * (10000 - slippageTolerance) / 10000,
+			_utilizedTokenAmount[1] * (10000 - slippageTolerance) / 10000,
 			address(this),
 			block.timestamp
 		);
 	}
 
-	function utilizedTokenWithdraw(address[] memory _utilizedToken, uint256[] memory _utilizedTokenAmounts)
+	function utilizedTokenWithdraw(address[] memory _utilizedToken, uint256[] memory _utilizedTokenAmount)
 		public
 	{
 		// Retrieve the current reserves to estimate the withdrawn amounts
 		(uint256 reserveA, uint256 reserveB, ) = uniswapV2Pair.getReserves();
 
 		// [calculate] Amount of tokens to be withdrawn given liquidity amount
-		uint256 amountA = _amount[0] * reserveA / IERC20(liquidityPool).totalSupply();
-		uint256 amountB = _amount[0] * reserveB / IERC20(liquidityPool).totalSupply();
+		uint256 amountA = _utilizedTokenAmount[0] * reserveA / IERC20(liquidityPool).totalSupply();
+		uint256 amountB = _utilizedTokenAmount[0] * reserveB / IERC20(liquidityPool).totalSupply();
 
 		// Remove liquidity
 		(uint256 amountRemovedA, uint256 amountRemovedB) = uniswapV2Router.removeLiquidity(
 			_utilizedToken[0],
 			_utilizedToken[1],
-			_amount[0],
+			_utilizedTokenAmount[0],
 			amountA * (10000 - slippageTolerance) / 10000,
 			amountB * (10000 - slippageTolerance) / 10000,
 			address(this),
@@ -169,6 +169,8 @@ contract StrategyHandlerUniswapV2LiquidityPool
 		slippageTolerance = _slippageTolerance;
 	}
 
+	// The objective of this function is to return the total values of each utilized token in this contarct
+	// It is a good idea to consider this as TVL but divided by each token itself
 	function utilizedTokenAmount()
 		public
 		returns (uint256[] memory utilizedTokenAmount_)
