@@ -35,7 +35,7 @@ interface IYieldSyncV1Strategy
 	* @param _utilizedToken {address[]}
 	* @param _utilizedToken {uint256[]}
 	*/
-	function utilizedTokensDeposit(address[] memory _utilizedToken, uint256[] memory _amount)
+	function utilizedTokenDeposit(address[] memory _utilizedToken, uint256[] memory _amount)
 		external
 	;
 
@@ -44,8 +44,16 @@ interface IYieldSyncV1Strategy
 	* @param _utilizedToken {address[]}
 	* @param _utilizedToken {uint256[]}
 	*/
-	function utilizedTokensWithdraw(address[] memory _utilizedToken, uint256[] memory _amount)
+	function utilizedTokenWithdraw(address[] memory _utilizedToken, uint256[] memory _amount)
 		external
+	;
+
+	/**
+	* @notice Return total amoutns lockeds
+	*/
+	function utilizedTokenAmount()
+		external
+		returns (uint256[] memory utilizedTokenAmount_)
 	;
 }
 
@@ -125,7 +133,7 @@ interface IYieldSyncV1StrategyManager is
 	* @notice Deposit into strategy
 	* @param _amount {uint256[]} Amount to be deposited
 	*/
-	function utilizedTokensDeposit(uint256[] memory _amount)
+	function utilizedTokenDeposit(uint256[] memory _amount)
 		external
 	;
 
@@ -133,7 +141,7 @@ interface IYieldSyncV1StrategyManager is
 	* @notice Withdraw from strategy
 	* @param _amount {uint256[]} Amount to be withdrawn
 	*/
-	function utilizedTokensWithdraw(uint256[] memory _amount)
+	function utilizedTokenWithdraw(uint256[] memory _amount)
 		external
 	;
 }

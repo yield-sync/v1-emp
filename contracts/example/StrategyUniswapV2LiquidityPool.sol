@@ -146,7 +146,7 @@ contract StrategyHandlerUniswapV2LiquidityPool
 		}
 	}
 
-	function utilizedTokensDeposit(address[] memory _utilizedToken, uint256[] memory _amount)
+	function utilizedTokenDeposit(address[] memory _utilizedToken, uint256[] memory _amount)
 		public
 	{
 		IERC20(_utilizedToken[0]).safeTransferFrom(msg.sender, address(this), _amount[0]);
@@ -167,7 +167,7 @@ contract StrategyHandlerUniswapV2LiquidityPool
 		);
 	}
 
-	function utilizedTokensWithdraw(address[] memory _utilizedToken, uint256[] memory _amount)
+	function utilizedTokenWithdraw(address[] memory _utilizedToken, uint256[] memory _amount)
 		public
 	{
 		// Retrieve the current reserves to estimate the withdrawn amounts
@@ -200,5 +200,14 @@ contract StrategyHandlerUniswapV2LiquidityPool
 
 		// Add access control if necessary
 		slippageTolerance = _slippageTolerance;
+	}
+
+	function utilizedTokenAmount()
+		public
+		returns (uint256[] memory utilizedTokenAmount_)
+	{
+		uint256[] memory returnAmounts;
+
+		return returnAmounts;
 	}
 }

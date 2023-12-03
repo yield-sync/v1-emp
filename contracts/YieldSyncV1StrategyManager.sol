@@ -75,6 +75,14 @@ contract YieldSyncV1StrategyManager is
 		override
 		returns (uint256 positionETHValue_)
 	{
+		// This should be computed on this contract
+
+		// First determine how many utilized tokens are returned for each ERC 20 token
+		uint256[] memory utilizedTokenAmounts = tokenToUtilizedTokenAmounts();
+
+		// Multiply ERC 20 balance of msg.sender by each utilized token return amounts
+
+		// Return the total return value
 		return IYieldSyncV1Strategy(strategy).positionETHValue(_utilizedToken, _target);
 	}
 
@@ -109,8 +117,23 @@ contract YieldSyncV1StrategyManager is
 		return IYieldSyncV1Strategy(strategy).utilizedTokenETHValue(_token);
 	}
 
+	// The objective of this function is to return the amount recievable for each token burned
+	function tokenToUtilizedTokenAmounts()
+		public
+		view
+		returns (uint256[] memory utilizedTokenAmounts_)
+	{
+		uint256[] memory utilizedTokenAmounts;
+
+		// First thing would be to retrieve the TVL from the strategy interactor
+
+		// Give the TVL divide by total tokens for THIS and then multiply by balanceOf(msg.sender)
+
+		return utilizedTokenAmounts;
+	}
+
 	/// @inheritdoc IYieldSyncV1StrategyManager
-	function utilizedTokensDeposit(uint256[] memory _amount)
+	function utilizedTokenDeposit(uint256[] memory _amount)
 		public
 		override
 		nonReentrant()
@@ -124,20 +147,20 @@ contract YieldSyncV1StrategyManager is
 			IERC20(_utilizedToken[i]).approve(strategy, _amount[i]);
 		}
 
-		IYieldSyncV1Strategy(strategy).utilizedTokensDeposit(_utilizedToken, _amount);
+		IYieldSyncV1Strategy(strategy).utilizedTokenDeposit(_utilizedToken, _amount);
 
 		// Mint the tokens accordingly
 		_mint(msg.sender, positionETHValue(msg.sender) - valueBefore);
 	}
 
 	/// @inheritdoc IYieldSyncV1StrategyManager
-	function utilizedTokensWithdraw(uint256[] memory _amount)
+	function utilizedTokenWithdraw(uint256[] memory _amount)
 		public
 		override
 		nonReentrant()
 	{
 		require(_amount.length == _utilizedToken.length, "!_amount.length");
 
-		IYieldSyncV1Strategy(strategy).utilizedTokensWithdraw(_utilizedToken, _amount);
+		IYieldSyncV1Strategy(strategy).utilizedTokenWithdraw(_utilizedToken, _amount);
 	}
 }
