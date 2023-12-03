@@ -45,7 +45,7 @@ interface IYieldSyncV1Strategy
 	/**
 	* @notice Return total amounts locked
 	*/
-	function utilizedTokenAmount()
+	function utilizedTokenTotalAmount()
 		external
 		returns (uint256[] memory utilizedTokenAmount_)
 	;
@@ -103,7 +103,7 @@ interface IYieldSyncV1StrategyManager is
 
 	/**
 	* @notice Sets the strategy
-	* @dev THIS CAN ONLY BE SET ONCE
+	* @dev This can only set the strategy once
 	* @param _strategy {address} Strategy
 	*/
 	function setStrategy(address _strategy)

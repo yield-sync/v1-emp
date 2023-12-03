@@ -116,9 +116,9 @@ contract YieldSyncV1StrategyManager is
 		override
 		returns (uint256[] memory utilizedTokenAmount_)
 	{
-		uint256[] memory utilizedTokenAmount = IYieldSyncV1Strategy(strategy).utilizedTokenAmount();
+		uint256[] memory utilizedTokenAmount = IYieldSyncV1Strategy(strategy).utilizedTokenTotalAmount();
 
-		require(utilizedTokenAmount.length == _utilizedToken.length, "utilizedTokenAmount.length != _utilizedToken.length");
+		require(_utilizedToken.length == utilizedTokenAmount.length , "_utilizedToken.length != utilizedTokenAmount.length");
 
 		for (uint256 i = 0; i < _utilizedToken.length; i++)
 		{
@@ -146,16 +146,16 @@ contract YieldSyncV1StrategyManager is
 		override
 		nonReentrant()
 	{
-		require(_utilizedTokenAmounts.length == _utilizedToken.length, "!_amount.length");
+		require(_utilizedTokenAmount.length == _utilizedToken.length, "!_amount.length");
 
 		uint256 valueBefore = positionETHValue(msg.sender);
 
-		for (uint256 i = 0; i < _utilizedTokenAmounts.length; i++)
+		for (uint256 i = 0; i < _utilizedTokenAmount.length; i++)
 		{
-			IERC20(_utilizedToken[i]).approve(strategy, _utilizedTokenAmounts[i]);
+			IERC20(_utilizedToken[i]).approve(strategy, _utilizedTokenAmount[i]);
 		}
 
-		IYieldSyncV1Strategy(strategy).utilizedTokenDeposit(_utilizedToken, _utilizedTokenAmounts);
+		IYieldSyncV1Strategy(strategy).utilizedTokenDeposit(_utilizedToken, _utilizedTokenAmount);
 
 		// Mint the tokens accordingly
 		_mint(msg.sender, positionETHValue(msg.sender) - valueBefore);
@@ -167,8 +167,8 @@ contract YieldSyncV1StrategyManager is
 		override
 		nonReentrant()
 	{
-		require(_utilizedTokenAmounts.length == _utilizedToken.length, "!_amount.length");
+		require(_utilizedTokenAmount.length == _utilizedToken.length, "!_amount.length");
 
-		IYieldSyncV1Strategy(strategy).utilizedTokenWithdraw(_utilizedToken, _utilizedTokenAmounts);
+		IYieldSyncV1Strategy(strategy).utilizedTokenWithdraw(_utilizedToken, _utilizedTokenAmount);
 	}
 }
