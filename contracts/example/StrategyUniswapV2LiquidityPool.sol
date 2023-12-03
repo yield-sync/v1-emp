@@ -63,7 +63,7 @@ interface IUniswapV2Router
 /**
 * @notice This strategy adds liquidity to a uniswap pool
 */
-contract StrategyHandlerUniswapV2LiquidityPool is
+contract StrategyUniswapV2LiquidityPool is
 	IYieldSyncV1Strategy
 {
 	address public immutable liquidityPool;
