@@ -6,12 +6,9 @@ pragma solidity 0.8.18;
 import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-import {
-	Allocation,
-	IERC20,
-	IYieldSyncV1Strategy,
-	IYieldSyncV1StrategyController
-} from "./interface/IYieldSyncV1StrategyController.sol";
+
+import { IYieldSyncV1Strategy } from "./interface/IYieldSyncV1Strategy.sol";
+import { Allocation, IERC20, IYieldSyncV1StrategyController } from "./interface/IYieldSyncV1StrategyController.sol";
 
 
 contract YieldSyncV1StrategyController is
@@ -150,7 +147,7 @@ contract YieldSyncV1StrategyController is
 
 		uint256 valueBefore = positionETHValue(msg.sender);
 
-		for (uint256 i = 0; i < _utilizedTokenAmount.length; i++)
+		for (uint256 i = 0; i < _utilizedToken.length; i++)
 		{
 			IERC20(_utilizedToken[i]).approve(strategy, _utilizedTokenAmount[i]);
 		}
@@ -162,13 +159,24 @@ contract YieldSyncV1StrategyController is
 	}
 
 	/// @inheritdoc IYieldSyncV1StrategyController
-	function utilizedTokenWithdraw(uint256[] memory _utilizedTokenAmount)
+	function utilizedTokenWithdraw(uint256 _tokenAmount)
 		public
 		override
 		nonReentrant()
 	{
+		require(balanceOf(msg.sender) >= _tokenAmount, "!_tokenAmount");
+
+		uint256[] memory _utilizedTokenAmount = utilizedTokenAmountPerToken();
+
 		require(_utilizedTokenAmount.length == _utilizedToken.length, "!_amount.length");
 
-		IYieldSyncV1Strategy(strategy).utilizedTokenWithdraw(_utilizedToken, _utilizedTokenAmount);
+		for (uint256 i = 0; i < _utilizedToken.length; i++)
+		{
+			_utilizedTokenAmount[i] += _utilizedTokenAmount[i] * _tokenAmount;
+		}
+
+		IYieldSyncV1Strategy(strategy).utilizedTokenWithdraw(msg.sender, _utilizedToken, _utilizedTokenAmount);
+
+		_burn(msg.sender, _tokenAmount);
 	}
 }

@@ -5,6 +5,8 @@ pragma solidity 0.8.18;
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
+import { IYieldSyncV1Strategy } from "./IYieldSyncV1Strategy.sol";
+
 
 using SafeERC20 for IERC20;
 
@@ -13,42 +15,6 @@ struct Allocation
 {
 	uint8 denominator;
 	uint8 numerator;
-}
-
-
-interface IYieldSyncV1Strategy
-{
-	function utilizedTokenETHValue(address _token)
-		external
-		view
-		returns (uint256 tokenETHValue_)
-	;
-
-	/**
-	* @notice
-	* @param _utilizedToken {address[]}
-	* @param _utilizedToken {uint256[]}
-	*/
-	function utilizedTokenDeposit(address[] memory _utilizedToken, uint256[] memory _utilizedTokenAmount)
-		external
-	;
-
-	/**
-	* @notice
-	* @param _utilizedToken {address[]}
-	* @param _utilizedToken {uint256[]}
-	*/
-	function utilizedTokenWithdraw(address[] memory _utilizedToken, uint256[] memory _utilizedTokenAmount)
-		external
-	;
-
-	/**
-	* @notice Return total amounts locked
-	*/
-	function utilizedTokenTotalAmount()
-		external
-		returns (uint256[] memory utilizedTokenAmount_)
-	;
 }
 
 
@@ -150,9 +116,9 @@ interface IYieldSyncV1StrategyController is
 
 	/**
 	* @notice Withdraw from strategy
-	* @param _utilizedTokenAmount {uint256[]} Amount to be withdrawn
+	* @param _tokenAmount {uint256}
 	*/
-	function utilizedTokenWithdraw(uint256[] memory _utilizedTokenAmount)
+	function utilizedTokenWithdraw(uint256 _tokenAmount)
 		external
 	;
 }

@@ -2,12 +2,8 @@
 pragma solidity 0.8.18;
 
 
-import {
-	Allocation,
-	IERC20,
-	IYieldSyncV1Strategy,
-	SafeERC20
-} from "../interface/IYieldSyncV1StrategyController.sol";
+import { IYieldSyncV1Strategy } from "../interface/IYieldSyncV1Strategy.sol";
+import { IERC20, SafeERC20 } from "../interface/IYieldSyncV1StrategyController.sol";
 
 
 using SafeERC20 for IERC20;
@@ -144,7 +140,7 @@ contract StrategyUniswapV2LiquidityPool is
 	}
 
 	/// @inheritdoc IYieldSyncV1Strategy
-	function utilizedTokenWithdraw(address[] memory _utilizedToken, uint256[] memory _utilizedTokenAmount)
+	function utilizedTokenWithdraw(address _to, address[] memory _utilizedToken, uint256[] memory _utilizedTokenAmount)
 		public
 		override
 	{
@@ -167,8 +163,8 @@ contract StrategyUniswapV2LiquidityPool is
 		);
 
 		// Transfer the withdrawn tokens to the recipient
-		IERC20(_utilizedToken[0]).safeTransfer(msg.sender, amountRemovedA);
-		IERC20(_utilizedToken[1]).safeTransfer(msg.sender, amountRemovedB);
+		IERC20(_utilizedToken[0]).safeTransfer(_to, amountRemovedA);
+		IERC20(_utilizedToken[1]).safeTransfer(_to, amountRemovedB);
 	}
 
 	/// @inheritdoc IYieldSyncV1Strategy
