@@ -51,6 +51,7 @@ interface IYieldSyncV1Strategy
 	;
 }
 
+
 interface IYieldSyncV1StrategyManager is
 	IERC20
 {
@@ -141,7 +142,7 @@ interface IYieldSyncV1StrategyManager is
 
 	/**
 	* @notice Deposit into strategy
-	* @param _utilizedTokenAmounts {uint256[]} Amount to be deposited
+	* @param _utilizedTokenAmount {uint256[]} Amount to be deposited
 	*/
 	function utilizedTokenDeposit(uint256[] memory _utilizedTokenAmount)
 		external
@@ -149,7 +150,7 @@ interface IYieldSyncV1StrategyManager is
 
 	/**
 	* @notice Withdraw from strategy
-	* @param _utilizedTokenAmounts {uint256[]} Amount to be withdrawn
+	* @param _utilizedTokenAmount {uint256[]} Amount to be withdrawn
 	*/
 	function utilizedTokenWithdraw(uint256[] memory _utilizedTokenAmount)
 		external
