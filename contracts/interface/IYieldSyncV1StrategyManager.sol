@@ -18,12 +18,6 @@ struct Allocation
 
 interface IYieldSyncV1Strategy
 {
-	function positionETHValue(address[] memory _utilizedToken, address _target)
-		external
-		view
-		returns (uint256 positionETHValue_)
-	;
-
 	function utilizedTokenETHValue(address _token)
 		external
 		view
@@ -35,7 +29,7 @@ interface IYieldSyncV1Strategy
 	* @param _utilizedToken {address[]}
 	* @param _utilizedToken {uint256[]}
 	*/
-	function utilizedTokenDeposit(address[] memory _utilizedToken, uint256[] memory _amount)
+	function utilizedTokenDeposit(address[] memory _utilizedToken, uint256[] memory _utilizedTokenAmounts)
 		external
 	;
 
@@ -44,12 +38,12 @@ interface IYieldSyncV1Strategy
 	* @param _utilizedToken {address[]}
 	* @param _utilizedToken {uint256[]}
 	*/
-	function utilizedTokenWithdraw(address[] memory _utilizedToken, uint256[] memory _amount)
+	function utilizedTokenWithdraw(address[] memory _utilizedToken, uint256[] memory _utilizedTokenAmounts)
 		external
 	;
 
 	/**
-	* @notice Return total amoutns lockeds
+	* @notice Return total amounts locked
 	*/
 	function utilizedTokenAmount()
 		external
@@ -107,6 +101,24 @@ interface IYieldSyncV1StrategyManager is
 		returns (uint256 positionETHValue_)
 	;
 
+	/**
+	* @notice Sets the strategy
+	* @dev THIS CAN ONLY BE SET ONCE
+	* @param _strategy {address} Strategy
+	*/
+	function setStrategy(address _strategy)
+		external
+	;
+
+	/**
+	* @notice The objective of this function is to return the amount recievable for each token burned
+	* @param _target {address} Target Address
+	*/
+	function tokenToUtilizedTokenAmounts(address _target)
+		external
+		view
+		returns (uint256[] memory utilizedTokenAmounts_)
+	;
 
 	/**
 	* @notice Array of utilized tokens
@@ -133,7 +145,7 @@ interface IYieldSyncV1StrategyManager is
 	* @notice Deposit into strategy
 	* @param _amount {uint256[]} Amount to be deposited
 	*/
-	function utilizedTokenDeposit(uint256[] memory _amount)
+	function utilizedTokenDeposit(uint256[] memory _utilizedTokenAmounts)
 		external
 	;
 
@@ -141,7 +153,7 @@ interface IYieldSyncV1StrategyManager is
 	* @notice Withdraw from strategy
 	* @param _amount {uint256[]} Amount to be withdrawn
 	*/
-	function utilizedTokenWithdraw(uint256[] memory _amount)
+	function utilizedTokenWithdraw(uint256[] memory _utilizedTokenAmounts)
 		external
 	;
 }

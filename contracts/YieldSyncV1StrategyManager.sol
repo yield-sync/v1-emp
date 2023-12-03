@@ -75,17 +75,21 @@ contract YieldSyncV1StrategyManager is
 		override
 		returns (uint256 positionETHValue_)
 	{
-		// This should be computed on this contract
+		uint256[] memory utilizedTokenAmount = tokenToUtilizedTokenAmounts(_target);
 
-		// First determine how many utilized tokens are returned for each ERC 20 token
-		uint256[] memory utilizedTokenAmounts = tokenToUtilizedTokenAmounts();
+		require(utilizedTokenAmount.length == _utilizedToken.length, "utilizedTokenAmount.length != _utilizedToken.length");
 
-		// Multiply ERC 20 balance of msg.sender by each utilized token return amounts
+		uint256 calculatedPositionETHValue = 0;
 
-		// Return the total return value
-		return IYieldSyncV1Strategy(strategy).positionETHValue(_utilizedToken, _target);
+		for (uint256 i = 0; i < _utilizedToken.length; i++)
+		{
+			calculatedPositionETHValue += utilizedTokenETHValue(_utilizedToken[i]) * utilizedTokenAmount[i];
+		}
+
+		return calculatedPositionETHValue;
 	}
 
+	/// @inheritdoc IYieldSyncV1StrategyManager
 	function setStrategy(address _strategy)
 		public
 	{
@@ -93,6 +97,22 @@ contract YieldSyncV1StrategyManager is
 		require(msg.sender == deployer, "!deployer");
 
 		strategy = _strategy;
+	}
+
+	/// @inheritdoc IYieldSyncV1StrategyManager
+	function tokenToUtilizedTokenAmounts(address _target)
+		public
+		view
+		override
+		returns (uint256[] memory utilizedTokenAmounts_)
+	{
+		uint256[] memory utilizedTokenAmounts;
+
+		// First thing would be to retrieve the TVL from the strategy interactor
+
+		// Give the TVL divide by total tokens for THIS and then multiply by balanceOf(msg.sender)
+
+		return utilizedTokenAmounts;
 	}
 
 	/// @inheritdoc IYieldSyncV1StrategyManager
@@ -117,23 +137,8 @@ contract YieldSyncV1StrategyManager is
 		return IYieldSyncV1Strategy(strategy).utilizedTokenETHValue(_token);
 	}
 
-	// The objective of this function is to return the amount recievable for each token burned
-	function tokenToUtilizedTokenAmounts()
-		public
-		view
-		returns (uint256[] memory utilizedTokenAmounts_)
-	{
-		uint256[] memory utilizedTokenAmounts;
-
-		// First thing would be to retrieve the TVL from the strategy interactor
-
-		// Give the TVL divide by total tokens for THIS and then multiply by balanceOf(msg.sender)
-
-		return utilizedTokenAmounts;
-	}
-
 	/// @inheritdoc IYieldSyncV1StrategyManager
-	function utilizedTokenDeposit(uint256[] memory _amount)
+	function utilizedTokenDeposit(uint256[] memory _utilizedTokenAmounts)
 		public
 		override
 		nonReentrant()
@@ -154,7 +159,7 @@ contract YieldSyncV1StrategyManager is
 	}
 
 	/// @inheritdoc IYieldSyncV1StrategyManager
-	function utilizedTokenWithdraw(uint256[] memory _amount)
+	function utilizedTokenWithdraw(uint256[] memory _utilizedTokenAmounts)
 		public
 		override
 		nonReentrant()

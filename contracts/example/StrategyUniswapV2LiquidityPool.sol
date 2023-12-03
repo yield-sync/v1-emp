@@ -89,39 +89,6 @@ contract StrategyHandlerUniswapV2LiquidityPool
 		uniswapV2Router = IUniswapV2Router(_uniswapV2Router);
 	}
 
-	function positionETHValue(address[] memory _utilizedToken, address _target)
-		public
-		view
-		returns (uint256 positionETHValue_)
-	{
-		uint256 balance = IERC20(liquidityPool).balanceOf(_target);
-
-		// No balance -> automatically worth 0
-		if (balance <= 0)
-		{
-			return 0;
-		}
-
-		(uint112 reserve0, uint112 reserve1, ) = uniswapV2Pair.getReserves();
-
-		uint256 totalSupply = uniswapV2Pair.totalSupply();
-
-		// If there is no liquidity then automatically the LP token value will be 0
-		if (totalSupply == 0)
-		{
-			return 0;
-		}
-
-		uint256 amount0PerLPToken = uint256(reserve0) / totalSupply;
-		uint256 amount1PerLPToken = uint256(reserve1) / totalSupply;
-
-		// Return total value of both output tokens denomintaed in weth
-		return balance * amount0PerLPToken * utilizedTokenETHValue(
-			_utilizedToken[0]
-		) + balance * amount1PerLPToken * utilizedTokenETHValue(
-			_utilizedToken[1]
-		);
-	}
 	function utilizedTokenETHValue(address _token)
 		public
 		view
@@ -146,7 +113,7 @@ contract StrategyHandlerUniswapV2LiquidityPool
 		}
 	}
 
-	function utilizedTokenDeposit(address[] memory _utilizedToken, uint256[] memory _amount)
+	function utilizedTokenDeposit(address[] memory _utilizedToken, uint256[] memory _utilizedTokenAmounts)
 		public
 	{
 		IERC20(_utilizedToken[0]).safeTransferFrom(msg.sender, address(this), _amount[0]);
@@ -167,7 +134,7 @@ contract StrategyHandlerUniswapV2LiquidityPool
 		);
 	}
 
-	function utilizedTokenWithdraw(address[] memory _utilizedToken, uint256[] memory _amount)
+	function utilizedTokenWithdraw(address[] memory _utilizedToken, uint256[] memory _utilizedTokenAmounts)
 		public
 	{
 		// Retrieve the current reserves to estimate the withdrawn amounts

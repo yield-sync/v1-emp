@@ -91,7 +91,7 @@ interface IYieldSyncV1AssetAllocator is
 	* @param _utilizedToken {address[]}
 	* @param _amounts {uint256[]}
 	*/
-	function depositTokens(address _strategy, address[] memory _utilizedToken,  uint256[] memory _amounts)
+	function depositTokens(address _strategy, address[] memory _utilizedToken,  uint256[] memory _utilizedTokenAmountss)
 		external
 	;
 
