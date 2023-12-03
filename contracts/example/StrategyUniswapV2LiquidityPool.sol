@@ -2,8 +2,12 @@
 pragma solidity 0.8.18;
 
 
-import { IERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {
+	Allocation,
+	IERC20,
+	IYieldSyncV1Strategy,
+	SafeERC20
+} from "../interface/IYieldSyncV1StrategyManager.sol";
 
 
 using SafeERC20 for IERC20;
@@ -59,7 +63,8 @@ interface IUniswapV2Router
 /**
 * @notice This strategy adds liquidity to a uniswap pool
 */
-contract StrategyHandlerUniswapV2LiquidityPool
+contract StrategyHandlerUniswapV2LiquidityPool is
+	IYieldSyncV1Strategy
 {
 	address public immutable liquidityPool;
     address public immutable weth;
@@ -89,9 +94,11 @@ contract StrategyHandlerUniswapV2LiquidityPool
 		uniswapV2Router = IUniswapV2Router(_uniswapV2Router);
 	}
 
+	/// @inheritdoc IYieldSyncV1Strategy
 	function utilizedTokenETHValue(address _token)
 		public
 		view
+		override
 		returns (uint256 tokenETHValue_)
 	{
 		(uint112 reserve0, uint112 reserve1, ) = uniswapV2Pair.getReserves();
@@ -113,8 +120,10 @@ contract StrategyHandlerUniswapV2LiquidityPool
 		}
 	}
 
+	/// @inheritdoc IYieldSyncV1Strategy
 	function utilizedTokenDeposit(address[] memory _utilizedToken, uint256[] memory _utilizedTokenAmount)
 		public
+		override
 	{
 		IERC20(_utilizedToken[0]).safeTransferFrom(msg.sender, address(this), _utilizedTokenAmount[0]);
 		IERC20(_utilizedToken[1]).safeTransferFrom(msg.sender, address(this), _utilizedTokenAmount[1]);
@@ -134,8 +143,10 @@ contract StrategyHandlerUniswapV2LiquidityPool
 		);
 	}
 
+	/// @inheritdoc IYieldSyncV1Strategy
 	function utilizedTokenWithdraw(address[] memory _utilizedToken, uint256[] memory _utilizedTokenAmount)
 		public
+		override
 	{
 		// Retrieve the current reserves to estimate the withdrawn amounts
 		(uint256 reserveA, uint256 reserveB, ) = uniswapV2Pair.getReserves();
@@ -160,6 +171,20 @@ contract StrategyHandlerUniswapV2LiquidityPool
 		IERC20(_utilizedToken[1]).safeTransfer(msg.sender, amountRemovedB);
 	}
 
+	/// @inheritdoc IYieldSyncV1Strategy
+	function utilizedTokenTotalAmount()
+		public
+		override
+		returns (uint256[] memory utilizedTokenAmount_)
+	{
+		// The objective of this function is to return the total values of each utilized token in this contarct
+		// It is a good idea to consider this as TVL but divided by each token itself
+		uint256[] memory returnAmounts;
+
+		return returnAmounts;
+	}
+
+
 	function slippageToleranceUpdate(uint256 _slippageTolerance)
 		public
 	{
@@ -167,16 +192,5 @@ contract StrategyHandlerUniswapV2LiquidityPool
 
 		// Add access control if necessary
 		slippageTolerance = _slippageTolerance;
-	}
-
-	// The objective of this function is to return the total values of each utilized token in this contarct
-	// It is a good idea to consider this as TVL but divided by each token itself
-	function utilizedTokenAmount()
-		public
-		returns (uint256[] memory utilizedTokenAmount_)
-	{
-		uint256[] memory returnAmounts;
-
-		return returnAmounts;
 	}
 }
