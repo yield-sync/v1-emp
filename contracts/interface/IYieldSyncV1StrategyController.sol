@@ -52,7 +52,7 @@ interface IYieldSyncV1Strategy
 }
 
 
-interface IYieldSyncV1StrategyManager is
+interface IYieldSyncV1StrategyController is
 	IERC20
 {
 	/**

@@ -7,7 +7,7 @@ import {
 	IERC20,
 	IYieldSyncV1Strategy,
 	SafeERC20
-} from "../interface/IYieldSyncV1StrategyManager.sol";
+} from "../interface/IYieldSyncV1StrategyController.sol";
 
 
 using SafeERC20 for IERC20;

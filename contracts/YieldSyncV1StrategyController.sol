@@ -10,13 +10,13 @@ import {
 	Allocation,
 	IERC20,
 	IYieldSyncV1Strategy,
-	IYieldSyncV1StrategyManager
-} from "./interface/IYieldSyncV1StrategyManager.sol";
+	IYieldSyncV1StrategyController
+} from "./interface/IYieldSyncV1StrategyController.sol";
 
 
-contract YieldSyncV1StrategyManager is
+contract YieldSyncV1StrategyController is
 	ERC20,
-	IYieldSyncV1StrategyManager,
+	IYieldSyncV1StrategyController,
 	ReentrancyGuard
 {
 	address public immutable deployer;
@@ -47,7 +47,7 @@ contract YieldSyncV1StrategyManager is
 	}
 
 
-	/// @inheritdoc IYieldSyncV1StrategyManager
+	/// @inheritdoc IYieldSyncV1StrategyController
 	function token_allocation(address _token)
 		external
 		view
@@ -57,7 +57,7 @@ contract YieldSyncV1StrategyManager is
 		return _token_allocation[_token];
 	}
 
-	/// @inheritdoc IYieldSyncV1StrategyManager
+	/// @inheritdoc IYieldSyncV1StrategyController
 	function token_utilized(address _token)
 		public
 		view
@@ -68,7 +68,7 @@ contract YieldSyncV1StrategyManager is
 	}
 
 
-	/// @inheritdoc IYieldSyncV1StrategyManager
+	/// @inheritdoc IYieldSyncV1StrategyController
 	function positionETHValue(address _target)
 		public
 		override
@@ -90,7 +90,7 @@ contract YieldSyncV1StrategyManager is
 		return calculatedPositionETHValue;
 	}
 
-	/// @inheritdoc IYieldSyncV1StrategyManager
+	/// @inheritdoc IYieldSyncV1StrategyController
 	function setStrategy(address _strategy)
 		public
 	{
@@ -100,7 +100,7 @@ contract YieldSyncV1StrategyManager is
 		strategy = _strategy;
 	}
 
-	/// @inheritdoc IYieldSyncV1StrategyManager
+	/// @inheritdoc IYieldSyncV1StrategyController
 	function utilizedToken()
 		public
 		view
@@ -110,7 +110,7 @@ contract YieldSyncV1StrategyManager is
 		return _utilizedToken;
 	}
 
-	/// @inheritdoc IYieldSyncV1StrategyManager
+	/// @inheritdoc IYieldSyncV1StrategyController
 	function utilizedTokenAmountPerToken()
 		public
 		override
@@ -128,7 +128,7 @@ contract YieldSyncV1StrategyManager is
 		return utilizedTokenAmount;
 	}
 
-	/// @inheritdoc IYieldSyncV1StrategyManager
+	/// @inheritdoc IYieldSyncV1StrategyController
 	function utilizedTokenETHValue(address _token)
 		public
 		view
@@ -140,7 +140,7 @@ contract YieldSyncV1StrategyManager is
 		return IYieldSyncV1Strategy(strategy).utilizedTokenETHValue(_token);
 	}
 
-	/// @inheritdoc IYieldSyncV1StrategyManager
+	/// @inheritdoc IYieldSyncV1StrategyController
 	function utilizedTokenDeposit(uint256[] memory _utilizedTokenAmount)
 		public
 		override
@@ -161,7 +161,7 @@ contract YieldSyncV1StrategyManager is
 		_mint(msg.sender, positionETHValue(msg.sender) - valueBefore);
 	}
 
-	/// @inheritdoc IYieldSyncV1StrategyManager
+	/// @inheritdoc IYieldSyncV1StrategyController
 	function utilizedTokenWithdraw(uint256[] memory _utilizedTokenAmount)
 		public
 		override
