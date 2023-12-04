@@ -64,6 +64,7 @@ interface IYieldSyncV1StrategyController is
 	*/
 	function positionETHValue(address target)
 		external
+		view
 		returns (uint256 positionETHValue_)
 	;
 
@@ -91,6 +92,7 @@ interface IYieldSyncV1StrategyController is
 	*/
 	function utilizedTokenAmountPerToken()
 		external
+		view
 		returns (uint256[] memory utilizedTokenAmount_)
 	;
 

@@ -6,7 +6,6 @@ pragma solidity 0.8.18;
 import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-
 import { IYieldSyncV1Strategy } from "./interface/IYieldSyncV1Strategy.sol";
 import { Allocation, IERC20, IYieldSyncV1StrategyController } from "./interface/IYieldSyncV1StrategyController.sol";
 
@@ -22,7 +21,6 @@ contract YieldSyncV1StrategyController is
 
 
 	mapping (address token => bool utilized) internal _token_utilized;
-
 	mapping (address token => Allocation allocation) internal _token_allocation;
 
 
@@ -69,25 +67,22 @@ contract YieldSyncV1StrategyController is
 	/// @inheritdoc IYieldSyncV1StrategyController
 	function positionETHValue(address _target)
 		public
+		view
 		override
 		returns (uint256 positionETHValue_)
 	{
-		uint256[] memory utilizedTokenAmount = utilizedTokenAmountPerToken();
+		uint256[] memory uTAPT = utilizedTokenAmountPerToken();
 
-		require(utilizedTokenAmount.length == _utilizedToken.length, "utilizedTokenAmount.length != _utilizedToken.length");
+		require(uTAPT.length == _utilizedToken.length, "uTAPT.length != _utilizedToken.length");
 
-		uint256 calculatedPositionETHValue = 0;
+		uint256 pEV = 0;
 
 		for (uint256 i = 0; i < _utilizedToken.length; i++)
 		{
-			calculatedPositionETHValue += utilizedTokenAmount[i] * IYieldSyncV1Strategy(strategy).utilizedTokenETHValue(
-				_utilizedToken[i]
-			) * balanceOf(
-				_target
-			);
+			pEV += uTAPT[i] * IYieldSyncV1Strategy(strategy).utilizedTokenETHValue(_utilizedToken[i]) * balanceOf(_target);
 		}
 
-		return calculatedPositionETHValue;
+		return pEV;
 	}
 
 	/// @inheritdoc IYieldSyncV1StrategyController
@@ -114,19 +109,20 @@ contract YieldSyncV1StrategyController is
 	/// @inheritdoc IYieldSyncV1StrategyController
 	function utilizedTokenAmountPerToken()
 		public
+		view
 		override
 		returns (uint256[] memory utilizedTokenAmount_)
 	{
-		uint256[] memory utilizedTokenAmount = IYieldSyncV1Strategy(strategy).utilizedTokenTotalAmount();
+		uint256[] memory uTTA = IYieldSyncV1Strategy(strategy).utilizedTokenTotalAmount(_utilizedToken);
 
-		require(_utilizedToken.length == utilizedTokenAmount.length , "_utilizedToken.length != utilizedTokenAmount.length");
+		require(_utilizedToken.length == uTTA.length , "_utilizedToken.length != uTTA.length");
 
 		for (uint256 i = 0; i < _utilizedToken.length; i++)
 		{
-			utilizedTokenAmount[i] = utilizedTokenAmount[i] / totalSupply();
+			uTTA[i] = uTTA[i] / totalSupply();
 		}
 
-		return utilizedTokenAmount;
+		return uTTA;
 	}
 
 	/// @inheritdoc IYieldSyncV1StrategyController
@@ -157,16 +153,16 @@ contract YieldSyncV1StrategyController is
 	{
 		require(balanceOf(msg.sender) >= _tokenAmount, "!_tokenAmount");
 
-		uint256[] memory _utilizedTokenAmount = utilizedTokenAmountPerToken();
+		uint256[] memory uTAPT = utilizedTokenAmountPerToken();
 
-		require(_utilizedTokenAmount.length == _utilizedToken.length, "!_amount.length");
+		require(uTAPT.length == _utilizedToken.length, "uTAPT.length != _utilizedToken.length");
 
 		for (uint256 i = 0; i < _utilizedToken.length; i++)
 		{
-			_utilizedTokenAmount[i] += _utilizedTokenAmount[i] * _tokenAmount;
+			uTAPT[i] += uTAPT[i] * _tokenAmount;
 		}
 
-		IYieldSyncV1Strategy(strategy).utilizedTokenWithdraw(msg.sender, _utilizedToken, _utilizedTokenAmount);
+		IYieldSyncV1Strategy(strategy).utilizedTokenWithdraw(msg.sender, _utilizedToken, uTAPT);
 
 		_burn(msg.sender, _tokenAmount);
 	}
