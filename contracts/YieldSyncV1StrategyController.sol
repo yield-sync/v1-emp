@@ -80,7 +80,9 @@ contract YieldSyncV1StrategyController is
 
 		for (uint256 i = 0; i < _utilizedToken.length; i++)
 		{
-			calculatedPositionETHValue += utilizedTokenAmount[i] * utilizedTokenETHValue(_utilizedToken[i]) * balanceOf(
+			calculatedPositionETHValue += utilizedTokenAmount[i] * IYieldSyncV1Strategy(strategy).utilizedTokenETHValue(
+				_utilizedToken[i]
+			) * balanceOf(
 				_target
 			);
 		}
@@ -91,9 +93,10 @@ contract YieldSyncV1StrategyController is
 	/// @inheritdoc IYieldSyncV1StrategyController
 	function setStrategy(address _strategy)
 		public
+		override
 	{
 		require(strategy == address(0), "strategy != address(0)");
-		require(msg.sender == deployer, "!deployer");
+		require(msg.sender == deployer, "msg.sender != deployer");
 
 		strategy = _strategy;
 	}
@@ -127,18 +130,6 @@ contract YieldSyncV1StrategyController is
 	}
 
 	/// @inheritdoc IYieldSyncV1StrategyController
-	function utilizedTokenETHValue(address _token)
-		public
-		view
-		override
-		returns (uint256 tokenETHValue_)
-	{
-		require(_token_utilized[_token] == true, "!_token_utilized[_token]");
-
-		return IYieldSyncV1Strategy(strategy).utilizedTokenETHValue(_token);
-	}
-
-	/// @inheritdoc IYieldSyncV1StrategyController
 	function utilizedTokenDeposit(uint256[] memory _utilizedTokenAmount)
 		public
 		override
@@ -155,7 +146,6 @@ contract YieldSyncV1StrategyController is
 
 		IYieldSyncV1Strategy(strategy).utilizedTokenDeposit(_utilizedToken, _utilizedTokenAmount);
 
-		// Mint the tokens accordingly
 		_mint(msg.sender, positionETHValue(msg.sender) - valueBefore);
 	}
 

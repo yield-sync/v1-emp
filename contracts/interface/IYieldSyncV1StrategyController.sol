@@ -87,23 +87,11 @@ interface IYieldSyncV1StrategyController is
 	;
 
 	/**
-	* @notice The objective of this function is to return the amount recievable for each token burned
-
+	* @notice Utilized tokens received per token
 	*/
 	function utilizedTokenAmountPerToken()
 		external
 		returns (uint256[] memory utilizedTokenAmount_)
-	;
-
-	/**
-	* @notice Return value of token denominated in WETH
-	* @param _token {uint256}
-	* @return tokenETHValue_ {uint256}
-	*/
-	function utilizedTokenETHValue(address _token)
-		external
-		view
-		returns (uint256 tokenETHValue_)
 	;
 
 	/**
