@@ -69,15 +69,6 @@ interface IYieldSyncV1StrategyController is
 	;
 
 	/**
-	* @notice Sets the strategy
-	* @dev This can only set the strategy once
-	* @param _strategy {address} Strategy
-	*/
-	function setStrategy(address _strategy)
-		external
-	;
-
-	/**
 	* @notice Array of utilized tokens
 	* @return utilizedToken_ {address[]}
 	*/
@@ -94,6 +85,16 @@ interface IYieldSyncV1StrategyController is
 		external
 		view
 		returns (uint256[] memory utilizedTokenAmount_)
+	;
+
+
+	/**
+	* @notice Sets the strategy
+	* @dev This can only set the strategy once
+	* @param _strategy {address} Strategy
+	*/
+	function setStrategy(address _strategy)
+		external
 	;
 
 	/**

@@ -85,16 +85,6 @@ contract YieldSyncV1StrategyController is
 		return pEV;
 	}
 
-	/// @inheritdoc IYieldSyncV1StrategyController
-	function setStrategy(address _strategy)
-		public
-		override
-	{
-		require(strategy == address(0), "strategy != address(0)");
-		require(msg.sender == deployer, "msg.sender != deployer");
-
-		strategy = _strategy;
-	}
 
 	/// @inheritdoc IYieldSyncV1StrategyController
 	function utilizedToken()
@@ -123,6 +113,18 @@ contract YieldSyncV1StrategyController is
 		}
 
 		return uTTA;
+	}
+
+
+	/// @inheritdoc IYieldSyncV1StrategyController
+	function setStrategy(address _strategy)
+		public
+		override
+	{
+		require(strategy == address(0), "strategy != address(0)");
+		require(msg.sender == deployer, "msg.sender != deployer");
+
+		strategy = _strategy;
 	}
 
 	/// @inheritdoc IYieldSyncV1StrategyController

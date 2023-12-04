@@ -4,11 +4,26 @@ pragma solidity 0.8.18;
 
 interface IYieldSyncV1Strategy
 {
+	/**
+	* @notice Utilized token value in ETH
+	* @param _token {address}
+	*/
 	function utilizedTokenETHValue(address _token)
 		external
 		view
 		returns (uint256 tokenETHValue_)
 	;
+
+	/**
+	* @notice Return total amounts locked
+	* @param _utilizedToken {address[]}
+	*/
+	function utilizedTokenTotalAmount(address[] memory _utilizedToken)
+		external
+		view
+		returns (uint256[] memory utilizedTokenAmount_)
+	;
+
 
 	/**
 	* @notice
@@ -27,14 +42,5 @@ interface IYieldSyncV1Strategy
 	*/
 	function utilizedTokenWithdraw(address _to, address[] memory _utilizedToken, uint256[] memory _utilizedTokenAmount)
 		external
-	;
-
-	/**
-	* @notice Return total amounts locked
-	*/
-	function utilizedTokenTotalAmount(address[] memory _utilizedToken)
-		external
-		view
-		returns (uint256[] memory utilizedTokenAmount_)
 	;
 }
