@@ -180,14 +180,39 @@ contract StrategyUniswapV2LiquidityPool is
 	}
 
 	/// @inheritdoc IYieldSyncV1Strategy
-	function utilizedTokenTotalAmount()
+	function utilizedTokenTotalAmount(address[] memory _utilizedToken)
 		public
+		view
 		override
 		returns (uint256[] memory utilizedTokenAmount_)
 	{
-		// The objective of this function is to return the total values of each utilized token in this contarct
-		// It is a good idea to consider this as TVL but divided by each token itself
-		uint256[] memory returnAmounts;
+		uint256[] memory returnAmounts = new uint256[](_utilizedToken.length);
+
+		uint256 liquidityPoolBalance = IERC20(address(uniswapV2Pair)).balanceOf(address(this));
+
+		if (liquidityPoolBalance > 0)
+		{
+			(uint112 reserve0, uint112 reserve1, ) = uniswapV2Pair.getReserves();
+
+			uint256 totalSupply = uniswapV2Pair.totalSupply();
+
+			// Calculate each token's share based on LP token balance
+			uint256 token0Amount = (uint256(reserve0) * liquidityPoolBalance) / totalSupply;
+			uint256 token1Amount = (uint256(reserve1) * liquidityPoolBalance) / totalSupply;
+
+			returnAmounts[0] = token0Amount;
+			returnAmounts[1] = token1Amount;
+		}
+		else
+		{
+			returnAmounts[0] = 0;
+			returnAmounts[1] = 0;
+		}
+
+		for (uint256 i = 0; i < _utilizedToken.length; i++)
+		{
+			returnAmounts[i] += IERC20(_utilizedToken[i]).balanceOf(address(this));
+		}
 
 		return returnAmounts;
 	}

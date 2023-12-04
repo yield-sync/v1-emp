@@ -32,8 +32,9 @@ interface IYieldSyncV1Strategy
 	/**
 	* @notice Return total amounts locked
 	*/
-	function utilizedTokenTotalAmount()
+	function utilizedTokenTotalAmount(address[] memory _utilizedToken)
 		external
+		view
 		returns (uint256[] memory utilizedTokenAmount_)
 	;
 }
