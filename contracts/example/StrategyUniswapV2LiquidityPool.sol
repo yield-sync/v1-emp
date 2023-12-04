@@ -65,6 +65,7 @@ contract StrategyUniswapV2LiquidityPool is
 	address public immutable liquidityPool;
     address public immutable weth;
 	address public manager;
+	address public strategyController;
 
 	uint256 public slippageTolerance;
 
@@ -73,22 +74,31 @@ contract StrategyUniswapV2LiquidityPool is
 
 	constructor (
 		address _liquidityPool,
-		address _weth,
+		uint256 _slippageTolerance,
+		address _strategyController,
 		address _uniswapV2Pair,
 		address _uniswapV2Router,
-		uint256 _slippageTolerance
+		address _weth
 	)
 	{
-		manager = msg.sender;
-
 		liquidityPool = _liquidityPool;
-		weth = _weth;
-
+		manager = msg.sender;
 		slippageTolerance = _slippageTolerance;
+		strategyController = _strategyController;
+		weth = _weth;
 
 		uniswapV2Pair = IUniswapV2Pair(_uniswapV2Pair);
 		uniswapV2Router = IUniswapV2Router(_uniswapV2Router);
 	}
+
+
+	modifier onlyStrategyController()
+	{
+		require(msg.sender == strategyController, "msg.sender != strategyController");
+
+		_;
+	}
+
 
 	/// @inheritdoc IYieldSyncV1Strategy
 	function utilizedTokenETHValue(address _token)
@@ -120,6 +130,7 @@ contract StrategyUniswapV2LiquidityPool is
 	function utilizedTokenDeposit(address[] memory _utilizedToken, uint256[] memory _utilizedTokenAmount)
 		public
 		override
+		onlyStrategyController()
 	{
 		IERC20(_utilizedToken[0]).safeTransferFrom(msg.sender, address(this), _utilizedTokenAmount[0]);
 		IERC20(_utilizedToken[1]).safeTransferFrom(msg.sender, address(this), _utilizedTokenAmount[1]);
@@ -143,6 +154,7 @@ contract StrategyUniswapV2LiquidityPool is
 	function utilizedTokenWithdraw(address _to, address[] memory _utilizedToken, uint256[] memory _utilizedTokenAmount)
 		public
 		override
+		onlyStrategyController()
 	{
 		// Retrieve the current reserves to estimate the withdrawn amounts
 		(uint256 reserveA, uint256 reserveB, ) = uniswapV2Pair.getReserves();
