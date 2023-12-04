@@ -133,7 +133,7 @@ contract YieldSyncV1StrategyController is
 		override
 		nonReentrant()
 	{
-		require(_utilizedTokenAmount.length == _utilizedToken.length, "!_amount.length");
+		require(_utilizedTokenAmount.length == _utilizedToken.length, "_utilizedTokenAmount.length != _utilizedToken.length");
 
 		uint256 valueBefore = positionETHValue(msg.sender);
 
