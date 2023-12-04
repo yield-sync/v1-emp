@@ -20,6 +20,7 @@ contract YieldSyncV1StrategyController is
 	address public override strategy;
 	address[] internal _utilizedToken;
 
+
 	mapping (address token => bool utilized) internal _token_utilized;
 
 	mapping (address token => Allocation allocation) internal _token_allocation;

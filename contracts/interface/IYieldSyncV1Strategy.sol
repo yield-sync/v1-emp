@@ -13,7 +13,7 @@ interface IYieldSyncV1Strategy
 	/**
 	* @notice
 	* @param _utilizedToken {address[]}
-	* @param _utilizedToken {uint256[]}
+	* @param _utilizedTokenAmount {uint256[]}
 	*/
 	function utilizedTokenDeposit(address[] memory _utilizedToken, uint256[] memory _utilizedTokenAmount)
 		external
