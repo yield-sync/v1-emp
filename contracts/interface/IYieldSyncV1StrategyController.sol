@@ -22,7 +22,6 @@ interface IYieldSyncV1StrategyController is
 	IERC20
 {
 	/**
-	* @notice
 	* @dev [view-address]
 	* @return {address}
 	*/
@@ -33,7 +32,6 @@ interface IYieldSyncV1StrategyController is
 	;
 
 	/**
-	* @notice token to allocation
 	* @dev [view-mapping]
 	* @param _token {address}
 	* @return {Allocation}
@@ -45,7 +43,6 @@ interface IYieldSyncV1StrategyController is
 	;
 
 	/**
-	* @notice token to utilized
 	* @dev [view-mapping]
 	* @param _token {address}
 	* @return utilized_ {bool}
@@ -58,7 +55,7 @@ interface IYieldSyncV1StrategyController is
 
 
 	/**
-	* @notice Value of position denominated in WETH
+	* @notice Position Value Denominated in ETH
 	* @param target {address}
 	* @return positionETHValue_ {uint256}
 	*/
@@ -69,7 +66,7 @@ interface IYieldSyncV1StrategyController is
 	;
 
 	/**
-	* @notice Array of utilized tokens
+	* @notice Utilized Tokens
 	* @return utilizedToken_ {address[]}
 	*/
 	function utilizedToken()
@@ -79,7 +76,7 @@ interface IYieldSyncV1StrategyController is
 	;
 
 	/**
-	* @notice Utilized tokens received per token
+	* @notice Utilized Token Amount Per Token
 	*/
 	function utilizedTokenAmountPerToken()
 		external
@@ -89,7 +86,7 @@ interface IYieldSyncV1StrategyController is
 
 
 	/**
-	* @notice Sets the strategy
+	* @notice Sets Strategy
 	* @dev This can only set the strategy once
 	* @param _strategy {address} Strategy
 	*/
@@ -98,7 +95,7 @@ interface IYieldSyncV1StrategyController is
 	;
 
 	/**
-	* @notice Deposit into strategy
+	* @notice Deposit Utilized Tokens
 	* @param _utilizedTokenAmount {uint256[]} Amount to be deposited
 	*/
 	function utilizedTokenDeposit(uint256[] memory _utilizedTokenAmount)
@@ -106,7 +103,7 @@ interface IYieldSyncV1StrategyController is
 	;
 
 	/**
-	* @notice Withdraw from strategy
+	* @notice Withdraw Utilized Tokens
 	* @param _tokenAmount {uint256}
 	*/
 	function utilizedTokenWithdraw(uint256 _tokenAmount)

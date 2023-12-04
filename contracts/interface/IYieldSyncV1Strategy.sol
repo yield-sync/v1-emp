@@ -26,7 +26,7 @@ interface IYieldSyncV1Strategy
 
 
 	/**
-	* @notice
+	* @notice Deposit Utilized Tokens
 	* @param _utilizedToken {address[]}
 	* @param _utilizedTokenAmount {uint256[]}
 	*/
@@ -35,7 +35,7 @@ interface IYieldSyncV1Strategy
 	;
 
 	/**
-	* @notice
+	* @notice Withdraw Utilized Tokens
 	* @param _to {address}
 	* @param _utilizedToken {address[]}
 	* @param _utilizedTokenAmount {uint256[]}
