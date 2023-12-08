@@ -75,14 +75,16 @@ contract YieldSyncV1StrategyController is
 
 		require(uTAPT.length == _utilizedToken.length, "uTAPT.length != _utilizedToken.length");
 
-		uint256 pEV = 0;
+		positionETHValue_ = 0;
 
 		for (uint256 i = 0; i < _utilizedToken.length; i++)
 		{
-			pEV += uTAPT[i] * IYieldSyncV1Strategy(strategy).utilizedTokenETHValue(_utilizedToken[i]) * balanceOf(_target);
+			positionETHValue_ += uTAPT[i] * IYieldSyncV1Strategy(strategy).utilizedTokenETHValue(
+				_utilizedToken[i]
+			) * balanceOf(
+				_target
+			);
 		}
-
-		return pEV;
 	}
 
 
@@ -103,16 +105,14 @@ contract YieldSyncV1StrategyController is
 		override
 		returns (uint256[] memory utilizedTokenAmount_)
 	{
-		uint256[] memory uTTA = IYieldSyncV1Strategy(strategy).utilizedTokenTotalAmount(_utilizedToken);
+		utilizedTokenAmount_ = IYieldSyncV1Strategy(strategy).utilizedTokenTotalAmount(_utilizedToken);
 
-		require(_utilizedToken.length == uTTA.length , "_utilizedToken.length != uTTA.length");
+		require(_utilizedToken.length == utilizedTokenAmount_.length , "_utilizedToken.length != utilizedTokenAmount_.length");
 
 		for (uint256 i = 0; i < _utilizedToken.length; i++)
 		{
-			uTTA[i] = uTTA[i] / totalSupply();
+			utilizedTokenAmount_[i] = utilizedTokenAmount_[i] / totalSupply();
 		}
-
-		return uTTA;
 	}
 
 
@@ -169,3 +169,4 @@ contract YieldSyncV1StrategyController is
 		_burn(msg.sender, _tokenAmount);
 	}
 }
+// TODO the next big thing i have to program out is the utilization of the allocation
