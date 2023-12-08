@@ -79,7 +79,7 @@ contract YieldSyncV1AssetAllocator is
 		for (uint256 i = 0; i < _activeStrategy.length; i++)
 		{
 			(, uint256 strategyAllocation) = SafeMath.tryDiv(
-				IYieldSyncV1StrategyController(_activeStrategy[i]).positionETHValue(msg.sender),
+				IYieldSyncV1StrategyController(_activeStrategy[i]).eTHValuePosition(msg.sender),
 				_totalValueOfAssetsInWETH
 			);
 
@@ -199,7 +199,7 @@ contract YieldSyncV1AssetAllocator is
 
 		for (uint256 i = 0; i < _activeStrategy.length; i++)
 		{
-			_totalETHValue += IYieldSyncV1StrategyController(_activeStrategy[i]).positionETHValue(address(this));
+			_totalETHValue += IYieldSyncV1StrategyController(_activeStrategy[i]).eTHValuePosition(address(this));
 		}
 
 		return _totalETHValue;

@@ -13,24 +13,14 @@ using SafeERC20 for IERC20;
 
 struct Allocation
 {
-	uint8 denominator;
-	uint8 numerator;
+	uint256 denominator;
+	uint256 numerator;
 }
 
 
 interface IYieldSyncV1StrategyController is
 	IERC20
 {
-	/**
-	* @dev [view-address]
-	* @return {address}
-	*/
-	function strategy()
-		external
-		view
-		returns (address)
-	;
-
 	/**
 	* @dev [view-mapping]
 	* @param _token {address}
@@ -42,27 +32,27 @@ interface IYieldSyncV1StrategyController is
 		returns (Allocation memory)
 	;
 
+
 	/**
-	* @dev [view-mapping]
-	* @param _token {address}
-	* @return utilized_ {bool}
+	* @dev [view-IYieldSyncV1Strategy]
+	* @return {address}
 	*/
-	function token_utilized(address _token)
+	function yieldSyncV1Strategy()
 		external
 		view
-		returns (bool utilized_)
+		returns (IYieldSyncV1Strategy)
 	;
 
 
 	/**
 	* @notice Position Value Denominated in ETH
 	* @param target {address}
-	* @return positionETHValue_ {uint256}
+	* @return eTHValuePosition_ {uint256}
 	*/
-	function positionETHValue(address target)
+	function eTHValuePosition(address target)
 		external
 		view
-		returns (uint256 positionETHValue_)
+		returns (uint256 eTHValuePosition_)
 	;
 
 	/**

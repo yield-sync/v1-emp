@@ -6,8 +6,12 @@ pragma solidity 0.8.18;
 import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-import { IYieldSyncV1Strategy } from "./interface/IYieldSyncV1Strategy.sol";
-import { Allocation, IERC20, IYieldSyncV1StrategyController } from "./interface/IYieldSyncV1StrategyController.sol";
+import {
+	Allocation,
+	IERC20,
+	IYieldSyncV1Strategy,
+	IYieldSyncV1StrategyController
+} from "./interface/IYieldSyncV1StrategyController.sol";
 
 
 contract YieldSyncV1StrategyController is
@@ -16,12 +20,11 @@ contract YieldSyncV1StrategyController is
 	ReentrancyGuard
 {
 	address public immutable deployer;
-	address public override strategy;
 	address[] internal _utilizedToken;
 
-
-	mapping (address token => bool utilized) internal _token_utilized;
 	mapping (address token => Allocation allocation) internal _token_allocation;
+
+	IYieldSyncV1Strategy public yieldSyncV1Strategy;
 
 
 	receive ()
@@ -53,35 +56,23 @@ contract YieldSyncV1StrategyController is
 		return _token_allocation[_token];
 	}
 
+
 	/// @inheritdoc IYieldSyncV1StrategyController
-	function token_utilized(address _token)
+	function eTHValuePosition(address _target)
 		public
 		view
 		override
-		returns (bool utilized_)
-	{
-		return _token_utilized[_token];
-	}
-
-
-	/// @inheritdoc IYieldSyncV1StrategyController
-	function positionETHValue(address _target)
-		public
-		view
-		override
-		returns (uint256 positionETHValue_)
+		returns (uint256 eTHValuePosition_)
 	{
 		uint256[] memory uTAPT = utilizedTokenAmountPerToken();
 
 		require(uTAPT.length == _utilizedToken.length, "uTAPT.length != _utilizedToken.length");
 
-		positionETHValue_ = 0;
+		eTHValuePosition_ = 0;
 
 		for (uint256 i = 0; i < _utilizedToken.length; i++)
 		{
-			positionETHValue_ += uTAPT[i] * IYieldSyncV1Strategy(strategy).utilizedTokenETHValue(
-				_utilizedToken[i]
-			) * balanceOf(
+			eTHValuePosition_ += uTAPT[i] * yieldSyncV1Strategy.utilizedTokenETHValue(_utilizedToken[i]) * balanceOf(
 				_target
 			);
 		}
@@ -105,7 +96,7 @@ contract YieldSyncV1StrategyController is
 		override
 		returns (uint256[] memory utilizedTokenAmount_)
 	{
-		utilizedTokenAmount_ = IYieldSyncV1Strategy(strategy).utilizedTokenTotalAmount(_utilizedToken);
+		utilizedTokenAmount_ = yieldSyncV1Strategy.utilizedTokenTotalAmount(_utilizedToken);
 
 		require(_utilizedToken.length == utilizedTokenAmount_.length , "_utilizedToken.length != utilizedTokenAmount_.length");
 
@@ -121,10 +112,10 @@ contract YieldSyncV1StrategyController is
 		public
 		override
 	{
-		require(strategy == address(0), "strategy != address(0)");
+		require(address(yieldSyncV1Strategy) == address(0), "strategy != address(0)");
 		require(msg.sender == deployer, "msg.sender != deployer");
 
-		strategy = _strategy;
+		yieldSyncV1Strategy = IYieldSyncV1Strategy(_strategy);
 	}
 
 	/// @inheritdoc IYieldSyncV1StrategyController
@@ -135,16 +126,16 @@ contract YieldSyncV1StrategyController is
 	{
 		require(_utilizedTokenAmount.length == _utilizedToken.length, "_utilizedTokenAmount.length != _utilizedToken.length");
 
-		uint256 valueBefore = positionETHValue(msg.sender);
+		uint256 valueBefore = eTHValuePosition(msg.sender);
 
 		for (uint256 i = 0; i < _utilizedToken.length; i++)
 		{
-			IERC20(_utilizedToken[i]).approve(strategy, _utilizedTokenAmount[i]);
+			IERC20(_utilizedToken[i]).approve(address(yieldSyncV1Strategy), _utilizedTokenAmount[i]);
 		}
 
-		IYieldSyncV1Strategy(strategy).utilizedTokenDeposit(_utilizedToken, _utilizedTokenAmount);
+		yieldSyncV1Strategy.utilizedTokenDeposit(_utilizedToken, _utilizedTokenAmount);
 
-		_mint(msg.sender, positionETHValue(msg.sender) - valueBefore);
+		_mint(msg.sender, eTHValuePosition(msg.sender) - valueBefore);
 	}
 
 	/// @inheritdoc IYieldSyncV1StrategyController
@@ -164,7 +155,7 @@ contract YieldSyncV1StrategyController is
 			uTAPT[i] += uTAPT[i] * _tokenAmount;
 		}
 
-		IYieldSyncV1Strategy(strategy).utilizedTokenWithdraw(msg.sender, _utilizedToken, uTAPT);
+		yieldSyncV1Strategy.utilizedTokenWithdraw(msg.sender, _utilizedToken, uTAPT);
 
 		_burn(msg.sender, _tokenAmount);
 	}
