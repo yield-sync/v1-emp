@@ -125,19 +125,19 @@ contract YieldSyncV1StrategyController is
 
 		for (uint256 i = 0; i < utilizedToken.length; i++)
 		{
-			(bool amountRatioTargetComputed, uint256 amountRatioTarget) = SafeMath.tryDiv(
+			(bool amountPercentTargetComputed, uint256 amountRatioTarget) = SafeMath.tryDiv(
 				_token_allocation[utilizedToken[i]].numerator,
 				_token_allocation[utilizedToken[i]].denominator
 			);
 
-			require(amountRatioTargetComputed, "!amountRatioTargetComputed");
+			require(amountPercentTargetComputed, "!amountPercentTargetComputed");
 
-			(bool amountRatioActualComputed, uint256 amountRatioActual) = SafeMath.tryDiv(
+			(bool amountPercentActualComputed, uint256 amountRatioActual) = SafeMath.tryDiv(
 				yieldSyncV1Strategy.utilizedTokenETHValue(utilizedToken[i]) * _utilizedTokenAmount[i],
 				_eTHValueUtilizedTokenAmount
 			);
 
-			require(amountRatioActualComputed, "!amountRatioActualComputed");
+			require(amountPercentActualComputed, "!amountPercentActualComputed");
 
 			if (amountRatioTarget != amountRatioActual)
 			{
@@ -158,6 +158,33 @@ contract YieldSyncV1StrategyController is
 		require(msg.sender == deployer, "msg.sender != deployer");
 
 		yieldSyncV1Strategy = IYieldSyncV1Strategy(_strategy);
+	}
+
+	// @inheritdoc IYieldSyncV1StrategyController
+	function setUtilizedTokensAndAllocation(address[] memory _utilizedToken, Allocation[] memory _allocation)
+		public
+	{
+		require(utilizedToken.length == 0, "utilizedToken.length != 0");
+
+		utilizedToken = _utilizedToken;
+
+		uint256 totalAllocations = 0;
+
+		for (uint256 i = 0; i < _allocation.length; i++)
+		{
+			(bool computedPercent, uint256 percent) = SafeMath.tryDiv(_allocation[i].numerator, _allocation[i].denominator);
+
+			require(computedPercent, "!computedPercent");
+
+			totalAllocations += percent;
+		}
+
+		require(totalAllocations == 100, "totalAllocations != 100");
+
+		for (uint256 i = 0; i < _utilizedToken.length; i++)
+		{
+			_token_allocation[_utilizedToken[i]] = _allocation[i];
+		}
 	}
 
 	/// @inheritdoc IYieldSyncV1StrategyController
