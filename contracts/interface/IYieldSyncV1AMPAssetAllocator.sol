@@ -17,7 +17,7 @@ struct Allocation
 }
 
 
-interface IYieldSyncV1AssetAllocator is
+interface IYieldSyncV1AMPAssetAllocator is
 	IERC20
 {
 	/**

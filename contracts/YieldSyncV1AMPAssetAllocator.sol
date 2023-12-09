@@ -6,16 +6,16 @@ import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-import { Allocation, IYieldSyncV1AssetAllocator } from "./interface/IYieldSyncV1AssetAllocator.sol";
-import { IYieldSyncV1StrategyController } from "./interface/IYieldSyncV1StrategyController.sol";
+import { Allocation, IYieldSyncV1AMPAssetAllocator } from "./interface/IYieldSyncV1AMPAssetAllocator.sol";
+import { IYieldSyncV1AMPStrategyController } from "./interface/IYieldSyncV1AMPStrategyController.sol";
 
 
 using SafeERC20 for ERC20;
 
 
-contract YieldSyncV1AssetAllocator is
+contract YieldSyncV1AMPAssetAllocator is
 	ERC20,
-	IYieldSyncV1AssetAllocator
+	IYieldSyncV1AMPAssetAllocator
 {
 	address public override manager;
 	address[] internal _activeStrategy;
@@ -44,7 +44,7 @@ contract YieldSyncV1AssetAllocator is
 	}
 
 
-	/// @inheritdoc IYieldSyncV1AssetAllocator
+	/// @inheritdoc IYieldSyncV1AMPAssetAllocator
 	function activeStrategy()
 		external
 		view
@@ -53,7 +53,7 @@ contract YieldSyncV1AssetAllocator is
 		return _activeStrategy;
 	}
 
-	/// @inheritdoc IYieldSyncV1AssetAllocator
+	/// @inheritdoc IYieldSyncV1AMPAssetAllocator
 	function strategy_allocation(address _strategy)
 		public
 		view
@@ -64,7 +64,7 @@ contract YieldSyncV1AssetAllocator is
 	}
 
 
-	/// @inheritdoc IYieldSyncV1AssetAllocator
+	/// @inheritdoc IYieldSyncV1AMPAssetAllocator
 	function prioritizedStrategy()
 		public
 		view
@@ -79,7 +79,7 @@ contract YieldSyncV1AssetAllocator is
 		for (uint256 i = 0; i < _activeStrategy.length; i++)
 		{
 			(, uint256 strategyAllocation) = SafeMath.tryDiv(
-				IYieldSyncV1StrategyController(_activeStrategy[i]).eTHValuePosition(msg.sender),
+				IYieldSyncV1AMPStrategyController(_activeStrategy[i]).eTHValuePosition(msg.sender),
 				_totalValueOfAssetsInWETH
 			);
 
@@ -93,14 +93,15 @@ contract YieldSyncV1AssetAllocator is
 		return strategy;
 	}
 
-	/// @inheritdoc IYieldSyncV1AssetAllocator
+	/// @inheritdoc IYieldSyncV1AMPAssetAllocator
 	function depositTokens(address _strategy, address[] memory _utilizedToken, uint256[] memory _utilizedTokenAmount)
 		public
 	{
 		require(_utilizedToken.length > 0, "Must deposit at least one token");
 
 		require(
-			_utilizedToken.length == IYieldSyncV1StrategyController(_strategy).utilizedToken().length, "!utilizedToken.length"
+			_utilizedToken.length == IYieldSyncV1AMPStrategyController(_strategy).utilizedToken().length,
+			"!utilizedToken.length"
 		);
 
 		if (onlyPrioritizedStrategy)
@@ -113,14 +114,14 @@ contract YieldSyncV1AssetAllocator is
 		for (uint256 i = 0; i < _utilizedToken.length; i++)
 		{
 			require(
-				IYieldSyncV1StrategyController(_strategy).token_utilized(_utilizedToken[i]),
-				"!IYieldSyncV1Strategy(_strategy).token_utilized(_utilizedToken[i])"
+				IYieldSyncV1AMPStrategyController(_strategy).token_utilized(_utilizedToken[i]),
+				"!IYieldSyncV1AMPStrategy(_strategy).token_utilized(_utilizedToken[i])"
 			);
 
 			ERC20(_utilizedToken[i]).safeTransferFrom(msg.sender, address(this), _utilizedTokenAmount[i]);
 
 			// Calculate the value of the deposited tokens
-			totalDepositValue += IYieldSyncV1StrategyController(_strategy).utilizedTokenETHValue(
+			totalDepositValue += IYieldSyncV1AMPStrategyController(_strategy).utilizedTokenETHValue(
 				_utilizedToken[i]
 			) * _utilizedTokenAmount[i];
 		}
@@ -142,7 +143,7 @@ contract YieldSyncV1AssetAllocator is
 		_mint(msg.sender, tokensToMint);
 	}
 
-	/// @inheritdoc IYieldSyncV1AssetAllocator
+	/// @inheritdoc IYieldSyncV1AMPAssetAllocator
 	function strategyAllocationUpdate(address _strategy, uint8 _denominator, uint8 _numerator)
 		public
 		accessManager()
@@ -153,7 +154,7 @@ contract YieldSyncV1AssetAllocator is
 		});
 	}
 
-	/// @inheritdoc IYieldSyncV1AssetAllocator
+	/// @inheritdoc IYieldSyncV1AMPAssetAllocator
 	function strategyAdd(address _strategy, uint8 _denominator, uint8 _numerator)
 		public
 		accessManager()
@@ -166,7 +167,7 @@ contract YieldSyncV1AssetAllocator is
 		});
 	}
 
-	/// @inheritdoc IYieldSyncV1AssetAllocator
+	/// @inheritdoc IYieldSyncV1AMPAssetAllocator
 	function strategySubtract(address _strategy)
 		public
 		accessManager()
@@ -189,7 +190,7 @@ contract YieldSyncV1AssetAllocator is
 		}
 	}
 
-	/// @inheritdoc IYieldSyncV1AssetAllocator
+	/// @inheritdoc IYieldSyncV1AMPAssetAllocator
 	function totalValueOfAssetsInWETH()
 		public
 		view
@@ -199,7 +200,7 @@ contract YieldSyncV1AssetAllocator is
 
 		for (uint256 i = 0; i < _activeStrategy.length; i++)
 		{
-			_totalETHValue += IYieldSyncV1StrategyController(_activeStrategy[i]).eTHValuePosition(address(this));
+			_totalETHValue += IYieldSyncV1AMPStrategyController(_activeStrategy[i]).eTHValuePosition(address(this));
 		}
 
 		return _totalETHValue;

@@ -5,13 +5,13 @@ pragma solidity 0.8.18;
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-import { IYieldSyncV1Strategy } from "./IYieldSyncV1Strategy.sol";
+import { IYieldSyncV1AMPStrategy } from "./IYieldSyncV1AMPStrategy.sol";
 
 
 using SafeERC20 for IERC20;
 
 
-interface IYieldSyncV1StrategyController is
+interface IYieldSyncV1AMPStrategyController is
 	IERC20
 {
 	/**
@@ -37,13 +37,13 @@ interface IYieldSyncV1StrategyController is
 	;
 
 	/**
-	* @dev [view-IYieldSyncV1Strategy]
+	* @dev [view-IYieldSyncV1AMPStrategy]
 	* @return {address}
 	*/
-	function yieldSyncV1Strategy()
+	function yieldSyncV1AMPStrategy()
 		external
 		view
-		returns (IYieldSyncV1Strategy)
+		returns (IYieldSyncV1AMPStrategy)
 	;
 
 

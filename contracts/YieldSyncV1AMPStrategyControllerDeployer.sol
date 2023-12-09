@@ -2,10 +2,10 @@
 pragma solidity 0.8.18;
 
 
-import { YieldSyncV1StrategyController } from "./YieldSyncV1StrategyController.sol";
+import { YieldSyncV1AMPStrategyController } from "./YieldSyncV1AMPStrategyController.sol";
 
 
-contract YieldSyncV1StrategyControllerDeployer
+contract YieldSyncV1AMPStrategyControllerDeployer
 {
 	receive ()
 		external
@@ -34,21 +34,21 @@ contract YieldSyncV1StrategyControllerDeployer
 	}
 
 
-	function deployYieldSyncV1StrategyController(string memory _name, string memory _symbol)
+	function deployYieldSyncV1AMPStrategyController(string memory _name, string memory _symbol)
 		public
 		payable
-		returns (address yieldSyncV1StrategyController_)
+		returns (address yieldSyncV1AMPStrategyController_)
 	{
 		require(msg.value >= fee, "!msg.value");
 
 		yieldSyncStrategyHandlerIdTracker++;
 
-		YieldSyncV1StrategyController yieldSyncV1StrategyController = new YieldSyncV1StrategyController(
+		YieldSyncV1AMPStrategyController yieldSyncV1AMPStrategyController = new YieldSyncV1AMPStrategyController(
 			msg.sender,
 			_name,
 			_symbol
 		);
 
-		return address(yieldSyncV1StrategyController);
+		return address(yieldSyncV1AMPStrategyController);
 	}
 }

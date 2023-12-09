@@ -9,21 +9,21 @@ import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 import {
 	IERC20,
-	IYieldSyncV1Strategy,
-	IYieldSyncV1StrategyController
-} from "./interface/IYieldSyncV1StrategyController.sol";
+	IYieldSyncV1AMPStrategy,
+	IYieldSyncV1AMPStrategyController
+} from "./interface/IYieldSyncV1AMPStrategyController.sol";
 
 
-contract YieldSyncV1StrategyController is
+contract YieldSyncV1AMPStrategyController is
 	ERC20,
-	IYieldSyncV1StrategyController,
+	IYieldSyncV1AMPStrategyController,
 	ReentrancyGuard
 {
 	address public immutable deployer;
 	address[] public utilizedToken;
 	uint256[] public utilizedTokenAllocation;
 
-	IYieldSyncV1Strategy public yieldSyncV1Strategy;
+	IYieldSyncV1AMPStrategy public yieldSyncV1AMPStrategy;
 
 
 	receive ()
@@ -45,7 +45,7 @@ contract YieldSyncV1StrategyController is
 	}
 
 
-	/// @inheritdoc IYieldSyncV1StrategyController
+	/// @inheritdoc IYieldSyncV1AMPStrategyController
 	function eTHValuePosition(address _target)
 		public
 		view
@@ -60,11 +60,11 @@ contract YieldSyncV1StrategyController is
 
 		for (uint256 i = 0; i < utilizedToken.length; i++)
 		{
-			eTHValuePosition_ += uTAPT[i] * yieldSyncV1Strategy.utilizedTokenETHValue(utilizedToken[i]) * balanceOf(_target);
+			eTHValuePosition_ += uTAPT[i] * yieldSyncV1AMPStrategy.utilizedTokenETHValue(utilizedToken[i]) * balanceOf(_target);
 		}
 	}
 
-	/// @inheritdoc IYieldSyncV1StrategyController
+	/// @inheritdoc IYieldSyncV1AMPStrategyController
 	function eTHValueUtilizedTokenAmount(uint256[] memory _utilizedTokenAmount)
 		public
 		view
@@ -77,18 +77,18 @@ contract YieldSyncV1StrategyController is
 
 		for (uint256 i = 0; i < utilizedToken.length; i++)
 		{
-			eTHValueUtilizedTokenAmount_ += yieldSyncV1Strategy.utilizedTokenETHValue(utilizedToken[i]) * _utilizedTokenAmount[i];
+			eTHValueUtilizedTokenAmount_ += yieldSyncV1AMPStrategy.utilizedTokenETHValue(utilizedToken[i]) * _utilizedTokenAmount[i];
 		}
 	}
 
-	/// @inheritdoc IYieldSyncV1StrategyController
+	/// @inheritdoc IYieldSyncV1AMPStrategyController
 	function utilizedTokenAmountPerToken()
 		public
 		view
 		override
 		returns (uint256[] memory utilizedTokenAmount_)
 	{
-		utilizedTokenAmount_ = yieldSyncV1Strategy.utilizedTokenTotalAmount(utilizedToken);
+		utilizedTokenAmount_ = yieldSyncV1AMPStrategy.utilizedTokenTotalAmount(utilizedToken);
 
 		require(utilizedToken.length == utilizedTokenAmount_.length , "utilizedToken.length != utilizedTokenAmount_.length");
 
@@ -98,7 +98,7 @@ contract YieldSyncV1StrategyController is
 		}
 	}
 
-	/// @inheritdoc IYieldSyncV1StrategyController
+	/// @inheritdoc IYieldSyncV1AMPStrategyController
 	function utilizedTokenAmountValid(uint256[] memory _utilizedTokenAmount)
 		public
 		view
@@ -111,7 +111,7 @@ contract YieldSyncV1StrategyController is
 		for (uint256 i = 0; i < utilizedToken.length; i++)
 		{
 			(bool utilizedTokenAmountPercentComputed, uint256 amountRatioActual) = SafeMath.tryDiv(
-				yieldSyncV1Strategy.utilizedTokenETHValue(utilizedToken[i]) * _utilizedTokenAmount[i],
+				yieldSyncV1AMPStrategy.utilizedTokenETHValue(utilizedToken[i]) * _utilizedTokenAmount[i],
 				_eTHValueUtilizedTokenAmount
 			);
 
@@ -127,16 +127,16 @@ contract YieldSyncV1StrategyController is
 	}
 
 
-	/// @inheritdoc IYieldSyncV1StrategyController
+	/// @inheritdoc IYieldSyncV1AMPStrategyController
 	function initializeStrategy(address _strategy, address[] memory _utilizedToken, uint256[] memory _utilizedTokenAllocation)
 		public
 		override
 	{
 		require(msg.sender == deployer, "msg.sender != deployer");
 		require(_strategy != address(0), "!_strategy");
-		require(address(yieldSyncV1Strategy) == address(0), "address(yieldSyncV1Strategy) != address(0)");
+		require(address(yieldSyncV1AMPStrategy) == address(0), "address(yieldSyncV1AMPStrategy) != address(0)");
 
-		yieldSyncV1Strategy = IYieldSyncV1Strategy(_strategy);
+		yieldSyncV1AMPStrategy = IYieldSyncV1AMPStrategy(_strategy);
 
 		utilizedToken = _utilizedToken;
 
@@ -150,7 +150,7 @@ contract YieldSyncV1StrategyController is
 		require(totalAllocations == 100, "totalAllocations != 100");
 	}
 
-	/// @inheritdoc IYieldSyncV1StrategyController
+	/// @inheritdoc IYieldSyncV1AMPStrategyController
 	function utilizedTokenDeposit(uint256[] memory _utilizedTokenAmount)
 		public
 		override
@@ -164,15 +164,15 @@ contract YieldSyncV1StrategyController is
 
 		for (uint256 i = 0; i < utilizedToken.length; i++)
 		{
-			IERC20(utilizedToken[i]).approve(address(yieldSyncV1Strategy), _utilizedTokenAmount[i]);
+			IERC20(utilizedToken[i]).approve(address(yieldSyncV1AMPStrategy), _utilizedTokenAmount[i]);
 		}
 
-		yieldSyncV1Strategy.utilizedTokenDeposit(utilizedToken, _utilizedTokenAmount);
+		yieldSyncV1AMPStrategy.utilizedTokenDeposit(utilizedToken, _utilizedTokenAmount);
 
 		_mint(msg.sender, eTHValuePosition(msg.sender) - valueBefore);
 	}
 
-	/// @inheritdoc IYieldSyncV1StrategyController
+	/// @inheritdoc IYieldSyncV1AMPStrategyController
 	function utilizedTokenWithdraw(uint256 _tokenAmount)
 		public
 		override
@@ -189,7 +189,7 @@ contract YieldSyncV1StrategyController is
 			uTAPT[i] += uTAPT[i] * _tokenAmount;
 		}
 
-		yieldSyncV1Strategy.utilizedTokenWithdraw(msg.sender, utilizedToken, uTAPT);
+		yieldSyncV1AMPStrategy.utilizedTokenWithdraw(msg.sender, utilizedToken, uTAPT);
 
 		_burn(msg.sender, _tokenAmount);
 	}

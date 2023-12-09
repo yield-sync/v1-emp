@@ -2,7 +2,7 @@
 pragma solidity 0.8.18;
 
 
-interface IYieldSyncV1Strategy
+interface IYieldSyncV1AMPStrategy
 {
 	/**
 	* @notice Utilized token value in ETH

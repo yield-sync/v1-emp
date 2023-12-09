@@ -2,8 +2,8 @@
 pragma solidity 0.8.18;
 
 
-import { IYieldSyncV1Strategy } from "../interface/IYieldSyncV1Strategy.sol";
-import { IERC20, SafeERC20 } from "../interface/IYieldSyncV1StrategyController.sol";
+import { IYieldSyncV1AMPStrategy } from "../interface/IYieldSyncV1AMPStrategy.sol";
+import { IERC20, SafeERC20 } from "../interface/IYieldSyncV1AMPStrategyController.sol";
 
 
 using SafeERC20 for IERC20;
@@ -60,7 +60,7 @@ interface IUniswapV2Router
 * @notice This strategy adds liquidity to a uniswap pool
 */
 contract StrategyUniswapV2LiquidityPool is
-	IYieldSyncV1Strategy
+	IYieldSyncV1AMPStrategy
 {
 	address public immutable liquidityPool;
     address public immutable weth;
@@ -100,7 +100,7 @@ contract StrategyUniswapV2LiquidityPool is
 	}
 
 
-	/// @inheritdoc IYieldSyncV1Strategy
+	/// @inheritdoc IYieldSyncV1AMPStrategy
 	function utilizedTokenETHValue(address _token)
 		public
 		view
@@ -126,7 +126,7 @@ contract StrategyUniswapV2LiquidityPool is
 		}
 	}
 
-	/// @inheritdoc IYieldSyncV1Strategy
+	/// @inheritdoc IYieldSyncV1AMPStrategy
 	function utilizedTokenTotalAmount(address[] memory _utilizedToken)
 		public
 		view
@@ -165,7 +165,7 @@ contract StrategyUniswapV2LiquidityPool is
 	}
 
 
-	/// @inheritdoc IYieldSyncV1Strategy
+	/// @inheritdoc IYieldSyncV1AMPStrategy
 	function utilizedTokenDeposit(address[] memory _utilizedToken, uint256[] memory _utilizedTokenAmount)
 		public
 		override
@@ -189,7 +189,7 @@ contract StrategyUniswapV2LiquidityPool is
 		);
 	}
 
-	/// @inheritdoc IYieldSyncV1Strategy
+	/// @inheritdoc IYieldSyncV1AMPStrategy
 	function utilizedTokenWithdraw(address _to, address[] memory _utilizedToken, uint256[] memory _utilizedTokenAmount)
 		public
 		override
