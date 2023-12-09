@@ -11,13 +11,6 @@ import { IYieldSyncV1Strategy } from "./IYieldSyncV1Strategy.sol";
 using SafeERC20 for IERC20;
 
 
-struct Allocation
-{
-	uint256 denominator;
-	uint256 numerator;
-}
-
-
 interface IYieldSyncV1StrategyController is
 	IERC20
 {
@@ -35,7 +28,7 @@ interface IYieldSyncV1StrategyController is
 	/**
 	* @dev [view-address[]]
 	* @notice Utilized Token
-	* @return utilizedToken_ {address[]}
+	* @return {address}
 	*/
 	function utilizedToken(uint256)
 		external
@@ -53,17 +46,6 @@ interface IYieldSyncV1StrategyController is
 		returns (IYieldSyncV1Strategy)
 	;
 
-
-	/**
-	* @dev [view-mapping]
-	* @param _token {address}
-	* @return {Allocation}
-	*/
-	function token_allocation(address _token)
-		external
-		view
-		returns (Allocation memory)
-	;
 
 	/**
 	* @notice Position Value Denominated in ETH
@@ -111,7 +93,7 @@ interface IYieldSyncV1StrategyController is
 	* @dev This can only set the strategy once
 	* @param _strategy {address} Strategy
 	*/
-	function initializeStrategy(address _strategy, address[] memory _utilizedToken, Allocation[] memory _allocation)
+	function initializeStrategy(address _strategy, address[] memory _utilizedToken, uint256[] memory _utilizedTokenAllocation)
 		external
 	;
 

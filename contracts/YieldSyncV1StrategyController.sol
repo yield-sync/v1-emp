@@ -8,7 +8,6 @@ import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 import {
-	Allocation,
 	IERC20,
 	IYieldSyncV1Strategy,
 	IYieldSyncV1StrategyController
@@ -22,8 +21,7 @@ contract YieldSyncV1StrategyController is
 {
 	address public immutable deployer;
 	address[] public utilizedToken;
-
-	mapping (address token => Allocation allocation) internal _token_allocation;
+	uint256[] public utilizedTokenAllocation;
 
 	IYieldSyncV1Strategy public yieldSyncV1Strategy;
 
@@ -48,17 +46,6 @@ contract YieldSyncV1StrategyController is
 
 
 	/// @inheritdoc IYieldSyncV1StrategyController
-	function token_allocation(address _token)
-		external
-		view
-		override
-		returns (Allocation memory)
-	{
-		return _token_allocation[_token];
-	}
-
-
-	/// @inheritdoc IYieldSyncV1StrategyController
 	function eTHValuePosition(address _target)
 		public
 		view
@@ -73,9 +60,7 @@ contract YieldSyncV1StrategyController is
 
 		for (uint256 i = 0; i < utilizedToken.length; i++)
 		{
-			eTHValuePosition_ += uTAPT[i] * yieldSyncV1Strategy.utilizedTokenETHValue(utilizedToken[i]) * balanceOf(
-				_target
-			);
+			eTHValuePosition_ += uTAPT[i] * yieldSyncV1Strategy.utilizedTokenETHValue(utilizedToken[i]) * balanceOf(_target);
 		}
 	}
 
@@ -125,21 +110,14 @@ contract YieldSyncV1StrategyController is
 
 		for (uint256 i = 0; i < utilizedToken.length; i++)
 		{
-			(bool amountPercentTargetComputed, uint256 amountRatioTarget) = SafeMath.tryDiv(
-				_token_allocation[utilizedToken[i]].numerator,
-				_token_allocation[utilizedToken[i]].denominator
-			);
-
-			require(amountPercentTargetComputed, "!amountPercentTargetComputed");
-
-			(bool amountPercentActualComputed, uint256 amountRatioActual) = SafeMath.tryDiv(
+			(bool utilizedTokenAmountPercentComputed, uint256 amountRatioActual) = SafeMath.tryDiv(
 				yieldSyncV1Strategy.utilizedTokenETHValue(utilizedToken[i]) * _utilizedTokenAmount[i],
 				_eTHValueUtilizedTokenAmount
 			);
 
-			require(amountPercentActualComputed, "!amountPercentActualComputed");
+			require(utilizedTokenAmountPercentComputed, "!utilizedTokenAmountPercentComputed");
 
-			if (amountRatioTarget != amountRatioActual)
+			if (utilizedTokenAllocation[i] != amountRatioActual)
 			{
 				utilizedTokenAmountValid_ = false;
 
@@ -150,7 +128,7 @@ contract YieldSyncV1StrategyController is
 
 
 	/// @inheritdoc IYieldSyncV1StrategyController
-	function initializeStrategy(address _strategy, address[] memory _utilizedToken, Allocation[] memory _allocation)
+	function initializeStrategy(address _strategy, address[] memory _utilizedToken, uint256[] memory _utilizedTokenAllocation)
 		public
 		override
 	{
@@ -164,21 +142,12 @@ contract YieldSyncV1StrategyController is
 
 		uint256 totalAllocations = 0;
 
-		for (uint256 i = 0; i < _allocation.length; i++)
+		for (uint256 i = 0; i < _utilizedTokenAllocation.length; i++)
 		{
-			(bool computedPercent, uint256 percent) = SafeMath.tryDiv(_allocation[i].numerator, _allocation[i].denominator);
-
-			require(computedPercent, "!computedPercent");
-
-			totalAllocations += percent;
+			totalAllocations += _utilizedTokenAllocation[i];
 		}
 
 		require(totalAllocations == 100, "totalAllocations != 100");
-
-		for (uint256 i = 0; i < _utilizedToken.length; i++)
-		{
-			_token_allocation[_utilizedToken[i]] = _allocation[i];
-		}
 	}
 
 	/// @inheritdoc IYieldSyncV1StrategyController
