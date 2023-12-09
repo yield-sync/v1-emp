@@ -70,10 +70,10 @@ interface IYieldSyncV1StrategyController is
 	* @notice Utilized Tokens
 	* @return utilizedToken_ {address[]}
 	*/
-	function utilizedToken()
+	function utilizedToken(uint256)
 		external
 		view
-		returns (address[] memory utilizedToken_)
+		returns (address)
 	;
 
 	/**
