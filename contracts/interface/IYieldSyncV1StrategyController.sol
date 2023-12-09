@@ -22,16 +22,26 @@ interface IYieldSyncV1StrategyController is
 	IERC20
 {
 	/**
-	* @dev [view-mapping]
-	* @param _token {address}
-	* @return {Allocation}
+	* @dev [view-address]
+	* @notice Deployer
+	* @return {address}
 	*/
-	function token_allocation(address _token)
+	function deployer()
 		external
 		view
-		returns (Allocation memory)
+		returns (address)
 	;
 
+	/**
+	* @dev [view-address[]]
+	* @notice Utilized Token
+	* @return utilizedToken_ {address[]}
+	*/
+	function utilizedToken(uint256)
+		external
+		view
+		returns (address)
+	;
 
 	/**
 	* @dev [view-IYieldSyncV1Strategy]
@@ -43,6 +53,17 @@ interface IYieldSyncV1StrategyController is
 		returns (IYieldSyncV1Strategy)
 	;
 
+
+	/**
+	* @dev [view-mapping]
+	* @param _token {address}
+	* @return {Allocation}
+	*/
+	function token_allocation(address _token)
+		external
+		view
+		returns (Allocation memory)
+	;
 
 	/**
 	* @notice Position Value Denominated in ETH
@@ -67,16 +88,6 @@ interface IYieldSyncV1StrategyController is
 	;
 
 	/**
-	* @notice Utilized Tokens
-	* @return utilizedToken_ {address[]}
-	*/
-	function utilizedToken(uint256)
-		external
-		view
-		returns (address)
-	;
-
-	/**
 	* @notice Utilized Token Amount Per Token
 	*/
 	function utilizedTokenAmountPerToken()
@@ -96,11 +107,11 @@ interface IYieldSyncV1StrategyController is
 	;
 
 	/**
-	* @notice Sets Strategy
+	* @notice Initialize Strategy
 	* @dev This can only set the strategy once
 	* @param _strategy {address} Strategy
 	*/
-	function setStrategy(address _strategy)
+	function initializeStrategy(address _strategy, address[] memory _utilizedToken, Allocation[] memory _allocation)
 		external
 	;
 

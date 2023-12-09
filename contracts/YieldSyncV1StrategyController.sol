@@ -150,21 +150,15 @@ contract YieldSyncV1StrategyController is
 
 
 	/// @inheritdoc IYieldSyncV1StrategyController
-	function setStrategy(address _strategy)
+	function initializeStrategy(address _strategy, address[] memory _utilizedToken, Allocation[] memory _allocation)
 		public
 		override
 	{
-		require(address(yieldSyncV1Strategy) == address(0), "strategy != address(0)");
 		require(msg.sender == deployer, "msg.sender != deployer");
+		require(_strategy != address(0), "!_strategy");
+		require(address(yieldSyncV1Strategy) == address(0), "address(yieldSyncV1Strategy) != address(0)");
 
 		yieldSyncV1Strategy = IYieldSyncV1Strategy(_strategy);
-	}
-
-	// @inheritdoc IYieldSyncV1StrategyController
-	function setUtilizedTokensAndAllocation(address[] memory _utilizedToken, Allocation[] memory _allocation)
-		public
-	{
-		require(utilizedToken.length == 0, "utilizedToken.length != 0");
 
 		utilizedToken = _utilizedToken;
 
