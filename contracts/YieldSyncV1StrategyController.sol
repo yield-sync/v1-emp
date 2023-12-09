@@ -5,6 +5,7 @@ pragma solidity 0.8.18;
 
 import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 import {
 	Allocation,
@@ -78,6 +79,23 @@ contract YieldSyncV1StrategyController is
 		}
 	}
 
+	/// @inheritdoc IYieldSyncV1StrategyController
+	function eTHValueUtilizedTokenAmount(uint256[] memory _utilizedTokenAmount)
+		public
+		view
+		override
+		returns (uint256 eTHValueUtilizedTokenAmount_)
+	{
+		require(_utilizedToken.length == _utilizedTokenAmount.length, "_utilizedToken.length != _utilizedTokenAmount.length");
+
+		eTHValueUtilizedTokenAmount_ = 0;
+
+		for (uint256 i = 0; i < _utilizedToken.length; i++)
+		{
+			eTHValueUtilizedTokenAmount_ += yieldSyncV1Strategy.utilizedTokenETHValue(_utilizedToken[i]) * _utilizedTokenAmount[i];
+		}
+	}
+
 
 	/// @inheritdoc IYieldSyncV1StrategyController
 	function utilizedToken()
@@ -106,6 +124,41 @@ contract YieldSyncV1StrategyController is
 		}
 	}
 
+	/// @inheritdoc IYieldSyncV1StrategyController
+	function utilizedTokenAmountValid(uint256[] memory _utilizedTokenAmount)
+		public
+		view
+		returns (bool utilizedTokenAmountValid_)
+	{
+		utilizedTokenAmountValid_ = true;
+
+		uint256 _eTHValueUtilizedTokenAmount = eTHValueUtilizedTokenAmount(_utilizedTokenAmount);
+
+		for (uint256 i = 0; i < _utilizedToken.length; i++)
+		{
+			(bool amountRatioTargetComputed, uint256 amountRatioTarget) = SafeMath.tryDiv(
+				_token_allocation[_utilizedToken[i]].numerator,
+				_token_allocation[_utilizedToken[i]].denominator
+			);
+
+			require(amountRatioTargetComputed, "!amountRatioTargetComputed");
+
+			(bool amountRatioActualComputed, uint256 amountRatioActual) = SafeMath.tryDiv(
+				yieldSyncV1Strategy.utilizedTokenETHValue(_utilizedToken[i]) * _utilizedTokenAmount[i],
+				_eTHValueUtilizedTokenAmount
+			);
+
+			require(amountRatioActualComputed, "!amountRatioActualComputed");
+
+			if (amountRatioTarget != amountRatioActual)
+			{
+				utilizedTokenAmountValid_ = false;
+
+				break;
+			}
+		}
+	}
+
 
 	/// @inheritdoc IYieldSyncV1StrategyController
 	function setStrategy(address _strategy)
@@ -125,6 +178,8 @@ contract YieldSyncV1StrategyController is
 		nonReentrant()
 	{
 		require(_utilizedTokenAmount.length == _utilizedToken.length, "_utilizedTokenAmount.length != _utilizedToken.length");
+
+		require(utilizedTokenAmountValid(_utilizedTokenAmount), "!utilizedTokenAmountValid(_utilizedTokenAmount)");
 
 		uint256 valueBefore = eTHValuePosition(msg.sender);
 
@@ -160,4 +215,3 @@ contract YieldSyncV1StrategyController is
 		_burn(msg.sender, _tokenAmount);
 	}
 }
-// TODO the next big thing i have to program out is the utilization of the allocation

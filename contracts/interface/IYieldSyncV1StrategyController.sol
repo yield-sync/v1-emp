@@ -56,6 +56,17 @@ interface IYieldSyncV1StrategyController is
 	;
 
 	/**
+	* ETH value of Utilized Token Amount
+	* @param _utilizedTokenAmount {uint256[]}
+	* @return eTHValueUtilizedTokenAmount_ {uint256[]}
+	*/
+	function eTHValueUtilizedTokenAmount(uint256[] memory _utilizedTokenAmount)
+		external
+		view
+		returns (uint256 eTHValueUtilizedTokenAmount_)
+	;
+
+	/**
 	* @notice Utilized Tokens
 	* @return utilizedToken_ {address[]}
 	*/
@@ -74,6 +85,15 @@ interface IYieldSyncV1StrategyController is
 		returns (uint256[] memory utilizedTokenAmount_)
 	;
 
+	/**
+	* @notice Withdraw Utilized Tokens
+	* @param _utilizedTokenAmount {uint256}
+	* @return utilizedTokenAmountValid_ {bool}
+	*/
+	function utilizedTokenAmountValid(uint256[] memory _utilizedTokenAmount)
+		external
+		returns (bool utilizedTokenAmountValid_)
+	;
 
 	/**
 	* @notice Sets Strategy
