@@ -99,6 +99,24 @@ contract YieldSyncV1AMPStrategyController is
 	}
 
 	/// @inheritdoc IYieldSyncV1AMPStrategyController
+	function utilizedTokenAllocationSet(uint256[] memory _utilizedTokenAllocation)
+		public
+	{
+		require(msg.sender == deployer, "msg.sender != deployer");
+
+		uint256 utilizedTokenAllocationTotal = 0;
+
+		for (uint256 i = 0; i < _utilizedTokenAllocation.length; i++)
+		{
+			utilizedTokenAllocationTotal += _utilizedTokenAllocation[i];
+		}
+
+		require(utilizedTokenAllocationTotal == 100, "utilizedTokenAllocationTotal != 100");
+
+		utilizedTokenAllocation = _utilizedTokenAllocation;
+	}
+
+	/// @inheritdoc IYieldSyncV1AMPStrategyController
 	function utilizedTokenAmountValid(uint256[] memory _utilizedTokenAmount)
 		public
 		view
@@ -128,26 +146,19 @@ contract YieldSyncV1AMPStrategyController is
 
 
 	/// @inheritdoc IYieldSyncV1AMPStrategyController
-	function initializeStrategy(address _strategy, address[] memory _utilizedToken, uint256[] memory _utilizedTokenAllocation)
+	function initializeStrategy(address _strategy, address[] memory _utilizedToken)
 		public
 		override
 	{
-		require(msg.sender == deployer, "msg.sender != deployer");
-		require(_strategy != address(0), "!_strategy");
 		require(address(yieldSyncV1AMPStrategy) == address(0), "address(yieldSyncV1AMPStrategy) != address(0)");
+
+		require(msg.sender == deployer, "msg.sender != deployer");
+
+		require(_strategy != address(0), "_strategy == address(0)");
 
 		yieldSyncV1AMPStrategy = IYieldSyncV1AMPStrategy(_strategy);
 
 		utilizedToken = _utilizedToken;
-
-		uint256 totalAllocations = 0;
-
-		for (uint256 i = 0; i < _utilizedTokenAllocation.length; i++)
-		{
-			totalAllocations += _utilizedTokenAllocation[i];
-		}
-
-		require(totalAllocations == 100, "totalAllocations != 100");
 	}
 
 	/// @inheritdoc IYieldSyncV1AMPStrategyController

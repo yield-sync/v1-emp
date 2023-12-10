@@ -80,6 +80,14 @@ interface IYieldSyncV1AMPStrategyController is
 
 	/**
 	* @notice Withdraw Utilized Tokens
+	* @param _utilizedTokenAllocation {uint256[]}
+	*/
+	function utilizedTokenAllocationSet(uint256[] memory _utilizedTokenAllocation)
+		external
+	;
+
+	/**
+	* @notice Withdraw Utilized Tokens
 	* @param _utilizedTokenAmount {uint256}
 	* @return utilizedTokenAmountValid_ {bool}
 	*/
@@ -93,7 +101,7 @@ interface IYieldSyncV1AMPStrategyController is
 	* @dev This can only set the strategy once
 	* @param _strategy {address} Strategy
 	*/
-	function initializeStrategy(address _strategy, address[] memory _utilizedToken, uint256[] memory _utilizedTokenAllocation)
+	function initializeStrategy(address _strategy, address[] memory _utilizedToken)
 		external
 	;
 
