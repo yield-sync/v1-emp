@@ -5,10 +5,10 @@ pragma solidity 0.8.18;
 interface IYieldSyncV1AMPStrategy
 {
 	/**
-	* @notice Utilized token value in ETH
+	* @notice Token value in ETH
 	* @param _token {address}
 	*/
-	function utilizedTokenETHValue(address _token)
+	function tokenETHValue(address _token)
 		external
 		view
 		returns (uint256 tokenETHValue_)
@@ -16,31 +16,31 @@ interface IYieldSyncV1AMPStrategy
 
 	/**
 	* @notice Total amounts locked
-	* @param _utilizedToken {address[]}
+	* @param _token {address[]}
 	*/
-	function utilizedTokenTotalAmount(address[] memory _utilizedToken)
+	function tokenTotalAmount(address[] memory _token)
 		external
 		view
-		returns (uint256[] memory utilizedTokenAmount_)
+		returns (uint256[] memory tokenAmount_)
 	;
 
 
 	/**
-	* @notice Deposit utilized tokens
-	* @param _utilizedToken {address[]}
-	* @param _utilizedTokenAmount {uint256[]}
+	* @notice Deposit tokens
+	* @param _token {address[]}
+	* @param _tokenAmount {uint256[]}
 	*/
-	function utilizedTokenDeposit(address[] memory _utilizedToken, uint256[] memory _utilizedTokenAmount)
+	function tokenDeposit(address[] memory _token, uint256[] memory _tokenAmount)
 		external
 	;
 
 	/**
-	* @notice Withdraw utilized tokens
+	* @notice Withdraw tokens
 	* @param _to {address}
-	* @param _utilizedToken {address[]}
-	* @param _utilizedTokenAmount {uint256[]}
+	* @param _token {address[]}
+	* @param _tokenAmount {uint256[]}
 	*/
-	function utilizedTokenWithdraw(address _to, address[] memory _utilizedToken, uint256[] memory _utilizedTokenAmount)
+	function tokenWithdraw(address _to, address[] memory _token, uint256[] memory _tokenAmount)
 		external
 	;
 }
