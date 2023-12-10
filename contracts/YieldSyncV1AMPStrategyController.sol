@@ -189,7 +189,7 @@ contract YieldSyncV1AMPStrategyController is
 	{
 		require(balanceOf(msg.sender) >= _tokenAmount, "!_tokenAmount");
 
-		uint256[] memory uTAPB = utilizedERC20AmountPerToken();
+		uint256[] memory uTAPB = utilizedERC20AmountPerBurn();
 
 		require(uTAPB.length == utilizedERC20.length, "uTAPB.length != utilizedERC20.length");
 
