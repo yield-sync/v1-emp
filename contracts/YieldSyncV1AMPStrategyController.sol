@@ -19,7 +19,7 @@ contract YieldSyncV1AMPStrategyController is
 	IYieldSyncV1AMPStrategyController,
 	ReentrancyGuard
 {
-	address public immutable deployer;
+	address public immutable manager;
 	address[] public utilizedToken;
 	uint256[] public utilizedTokenAllocation;
 
@@ -38,10 +38,10 @@ contract YieldSyncV1AMPStrategyController is
 	{}
 
 
-	constructor (address _deployer, string memory _name, string memory _symbol)
+	constructor (address _manager, string memory _name, string memory _symbol)
 		ERC20(_name, _symbol)
 	{
-		deployer = _deployer;
+		manager = _manager;
 	}
 
 
@@ -102,7 +102,7 @@ contract YieldSyncV1AMPStrategyController is
 	function utilizedTokenAllocationSet(uint256[] memory _utilizedTokenAllocation)
 		public
 	{
-		require(msg.sender == deployer, "msg.sender != deployer");
+		require(msg.sender == manager, "msg.sender != manager");
 
 		uint256 utilizedTokenAllocationTotal = 0;
 
@@ -152,7 +152,7 @@ contract YieldSyncV1AMPStrategyController is
 	{
 		require(address(yieldSyncV1AMPStrategy) == address(0), "address(yieldSyncV1AMPStrategy) != address(0)");
 
-		require(msg.sender == deployer, "msg.sender != deployer");
+		require(msg.sender == manager, "msg.sender != manager");
 
 		require(_strategy != address(0), "_strategy == address(0)");
 

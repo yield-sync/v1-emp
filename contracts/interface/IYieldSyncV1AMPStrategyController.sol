@@ -16,10 +16,10 @@ interface IYieldSyncV1AMPStrategyController is
 {
 	/**
 	* @dev [view-address]
-	* @notice Deployer
+	* @notice Manager
 	* @return {address}
 	*/
-	function deployer()
+	function manager()
 		external
 		view
 		returns (address)
@@ -27,7 +27,7 @@ interface IYieldSyncV1AMPStrategyController is
 
 	/**
 	* @dev [view-address[]]
-	* @notice Utilized Token
+	* @notice Utilized tokens
 	* @return {address}
 	*/
 	function utilizedToken(uint256)
@@ -38,7 +38,8 @@ interface IYieldSyncV1AMPStrategyController is
 
 	/**
 	* @dev [view-IYieldSyncV1AMPStrategy]
-	* @return {address}
+	* @notice Implemented IYieldSyncV1AMPStrategy
+	* @return {IYieldSyncV1AMPStrategy}
 	*/
 	function yieldSyncV1AMPStrategy()
 		external
@@ -48,7 +49,7 @@ interface IYieldSyncV1AMPStrategyController is
 
 
 	/**
-	* @notice Position Value Denominated in ETH
+	* @notice Eth value of position
 	* @param target {address}
 	* @return eTHValuePosition_ {uint256}
 	*/
@@ -59,7 +60,7 @@ interface IYieldSyncV1AMPStrategyController is
 	;
 
 	/**
-	* ETH value of Utilized Token Amount
+	* @notice ETH value of Utilized token amount
 	* @param _utilizedTokenAmount {uint256[]}
 	* @return eTHValueUtilizedTokenAmount_ {uint256[]}
 	*/
@@ -70,7 +71,8 @@ interface IYieldSyncV1AMPStrategyController is
 	;
 
 	/**
-	* @notice Utilized Token Amount Per Token
+	* @notice Utilized token amounts returned per token
+	* @return utilizedTokenAmount_ {uint256[]}
 	*/
 	function utilizedTokenAmountPerToken()
 		external
@@ -79,7 +81,7 @@ interface IYieldSyncV1AMPStrategyController is
 	;
 
 	/**
-	* @notice Withdraw Utilized Tokens
+	* @notice Set allocation for utilized tokens
 	* @param _utilizedTokenAllocation {uint256[]}
 	*/
 	function utilizedTokenAllocationSet(uint256[] memory _utilizedTokenAllocation)
@@ -87,7 +89,7 @@ interface IYieldSyncV1AMPStrategyController is
 	;
 
 	/**
-	* @notice Withdraw Utilized Tokens
+	* @notice Valid utilized token amounts
 	* @param _utilizedTokenAmount {uint256}
 	* @return utilizedTokenAmountValid_ {bool}
 	*/
@@ -97,8 +99,8 @@ interface IYieldSyncV1AMPStrategyController is
 	;
 
 	/**
-	* @notice Initialize Strategy
-	* @dev This can only set the strategy once
+	* @dev [called-once]
+	* @notice Initialize strategy
 	* @param _strategy {address} Strategy
 	*/
 	function initializeStrategy(address _strategy, address[] memory _utilizedToken)
@@ -106,15 +108,15 @@ interface IYieldSyncV1AMPStrategyController is
 	;
 
 	/**
-	* @notice Deposit Utilized Tokens
-	* @param _utilizedTokenAmount {uint256[]} Amount to be deposited
+	* @notice Deposit utilized tokens
+	* @param _utilizedTokenAmount {uint256[]}
 	*/
 	function utilizedTokenDeposit(uint256[] memory _utilizedTokenAmount)
 		external
 	;
 
 	/**
-	* @notice Withdraw Utilized Tokens
+	* @notice Withdraw utilized tokens
 	* @param _tokenAmount {uint256}
 	*/
 	function utilizedTokenWithdraw(uint256 _tokenAmount)

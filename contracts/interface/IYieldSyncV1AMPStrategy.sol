@@ -15,7 +15,7 @@ interface IYieldSyncV1AMPStrategy
 	;
 
 	/**
-	* @notice Return total amounts locked
+	* @notice Total amounts locked
 	* @param _utilizedToken {address[]}
 	*/
 	function utilizedTokenTotalAmount(address[] memory _utilizedToken)
@@ -26,7 +26,7 @@ interface IYieldSyncV1AMPStrategy
 
 
 	/**
-	* @notice Deposit Utilized Tokens
+	* @notice Deposit utilized tokens
 	* @param _utilizedToken {address[]}
 	* @param _utilizedTokenAmount {uint256[]}
 	*/
@@ -35,7 +35,7 @@ interface IYieldSyncV1AMPStrategy
 	;
 
 	/**
-	* @notice Withdraw Utilized Tokens
+	* @notice Withdraw utilized tokens
 	* @param _to {address}
 	* @param _utilizedToken {address[]}
 	* @param _utilizedTokenAmount {uint256[]}
