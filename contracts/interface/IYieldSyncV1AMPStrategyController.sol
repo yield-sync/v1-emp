@@ -2,8 +2,8 @@
 pragma solidity 0.8.18;
 
 
-import { IERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import { IERC20 } from "@openzeppelin/contracts/ERC20/ERC20/ERC20.sol";
+import { SafeERC20 } from "@openzeppelin/contracts/ERC20/ERC20/utils/SafeERC20.sol";
 
 import { IYieldSyncV1AMPStrategy } from "./IYieldSyncV1AMPStrategy.sol";
 
@@ -27,10 +27,10 @@ interface IYieldSyncV1AMPStrategyController is
 
 	/**
 	* @dev [view-address[]]
-	* @notice Utilized tokens
+	* @notice Utilized ERC20s
 	* @return {address}
 	*/
-	function utilizedToken(uint256)
+	function utilizedERC20(uint256)
 		external
 		view
 		returns (address)
@@ -60,42 +60,42 @@ interface IYieldSyncV1AMPStrategyController is
 	;
 
 	/**
-	* @notice ETH value of Utilized token amount
-	* @param _utilizedTokenAmount {uint256[]}
-	* @return eTHValueUtilizedTokenAmount_ {uint256[]}
+	* @notice ETH value of Utilized ERC20 amount
+	* @param _utilizedERC20Amount {uint256[]}
+	* @return eTHValueUtilizedERC20Amount_ {uint256[]}
 	*/
-	function eTHValueUtilizedTokenAmount(uint256[] memory _utilizedTokenAmount)
+	function eTHValueUtilizedERC20Amount(uint256[] memory _utilizedERC20Amount)
 		external
 		view
-		returns (uint256 eTHValueUtilizedTokenAmount_)
+		returns (uint256 eTHValueUtilizedERC20Amount_)
 	;
 
 	/**
-	* @notice Utilized token amounts returned per token
-	* @return utilizedTokenAmount_ {uint256[]}
+	* @notice Utilized ERC20 amounts returned per ERC20
+	* @return utilizedERC20Amount_ {uint256[]}
 	*/
-	function utilizedTokenAmountPerToken()
+	function utilizedERC20AmountPerBurn()
 		external
 		view
-		returns (uint256[] memory utilizedTokenAmount_)
+		returns (uint256[] memory utilizedERC20Amount_)
 	;
 
 	/**
-	* @notice Set allocation for utilized tokens
-	* @param _utilizedTokenAllocation {uint256[]}
+	* @notice Set allocation for utilized ERC20s
+	* @param _utilizedERC20Allocation {uint256[]}
 	*/
-	function utilizedTokenAllocationSet(uint256[] memory _utilizedTokenAllocation)
+	function utilizedERC20AllocationSet(uint256[] memory _utilizedERC20Allocation)
 		external
 	;
 
 	/**
-	* @notice Valid utilized token amounts
-	* @param _utilizedTokenAmount {uint256}
-	* @return utilizedTokenAmountValid_ {bool}
+	* @notice Valid utilized ERC20 amounts
+	* @param _utilizedERC20Amount {uint256}
+	* @return utilizedERC20AmountValid_ {bool}
 	*/
-	function utilizedTokenAmountValid(uint256[] memory _utilizedTokenAmount)
+	function utilizedERC20AmountValid(uint256[] memory _utilizedERC20Amount)
 		external
-		returns (bool utilizedTokenAmountValid_)
+		returns (bool utilizedERC20AmountValid_)
 	;
 
 	/**
@@ -103,23 +103,23 @@ interface IYieldSyncV1AMPStrategyController is
 	* @notice Initialize strategy
 	* @param _strategy {address} Strategy
 	*/
-	function initializeStrategy(address _strategy, address[] memory _utilizedToken)
+	function initializeStrategy(address _strategy, address[] memory _utilizedERC20)
 		external
 	;
 
 	/**
-	* @notice Deposit utilized tokens
-	* @param _utilizedTokenAmount {uint256[]}
+	* @notice Deposit utilized ERC20s
+	* @param _utilizedERC20Amount {uint256[]}
 	*/
-	function utilizedTokenDeposit(uint256[] memory _utilizedTokenAmount)
+	function utilizedERC20Deposit(uint256[] memory _utilizedERC20Amount)
 		external
 	;
 
 	/**
-	* @notice Withdraw utilized tokens
-	* @param _tokenAmount {uint256}
+	* @notice Withdraw utilized ERC20s
+	* @param _ERC20Amount {uint256}
 	*/
-	function utilizedTokenWithdraw(uint256 _tokenAmount)
+	function utilizedERC20Withdraw(uint256 _ERC20Amount)
 		external
 	;
 }

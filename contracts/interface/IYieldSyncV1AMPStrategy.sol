@@ -5,42 +5,42 @@ pragma solidity 0.8.18;
 interface IYieldSyncV1AMPStrategy
 {
 	/**
-	* @notice Token value in ETH
-	* @param _token {address}
+	* @notice ERC20 value in ETH
+	* @param _eRC20 {address}
 	*/
-	function tokenETHValue(address _token)
+	function eRC20ETHValue(address _eRC20)
 		external
 		view
-		returns (uint256 tokenETHValue_)
+		returns (uint256 eRC20ETHValue_)
 	;
 
 	/**
 	* @notice Total amounts locked
-	* @param _token {address[]}
+	* @param _eRC20 {address[]}
 	*/
-	function tokenTotalAmount(address[] memory _token)
+	function eRC20TotalAmount(address[] memory _eRC20)
 		external
 		view
-		returns (uint256[] memory tokenAmount_)
+		returns (uint256[] memory eRC20Amount_)
 	;
 
 
 	/**
-	* @notice Deposit tokens
-	* @param _token {address[]}
-	* @param _tokenAmount {uint256[]}
+	* @notice Deposit eRC20s
+	* @param _eRC20 {address[]}
+	* @param _eRC20Amount {uint256[]}
 	*/
-	function tokenDeposit(address[] memory _token, uint256[] memory _tokenAmount)
+	function eRC20Deposit(address[] memory _eRC20, uint256[] memory _eRC20Amount)
 		external
 	;
 
 	/**
-	* @notice Withdraw tokens
+	* @notice Withdraw eRC20s
 	* @param _to {address}
-	* @param _token {address[]}
-	* @param _tokenAmount {uint256[]}
+	* @param _eRC20 {address[]}
+	* @param _eRC20Amount {uint256[]}
 	*/
-	function tokenWithdraw(address _to, address[] memory _token, uint256[] memory _tokenAmount)
+	function eRC20Withdraw(address _to, address[] memory _eRC20, uint256[] memory _eRC20Amount)
 		external
 	;
 }

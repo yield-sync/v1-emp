@@ -101,11 +101,11 @@ contract StrategyUniswapV2LiquidityPool is
 
 
 	/// @inheritdoc IYieldSyncV1AMPStrategy
-	function utilizedTokenETHValue(address _token)
+	function eRC20ETHValue(address _eRC20)
 		public
 		view
 		override
-		returns (uint256 tokenETHValue_)
+		returns (uint256 eRC20ETHValue_)
 	{
 		(uint112 reserve0, uint112 reserve1, ) = uniswapV2Pair.getReserves();
 
@@ -115,8 +115,8 @@ contract StrategyUniswapV2LiquidityPool is
 			return 0;
 		}
 
-		// Return token price in terms of weth
-		if (_token < weth)
+		// Return eRC20 price in terms of weth
+		if (_eRC20 < weth)
 		{
 			return uint256(reserve1) * 1e18 / reserve0;
 		}
@@ -127,13 +127,13 @@ contract StrategyUniswapV2LiquidityPool is
 	}
 
 	/// @inheritdoc IYieldSyncV1AMPStrategy
-	function utilizedTokenTotalAmount(address[] memory _utilizedToken)
+	function eRC20TotalAmount(address[] memory _eRC20)
 		public
 		view
 		override
-		returns (uint256[] memory utilizedTokenAmount_)
+		returns (uint256[] memory eRC20okenAmount_)
 	{
-		uint256[] memory returnAmounts = new uint256[](_utilizedToken.length);
+		uint256[] memory returnAmounts = new uint256[](_eRC20.length);
 
 		uint256 liquidityPoolBalance = IERC20(address(uniswapV2Pair)).balanceOf(address(this));
 
@@ -143,12 +143,12 @@ contract StrategyUniswapV2LiquidityPool is
 
 			uint256 totalSupply = uniswapV2Pair.totalSupply();
 
-			// Calculate each token's share based on LP token balance
-			uint256 token0Amount = (uint256(reserve0) * liquidityPoolBalance) / totalSupply;
-			uint256 token1Amount = (uint256(reserve1) * liquidityPoolBalance) / totalSupply;
+			// Calculate each eRC20's share based on LP eRC20 balance
+			uint256 eRC20AAmount = (uint256(reserve0) * liquidityPoolBalance) / totalSupply;
+			uint256 eRC20BAmount = (uint256(reserve1) * liquidityPoolBalance) / totalSupply;
 
-			returnAmounts[0] = token0Amount;
-			returnAmounts[1] = token1Amount;
+			returnAmounts[0] = eRC20AAmount;
+			returnAmounts[1] = eRC20BAmount;
 		}
 		else
 		{
@@ -156,9 +156,9 @@ contract StrategyUniswapV2LiquidityPool is
 			returnAmounts[1] = 0;
 		}
 
-		for (uint256 i = 0; i < _utilizedToken.length; i++)
+		for (uint256 i = 0; i < _eRC20.length; i++)
 		{
-			returnAmounts[i] += IERC20(_utilizedToken[i]).balanceOf(address(this));
+			returnAmounts[i] += IERC20(_eRC20[i]).balanceOf(address(this));
 		}
 
 		return returnAmounts;
@@ -166,31 +166,31 @@ contract StrategyUniswapV2LiquidityPool is
 
 
 	/// @inheritdoc IYieldSyncV1AMPStrategy
-	function utilizedTokenDeposit(address[] memory _utilizedToken, uint256[] memory _utilizedTokenAmount)
+	function eRC20Deposit(address[] memory _eRC20, uint256[] memory _eRC20Amount)
 		public
 		override
 		onlyStrategyController()
 	{
-		IERC20(_utilizedToken[0]).safeTransferFrom(msg.sender, address(this), _utilizedTokenAmount[0]);
-		IERC20(_utilizedToken[1]).safeTransferFrom(msg.sender, address(this), _utilizedTokenAmount[1]);
+		IERC20(_eRC20[0]).safeTransferFrom(msg.sender, address(this), _eRC20Amount[0]);
+		IERC20(_eRC20[1]).safeTransferFrom(msg.sender, address(this), _eRC20Amount[1]);
 
-		IERC20(_utilizedToken[0]).safeApprove(address(uniswapV2Router), _utilizedTokenAmount[0]);
-		IERC20(_utilizedToken[1]).safeApprove(address(uniswapV2Router), _utilizedTokenAmount[1]);
+		IERC20(_eRC20[0]).safeApprove(address(uniswapV2Router), _eRC20Amount[0]);
+		IERC20(_eRC20[1]).safeApprove(address(uniswapV2Router), _eRC20Amount[1]);
 
 		uniswapV2Router.addLiquidity(
-			_utilizedToken[0],
-			_utilizedToken[1],
-			_utilizedTokenAmount[0],
-			_utilizedTokenAmount[1],
-			_utilizedTokenAmount[0] * (10000 - slippageTolerance) / 10000,
-			_utilizedTokenAmount[1] * (10000 - slippageTolerance) / 10000,
+			_eRC20[0],
+			_eRC20[1],
+			_eRC20Amount[0],
+			_eRC20Amount[1],
+			_eRC20Amount[0] * (10000 - slippageTolerance) / 10000,
+			_eRC20Amount[1] * (10000 - slippageTolerance) / 10000,
 			address(this),
 			block.timestamp
 		);
 	}
 
 	/// @inheritdoc IYieldSyncV1AMPStrategy
-	function utilizedTokenWithdraw(address _to, address[] memory _utilizedToken, uint256[] memory _utilizedTokenAmount)
+	function eRC20Withdraw(address _to, address[] memory _eRC20, uint256[] memory _eRC20Amount)
 		public
 		override
 		onlyStrategyController()
@@ -198,24 +198,24 @@ contract StrategyUniswapV2LiquidityPool is
 		// Retrieve the current reserves to estimate the withdrawn amounts
 		(uint256 reserveA, uint256 reserveB, ) = uniswapV2Pair.getReserves();
 
-		// [calculate] Amount of tokens to be withdrawn given liquidity amount
-		uint256 amountA = _utilizedTokenAmount[0] * reserveA / IERC20(liquidityPool).totalSupply();
-		uint256 amountB = _utilizedTokenAmount[0] * reserveB / IERC20(liquidityPool).totalSupply();
+		// [calculate] Amount of eRC20s to be withdrawn given liquidity amount
+		uint256 amountA = _eRC20Amount[0] * reserveA / IERC20(liquidityPool).totalSupply();
+		uint256 amountB = _eRC20Amount[0] * reserveB / IERC20(liquidityPool).totalSupply();
 
 		// Remove liquidity
 		(uint256 amountRemovedA, uint256 amountRemovedB) = uniswapV2Router.removeLiquidity(
-			_utilizedToken[0],
-			_utilizedToken[1],
-			_utilizedTokenAmount[0],
+			_eRC20[0],
+			_eRC20[1],
+			_eRC20Amount[0],
 			amountA * (10000 - slippageTolerance) / 10000,
 			amountB * (10000 - slippageTolerance) / 10000,
 			address(this),
 			block.timestamp
 		);
 
-		// Transfer the withdrawn tokens to the recipient
-		IERC20(_utilizedToken[0]).safeTransfer(_to, amountRemovedA);
-		IERC20(_utilizedToken[1]).safeTransfer(_to, amountRemovedB);
+		// Transfer the withdrawn eRC20s to the recipient
+		IERC20(_eRC20[0]).safeTransfer(_to, amountRemovedA);
+		IERC20(_eRC20[1]).safeTransfer(_to, amountRemovedB);
 	}
 
 
