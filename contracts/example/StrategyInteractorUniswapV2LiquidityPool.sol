@@ -94,14 +94,14 @@ contract StrategyInteractorUniswapV2LiquidityPool is
 	}
 
 
-	modifier onlyStrategyController()
+	modifier onlyYieldSyncV1AMPStrategy()
 	{
 		require(msg.sender == strategyController, "msg.sender != strategyController");
 
 		_;
 	}
 
-	modifier onlyStrategyControllerManager()
+	modifier onlyYieldSyncV1AMPStrategyManager()
 	{
 		require(true, "");
 
@@ -178,7 +178,7 @@ contract StrategyInteractorUniswapV2LiquidityPool is
 	function eRC20Deposit(address _from, address[] memory _eRC20, uint256[] memory _eRC20Amount)
 		public
 		override
-		onlyStrategyController()
+		onlyYieldSyncV1AMPStrategy()
 	{
 		IERC20(_eRC20[0]).safeTransferFrom(_from, address(this), _eRC20Amount[0]);
 		IERC20(_eRC20[1]).safeTransferFrom(_from, address(this), _eRC20Amount[1]);
@@ -191,7 +191,7 @@ contract StrategyInteractorUniswapV2LiquidityPool is
 	function eRC20Withdraw(address _to, address[] memory _eRC20, uint256[] memory _eRC20Amount)
 		public
 		override
-		onlyStrategyController()
+		onlyYieldSyncV1AMPStrategy()
 	{
 		// Transfer the withdrawn eRC20s to the recipient
 		IERC20(_eRC20[0]).safeTransfer(_to, _eRC20Amount[0]);
@@ -215,7 +215,7 @@ contract StrategyInteractorUniswapV2LiquidityPool is
 
 	function injectIntoPool(address[] memory _eRC20, uint256[] memory _eRC20Amount)
 		public
-		onlyStrategyControllerManager()
+		onlyYieldSyncV1AMPStrategyManager()
 	{
 		uniswapV2Router.addLiquidity(
 			_eRC20[0],
@@ -231,7 +231,7 @@ contract StrategyInteractorUniswapV2LiquidityPool is
 
 	function extractFromPool(address[] memory _eRC20, uint256[] memory _eRC20Amount)
 		public
-		onlyStrategyControllerManager()
+		onlyYieldSyncV1AMPStrategyManager()
 	{
 		// Retrieve the current reserves to estimate the withdrawn amounts
 		(uint256 reserveA, uint256 reserveB, ) = uniswapV2Pair.getReserves();
