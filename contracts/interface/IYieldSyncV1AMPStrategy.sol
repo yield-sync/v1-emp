@@ -35,10 +35,11 @@ interface IYieldSyncV1AMPStrategy
 
 	/**
 	* @notice Deposit ERC20s
+	* @param _from {address}
 	* @param _eRC20 {address[]}
 	* @param _eRC20Amount {uint256[]}
 	*/
-	function eRC20Deposit(address[] memory _eRC20, uint256[] memory _eRC20Amount)
+	function eRC20Deposit(address _from, address[] memory _eRC20, uint256[] memory _eRC20Amount)
 		external
 	;
 

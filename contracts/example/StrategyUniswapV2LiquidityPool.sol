@@ -101,6 +101,13 @@ contract StrategyUniswapV2LiquidityPool is
 		_;
 	}
 
+	modifier onlyStrategyControllerManager()
+	{
+		require(true, "");
+
+		_;
+	}
+
 
 	/// @inheritdoc IYieldSyncV1AMPStrategy
 	function eRC20ETHValue(address _eRC20)
@@ -168,17 +175,48 @@ contract StrategyUniswapV2LiquidityPool is
 
 
 	/// @inheritdoc IYieldSyncV1AMPStrategy
-	function eRC20Deposit(address[] memory _eRC20, uint256[] memory _eRC20Amount)
+	function eRC20Deposit(address _from, address[] memory _eRC20, uint256[] memory _eRC20Amount)
 		public
 		override
 		onlyStrategyController()
 	{
-		IERC20(_eRC20[0]).safeTransferFrom(msg.sender, address(this), _eRC20Amount[0]);
-		IERC20(_eRC20[1]).safeTransferFrom(msg.sender, address(this), _eRC20Amount[1]);
+		IERC20(_eRC20[0]).safeTransferFrom(_from, address(this), _eRC20Amount[0]);
+		IERC20(_eRC20[1]).safeTransferFrom(_from, address(this), _eRC20Amount[1]);
 
 		IERC20(_eRC20[0]).safeApprove(address(uniswapV2Router), _eRC20Amount[0]);
 		IERC20(_eRC20[1]).safeApprove(address(uniswapV2Router), _eRC20Amount[1]);
+	}
 
+	/// @inheritdoc IYieldSyncV1AMPStrategy
+	function eRC20Withdraw(address _to, address[] memory _eRC20, uint256[] memory _eRC20Amount)
+		public
+		override
+		onlyStrategyController()
+	{
+		// Transfer the withdrawn eRC20s to the recipient
+		IERC20(_eRC20[0]).safeTransfer(_to, _eRC20Amount[0]);
+		IERC20(_eRC20[1]).safeTransfer(_to, _eRC20Amount[1]);
+	}
+
+
+	/////////////////////////////////////////////
+	/// NON-YIELD-SYNC-V1-AMP IMPLEMENTATIONS ///
+	/////////////////////////////////////////////
+
+
+	function slippageToleranceUpdate(uint256 _slippageTolerance)
+		public
+	{
+		require(msg.sender == manager, "!manager");
+
+		// Add access control if necessary
+		slippageTolerance = _slippageTolerance;
+	}
+
+	function injectIntoPool(address[] memory _eRC20, uint256[] memory _eRC20Amount)
+		public
+		onlyStrategyControllerManager()
+	{
 		uniswapV2Router.addLiquidity(
 			_eRC20[0],
 			_eRC20[1],
@@ -191,11 +229,9 @@ contract StrategyUniswapV2LiquidityPool is
 		);
 	}
 
-	/// @inheritdoc IYieldSyncV1AMPStrategy
-	function eRC20Withdraw(address _to, address[] memory _eRC20, uint256[] memory _eRC20Amount)
+	function extractFromPool(address[] memory _eRC20, uint256[] memory _eRC20Amount)
 		public
-		override
-		onlyStrategyController()
+		onlyStrategyControllerManager()
 	{
 		// Retrieve the current reserves to estimate the withdrawn amounts
 		(uint256 reserveA, uint256 reserveB, ) = uniswapV2Pair.getReserves();
@@ -205,7 +241,7 @@ contract StrategyUniswapV2LiquidityPool is
 		uint256 amountB = _eRC20Amount[0] * reserveB / IERC20(liquidityPool).totalSupply();
 
 		// Remove liquidity
-		(uint256 amountRemovedA, uint256 amountRemovedB) = uniswapV2Router.removeLiquidity(
+		uniswapV2Router.removeLiquidity(
 			_eRC20[0],
 			_eRC20[1],
 			_eRC20Amount[0],
@@ -214,19 +250,5 @@ contract StrategyUniswapV2LiquidityPool is
 			address(this),
 			block.timestamp
 		);
-
-		// Transfer the withdrawn eRC20s to the recipient
-		IERC20(_eRC20[0]).safeTransfer(_to, amountRemovedA);
-		IERC20(_eRC20[1]).safeTransfer(_to, amountRemovedB);
-	}
-
-
-	function slippageToleranceUpdate(uint256 _slippageTolerance)
-		public
-	{
-		require(msg.sender == manager, "!manager");
-
-		// Add access control if necessary
-		slippageTolerance = _slippageTolerance;
 	}
 }
