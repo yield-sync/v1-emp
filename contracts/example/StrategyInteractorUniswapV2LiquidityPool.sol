@@ -2,7 +2,7 @@
 pragma solidity 0.8.18;
 
 
-import { IYieldSyncV1AMPStrategy } from "../interface/IYieldSyncV1AMPStrategy.sol";
+import { IYieldSyncV1AMPStrategyInteractor } from "../interface/IYieldSyncV1AMPStrategyInteractor.sol";
 import { IERC20, SafeERC20 } from "../interface/IYieldSyncV1AMPStrategy.sol";
 
 
@@ -59,8 +59,8 @@ interface IUniswapV2Router
 /**
 * @notice This strategy adds liquidity to a uniswap pool
 */
-contract StrategyUniswapV2LiquidityPool is
-	IYieldSyncV1AMPStrategy
+contract StrategyInteractorUniswapV2LiquidityPool is
+	IYieldSyncV1AMPStrategyInteractor
 {
 	address public immutable liquidityPool;
     address public immutable weth;
@@ -109,7 +109,7 @@ contract StrategyUniswapV2LiquidityPool is
 	}
 
 
-	/// @inheritdoc IYieldSyncV1AMPStrategy
+	/// @inheritdoc IYieldSyncV1AMPStrategyInteractor
 	function eRC20ETHValue(address _eRC20)
 		public
 		view
@@ -135,7 +135,7 @@ contract StrategyUniswapV2LiquidityPool is
 		}
 	}
 
-	/// @inheritdoc IYieldSyncV1AMPStrategy
+	/// @inheritdoc IYieldSyncV1AMPStrategyInteractor
 	function eRC20TotalAmount(address[] memory _eRC20)
 		public
 		view
@@ -174,7 +174,7 @@ contract StrategyUniswapV2LiquidityPool is
 	}
 
 
-	/// @inheritdoc IYieldSyncV1AMPStrategy
+	/// @inheritdoc IYieldSyncV1AMPStrategyInteractor
 	function eRC20Deposit(address _from, address[] memory _eRC20, uint256[] memory _eRC20Amount)
 		public
 		override
@@ -187,7 +187,7 @@ contract StrategyUniswapV2LiquidityPool is
 		IERC20(_eRC20[1]).safeApprove(address(uniswapV2Router), _eRC20Amount[1]);
 	}
 
-	/// @inheritdoc IYieldSyncV1AMPStrategy
+	/// @inheritdoc IYieldSyncV1AMPStrategyInteractor
 	function eRC20Withdraw(address _to, address[] memory _eRC20, uint256[] memory _eRC20Amount)
 		public
 		override
