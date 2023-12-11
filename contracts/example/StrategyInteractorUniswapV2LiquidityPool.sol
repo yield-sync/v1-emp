@@ -3,7 +3,7 @@ pragma solidity 0.8.18;
 
 
 import { IYieldSyncV1AMPStrategy } from "../interface/IYieldSyncV1AMPStrategy.sol";
-import { IERC20, SafeERC20 } from "../interface/IYieldSyncV1AMPStrategyController.sol";
+import { IERC20, SafeERC20 } from "../interface/IYieldSyncV1AMPStrategy.sol";
 
 
 using SafeERC20 for IERC20;

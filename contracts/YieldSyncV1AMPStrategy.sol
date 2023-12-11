@@ -9,21 +9,22 @@ import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 import {
 	IERC20,
-	IYieldSyncV1AMPStrategy,
-	IYieldSyncV1AMPStrategyController
-} from "./interface/IYieldSyncV1AMPStrategyController.sol";
+	IYieldSyncV1AMPStrategyInteractor,
+	IYieldSyncV1AMPStrategy
+} from "./interface/IYieldSyncV1AMPStrategy.sol";
 
 
-contract YieldSyncV1AMPStrategyController is
+contract YieldSyncV1AMPStrategy is
 	ERC20,
-	IYieldSyncV1AMPStrategyController,
+	IYieldSyncV1AMPStrategy,
 	ReentrancyGuard
 {
 	address public immutable manager;
 	address[] public utilizedERC20;
+
 	uint256[] public utilizedERC20Allocation;
 
-	IYieldSyncV1AMPStrategy public yieldSyncV1AMPStrategy;
+	IYieldSyncV1AMPStrategyInteractor public yieldSyncV1AMPStrategyInteractor;
 
 
 	receive ()
@@ -45,7 +46,7 @@ contract YieldSyncV1AMPStrategyController is
 	}
 
 
-	/// @inheritdoc IYieldSyncV1AMPStrategyController
+	/// @inheritdoc IYieldSyncV1AMPStrategy
 	function eTHValuePosition(address _target)
 		public
 		view
@@ -58,11 +59,11 @@ contract YieldSyncV1AMPStrategyController is
 
 		for (uint256 i = 0; i < utilizedERC20.length; i++)
 		{
-			eTHValuePosition_ += uTAPB[i] * yieldSyncV1AMPStrategy.eRC20ETHValue(utilizedERC20[i]) * balanceOf(_target);
+			eTHValuePosition_ += uTAPB[i] * yieldSyncV1AMPStrategyInteractor.eRC20ETHValue(utilizedERC20[i]) * balanceOf(_target);
 		}
 	}
 
-	/// @inheritdoc IYieldSyncV1AMPStrategyController
+	/// @inheritdoc IYieldSyncV1AMPStrategy
 	function eTHValueUtilizedERC20Amount(uint256[] memory _utilizedERC20Amount)
 		public
 		view
@@ -75,18 +76,20 @@ contract YieldSyncV1AMPStrategyController is
 
 		for (uint256 i = 0; i < utilizedERC20.length; i++)
 		{
-			eTHValueUtilizedERC20Amount_ += yieldSyncV1AMPStrategy.eRC20ETHValue(utilizedERC20[i]) * _utilizedERC20Amount[i];
+			eTHValueUtilizedERC20Amount_ += _utilizedERC20Amount[i] * yieldSyncV1AMPStrategyInteractor.eRC20ETHValue(
+				utilizedERC20[i]
+			);
 		}
 	}
 
-	/// @inheritdoc IYieldSyncV1AMPStrategyController
+	/// @inheritdoc IYieldSyncV1AMPStrategy
 	function utilizedERC20AmountPerBurn()
 		public
 		view
 		override
 		returns (uint256[] memory utilizedERC20Amount_)
 	{
-		utilizedERC20Amount_ = yieldSyncV1AMPStrategy.eRC20TotalAmount(utilizedERC20);
+		utilizedERC20Amount_ = yieldSyncV1AMPStrategyInteractor.eRC20TotalAmount(utilizedERC20);
 
 		require(utilizedERC20.length == utilizedERC20Amount_.length , "utilizedERC20.length != utilizedERC20Amount_.length");
 
@@ -96,7 +99,7 @@ contract YieldSyncV1AMPStrategyController is
 		}
 	}
 
-	/// @inheritdoc IYieldSyncV1AMPStrategyController
+	/// @inheritdoc IYieldSyncV1AMPStrategy
 	function utilizedERC20AllocationSet(uint256[] memory _utilizedERC20Allocation)
 		public
 	{
@@ -114,7 +117,7 @@ contract YieldSyncV1AMPStrategyController is
 		utilizedERC20Allocation = _utilizedERC20Allocation;
 	}
 
-	/// @inheritdoc IYieldSyncV1AMPStrategyController
+	/// @inheritdoc IYieldSyncV1AMPStrategy
 	function utilizedERC20AmountValid(uint256[] memory _utilizedERC20Amount)
 		public
 		view
@@ -127,7 +130,7 @@ contract YieldSyncV1AMPStrategyController is
 		for (uint256 i = 0; i < utilizedERC20.length; i++)
 		{
 			(bool utilizedERC20AmountPercentComputed, uint256 amountRatioActual) = SafeMath.tryDiv(
-				_utilizedERC20Amount[i] * yieldSyncV1AMPStrategy.eRC20ETHValue(utilizedERC20[i]),
+				_utilizedERC20Amount[i] * yieldSyncV1AMPStrategyInteractor.eRC20ETHValue(utilizedERC20[i]),
 				_eTHValueUtilizedERC20Amount
 			);
 
@@ -143,23 +146,26 @@ contract YieldSyncV1AMPStrategyController is
 	}
 
 
-	/// @inheritdoc IYieldSyncV1AMPStrategyController
+	/// @inheritdoc IYieldSyncV1AMPStrategy
 	function initializeStrategy(address _strategy, address[] memory _utilizedERC20)
 		public
 		override
 	{
-		require(address(yieldSyncV1AMPStrategy) == address(0), "address(yieldSyncV1AMPStrategy) != address(0)");
+		require(
+			address(yieldSyncV1AMPStrategyInteractor) == address(0),
+			"address(yieldSyncV1AMPStrategyInteractor) != address(0)"
+		);
 
 		require(msg.sender == manager, "msg.sender != manager");
 
 		require(_strategy != address(0), "_strategy == address(0)");
 
-		yieldSyncV1AMPStrategy = IYieldSyncV1AMPStrategy(_strategy);
+		yieldSyncV1AMPStrategyInteractor = IYieldSyncV1AMPStrategyInteractor(_strategy);
 
 		utilizedERC20 = _utilizedERC20;
 	}
 
-	/// @inheritdoc IYieldSyncV1AMPStrategyController
+	/// @inheritdoc IYieldSyncV1AMPStrategy
 	function utilizedERC20Deposit(uint256[] memory _utilizedERC20Amount)
 		public
 		override
@@ -173,15 +179,15 @@ contract YieldSyncV1AMPStrategyController is
 
 		for (uint256 i = 0; i < utilizedERC20.length; i++)
 		{
-			IERC20(utilizedERC20[i]).approve(address(yieldSyncV1AMPStrategy), _utilizedERC20Amount[i]);
+			IERC20(utilizedERC20[i]).approve(address(yieldSyncV1AMPStrategyInteractor), _utilizedERC20Amount[i]);
 		}
 
-		yieldSyncV1AMPStrategy.eRC20Deposit(msg.sender, utilizedERC20, _utilizedERC20Amount);
+		yieldSyncV1AMPStrategyInteractor.eRC20Deposit(msg.sender, utilizedERC20, _utilizedERC20Amount);
 
 		_mint(msg.sender, eTHValuePosition(msg.sender) - valueBefore);
 	}
 
-	/// @inheritdoc IYieldSyncV1AMPStrategyController
+	/// @inheritdoc IYieldSyncV1AMPStrategy
 	function utilizedERC20Withdraw(uint256 _tokenAmount)
 		public
 		override
@@ -189,7 +195,10 @@ contract YieldSyncV1AMPStrategyController is
 	{
 		require(balanceOf(msg.sender) >= _tokenAmount, "!_tokenAmount");
 
-		require(yieldSyncV1AMPStrategy.eRC20WithdrawalsOpen(), "!yieldSyncV1AMPStrategy.eRC20WithdrawalsOpen()");
+		require(
+			yieldSyncV1AMPStrategyInteractor.eRC20WithdrawalsOpen(),
+			"!yieldSyncV1AMPStrategyInteractor.eRC20WithdrawalsOpen()"
+		);
 
 		uint256[] memory uTAPB = utilizedERC20AmountPerBurn();
 
@@ -200,7 +209,7 @@ contract YieldSyncV1AMPStrategyController is
 			uTAPB[i] += uTAPB[i] * _tokenAmount;
 		}
 
-		yieldSyncV1AMPStrategy.eRC20Withdraw(msg.sender, utilizedERC20, uTAPB);
+		yieldSyncV1AMPStrategyInteractor.eRC20Withdraw(msg.sender, utilizedERC20, uTAPB);
 
 		_burn(msg.sender, _tokenAmount);
 	}

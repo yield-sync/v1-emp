@@ -2,54 +2,124 @@
 pragma solidity 0.8.18;
 
 
-interface IYieldSyncV1AMPStrategy
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+
+import { IYieldSyncV1AMPStrategyInteractor } from "./IYieldSyncV1AMPStrategyInteractor.sol";
+
+
+using SafeERC20 for IERC20;
+
+
+interface IYieldSyncV1AMPStrategy is
+	IERC20
 {
 	/**
-	* @notice ERC20 value in ETH
-	* @param _eRC20 {address}
+	* @dev [view-address]
+	* @notice Manager
+	* @return {address}
 	*/
-	function eRC20ETHValue(address _eRC20)
+	function manager()
 		external
 		view
-		returns (uint256 eRC20ETHValue_)
+		returns (address)
 	;
 
 	/**
-	* @notice Total amounts locked
-	* @param _eRC20 {address[]}
+	* @dev [view-address[]]
+	* @notice Utilized ERC20s
+	* @return {address}
 	*/
-	function eRC20TotalAmount(address[] memory _eRC20)
+	function utilizedERC20(uint256)
 		external
 		view
-		returns (uint256[] memory eRC20Amount_)
+		returns (address)
 	;
 
 	/**
-	* @notice ERC20 Withdrawals open
+	* @dev [view-IYieldSyncV1AMPStrategyInteractor]
+	* @notice Implemented IYieldSyncV1AMPStrategyInteractor
+	* @return {IYieldSyncV1AMPStrategyInteractor}
 	*/
-	function eRC20WithdrawalsOpen()
+	function yieldSyncV1AMPStrategyInteractor()
 		external
-		returns (bool eRC20WithdrawalsOpen_)
+		view
+		returns (IYieldSyncV1AMPStrategyInteractor)
 	;
 
 
 	/**
-	* @notice Deposit ERC20s
-	* @param _from {address}
-	* @param _eRC20 {address[]}
-	* @param _eRC20Amount {uint256[]}
+	* @notice Eth value of position
+	* @param target {address}
+	* @return eTHValuePosition_ {uint256}
 	*/
-	function eRC20Deposit(address _from, address[] memory _eRC20, uint256[] memory _eRC20Amount)
+	function eTHValuePosition(address target)
+		external
+		view
+		returns (uint256 eTHValuePosition_)
+	;
+
+	/**
+	* @notice ETH value of Utilized ERC20 amount
+	* @param _utilizedERC20Amount {uint256[]}
+	* @return eTHValueUtilizedERC20Amount_ {uint256[]}
+	*/
+	function eTHValueUtilizedERC20Amount(uint256[] memory _utilizedERC20Amount)
+		external
+		view
+		returns (uint256 eTHValueUtilizedERC20Amount_)
+	;
+
+	/**
+	* @notice Utilized ERC20 amounts returned per ERC20
+	* @return utilizedERC20Amount_ {uint256[]}
+	*/
+	function utilizedERC20AmountPerBurn()
+		external
+		view
+		returns (uint256[] memory utilizedERC20Amount_)
+	;
+
+	/**
+	* @notice Set allocation for utilized ERC20s
+	* @param _utilizedERC20Allocation {uint256[]}
+	*/
+	function utilizedERC20AllocationSet(uint256[] memory _utilizedERC20Allocation)
 		external
 	;
 
 	/**
-	* @notice Withdraw ERC20s
-	* @param _to {address}
-	* @param _eRC20 {address[]}
-	* @param _eRC20Amount {uint256[]}
+	* @notice Valid utilized ERC20 amounts
+	* @param _utilizedERC20Amount {uint256}
+	* @return utilizedERC20AmountValid_ {bool}
 	*/
-	function eRC20Withdraw(address _to, address[] memory _eRC20, uint256[] memory _eRC20Amount)
+	function utilizedERC20AmountValid(uint256[] memory _utilizedERC20Amount)
+		external
+		returns (bool utilizedERC20AmountValid_)
+	;
+
+	/**
+	* @dev [called-once]
+	* @notice Initialize strategy
+	* @param _strategy {address} Strategy
+	*/
+	function initializeStrategy(address _strategy, address[] memory _utilizedERC20)
+		external
+	;
+
+	/**
+	* @notice Deposit utilized ERC20s
+	* @param _utilizedERC20Amount {uint256[]}
+	*/
+	function utilizedERC20Deposit(uint256[] memory _utilizedERC20Amount)
+		external
+	;
+
+	/**
+	* @notice Withdraw utilized ERC20s
+	* @param _ERC20Amount {uint256}
+	*/
+	function utilizedERC20Withdraw(uint256 _ERC20Amount)
 		external
 	;
 }

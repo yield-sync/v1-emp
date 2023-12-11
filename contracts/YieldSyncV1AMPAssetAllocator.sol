@@ -7,7 +7,7 @@ import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.s
 import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 import { Allocation, IYieldSyncV1AMPAssetAllocator } from "./interface/IYieldSyncV1AMPAssetAllocator.sol";
-import { IYieldSyncV1AMPStrategyController } from "./interface/IYieldSyncV1AMPStrategyController.sol";
+import { IYieldSyncV1AMPStrategy } from "./interface/IYieldSyncV1AMPStrategy.sol";
 
 
 using SafeERC20 for ERC20;
@@ -79,7 +79,7 @@ contract YieldSyncV1AMPAssetAllocator is
 		for (uint256 i = 0; i < _activeStrategy.length; i++)
 		{
 			(, uint256 strategyAllocation) = SafeMath.tryDiv(
-				IYieldSyncV1AMPStrategyController(_activeStrategy[i]).eTHValuePosition(msg.sender),
+				IYieldSyncV1AMPStrategy(_activeStrategy[i]).eTHValuePosition(msg.sender),
 				_totalValueOfAssetsInWETH
 			);
 
@@ -100,7 +100,7 @@ contract YieldSyncV1AMPAssetAllocator is
 		require(_utilizedToken.length > 0, "Must deposit at least one token");
 
 		require(
-			_utilizedToken.length == IYieldSyncV1AMPStrategyController(_strategy).utilizedToken().length,
+			_utilizedToken.length == IYieldSyncV1AMPStrategy(_strategy).utilizedToken().length,
 			"!utilizedToken.length"
 		);
 
@@ -114,14 +114,14 @@ contract YieldSyncV1AMPAssetAllocator is
 		for (uint256 i = 0; i < _utilizedToken.length; i++)
 		{
 			require(
-				IYieldSyncV1AMPStrategyController(_strategy).token_utilized(_utilizedToken[i]),
+				IYieldSyncV1AMPStrategy(_strategy).token_utilized(_utilizedToken[i]),
 				"!IYieldSyncV1AMPStrategy(_strategy).token_utilized(_utilizedToken[i])"
 			);
 
 			ERC20(_utilizedToken[i]).safeTransferFrom(msg.sender, address(this), _utilizedTokenAmount[i]);
 
 			// Calculate the value of the deposited tokens
-			totalDepositValue += IYieldSyncV1AMPStrategyController(_strategy).utilizedTokenETHValue(
+			totalDepositValue += IYieldSyncV1AMPStrategy(_strategy).utilizedTokenETHValue(
 				_utilizedToken[i]
 			) * _utilizedTokenAmount[i];
 		}
@@ -200,7 +200,7 @@ contract YieldSyncV1AMPAssetAllocator is
 
 		for (uint256 i = 0; i < _activeStrategy.length; i++)
 		{
-			_totalETHValue += IYieldSyncV1AMPStrategyController(_activeStrategy[i]).eTHValuePosition(address(this));
+			_totalETHValue += IYieldSyncV1AMPStrategy(_activeStrategy[i]).eTHValuePosition(address(this));
 		}
 
 		return _totalETHValue;
