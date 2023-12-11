@@ -176,7 +176,7 @@ contract YieldSyncV1AMPStrategyController is
 			IERC20(utilizedERC20[i]).approve(address(yieldSyncV1AMPStrategy), _utilizedERC20Amount[i]);
 		}
 
-		yieldSyncV1AMPStrategy.eRC20Deposit(utilizedERC20, _utilizedERC20Amount);
+		yieldSyncV1AMPStrategy.eRC20Deposit(msg.sender, utilizedERC20, _utilizedERC20Amount);
 
 		_mint(msg.sender, eTHValuePosition(msg.sender) - valueBefore);
 	}
