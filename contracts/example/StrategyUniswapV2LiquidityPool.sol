@@ -67,6 +67,8 @@ contract StrategyUniswapV2LiquidityPool is
 	address public manager;
 	address public strategyController;
 
+	bool public override eRC20WithdrawalsOpen = true;
+
 	uint256 public slippageTolerance;
 
 	IUniswapV2Pair public immutable uniswapV2Pair;

@@ -24,9 +24,17 @@ interface IYieldSyncV1AMPStrategy
 		returns (uint256[] memory eRC20Amount_)
 	;
 
+	/**
+	* @notice ERC20 Withdrawals open
+	*/
+	function eRC20WithdrawalsOpen()
+		external
+		returns (bool eRC20WithdrawalsOpen_)
+	;
+
 
 	/**
-	* @notice Deposit eRC20s
+	* @notice Deposit ERC20s
 	* @param _eRC20 {address[]}
 	* @param _eRC20Amount {uint256[]}
 	*/
@@ -35,7 +43,7 @@ interface IYieldSyncV1AMPStrategy
 	;
 
 	/**
-	* @notice Withdraw eRC20s
+	* @notice Withdraw ERC20s
 	* @param _to {address}
 	* @param _eRC20 {address[]}
 	* @param _eRC20Amount {uint256[]}
