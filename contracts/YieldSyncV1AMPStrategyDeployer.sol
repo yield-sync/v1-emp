@@ -2,6 +2,8 @@
 pragma solidity 0.8.18;
 
 
+import { IAccessControlEnumerable } from "@openzeppelin/contracts/access/IAccessControlEnumerable.sol";
+
 import { YieldSyncV1AMPStrategy } from "./YieldSyncV1AMPStrategy.sol";
 
 
@@ -25,6 +27,23 @@ contract YieldSyncV1AMPStrategyDeployer
 	uint256 public yieldSyncStrategyHandlerIdTracker;
 
 
+	mapping (
+		address yieldSyncV1AMPStrategy => uint256 yieldSyncV1AMPStrategyId
+	) public yieldSyncV1AMPStrategy_yieldSyncV1AMPStrategyId;
+
+	mapping (
+		uint256 yieldSyncV1AMPStrategyId => address yieldSyncV1AMPStrategy
+	) public yieldSyncV1AMPStrategyId_yieldSyncV1AMPStrategy;
+
+
+	modifier contractYieldSyncGovernance(bytes32 _role)
+	{
+		require(IAccessControlEnumerable(YieldSyncGovernance).hasRole(_role, msg.sender), "!auth");
+
+		_;
+	}
+
+
 	constructor (address _YieldSyncGovernance)
 	{
 		fee = 0;
@@ -43,12 +62,16 @@ contract YieldSyncV1AMPStrategyDeployer
 
 		yieldSyncStrategyHandlerIdTracker++;
 
-		YieldSyncV1AMPStrategy yieldSyncV1AMPStrategy = new YieldSyncV1AMPStrategy(
-			msg.sender,
-			_name,
-			_symbol
-		);
+		yieldSyncV1AMPStrategy_ = address(new YieldSyncV1AMPStrategy(msg.sender, _name, _symbol));
 
-		return address(yieldSyncV1AMPStrategy);
+		yieldSyncV1AMPStrategy_yieldSyncV1AMPStrategyId[yieldSyncV1AMPStrategy_] = yieldSyncStrategyHandlerIdTracker;
+		yieldSyncV1AMPStrategyId_yieldSyncV1AMPStrategy[yieldSyncStrategyHandlerIdTracker] = yieldSyncV1AMPStrategy_;
+	}
+
+	function feeUpdate(uint256 _fee)
+		public
+		contractYieldSyncGovernance(bytes32(0))
+	{
+		fee = _fee;
 	}
 }

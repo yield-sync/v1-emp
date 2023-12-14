@@ -213,7 +213,7 @@ contract StrategyInteractorUniswapV2LiquidityPool is
 		slippageTolerance = _slippageTolerance;
 	}
 
-	function injectIntoPool(address[] memory _eRC20, uint256[] memory _eRC20Amount)
+	function addLiquidity(address[] memory _eRC20, uint256[] memory _eRC20Amount)
 		public
 		onlyYieldSyncV1AMPStrategyManager()
 	{
@@ -229,7 +229,7 @@ contract StrategyInteractorUniswapV2LiquidityPool is
 		);
 	}
 
-	function extractFromPool(address[] memory _eRC20, uint256[] memory _eRC20Amount)
+	function removeLiquidity(address[] memory _eRC20, uint256[] memory _eRC20Amount)
 		public
 		onlyYieldSyncV1AMPStrategyManager()
 	{
