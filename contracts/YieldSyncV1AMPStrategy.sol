@@ -25,7 +25,7 @@ contract YieldSyncV1AMPStrategy is
 
 	uint256[] internal _utilizedERC20Allocation;
 
-	IYieldSyncV1AMPStrategyInteractor public yieldSyncV1AMPStrategyInteractor;
+	IYieldSyncV1AMPStrategyInteractor public override yieldSyncV1AMPStrategyInteractor;
 
 
 	receive ()
@@ -173,8 +173,7 @@ contract YieldSyncV1AMPStrategy is
 		override
 	{
 		require(
-			address(yieldSyncV1AMPStrategyInteractor) == address(0),
-			"address(yieldSyncV1AMPStrategyInteractor) != address(0)"
+			address(yieldSyncV1AMPStrategyInteractor) == address(0), "address(yieldSyncV1AMPStrategyInteractor) != address(0)"
 		);
 
 		require(msg.sender == manager, "msg.sender != manager");
