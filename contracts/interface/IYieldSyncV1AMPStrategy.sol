@@ -58,7 +58,6 @@ interface IYieldSyncV1AMPStrategy is
 		returns (IYieldSyncV1AMPStrategyInteractor)
 	;
 
-
 	/**
 	* @notice Eth value of position
 	* @param target {address}
@@ -90,6 +89,7 @@ interface IYieldSyncV1AMPStrategy is
 		view
 		returns (uint256[] memory utilizedERC20Amount_)
 	;
+
 
 	/**
 	* @notice Set allocation for utilized ERC20s

@@ -120,6 +120,7 @@ contract YieldSyncV1AMPStrategy is
 		}
 	}
 
+
 	/// @inheritdoc IYieldSyncV1AMPStrategy
 	function utilizedERC20AllocationSet(uint256[] memory __utilizedERC20Allocation)
 		public
@@ -165,7 +166,6 @@ contract YieldSyncV1AMPStrategy is
 			}
 		}
 	}
-
 
 	/// @inheritdoc IYieldSyncV1AMPStrategy
 	function initializeStrategy(address _strategy, address[] memory __utilizedERC20)
