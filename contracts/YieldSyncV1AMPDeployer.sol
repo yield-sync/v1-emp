@@ -2,10 +2,10 @@
 pragma solidity 0.8.18;
 
 
-import { YieldSyncV1AMPAssetAllocator } from "./YieldSyncV1AMPAssetAllocator.sol";
+import { YieldSyncV1AMP } from "./YieldSyncV1AMP.sol";
 
 
-contract YieldSyncV1AMPAssetAllocatorDeployer
+contract YieldSyncV1AMPDeployer
 {
 	receive ()
 		external
@@ -34,20 +34,20 @@ contract YieldSyncV1AMPAssetAllocatorDeployer
 	}
 
 
-	function deployYieldSyncV1AMPAssetAllocator(string memory _name, bool _onlyPrioritizedStrategy, string memory _symbol)
+	function deployYieldSyncV1AMP(string memory _name, bool _onlyPrioritizedStrategy, string memory _symbol)
 		public
 		payable
-		returns (address yieldSyncV1AMPAssetAllocator_)
+		returns (address yieldSyncV1AMP_)
 	{
 		require(msg.value >= fee, "!msg.value");
 
-		YieldSyncV1AMPAssetAllocator yieldSyncV1AMPAssetAllocator = new YieldSyncV1AMPAssetAllocator(
+		YieldSyncV1AMP yieldSyncV1AMP = new YieldSyncV1AMP(
 			msg.sender,
 			_onlyPrioritizedStrategy,
 			_name,
 			_symbol
 		);
 
-		return address(yieldSyncV1AMPAssetAllocator);
+		return address(yieldSyncV1AMP);
 	}
 }

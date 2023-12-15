@@ -2,7 +2,7 @@
 pragma solidity 0.8.18;
 
 
-interface IYieldSyncV1AMPAssetAllocatorDeployer
+interface IYieldSyncV1AMPDeployer
 {
-	event YieldSyncV1AMPAssetAllocatorDeployed(address);
+	event YieldSyncV1AMPDeployed(address);
 }
