@@ -4,10 +4,12 @@ pragma solidity 0.8.18;
 
 import { IAccessControlEnumerable } from "@openzeppelin/contracts/access/IAccessControlEnumerable.sol";
 
+import { IYieldSyncV1AMPStrategyDeployer } from "./interface/IYieldSyncV1AMPStrategyDeployer.sol";
 import { YieldSyncV1AMPStrategy } from "./YieldSyncV1AMPStrategy.sol";
 
 
-contract YieldSyncV1AMPStrategyDeployer
+contract YieldSyncV1AMPStrategyDeployer is
+	IYieldSyncV1AMPStrategyDeployer
 {
 	receive ()
 		external

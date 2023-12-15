@@ -3,9 +3,11 @@ pragma solidity 0.8.18;
 
 
 import { YieldSyncV1AMP } from "./YieldSyncV1AMP.sol";
+import { IYieldSyncV1AMPDeployer } from "./interface/IYieldSyncV1AMPDeployer.sol";
 
 
-contract YieldSyncV1AMPDeployer
+contract YieldSyncV1AMPDeployer is
+	IYieldSyncV1AMPDeployer
 {
 	receive ()
 		external
