@@ -23,6 +23,8 @@ contract YieldSyncV1AMPStrategy is
 
 	address[] internal _utilizedERC20;
 
+	uint256 constant public override ONE_HUNDRED_PERCENT = 1e18;
+
 	uint256[] internal _utilizedERC20Allocation;
 
 	IYieldSyncV1AMPStrategyInteractor public override yieldSyncV1AMPStrategyInteractor;
@@ -45,6 +47,9 @@ contract YieldSyncV1AMPStrategy is
 	{
 		manager = _manager;
 	}
+
+
+	//// @notice view
 
 
 	/// @inheritdoc IYieldSyncV1AMPStrategy
@@ -121,6 +126,9 @@ contract YieldSyncV1AMPStrategy is
 	}
 
 
+	/// @notice mutative
+
+
 	/// @inheritdoc IYieldSyncV1AMPStrategy
 	function utilizedERC20AllocationSet(uint256[] memory __utilizedERC20Allocation)
 		public
@@ -134,7 +142,7 @@ contract YieldSyncV1AMPStrategy is
 			_utilizedERC20AllocationTotal += __utilizedERC20Allocation[i];
 		}
 
-		require(_utilizedERC20AllocationTotal == 100, "_utilizedERC20AllocationTotal != 100");
+		require(_utilizedERC20AllocationTotal == ONE_HUNDRED_PERCENT, "_utilizedERC20AllocationTotal != ONE_HUNDRED_PERCENT");
 
 		_utilizedERC20Allocation = __utilizedERC20Allocation;
 	}
@@ -176,7 +184,7 @@ contract YieldSyncV1AMPStrategy is
 			address(yieldSyncV1AMPStrategyInteractor) == address(0), "address(yieldSyncV1AMPStrategyInteractor) != address(0)"
 		);
 
-		require(msg.sender == manager, "msg.sender != manager");
+		require(manager == msg.sender, "manager != msg.sender");
 
 		require(_strategy != address(0), "_strategy == address(0)");
 
@@ -191,7 +199,7 @@ contract YieldSyncV1AMPStrategy is
 		override
 		nonReentrant()
 	{
-		require(_utilizedERC20Amount.length == _utilizedERC20.length, "_utilizedERC20Amount.length != utilizedERC20.length");
+		require(_utilizedERC20.length == _utilizedERC20Amount.length, "_utilizedERC20.length != _utilizedERC20Amount.length");
 
 		require(utilizedERC20AmountValid(_utilizedERC20Amount), "!utilizedERC20AmountValid(_utilizedERC20Amount)");
 

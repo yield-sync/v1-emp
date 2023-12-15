@@ -37,6 +37,17 @@ interface IYieldSyncV1AMPStrategy is
 	;
 
 	/**
+	* @dev [view-uint256]
+	* @notice One Hundred Percent
+	* @return {uint256}
+	*/
+	function ONE_HUNDRED_PERCENT()
+		external
+		view
+		returns (uint256)
+	;
+
+	/**
 	* @dev [view-uint256[]]
 	* @notice Utilized ERC20 Allocations
 	* @return {uint256[]}
