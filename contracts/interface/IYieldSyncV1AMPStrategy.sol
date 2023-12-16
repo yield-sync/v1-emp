@@ -72,23 +72,22 @@ interface IYieldSyncV1AMPStrategy is
 	/**
 	* @notice Eth value of position
 	* @param target {address}
-	* @return eTHValuePosition_ {uint256}
+	* @return balanceOfETHValue_ {uint256}
 	*/
-	function eTHValuePosition(address target)
+	function balanceOfETHValue(address target)
 		external
 		view
-		returns (uint256 eTHValuePosition_)
+		returns (uint256 balanceOfETHValue_)
 	;
 
 	/**
-	* @notice ETH value of Utilized ERC20 amount
-	* @param _utilizedERC20Amount {uint256[]}
-	* @return eTHValueUtilizedERC20Amount_ {uint256[]}
+	* @notice Valid utilized ERC20 amounts
+	* @param _utilizedERC20Amount {uint256}
+	* @return utilizedERC20AmountValid_ {bool}
 	*/
-	function eTHValueUtilizedERC20Amount(uint256[] memory _utilizedERC20Amount)
+	function utilizedERC20AmountValid(uint256[] memory _utilizedERC20Amount)
 		external
-		view
-		returns (uint256 eTHValueUtilizedERC20Amount_)
+		returns (bool utilizedERC20AmountValid_)
 	;
 
 	/**
@@ -103,29 +102,19 @@ interface IYieldSyncV1AMPStrategy is
 
 
 	/**
-	* @notice Set allocation for utilized ERC20s
-	* @param _utilizedERC20Allocation {uint256[]}
-	*/
-	function utilizedERC20AllocationSet(uint256[] memory _utilizedERC20Allocation)
-		external
-	;
-
-	/**
-	* @notice Valid utilized ERC20 amounts
-	* @param _utilizedERC20Amount {uint256}
-	* @return utilizedERC20AmountValid_ {bool}
-	*/
-	function utilizedERC20AmountValid(uint256[] memory _utilizedERC20Amount)
-		external
-		returns (bool utilizedERC20AmountValid_)
-	;
-
-	/**
 	* @dev [called-once]
 	* @notice Initialize strategy
 	* @param _strategy {address} Strategy
 	*/
 	function initializeStrategy(address _strategy, address[] memory _utilizedERC20)
+		external
+	;
+
+	/**
+	* @notice Set allocation for utilized ERC20s
+	* @param _utilizedERC20Allocation {uint256[]}
+	*/
+	function utilizedERC20AllocationSet(uint256[] memory _utilizedERC20Allocation)
 		external
 	;
 

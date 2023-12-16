@@ -79,7 +79,7 @@ contract YieldSyncV1AMP is
 		for (uint256 i = 0; i < _activeStrategy.length; i++)
 		{
 			(, uint256 strategyAllocation) = SafeMath.tryDiv(
-				IYieldSyncV1AMPStrategy(_activeStrategy[i]).eTHValuePosition(msg.sender),
+				IYieldSyncV1AMPStrategy(_activeStrategy[i]).balanceOfETHValue(msg.sender),
 				_totalValueOfAssetsInWETH
 			);
 
@@ -200,7 +200,7 @@ contract YieldSyncV1AMP is
 
 		for (uint256 i = 0; i < _activeStrategy.length; i++)
 		{
-			_totalETHValue += IYieldSyncV1AMPStrategy(_activeStrategy[i]).eTHValuePosition(address(this));
+			_totalETHValue += IYieldSyncV1AMPStrategy(_activeStrategy[i]).balanceOfETHValue(address(this));
 		}
 
 		return _totalETHValue;

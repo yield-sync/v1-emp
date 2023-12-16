@@ -73,38 +73,56 @@ contract YieldSyncV1AMPStrategy is
 	}
 
 	/// @inheritdoc IYieldSyncV1AMPStrategy
-	function eTHValuePosition(address _target)
+	function balanceOfETHValue(address _target)
 		public
 		view
 		override
-		returns (uint256 eTHValuePosition_)
+		returns (uint256 balanceOfETHValue_)
 	{
 		uint256[] memory uTAPB = utilizedERC20AmountPerBurn();
 
-		eTHValuePosition_ = 0;
+		balanceOfETHValue_ = 0;
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
-			eTHValuePosition_ += uTAPB[i] * yieldSyncV1AMPStrategyInteractor.eRC20ETHValue(_utilizedERC20[i]) * balanceOf(_target);
+			balanceOfETHValue_ += uTAPB[i] * yieldSyncV1AMPStrategyInteractor.eRC20ETHValue(_utilizedERC20[i]) * balanceOf(_target);
 		}
 	}
 
 	/// @inheritdoc IYieldSyncV1AMPStrategy
-	function eTHValueUtilizedERC20Amount(uint256[] memory _utilizedERC20Amount)
+	function utilizedERC20AmountValid(uint256[] memory _utilizedERC20Amount)
 		public
 		view
-		override
-		returns (uint256 eTHValueUtilizedERC20Amount_)
+		returns (bool utilizedERC20AmountValid_)
 	{
 		require(_utilizedERC20.length == _utilizedERC20Amount.length, "_utilizedERC20.length != _utilizedERC20Amount.length");
 
-		eTHValueUtilizedERC20Amount_ = 0;
+		utilizedERC20AmountValid_ = true;
+
+		uint256 _utilizedERC20AmountETHValue;
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
-			eTHValueUtilizedERC20Amount_ += _utilizedERC20Amount[i] * yieldSyncV1AMPStrategyInteractor.eRC20ETHValue(
+			_utilizedERC20AmountETHValue += _utilizedERC20Amount[i] * yieldSyncV1AMPStrategyInteractor.eRC20ETHValue(
 				_utilizedERC20[i]
 			);
+		}
+
+		for (uint256 i = 0; i < _utilizedERC20.length; i++)
+		{
+			(bool utilizedERC20AmountPercentComputed, uint256 amountRatioActual) = SafeMath.tryDiv(
+				_utilizedERC20Amount[i] * yieldSyncV1AMPStrategyInteractor.eRC20ETHValue(_utilizedERC20[i]),
+				_utilizedERC20AmountETHValue
+			);
+
+			require(utilizedERC20AmountPercentComputed, "!utilizedERC20AmountPercentComputed");
+
+			if (_utilizedERC20Allocation[i] != amountRatioActual)
+			{
+				utilizedERC20AmountValid_ = false;
+
+				break;
+			}
 		}
 	}
 
@@ -130,52 +148,6 @@ contract YieldSyncV1AMPStrategy is
 
 
 	/// @inheritdoc IYieldSyncV1AMPStrategy
-	function utilizedERC20AllocationSet(uint256[] memory __utilizedERC20Allocation)
-		public
-	{
-		require(msg.sender == manager, "msg.sender != manager");
-
-		uint256 _utilizedERC20AllocationTotal = 0;
-
-		for (uint256 i = 0; i < __utilizedERC20Allocation.length; i++)
-		{
-			_utilizedERC20AllocationTotal += __utilizedERC20Allocation[i];
-		}
-
-		require(_utilizedERC20AllocationTotal == ONE_HUNDRED_PERCENT, "_utilizedERC20AllocationTotal != ONE_HUNDRED_PERCENT");
-
-		_utilizedERC20Allocation = __utilizedERC20Allocation;
-	}
-
-	/// @inheritdoc IYieldSyncV1AMPStrategy
-	function utilizedERC20AmountValid(uint256[] memory _utilizedERC20Amount)
-		public
-		view
-		returns (bool utilizedERC20AmountValid_)
-	{
-		utilizedERC20AmountValid_ = true;
-
-		uint256 _eTHValueUtilizedERC20Amount = eTHValueUtilizedERC20Amount(_utilizedERC20Amount);
-
-		for (uint256 i = 0; i < _utilizedERC20.length; i++)
-		{
-			(bool utilizedERC20AmountPercentComputed, uint256 amountRatioActual) = SafeMath.tryDiv(
-				_utilizedERC20Amount[i] * yieldSyncV1AMPStrategyInteractor.eRC20ETHValue(_utilizedERC20[i]),
-				_eTHValueUtilizedERC20Amount
-			);
-
-			require(utilizedERC20AmountPercentComputed, "!utilizedERC20AmountPercentComputed");
-
-			if (_utilizedERC20Allocation[i] != amountRatioActual)
-			{
-				utilizedERC20AmountValid_ = false;
-
-				break;
-			}
-		}
-	}
-
-	/// @inheritdoc IYieldSyncV1AMPStrategy
 	function initializeStrategy(address _strategy, address[] memory __utilizedERC20)
 		public
 		override
@@ -194,6 +166,25 @@ contract YieldSyncV1AMPStrategy is
 	}
 
 	/// @inheritdoc IYieldSyncV1AMPStrategy
+	function utilizedERC20AllocationSet(uint256[] memory __utilizedERC20Allocation)
+		public
+		override
+	{
+		require(msg.sender == manager, "msg.sender != manager");
+
+		uint256 _utilizedERC20AllocationTotal = 0;
+
+		for (uint256 i = 0; i < __utilizedERC20Allocation.length; i++)
+		{
+			_utilizedERC20AllocationTotal += __utilizedERC20Allocation[i];
+		}
+
+		require(_utilizedERC20AllocationTotal == ONE_HUNDRED_PERCENT, "_utilizedERC20AllocationTotal != ONE_HUNDRED_PERCENT");
+
+		_utilizedERC20Allocation = __utilizedERC20Allocation;
+	}
+
+	/// @inheritdoc IYieldSyncV1AMPStrategy
 	function utilizedERC20Deposit(uint256[] memory _utilizedERC20Amount)
 		public
 		override
@@ -203,7 +194,7 @@ contract YieldSyncV1AMPStrategy is
 
 		require(utilizedERC20AmountValid(_utilizedERC20Amount), "!utilizedERC20AmountValid(_utilizedERC20Amount)");
 
-		uint256 valueBefore = eTHValuePosition(msg.sender);
+		uint256 valueBefore = balanceOfETHValue(msg.sender);
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
@@ -212,7 +203,7 @@ contract YieldSyncV1AMPStrategy is
 
 		yieldSyncV1AMPStrategyInteractor.eRC20Deposit(msg.sender, _utilizedERC20, _utilizedERC20Amount);
 
-		_mint(msg.sender, eTHValuePosition(msg.sender) - valueBefore);
+		_mint(msg.sender, balanceOfETHValue(msg.sender) - valueBefore);
 	}
 
 	/// @inheritdoc IYieldSyncV1AMPStrategy
