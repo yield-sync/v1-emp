@@ -3,7 +3,6 @@
 pragma solidity 0.8.18;
 
 
-import "hardhat/console.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
@@ -11,8 +10,12 @@ import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import {
 	IERC20,
 	IYieldSyncV1AMPStrategyInteractor,
-	IYieldSyncV1AMPStrategy
+	IYieldSyncV1AMPStrategy,
+	SafeERC20
 } from "./interface/IYieldSyncV1AMPStrategy.sol";
+
+
+using SafeERC20 for IERC20;
 
 
 contract YieldSyncV1AMPStrategy is
@@ -212,11 +215,6 @@ contract YieldSyncV1AMPStrategy is
 		require(yieldSyncV1AMPStrategyInteractor.eRC20DepositsOpen(), "!yieldSyncV1AMPStrategyInteractor.eRC20DepositsOpen()");
 
 		uint256 valueBefore = balanceOfETHValue(msg.sender);
-
-		for (uint256 i = 0; i < _utilizedERC20.length; i++)
-		{
-			IERC20(_utilizedERC20[i]).approve(address(yieldSyncV1AMPStrategyInteractor), _utilizedERC20Amount[i]);
-		}
 
 		yieldSyncV1AMPStrategyInteractor.eRC20Deposit(msg.sender, _utilizedERC20, _utilizedERC20Amount);
 
