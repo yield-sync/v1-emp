@@ -183,7 +183,7 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol", async () => {
 				// Deposit ERC20 tokens into the strategy
 				await yieldSyncV1AMPStrategy.connect(owner).utilizedERC20Deposit([depositAmountA])
 
-				//console.log("HH Strategy balanceOf:", await yieldSyncV1AMPStrategy.balanceOf(owner.address));
+				expect(await yieldSyncV1AMPStrategy.balanceOf(owner.address)).to.be(ethers.utils.parseUnits("1", 18));
 			}
 		);
 
