@@ -152,13 +152,11 @@ contract YieldSyncV1AMPStrategy is
 		public
 		override
 	{
+		require(manager == msg.sender, "manager != msg.sender");
+
 		require(
 			address(yieldSyncV1AMPStrategyInteractor) == address(0), "address(yieldSyncV1AMPStrategyInteractor) != address(0)"
 		);
-
-		require(manager == msg.sender, "manager != msg.sender");
-
-		require(_strategy != address(0), "_strategy == address(0)");
 
 		yieldSyncV1AMPStrategyInteractor = IYieldSyncV1AMPStrategyInteractor(_strategy);
 
