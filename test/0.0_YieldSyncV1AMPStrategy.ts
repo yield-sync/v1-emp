@@ -183,7 +183,7 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol", async () => {
 				// Deposit ERC20 tokens into the strategy
 				await yieldSyncV1AMPStrategy.connect(owner).utilizedERC20Deposit([depositAmountA])
 
-				expect(await yieldSyncV1AMPStrategy.balanceOf(owner.address)).to.be(ethers.utils.parseUnits("1", 18));
+				expect(await yieldSyncV1AMPStrategy.balanceOf(owner.address)).to.be.equal(ethers.utils.parseUnits("1", 18));
 			}
 		);
 
@@ -243,6 +243,8 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol", async () => {
 
 					expect(await mockERC20A.balanceOf(strategyInteractorBlank.address)).to.be.equal(depositAmountA);
 					expect(await mockERC20B.balanceOf(strategyInteractorBlank.address)).to.be.equal(depositAmountB);
+
+					expect(await yieldSyncV1AMPStrategy.balanceOf(owner.address)).to.be.equal(ethers.utils.parseUnits("2", 18));
 				}
 			);
 		});
