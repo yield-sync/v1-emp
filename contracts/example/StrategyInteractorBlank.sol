@@ -14,7 +14,8 @@ contract StrategyInteractorBlank is
 {
 	address public strategy;
 
-	bool public override eRC20WithdrawalsOpen = true;
+	bool internal _eRC20DepositsOpen = true;
+	bool internal _eRC20WithdrawalsOpen = true;
 
 	uint256 public slippageTolerance;
 
@@ -32,6 +33,15 @@ contract StrategyInteractorBlank is
 		_;
 	}
 
+	/// @inheritdoc IYieldSyncV1AMPStrategyInteractor
+	function eRC20DepositsOpen()
+		public
+		view
+		override
+		returns (bool eRC20DepositsOpen_)
+	{
+		return _eRC20DepositsOpen;
+	}
 
 	/// @inheritdoc IYieldSyncV1AMPStrategyInteractor
 	function eRC20ETHValue(address _eRC20)
@@ -58,6 +68,16 @@ contract StrategyInteractorBlank is
 		}
 
 		return returnAmounts;
+	}
+
+	/// @inheritdoc IYieldSyncV1AMPStrategyInteractor
+	function eRC20WithdrawalsOpen()
+		public
+		view
+		override
+		returns (bool eRC20WithdrawalsOpen_)
+	{
+		return _eRC20WithdrawalsOpen;
 	}
 
 

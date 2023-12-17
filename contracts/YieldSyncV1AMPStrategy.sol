@@ -194,6 +194,12 @@ contract YieldSyncV1AMPStrategy is
 
 		require(utilizedERC20AmountValid(_utilizedERC20Amount), "!utilizedERC20AmountValid(_utilizedERC20Amount)");
 
+		require(
+			yieldSyncV1AMPStrategyInteractor.eRC20DepositsOpen(),
+			"!yieldSyncV1AMPStrategyInteractor.eRC20DepositsOpen()"
+		);
+
+
 		uint256 valueBefore = balanceOfETHValue(msg.sender);
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)

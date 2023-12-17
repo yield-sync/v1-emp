@@ -67,7 +67,8 @@ contract StrategyInteractorUniswapV2LiquidityPool is
 	address public manager;
 	address public strategyController;
 
-	bool public override eRC20WithdrawalsOpen = true;
+	bool internal _eRC20DepositsOpen = true;
+	bool internal _eRC20WithdrawalsOpen = true;
 
 	uint256 public slippageTolerance;
 
@@ -108,6 +109,16 @@ contract StrategyInteractorUniswapV2LiquidityPool is
 		_;
 	}
 
+
+	/// @inheritdoc IYieldSyncV1AMPStrategyInteractor
+	function eRC20DepositsOpen()
+		public
+		view
+		override
+		returns (bool eRC20DepositsOpen_)
+	{
+		return _eRC20DepositsOpen;
+	}
 
 	/// @inheritdoc IYieldSyncV1AMPStrategyInteractor
 	function eRC20ETHValue(address _eRC20)
@@ -171,6 +182,16 @@ contract StrategyInteractorUniswapV2LiquidityPool is
 		}
 
 		return returnAmounts;
+	}
+
+	/// @inheritdoc IYieldSyncV1AMPStrategyInteractor
+	function eRC20WithdrawalsOpen()
+		public
+		view
+		override
+		returns (bool eRC20WithdrawalsOpen_)
+	{
+		return _eRC20WithdrawalsOpen;
 	}
 
 
