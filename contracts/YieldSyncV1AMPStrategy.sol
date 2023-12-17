@@ -215,18 +215,18 @@ contract YieldSyncV1AMPStrategy is
 
 		require(yieldSyncV1AMPStrategyInteractor.eRC20DepositsOpen(), "!yieldSyncV1AMPStrategyInteractor.eRC20DepositsOpen()");
 
-		uint256 balanceOfETHValueBefore = balanceOfETHValue(msg.sender);
-
 		yieldSyncV1AMPStrategyInteractor.eRC20Deposit(msg.sender, _utilizedERC20, _utilizedERC20Amount);
 
-		uint256 depositedETHValue;
+		uint256 utilizedERC20AmountETHValue;
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
-			depositedETHValue += _utilizedERC20Amount[i] * yieldSyncV1AMPStrategyInteractor.eRC20ETHValue(_utilizedERC20[i]);
+			utilizedERC20AmountETHValue += _utilizedERC20Amount[i] * yieldSyncV1AMPStrategyInteractor.eRC20ETHValue(
+				_utilizedERC20[i]
+			);
 		}
 
-		_mint(msg.sender, depositedETHValue - balanceOfETHValueBefore);
+		_mint(msg.sender, utilizedERC20AmountETHValue);
 	}
 
 	/// @inheritdoc IYieldSyncV1AMPStrategy
