@@ -3,6 +3,7 @@
 pragma solidity 0.8.18;
 
 
+import "hardhat/console.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
@@ -99,7 +100,7 @@ contract YieldSyncV1AMPStrategy is
 
 		utilizedERC20AmountValid_ = true;
 
-		uint256 _utilizedERC20AmountETHValue;
+		uint256 _utilizedERC20AmountETHValue = 0;
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
@@ -110,14 +111,14 @@ contract YieldSyncV1AMPStrategy is
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
-			(bool utilizedERC20AmountPercentComputed, uint256 amountRatioActual) = SafeMath.tryDiv(
+			(bool utilizedERC20AmountAllocationComputed, uint256 amountAllocationActual) = SafeMath.tryDiv(
 				_utilizedERC20Amount[i] * yieldSyncV1AMPStrategyInteractor.eRC20ETHValue(_utilizedERC20[i]),
 				_utilizedERC20AmountETHValue
 			);
 
-			require(utilizedERC20AmountPercentComputed, "!utilizedERC20AmountPercentComputed");
+			require(utilizedERC20AmountAllocationComputed, "!utilizedERC20AmountAllocationComputed");
 
-			if (_utilizedERC20Allocation[i] != amountRatioActual)
+			if (_utilizedERC20Allocation[i] != amountAllocationActual * 1e18)
 			{
 				utilizedERC20AmountValid_ = false;
 
@@ -135,11 +136,11 @@ contract YieldSyncV1AMPStrategy is
 	{
 		utilizedERC20Amount_ = yieldSyncV1AMPStrategyInteractor.eRC20TotalAmount(_utilizedERC20);
 
-		require(_utilizedERC20.length == utilizedERC20Amount_.length , "_utilizedERC20.length != utilizedERC20Amount_.length");
-
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
-			utilizedERC20Amount_[i] = utilizedERC20Amount_[i] / totalSupply();
+			(, uint256 utilizedERC20Amount) = SafeMath.tryDiv(utilizedERC20Amount_[i], totalSupply());
+
+			utilizedERC20Amount_[i] = utilizedERC20Amount;
 		}
 	}
 
