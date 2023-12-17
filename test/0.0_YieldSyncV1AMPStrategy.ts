@@ -96,5 +96,29 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol", async () => {
 				expect(await mockERC20.balanceOf(strategyInteractorBlank.address)).to.be.equal(depositAmount);
 			}
 		);
+
+		it(
+			"Should allow caller to recieve strategy ERC20 tokens..",
+			async () => {
+				const [owner] = await ethers.getSigners();
+
+				const depositAmount = ethers.utils.parseUnits("1", 18);
+
+				// Initialize strategy with mock ERC20
+				await yieldSyncV1AMPStrategy.initializeStrategy(
+					strategyInteractorBlank.address,
+					[mockERC20.address],
+					[HUNDRED_PERCENT]
+				);
+
+				// Approve the StrategyInteractorBlank contract to spend tokens on behalf of owner
+				await mockERC20.connect(owner).approve(strategyInteractorBlank.address, depositAmount);
+
+				// Deposit ERC20 tokens into the strategy
+				await yieldSyncV1AMPStrategy.connect(owner).utilizedERC20Deposit([depositAmount])
+
+				console.log("HH Strategy balanceOf:", await yieldSyncV1AMPStrategy.balanceOf(owner.address));
+			}
+		);
 	});
 });

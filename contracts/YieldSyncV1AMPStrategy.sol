@@ -3,6 +3,7 @@
 pragma solidity 0.8.18;
 
 
+import "hardhat/console.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
@@ -85,7 +86,7 @@ contract YieldSyncV1AMPStrategy is
 	{
 		uint256[] memory uTAPB = utilizedERC20AmountPerBurn();
 
-		balanceOfETHValue_ = 0;
+		balanceOfETHValue_;
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
@@ -103,7 +104,7 @@ contract YieldSyncV1AMPStrategy is
 
 		utilizedERC20AmountValid_ = true;
 
-		uint256 _utilizedERC20AmountETHValue = 0;
+		uint256 _utilizedERC20AmountETHValue;
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
@@ -190,7 +191,7 @@ contract YieldSyncV1AMPStrategy is
 			"_utilizedERC20.length != __utilizedERC20Allocation.length"
 		);
 
-		uint256 _utilizedERC20AllocationTotal = 0;
+		uint256 _utilizedERC20AllocationTotal;
 
 		for (uint256 i = 0; i < __utilizedERC20Allocation.length; i++)
 		{
@@ -214,11 +215,18 @@ contract YieldSyncV1AMPStrategy is
 
 		require(yieldSyncV1AMPStrategyInteractor.eRC20DepositsOpen(), "!yieldSyncV1AMPStrategyInteractor.eRC20DepositsOpen()");
 
-		uint256 valueBefore = balanceOfETHValue(msg.sender);
-
 		yieldSyncV1AMPStrategyInteractor.eRC20Deposit(msg.sender, _utilizedERC20, _utilizedERC20Amount);
 
-		_mint(msg.sender, balanceOfETHValue(msg.sender) - valueBefore);
+		uint256 utilizedERC20AmountETHValue;
+
+		for (uint256 i = 0; i < _utilizedERC20.length; i++)
+		{
+			utilizedERC20AmountETHValue += _utilizedERC20Amount[i] * yieldSyncV1AMPStrategyInteractor.eRC20ETHValue(
+				_utilizedERC20[i]
+			);
+		}
+
+		_mint(msg.sender, utilizedERC20AmountETHValue);
 	}
 
 	/// @inheritdoc IYieldSyncV1AMPStrategy
