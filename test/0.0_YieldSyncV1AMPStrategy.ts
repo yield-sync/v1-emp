@@ -6,6 +6,7 @@ import { Contract, ContractFactory } from "ethers";
 
 
 const ERROR_STRATEGY_ALREADY_SET = "address(yieldSyncV1AMPStrategyInteractor) != address(0)";
+const ERR0R_INVALID_UTILIZEDERC20AMOUNT = "_utilizedERC20.length != _utilizedERC20Amount.length";
 const HUNDRED_PERCENT = ethers.utils.parseUnits('1', 18);
 
 
@@ -71,6 +72,30 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol", async () => {
 	});
 
 	describe("utilizedERC20Deposit()", async () => {
+		it(
+			"Should revert if invalid utilizedERC20Amount passed..",
+			async () => {
+				const [owner] = await ethers.getSigners();
+
+				const depositAmount = ethers.utils.parseUnits("1", 18);
+
+				// Initialize strategy with mock ERC20
+				await yieldSyncV1AMPStrategy.initializeStrategy(
+					strategyInteractorBlank.address,
+					[mockERC20.address],
+					[HUNDRED_PERCENT]
+				);
+
+				// Approve the StrategyInteractorBlank contract to spend tokens on behalf of owner
+				await mockERC20.connect(owner).approve(strategyInteractorBlank.address, depositAmount);
+
+				// Deposit ERC20 tokens into the strategy
+				await expect(
+					yieldSyncV1AMPStrategy.connect(owner).utilizedERC20Deposit([depositAmount, depositAmount])
+				).to.be.revertedWith(ERR0R_INVALID_UTILIZEDERC20AMOUNT);
+			}
+		);
+
 		it(
 			"Should be able to deposit ERC20 into strategy interactor..",
 			async () => {
