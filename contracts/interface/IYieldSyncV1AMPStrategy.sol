@@ -104,9 +104,15 @@ interface IYieldSyncV1AMPStrategy is
 	/**
 	* @dev [called-once]
 	* @notice Initialize strategy
-	* @param _strategy {address} Strategy
+	* @param _strategy {address}
+	* @param __utilizedERC20 {address[]}
+	* @param __utilizedERC20Allocation {uint256[]}
 	*/
-	function initializeStrategy(address _strategy, address[] memory _utilizedERC20)
+	function initializeStrategy(
+		address _strategy,
+		address[] memory __utilizedERC20,
+		uint256[] memory __utilizedERC20Allocation
+	)
 		external
 	;
 

@@ -148,7 +148,11 @@ contract YieldSyncV1AMPStrategy is
 
 
 	/// @inheritdoc IYieldSyncV1AMPStrategy
-	function initializeStrategy(address _strategy, address[] memory __utilizedERC20)
+	function initializeStrategy(
+		address _strategy,
+		address[] memory __utilizedERC20,
+		uint256[] memory __utilizedERC20Allocation
+	)
 		public
 		override
 	{
@@ -158,9 +162,16 @@ contract YieldSyncV1AMPStrategy is
 			address(yieldSyncV1AMPStrategyInteractor) == address(0), "address(yieldSyncV1AMPStrategyInteractor) != address(0)"
 		);
 
+		require(
+			__utilizedERC20.length == __utilizedERC20Allocation.length,
+			"__utilizedERC20.length != __utilizedERC20Allocation.length"
+		);
+
 		yieldSyncV1AMPStrategyInteractor = IYieldSyncV1AMPStrategyInteractor(_strategy);
 
 		_utilizedERC20 = __utilizedERC20;
+
+		_utilizedERC20Allocation = __utilizedERC20Allocation;
 	}
 
 	/// @inheritdoc IYieldSyncV1AMPStrategy
@@ -168,7 +179,12 @@ contract YieldSyncV1AMPStrategy is
 		public
 		override
 	{
-		require(msg.sender == manager, "msg.sender != manager");
+		require(manager == msg.sender, "manager != msg.sender");
+
+		require(
+			_utilizedERC20.length == __utilizedERC20Allocation.length,
+			"_utilizedERC20.length != __utilizedERC20Allocation.length"
+		);
 
 		uint256 _utilizedERC20AllocationTotal = 0;
 
@@ -192,11 +208,7 @@ contract YieldSyncV1AMPStrategy is
 
 		require(utilizedERC20AmountValid(_utilizedERC20Amount), "!utilizedERC20AmountValid(_utilizedERC20Amount)");
 
-		require(
-			yieldSyncV1AMPStrategyInteractor.eRC20DepositsOpen(),
-			"!yieldSyncV1AMPStrategyInteractor.eRC20DepositsOpen()"
-		);
-
+		require(yieldSyncV1AMPStrategyInteractor.eRC20DepositsOpen(), "!yieldSyncV1AMPStrategyInteractor.eRC20DepositsOpen()");
 
 		uint256 valueBefore = balanceOfETHValue(msg.sender);
 

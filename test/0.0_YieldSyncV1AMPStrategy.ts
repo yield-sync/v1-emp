@@ -6,6 +6,7 @@ import { Contract, ContractFactory } from "ethers";
 
 
 const ERROR_STRATEGY_ALREADY_SET = "address(yieldSyncV1AMPStrategyInteractor) != address(0)";
+const HUNDRED_PERCENT = ethers.utils.parseUnits('1', 18);
 
 
 describe("[0.0] YieldSyncV1VaultDeployer.sol", async () => {
@@ -14,7 +15,7 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol", async () => {
 	let yieldSyncV1AMPStrategy: Contract;
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
-		const [owner, addr1] = await ethers.getSigners();
+		const [owner] = await ethers.getSigners();
 
 		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
 		const StrategyInteractorBlank: ContractFactory = await ethers.getContractFactory("StrategyInteractorBlank");
@@ -43,7 +44,7 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol", async () => {
 		it(
 			"It should be able to set _strategy and _utilizedERC20..",
 			async () => {
-				await yieldSyncV1AMPStrategy.initializeStrategy(strategyInteractorBlank.address, [mockERC20.address]);
+				await yieldSyncV1AMPStrategy.initializeStrategy(strategyInteractorBlank.address, [mockERC20.address], [HUNDRED_PERCENT]);
 
 				expect(await yieldSyncV1AMPStrategy.yieldSyncV1AMPStrategyInteractor()).to.be.equal(
 					strategyInteractorBlank.address
@@ -56,12 +57,13 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol", async () => {
 		it(
 			"It should be able only be able to set once..",
 			async () => {
-				await yieldSyncV1AMPStrategy.initializeStrategy(strategyInteractorBlank.address, [mockERC20.address]);
+				await yieldSyncV1AMPStrategy.initializeStrategy(strategyInteractorBlank.address, [mockERC20.address], [HUNDRED_PERCENT]);
 
 				await expect(
 					yieldSyncV1AMPStrategy.initializeStrategy(
 						strategyInteractorBlank.address,
-						[mockERC20.address]
+						[mockERC20.address],
+						[HUNDRED_PERCENT]
 					)
 				).to.be.rejectedWith(ERROR_STRATEGY_ALREADY_SET);
 			}
@@ -72,7 +74,7 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol", async () => {
 		it(
 			"Should be able to deposit ERC20 into strategy interactor..",
 			async () => {
-				await yieldSyncV1AMPStrategy.initializeStrategy(strategyInteractorBlank.address, [mockERC20.address]);
+				await yieldSyncV1AMPStrategy.initializeStrategy(strategyInteractorBlank.address, [mockERC20.address], [HUNDRED_PERCENT]);
 
 				await yieldSyncV1AMPStrategy.utilizedERC20Deposit([1])
 			}
