@@ -6,12 +6,16 @@ import { Contract, ContractFactory } from "ethers";
 
 
 const ERROR_STRATEGY_ALREADY_SET = "address(yieldSyncV1AMPStrategyInteractor) != address(0)";
-const ERR0R_INVALID_UTILIZEDERC20AMOUNT = "_utilizedERC20.length != _utilizedERC20Amount.length";
+const ERR0R_INVALID_UTILIZEDERC20AMOUNT = "!utilizedERC20AmountValid(_utilizedERC20Amount)";
+const ERR0R_INVALID_UTILIZEDERC20AMOUNT_LENGTH = "_utilizedERC20.length != _utilizedERC20Amount.length";
+
 const HUNDRED_PERCENT = ethers.utils.parseUnits('1', 18);
+const FIFTY_PERCENT = ethers.utils.parseUnits('.5', 18);
 
 
 describe("[0.0] YieldSyncV1VaultDeployer.sol", async () => {
-	let mockERC20: Contract;
+	let mockERC20A: Contract;
+	let mockERC20B: Contract;
 	let strategyInteractorBlank: Contract;
 	let yieldSyncV1AMPStrategy: Contract;
 
@@ -22,12 +26,13 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol", async () => {
 		const StrategyInteractorBlank: ContractFactory = await ethers.getContractFactory("StrategyInteractorBlank");
 		const YieldSyncV1AMPStrategy: ContractFactory = await ethers.getContractFactory("YieldSyncV1AMPStrategy");
 
-		mockERC20 = await (await MockERC20.deploy()).deployed();
+		mockERC20A = await (await MockERC20.deploy()).deployed();
+		mockERC20B = await (await MockERC20.deploy()).deployed();
 		strategyInteractorBlank = await (await StrategyInteractorBlank.deploy()).deployed();
 		yieldSyncV1AMPStrategy = await (await YieldSyncV1AMPStrategy.deploy(owner.address, "Exampe", "EX")).deployed();
 	});
 
-	describe("initializeStrategy()", async () => {
+	describe("function initializeStrategy()", async () => {
 		it(
 			"[auth] Should revert when unauthorized msg.sender calls..",
 			async () => {
@@ -36,7 +41,7 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol", async () => {
 				await expect(
 					yieldSyncV1AMPStrategy.connect(addr1).initializeStrategy(
 						strategyInteractorBlank.address,
-						[mockERC20.address]
+						[mockERC20A.address]
 					)
 				).to.be.rejected;
 			}
@@ -45,54 +50,90 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol", async () => {
 		it(
 			"It should be able to set _strategy and _utilizedERC20..",
 			async () => {
-				await yieldSyncV1AMPStrategy.initializeStrategy(strategyInteractorBlank.address, [mockERC20.address], [HUNDRED_PERCENT]);
+				// Initialize strategy with mock ERC20
+				await expect(
+					yieldSyncV1AMPStrategy.initializeStrategy(
+						strategyInteractorBlank.address,
+						[mockERC20A.address],
+						[HUNDRED_PERCENT]
+					)
+				).to.not.be.reverted;
 
 				expect(await yieldSyncV1AMPStrategy.yieldSyncV1AMPStrategyInteractor()).to.be.equal(
 					strategyInteractorBlank.address
 				);
 				expect((await yieldSyncV1AMPStrategy.utilizedERC20()).length).to.be.equal(1);
-				expect((await yieldSyncV1AMPStrategy.utilizedERC20())[0]).to.be.equal(mockERC20.address);
+				expect((await yieldSyncV1AMPStrategy.utilizedERC20())[0]).to.be.equal(mockERC20A.address);
+				expect((await yieldSyncV1AMPStrategy.utilizedERC20Allocation())[0]).to.be.equal(HUNDRED_PERCENT);
 			}
 		);
 
 		it(
 			"It should be able only be able to set once..",
 			async () => {
-				await yieldSyncV1AMPStrategy.initializeStrategy(strategyInteractorBlank.address, [mockERC20.address], [HUNDRED_PERCENT]);
+				// Initialize strategy with mock ERC20
+				await expect(
+					await yieldSyncV1AMPStrategy.initializeStrategy(
+						strategyInteractorBlank.address,
+						[mockERC20A.address],
+						[HUNDRED_PERCENT]
+					)
+				).to.not.be.reverted;
 
 				await expect(
 					yieldSyncV1AMPStrategy.initializeStrategy(
 						strategyInteractorBlank.address,
-						[mockERC20.address],
+						[mockERC20A.address],
 						[HUNDRED_PERCENT]
 					)
 				).to.be.rejectedWith(ERROR_STRATEGY_ALREADY_SET);
 			}
 		);
+
+		it(
+			"It should be able to set multiple _utilizedERC20..",
+			async () => {
+				// Initialize strategy with mock ERC20
+				await yieldSyncV1AMPStrategy.initializeStrategy(
+					strategyInteractorBlank.address,
+					[mockERC20A.address, mockERC20B.address],
+					[FIFTY_PERCENT, FIFTY_PERCENT]
+				);
+
+				expect(await yieldSyncV1AMPStrategy.yieldSyncV1AMPStrategyInteractor()).to.be.equal(
+					strategyInteractorBlank.address
+				);
+				expect((await yieldSyncV1AMPStrategy.utilizedERC20()).length).to.be.equal(2);
+				expect((await yieldSyncV1AMPStrategy.utilizedERC20())[0]).to.be.equal(mockERC20A.address);
+				expect((await yieldSyncV1AMPStrategy.utilizedERC20())[1]).to.be.equal(mockERC20B.address);
+				expect((await yieldSyncV1AMPStrategy.utilizedERC20Allocation())[0]).to.be.equal(FIFTY_PERCENT);
+				expect((await yieldSyncV1AMPStrategy.utilizedERC20Allocation())[1]).to.be.equal(FIFTY_PERCENT);
+			}
+		);
 	});
 
-	describe("utilizedERC20Deposit()", async () => {
+	describe("function utilizedERC20Deposit()", async () => {
 		it(
-			"Should revert if invalid utilizedERC20Amount passed..",
+			"Should revert if invalid length for utilizedERC20Amount passed..",
 			async () => {
 				const [owner] = await ethers.getSigners();
 
-				const depositAmount = ethers.utils.parseUnits("1", 18);
+				const depositAmountA = ethers.utils.parseUnits("1", 18);
 
 				// Initialize strategy with mock ERC20
 				await yieldSyncV1AMPStrategy.initializeStrategy(
 					strategyInteractorBlank.address,
-					[mockERC20.address],
+					[mockERC20A.address],
 					[HUNDRED_PERCENT]
 				);
 
 				// Approve the StrategyInteractorBlank contract to spend tokens on behalf of owner
-				await mockERC20.connect(owner).approve(strategyInteractorBlank.address, depositAmount);
+				await mockERC20A.connect(owner).approve(strategyInteractorBlank.address, depositAmountA);
 
 				// Deposit ERC20 tokens into the strategy
 				await expect(
-					yieldSyncV1AMPStrategy.connect(owner).utilizedERC20Deposit([depositAmount, depositAmount])
-				).to.be.revertedWith(ERR0R_INVALID_UTILIZEDERC20AMOUNT);
+					yieldSyncV1AMPStrategy.connect(owner).utilizedERC20Deposit([depositAmountA, depositAmountA])
+				).to.be.revertedWith(ERR0R_INVALID_UTILIZEDERC20AMOUNT_LENGTH);
 			}
 		);
 
@@ -101,49 +142,110 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol", async () => {
 			async () => {
 				const [owner] = await ethers.getSigners();
 
-				const depositAmount = ethers.utils.parseUnits("1", 18);
+				const depositAmountA = ethers.utils.parseUnits("1", 18);
 
 				// Initialize strategy with mock ERC20
 				await yieldSyncV1AMPStrategy.initializeStrategy(
 					strategyInteractorBlank.address,
-					[mockERC20.address],
+					[mockERC20A.address],
 					[HUNDRED_PERCENT]
 				);
 
 				// Approve the StrategyInteractorBlank contract to spend tokens on behalf of owner
-				await mockERC20.connect(owner).approve(strategyInteractorBlank.address, depositAmount);
+				await mockERC20A.connect(owner).approve(strategyInteractorBlank.address, depositAmountA);
 
 				// Deposit ERC20 tokens into the strategy
 				await expect(
-					yieldSyncV1AMPStrategy.connect(owner).utilizedERC20Deposit([depositAmount])
+					yieldSyncV1AMPStrategy.connect(owner).utilizedERC20Deposit([depositAmountA])
 				).to.not.be.reverted;
 
-				expect(await mockERC20.balanceOf(strategyInteractorBlank.address)).to.be.equal(depositAmount);
+				expect(await mockERC20A.balanceOf(strategyInteractorBlank.address)).to.be.equal(depositAmountA);
 			}
 		);
 
 		it(
-			"Should allow caller to recieve strategy ERC20 tokens..",
+			"Should allow caller to receive strategy ERC20 tokens..",
 			async () => {
 				const [owner] = await ethers.getSigners();
 
-				const depositAmount = ethers.utils.parseUnits("1", 18);
+				const depositAmountA = ethers.utils.parseUnits("1", 18);
 
 				// Initialize strategy with mock ERC20
 				await yieldSyncV1AMPStrategy.initializeStrategy(
 					strategyInteractorBlank.address,
-					[mockERC20.address],
+					[mockERC20A.address],
 					[HUNDRED_PERCENT]
 				);
 
 				// Approve the StrategyInteractorBlank contract to spend tokens on behalf of owner
-				await mockERC20.connect(owner).approve(strategyInteractorBlank.address, depositAmount);
+				await mockERC20A.connect(owner).approve(strategyInteractorBlank.address, depositAmountA);
 
 				// Deposit ERC20 tokens into the strategy
-				await yieldSyncV1AMPStrategy.connect(owner).utilizedERC20Deposit([depositAmount])
+				await yieldSyncV1AMPStrategy.connect(owner).utilizedERC20Deposit([depositAmountA])
 
-				console.log("HH Strategy balanceOf:", await yieldSyncV1AMPStrategy.balanceOf(owner.address));
+				//console.log("HH Strategy balanceOf:", await yieldSyncV1AMPStrategy.balanceOf(owner.address));
 			}
 		);
+
+		describe("MULTIPLE ERC20", async () => {
+			it(
+				"Should revert if invalid utilizedERC20Amounts passed..",
+				async () => {
+					const [owner] = await ethers.getSigners();
+
+					const depositAmountA = ethers.utils.parseUnits("1", 18);
+					const depositAmountB = ethers.utils.parseUnits(".8", 18);
+
+					// Initialize strategy with mock ERC20
+					await yieldSyncV1AMPStrategy.initializeStrategy(
+						strategyInteractorBlank.address,
+						[mockERC20A.address, mockERC20B.address],
+						[FIFTY_PERCENT, FIFTY_PERCENT]
+					);
+
+					// Approve the StrategyInteractorBlank contract to spend tokens on behalf of owner
+					await mockERC20A.connect(owner).approve(strategyInteractorBlank.address, depositAmountA);
+					await mockERC20B.connect(owner).approve(strategyInteractorBlank.address, depositAmountA);
+
+					// Deposit ERC20 tokens into the strategy
+					await expect(
+						yieldSyncV1AMPStrategy.connect(owner).utilizedERC20Deposit([depositAmountA, depositAmountB])
+					).to.be.revertedWith(ERR0R_INVALID_UTILIZEDERC20AMOUNT);
+				}
+			);
+
+			it(
+				"Should be able to deposit ERC20s into strategy interactor..",
+				async () => {
+					const [owner] = await ethers.getSigners();
+
+					const depositAmountA = ethers.utils.parseUnits("1", 18);
+					const depositAmountB = ethers.utils.parseUnits("1", 18);
+
+					// Initialize strategy with mock ERC20
+					await yieldSyncV1AMPStrategy.initializeStrategy(
+						strategyInteractorBlank.address,
+						[mockERC20A.address, mockERC20B.address],
+						[FIFTY_PERCENT, FIFTY_PERCENT]
+					);
+
+					//console.log("await yieldSyncV1AMPStrategy.utilizedERC20Allocation()", await yieldSyncV1AMPStrategy.utilizedERC20Allocation());
+
+
+					// Approve the StrategyInteractorBlank contract to spend tokens on behalf of owner
+					await mockERC20A.connect(owner).approve(strategyInteractorBlank.address, depositAmountA);
+					await mockERC20B.connect(owner).approve(strategyInteractorBlank.address, depositAmountB);
+
+					// Deposit ERC20 tokens into the strategy
+					await expect(
+						yieldSyncV1AMPStrategy.connect(owner).utilizedERC20Deposit([depositAmountA, depositAmountB])
+					).to.not.be.reverted;
+
+					expect(await mockERC20A.balanceOf(strategyInteractorBlank.address)).to.be.equal(depositAmountA);
+					expect(await mockERC20B.balanceOf(strategyInteractorBlank.address)).to.be.equal(depositAmountB);
+				}
+			);
+		});
+
 	});
 });

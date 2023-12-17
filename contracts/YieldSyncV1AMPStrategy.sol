@@ -116,13 +116,13 @@ contract YieldSyncV1AMPStrategy is
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
 			(bool utilizedERC20AmountAllocationComputed, uint256 amountAllocationActual) = SafeMath.tryDiv(
-				_utilizedERC20Amount[i] * yieldSyncV1AMPStrategyInteractor.eRC20ETHValue(_utilizedERC20[i]),
+				_utilizedERC20Amount[i] * yieldSyncV1AMPStrategyInteractor.eRC20ETHValue(_utilizedERC20[i]) * 1e18,
 				_utilizedERC20AmountETHValue
 			);
 
 			require(utilizedERC20AmountAllocationComputed, "!utilizedERC20AmountAllocationComputed");
 
-			if (_utilizedERC20Allocation[i] != amountAllocationActual * 1e18)
+			if (_utilizedERC20Allocation[i] != amountAllocationActual)
 			{
 				utilizedERC20AmountValid_ = false;
 
