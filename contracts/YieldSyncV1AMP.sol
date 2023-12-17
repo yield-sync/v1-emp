@@ -113,17 +113,17 @@ contract YieldSyncV1AMP is
 
 		for (uint256 i = 0; i < _utilizedToken.length; i++)
 		{
-			require(
-				IYieldSyncV1AMPStrategy(_strategy).token_utilized(_utilizedToken[i]),
-				"!IYieldSyncV1AMPStrategy(_strategy).token_utilized(_utilizedToken[i])"
-			);
+			//require(
+			//	IYieldSyncV1AMPStrategy(_strategy).token_utilized(_utilizedToken[i]),
+			//	"!IYieldSyncV1AMPStrategy(_strategy).token_utilized(_utilizedToken[i])"
+			//);
 
 			ERC20(_utilizedToken[i]).safeTransferFrom(msg.sender, address(this), _utilizedTokenAmount[i]);
 
 			// Calculate the value of the deposited tokens
-			totalDepositValue += IYieldSyncV1AMPStrategy(_strategy).utilizedTokenETHValue(
-				_utilizedToken[i]
-			) * _utilizedTokenAmount[i];
+			//totalDepositValue += IYieldSyncV1AMPStrategy(_strategy).utilizedTokenETHValue(
+			//	_utilizedToken[i]
+			//) * _utilizedTokenAmount[i];
 		}
 
 		uint256 tokensToMint;

@@ -12,26 +12,9 @@ using SafeERC20 for IERC20;
 contract StrategyInteractorBlank is
 	IYieldSyncV1AMPStrategyInteractor
 {
-	address public strategy;
-
 	bool internal _eRC20DepositsOpen = true;
 	bool internal _eRC20WithdrawalsOpen = true;
 
-	uint256 public slippageTolerance;
-
-
-	constructor (address _strategy)
-	{
-		strategy = _strategy;
-	}
-
-
-	modifier onlyYieldSyncV1AMPStrategy()
-	{
-		require(strategy == msg.sender, "strategy != msg.sender");
-
-		_;
-	}
 
 	/// @inheritdoc IYieldSyncV1AMPStrategyInteractor
 	function eRC20DepositsOpen()
@@ -85,7 +68,6 @@ contract StrategyInteractorBlank is
 	function eRC20Deposit(address _from, address[] memory _eRC20, uint256[] memory _eRC20Amount)
 		public
 		override
-		onlyYieldSyncV1AMPStrategy()
 	{
 		for (uint256 i = 0; i < _eRC20.length; i++)
 		{
@@ -97,7 +79,6 @@ contract StrategyInteractorBlank is
 	function eRC20Withdraw(address _to, address[] memory _eRC20, uint256[] memory _eRC20Amount)
 		public
 		override
-		onlyYieldSyncV1AMPStrategy()
 	{
 		for (uint256 i = 0; i < _eRC20.length; i++)
 		{
