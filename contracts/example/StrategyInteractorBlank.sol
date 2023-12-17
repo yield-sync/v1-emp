@@ -9,6 +9,12 @@ import { IERC20, SafeERC20 } from "../interface/IYieldSyncV1AMPStrategy.sol";
 using SafeERC20 for IERC20;
 
 
+/**
+* @notice THIS IS A DANGEROUS CONTRACT MEANT ONLY FOR TESTING
+* This contract lacks authorization and all functions can be called from anyone. Balances on this smart contract are not
+* safe.
+* The purpose of this contract is strictly for testing.
+*/
 contract StrategyInteractorBlank is
 	IYieldSyncV1AMPStrategyInteractor
 {
