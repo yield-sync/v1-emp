@@ -118,14 +118,14 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol", async () => {
 			async () => {
 				const [owner] = await ethers.getSigners();
 
-				const depositAmountA = ethers.utils.parseUnits("1", 18);
-
 				// Initialize strategy with mock ERC20
 				await yieldSyncV1AMPStrategy.initializeStrategy(
 					strategyInteractorBlank.address,
 					[mockERC20A.address],
 					[HUNDRED_PERCENT]
 				);
+
+				const depositAmountA = ethers.utils.parseUnits("1", 18);
 
 				// Approve the StrategyInteractorBlank contract to spend tokens on behalf of owner
 				await mockERC20A.connect(owner).approve(strategyInteractorBlank.address, depositAmountA);
@@ -142,14 +142,14 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol", async () => {
 			async () => {
 				const [owner] = await ethers.getSigners();
 
-				const depositAmountA = ethers.utils.parseUnits("1", 18);
-
 				// Initialize strategy with mock ERC20
 				await yieldSyncV1AMPStrategy.initializeStrategy(
 					strategyInteractorBlank.address,
 					[mockERC20A.address],
 					[HUNDRED_PERCENT]
 				);
+
+				const depositAmountA = ethers.utils.parseUnits("1", 18);
 
 				// Approve the StrategyInteractorBlank contract to spend tokens on behalf of owner
 				await mockERC20A.connect(owner).approve(strategyInteractorBlank.address, depositAmountA);
@@ -168,14 +168,14 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol", async () => {
 			async () => {
 				const [owner] = await ethers.getSigners();
 
-				const depositAmountA = ethers.utils.parseUnits("1", 18);
-
 				// Initialize strategy with mock ERC20
 				await yieldSyncV1AMPStrategy.initializeStrategy(
 					strategyInteractorBlank.address,
 					[mockERC20A.address],
 					[HUNDRED_PERCENT]
 				);
+
+				const depositAmountA = ethers.utils.parseUnits("1", 18);
 
 				// Approve the StrategyInteractorBlank contract to spend tokens on behalf of owner
 				await mockERC20A.connect(owner).approve(strategyInteractorBlank.address, depositAmountA);
@@ -193,14 +193,14 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol", async () => {
 				async () => {
 					const [owner] = await ethers.getSigners();
 
-					const depositAmountA = ethers.utils.parseUnits("1", 18);
-
 					// Initialize strategy with mock ERC20
 					await yieldSyncV1AMPStrategy.initializeStrategy(
 						strategyInteractorBlank.address,
 						[mockERC20A.address, mockERC20B.address],
 						[FIFTY_PERCENT, FIFTY_PERCENT]
 					);
+
+					const depositAmountA = ethers.utils.parseUnits("1", 18);
 
 					// Approve the StrategyInteractorBlank contract to spend tokens on behalf of owner
 					await mockERC20A.connect(owner).approve(strategyInteractorBlank.address, depositAmountA);
@@ -218,15 +218,15 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol", async () => {
 				async () => {
 					const [owner] = await ethers.getSigners();
 
-					const depositAmountA = ethers.utils.parseUnits("1", 18);
-					const depositAmountB = ethers.utils.parseUnits(".8", 18);
-
 					// Initialize strategy with mock ERC20
 					await yieldSyncV1AMPStrategy.initializeStrategy(
 						strategyInteractorBlank.address,
 						[mockERC20A.address, mockERC20B.address],
 						[FIFTY_PERCENT, FIFTY_PERCENT]
 					);
+
+					const depositAmountA = ethers.utils.parseUnits("1", 18);
+					const depositAmountB = ethers.utils.parseUnits(".8", 18);
 
 					// Approve the StrategyInteractorBlank contract to spend tokens on behalf of owner
 					await mockERC20A.connect(owner).approve(strategyInteractorBlank.address, depositAmountA);
@@ -244,9 +244,6 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol", async () => {
 				async () => {
 					const [owner] = await ethers.getSigners();
 
-					const depositAmountA = ethers.utils.parseUnits("1", 18);
-					const depositAmountB = ethers.utils.parseUnits("1", 18);
-
 					// Initialize strategy with mock ERC20
 					await yieldSyncV1AMPStrategy.initializeStrategy(
 						strategyInteractorBlank.address,
@@ -254,8 +251,8 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol", async () => {
 						[FIFTY_PERCENT, FIFTY_PERCENT]
 					);
 
-					//console.log("await yieldSyncV1AMPStrategy.utilizedERC20Allocation()", await yieldSyncV1AMPStrategy.utilizedERC20Allocation());
-
+					const depositAmountA = ethers.utils.parseUnits("1", 18);
+					const depositAmountB = ethers.utils.parseUnits("1", 18);
 
 					// Approve the StrategyInteractorBlank contract to spend tokens on behalf of owner
 					await mockERC20A.connect(owner).approve(strategyInteractorBlank.address, depositAmountA);
@@ -269,7 +266,39 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol", async () => {
 					expect(await mockERC20A.balanceOf(strategyInteractorBlank.address)).to.be.equal(depositAmountA);
 					expect(await mockERC20B.balanceOf(strategyInteractorBlank.address)).to.be.equal(depositAmountB);
 
-					expect(await yieldSyncV1AMPStrategy.balanceOf(owner.address)).to.be.equal(ethers.utils.parseUnits("2", 18));
+					expect(await yieldSyncV1AMPStrategy.balanceOf(owner.address)).to.be.equal(
+						ethers.utils.parseUnits("2", 18)
+					);
+				}
+			);
+
+			it(
+				"Should allow caller to receive strategy ERC20 tokens..",
+				async () => {
+					const [owner] = await ethers.getSigners();
+
+					// Initialize strategy with mock ERC20
+					await yieldSyncV1AMPStrategy.initializeStrategy(
+						strategyInteractorBlank.address,
+						[mockERC20A.address, mockERC20B.address],
+						[FIFTY_PERCENT, FIFTY_PERCENT]
+					);
+
+					const depositAmountA = ethers.utils.parseUnits("1", 18);
+					const depositAmountB = ethers.utils.parseUnits("1", 18);
+
+					// Approve the StrategyInteractorBlank contract to spend tokens on behalf of owner
+					await mockERC20A.connect(owner).approve(strategyInteractorBlank.address, depositAmountA);
+					await mockERC20B.connect(owner).approve(strategyInteractorBlank.address, depositAmountB);
+
+					// Deposit ERC20 tokens into the strategy
+					await expect(
+						yieldSyncV1AMPStrategy.connect(owner).utilizedERC20Deposit([depositAmountA, depositAmountB])
+					).to.not.be.reverted;
+
+					expect(await yieldSyncV1AMPStrategy.balanceOf(owner.address)).to.be.equal(
+						ethers.utils.parseUnits("2", 18)
+					);
 				}
 			);
 		});
