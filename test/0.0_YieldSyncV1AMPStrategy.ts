@@ -189,6 +189,31 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol", async () => {
 
 		describe("MULTIPLE ERC20", async () => {
 			it(
+				"Should revert if invalid length for utilizedERC20Amount passed..",
+				async () => {
+					const [owner] = await ethers.getSigners();
+
+					const depositAmountA = ethers.utils.parseUnits("1", 18);
+
+					// Initialize strategy with mock ERC20
+					await yieldSyncV1AMPStrategy.initializeStrategy(
+						strategyInteractorBlank.address,
+						[mockERC20A.address, mockERC20B.address],
+						[FIFTY_PERCENT, FIFTY_PERCENT]
+					);
+
+					// Approve the StrategyInteractorBlank contract to spend tokens on behalf of owner
+					await mockERC20A.connect(owner).approve(strategyInteractorBlank.address, depositAmountA);
+					await mockERC20B.connect(owner).approve(strategyInteractorBlank.address, depositAmountA);
+
+					// Deposit ERC20 tokens into the strategy
+					await expect(
+						yieldSyncV1AMPStrategy.connect(owner).utilizedERC20Deposit([depositAmountA])
+					).to.be.revertedWith(ERR0R_INVALID_UTILIZEDERC20AMOUNT_LENGTH);
+				}
+			);
+
+			it(
 				"Should revert if invalid utilizedERC20Amounts passed..",
 				async () => {
 					const [owner] = await ethers.getSigners();
