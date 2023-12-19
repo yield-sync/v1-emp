@@ -112,6 +112,9 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol", async () => {
 		);
 	});
 
+	describe("function utilizedERC20AllocationSet()", async () => {
+	});
+
 	describe("function utilizedERC20Deposit()", async () => {
 		it(
 			"Should revert if invalid length for utilizedERC20Amount passed..",
@@ -294,7 +297,6 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol", async () => {
 				}
 			);
 		});
-
 	});
 
 	describe("function utilizedERC20Withdraw()", async () => {
@@ -356,5 +358,9 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol", async () => {
 				expect(await mockERC20A.balanceOf(owner.address)).to.be.greaterThanOrEqual(ownerMockERC20ABalanceBefore);
 			}
 		);
+
+		describe("MULTIPLE ERC20", async () => {
+
+		});
 	});
 });
