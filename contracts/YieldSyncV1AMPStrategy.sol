@@ -248,7 +248,7 @@ contract YieldSyncV1AMPStrategy is
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
-			uTAPB[i] += uTAPB[i] * _tokenAmount;
+			uTAPB[i] = uTAPB[i] * _tokenAmount;
 		}
 
 		yieldSyncV1AMPStrategyInteractor.eRC20Withdraw(msg.sender, _utilizedERC20, uTAPB);
