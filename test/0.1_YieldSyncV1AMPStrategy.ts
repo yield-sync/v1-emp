@@ -336,8 +336,12 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Deposit", async () => {
 							yieldSyncV1AMPStrategy.utilizedERC20Deposit([mockERC20AdepositAmount, mockERC206depositAmount])
 						).to.not.be.reverted;
 
-						expect(await mockERC20A.balanceOf(strategyInteractorBlank.address)).to.be.equal(mockERC20AdepositAmount);
-						expect(await mockERC206.balanceOf(strategyInteractorBlank.address)).to.be.equal(mockERC206depositAmount);
+						expect(await mockERC20A.balanceOf(strategyInteractorBlank.address)).to.be.equal(
+							mockERC20AdepositAmount
+						);
+						expect(await mockERC206.balanceOf(strategyInteractorBlank.address)).to.be.equal(
+							mockERC206depositAmount
+						);
 
 						expect(await yieldSyncV1AMPStrategy.balanceOf(owner.address)).to.be.equal(
 							ethers.utils.parseUnits("2", 18)
@@ -371,8 +375,12 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Deposit", async () => {
 							yieldSyncV1AMPStrategy.utilizedERC20Deposit([mockERC20AdepositAmount, mockERC206depositAmount])
 						).to.not.be.reverted;
 
-						expect(await mockERC20A.balanceOf(strategyInteractorBlank.address)).to.be.equal(mockERC20AdepositAmount);
-						expect(await mockERC206.balanceOf(strategyInteractorBlank.address)).to.be.equal(mockERC206depositAmount);
+						expect(await mockERC20A.balanceOf(strategyInteractorBlank.address)).to.be.equal(
+							mockERC20AdepositAmount
+						);
+						expect(await mockERC206.balanceOf(strategyInteractorBlank.address)).to.be.equal(
+							mockERC206depositAmount
+						);
 
 						expect(await yieldSyncV1AMPStrategy.balanceOf(owner.address)).to.be.equal(
 							ethers.utils.parseUnits("1", 18)

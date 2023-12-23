@@ -369,7 +369,9 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 
 						// [main-test] Withdraw ERC20 tokens into the strategy
 						await expect(
-							yieldSyncV1AMPStrategy.utilizedERC20Withdraw(await yieldSyncV1AMPStrategy.balanceOf(owner.address))
+							yieldSyncV1AMPStrategy.utilizedERC20Withdraw(
+								await yieldSyncV1AMPStrategy.balanceOf(owner.address)
+							)
 						).to.be.not.reverted;
 
 
@@ -450,7 +452,9 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 
 						// [main-test] Withdraw ERC20 tokens into the strategy
 						await expect(
-							yieldSyncV1AMPStrategy.utilizedERC20Withdraw(await yieldSyncV1AMPStrategy.balanceOf(owner.address))
+							yieldSyncV1AMPStrategy.utilizedERC20Withdraw(
+								await yieldSyncV1AMPStrategy.balanceOf(owner.address)
+							)
 						).to.be.not.reverted;
 
 
