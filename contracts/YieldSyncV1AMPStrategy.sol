@@ -176,7 +176,7 @@ contract YieldSyncV1AMPStrategy is
 
 		_utilizedERC20 = __utilizedERC20;
 
-		_utilizedERC20Allocation = __utilizedERC20Allocation;
+		utilizedERC20AllocationSet(__utilizedERC20Allocation);
 	}
 
 	/// @inheritdoc IYieldSyncV1AMPStrategy
