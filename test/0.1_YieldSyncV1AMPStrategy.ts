@@ -13,7 +13,7 @@ const TWENTY_FIVE_PERCENT = ethers.utils.parseUnits('.25', 18);
 const SEVENTY_FIVE_PERCENT = ethers.utils.parseUnits('.75', 18);
 
 
-describe("[0.1] YieldSyncV1VaultDeployer.sol", async () => {
+describe("[0.1] YieldSyncV1VaultDeployer.sol - Deposit & Withdrawal", async () => {
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;
 	let mockERC206: Contract;
@@ -255,7 +255,7 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol", async () => {
 						);
 
 						const mockERC20AdepositAmount = ethers.utils.parseUnits("1", 18);
-						const mockERC20BdepositAmount = ethers.utils.parseUnits("1", 18);
+						const mockERC20BdepositAmount = ethers.utils.parseUnits("1", 6);
 
 						// Approve the StrategyInteractorBlank contract to spend tokens on behalf of owner
 						await mockERC20A.approve(strategyInteractorBlank.address, mockERC20AdepositAmount);
