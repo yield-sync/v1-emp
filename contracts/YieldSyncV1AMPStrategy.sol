@@ -142,7 +142,7 @@ contract YieldSyncV1AMPStrategy is
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
-			(, uint256 utilizedERC20Amount) = SafeMath.tryDiv(utilizedERC20Amount_[i], totalSupply());
+			(, uint256 utilizedERC20Amount) = SafeMath.tryDiv(utilizedERC20Amount_[i] * 1e18, totalSupply());
 
 			utilizedERC20Amount_[i] = utilizedERC20Amount;
 		}
@@ -244,11 +244,9 @@ contract YieldSyncV1AMPStrategy is
 
 		uint256[] memory uTAPB = utilizedERC20AmountPerBurn();
 
-		require(uTAPB.length == _utilizedERC20.length, "uTAPB.length != _utilizedERC20.length");
-
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
-			uTAPB[i] = uTAPB[i] * _tokenAmount;
+			uTAPB[i] = uTAPB[i] * _tokenAmount / 1e18;
 		}
 
 		yieldSyncV1AMPStrategyInteractor.eRC20Withdraw(msg.sender, _utilizedERC20, uTAPB);
