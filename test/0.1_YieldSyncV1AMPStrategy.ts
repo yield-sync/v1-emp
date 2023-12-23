@@ -254,20 +254,20 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Deposit & Withdrawal", async () =
 							[FIFTY_PERCENT, FIFTY_PERCENT]
 						);
 
-						const mockERC20AdepositAmount = ethers.utils.parseUnits("1", 18);
-						const mockERC20BdepositAmount = ethers.utils.parseUnits("1", 6);
+						const mockERC20AdepositAmount = ethers.utils.parseUnits("9", 18);
+						const mockERC206depositAmount = ethers.utils.parseUnits("3", 6);
 
 						// Approve the StrategyInteractorBlank contract to spend tokens on behalf of owner
 						await mockERC20A.approve(strategyInteractorBlank.address, mockERC20AdepositAmount);
-						await mockERC20B.approve(strategyInteractorBlank.address, mockERC20BdepositAmount);
+						await mockERC20B.approve(strategyInteractorBlank.address, mockERC206depositAmount);
 
 						// Deposit ERC20 tokens into the strategy
 						await expect(
-							yieldSyncV1AMPStrategy.utilizedERC20Deposit([mockERC20AdepositAmount, mockERC20BdepositAmount])
+							yieldSyncV1AMPStrategy.utilizedERC20Deposit([mockERC20AdepositAmount, mockERC206depositAmount])
 						).to.not.be.reverted;
 
 						expect(await mockERC20A.balanceOf(strategyInteractorBlank.address)).to.be.equal(mockERC20AdepositAmount);
-						expect(await mockERC20B.balanceOf(strategyInteractorBlank.address)).to.be.equal(mockERC20BdepositAmount);
+						expect(await mockERC20B.balanceOf(strategyInteractorBlank.address)).to.be.equal(mockERC206depositAmount);
 
 						expect(await yieldSyncV1AMPStrategy.balanceOf(owner.address)).to.be.equal(
 							ethers.utils.parseUnits("2", 18)
