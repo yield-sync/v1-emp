@@ -114,6 +114,62 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Deposit", async () => {
 			}
 		);
 
+		describe("ERC20 with 6 decimals", async () => {
+			it(
+				"Should be able to deposit ERC20 into strategy interactor..",
+				async () => {
+					// Initialize strategy with mock ERC20
+					await expect(
+						yieldSyncV1AMPStrategy.initializeStrategy(
+							strategyInteractorBlank.address,
+							[mockERC206.address],
+							[HUNDRED_PERCENT]
+						)
+					).to.not.be.reverted;
+
+					const mockERC206depositAmount = ethers.utils.parseUnits("1", 6);
+
+					// Approve the StrategyInteractorBlank contract to spend tokens on behalf of owner
+					await mockERC206.approve(strategyInteractorBlank.address, mockERC206depositAmount);
+
+					// Deposit ERC20 tokens into the strategy
+					await expect(
+						yieldSyncV1AMPStrategy.utilizedERC20Deposit([mockERC206depositAmount])
+					).to.not.be.reverted;
+
+					expect(await mockERC206.balanceOf(strategyInteractorBlank.address)).to.be.equal(mockERC206depositAmount);
+				}
+			);
+
+			it(
+				"Should issue strategy ERC20 tokens upon utilzied ERC20 deposit..",
+				async () => {
+					const [owner] = await ethers.getSigners();
+
+					// Initialize strategy with mock ERC20
+					await expect(
+						yieldSyncV1AMPStrategy.initializeStrategy(
+							strategyInteractorBlank.address,
+							[mockERC206.address],
+							[HUNDRED_PERCENT]
+						)
+					).to.not.be.reverted;
+
+					const mockERC206depositAmount = ethers.utils.parseUnits("1", 6);
+
+					// Approve the StrategyInteractorBlank contract to spend tokens on behalf of owner
+					await mockERC206.approve(strategyInteractorBlank.address, mockERC206depositAmount);
+
+					// Deposit ERC20 tokens into the strategy
+					await yieldSyncV1AMPStrategy.utilizedERC20Deposit([mockERC206depositAmount])
+
+					expect(await yieldSyncV1AMPStrategy.balanceOf(owner.address)).to.be.equal(
+						ethers.utils.parseUnits("1", 18)
+					);
+				}
+			);
+		});
+
 		describe("MULTIPLE ERC20", async () => {
 			it(
 				"Should revert if invalid length for utilizedERC20Amount passed..",
