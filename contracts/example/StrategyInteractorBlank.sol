@@ -2,6 +2,7 @@
 pragma solidity 0.8.18;
 
 
+import "hardhat/console.sol";
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 import { IYieldSyncV1AMPStrategyInteractor } from "../interface/IYieldSyncV1AMPStrategyInteractor.sol";
@@ -41,6 +42,7 @@ contract StrategyInteractorBlank is
 		override
 		returns (uint256 eRC20ETHValue_)
 	{
+		// Must return decimals 18
 		return 10 ** 18;
 	}
 

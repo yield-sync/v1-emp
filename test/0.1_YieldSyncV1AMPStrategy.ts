@@ -241,7 +241,7 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Deposit & Withdrawal", async () =
 				}
 			);
 
-			describe("MULTIPLE ERC20 with different decimal", async () => {
+			describe("decmials = 6", async () => {
 				it(
 					"[50/50] Should be able to deposit ERC20s into strategy interactor..",
 					async () => {
@@ -254,12 +254,12 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Deposit & Withdrawal", async () =
 							[FIFTY_PERCENT, FIFTY_PERCENT]
 						);
 
-						const mockERC20AdepositAmount = ethers.utils.parseUnits("9", 18);
-						const mockERC206depositAmount = ethers.utils.parseUnits("3", 6);
+						const mockERC20AdepositAmount = ethers.utils.parseUnits("1", 18);
+						const mockERC206depositAmount = ethers.utils.parseUnits("1", 6);
 
 						// Approve the StrategyInteractorBlank contract to spend tokens on behalf of owner
 						await mockERC20A.approve(strategyInteractorBlank.address, mockERC20AdepositAmount);
-						await mockERC20B.approve(strategyInteractorBlank.address, mockERC206depositAmount);
+						await mockERC206.approve(strategyInteractorBlank.address, mockERC206depositAmount);
 
 						// Deposit ERC20 tokens into the strategy
 						await expect(
@@ -267,7 +267,7 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Deposit & Withdrawal", async () =
 						).to.not.be.reverted;
 
 						expect(await mockERC20A.balanceOf(strategyInteractorBlank.address)).to.be.equal(mockERC20AdepositAmount);
-						expect(await mockERC20B.balanceOf(strategyInteractorBlank.address)).to.be.equal(mockERC206depositAmount);
+						expect(await mockERC206.balanceOf(strategyInteractorBlank.address)).to.be.equal(mockERC206depositAmount);
 
 						expect(await yieldSyncV1AMPStrategy.balanceOf(owner.address)).to.be.equal(
 							ethers.utils.parseUnits("2", 18)

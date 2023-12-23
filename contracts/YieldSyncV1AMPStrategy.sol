@@ -103,16 +103,16 @@ contract YieldSyncV1AMPStrategy is
 
 		utilizedERC20AmountValid_ = true;
 
-		uint256 _utilizedERC20AmountETHValue;
+		uint256 totalETHValue;
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
-			_utilizedERC20AmountETHValue += SafeMath.div(
+			totalETHValue += SafeMath.div(
 				SafeMath.mul(
-					_utilizedERC20Amount[i],
+				_utilizedERC20Amount[i] * 10 ** (18 - ERC20(_utilizedERC20[i]).decimals()),
 					yieldSyncV1AMPStrategyInteractor.eRC20ETHValue(_utilizedERC20[i])
 				),
-				1e18
+				10 ** 18
 			);
 		}
 
@@ -120,10 +120,16 @@ contract YieldSyncV1AMPStrategy is
 		{
 			(bool computed, uint256 amountAllocationActual) = SafeMath.tryDiv(
 				SafeMath.mul(
-					_utilizedERC20Amount[i],
-					yieldSyncV1AMPStrategyInteractor.eRC20ETHValue(_utilizedERC20[i])
+					SafeMath.div(
+						SafeMath.mul(
+							_utilizedERC20Amount[i],
+							yieldSyncV1AMPStrategyInteractor.eRC20ETHValue(_utilizedERC20[i])
+						),
+						10 ** ERC20(_utilizedERC20[i]).decimals()
+					),
+					1e18
 				),
-				_utilizedERC20AmountETHValue
+				totalETHValue
 			);
 
 			require(computed, "!computed");
@@ -229,7 +235,7 @@ contract YieldSyncV1AMPStrategy is
 		{
 			utilizedERC20AmountETHValue += SafeMath.div(
 				SafeMath.mul(
-					_utilizedERC20Amount[i],
+					_utilizedERC20Amount[i] * 10 ** (18 - ERC20(_utilizedERC20[i]).decimals()),
 					yieldSyncV1AMPStrategyInteractor.eRC20ETHValue(_utilizedERC20[i])
 				),
 				1e18
