@@ -280,7 +280,7 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Deposit & Withdrawal", async () =
 
 	describe("function utilizedERC20Withdraw()", async () => {
 		it(
-			"Should allow caller to burn ERC20 and cash out..",
+			"[100] Should allow caller to burn ERC20 and cash out..",
 			async () => {
 				const [owner] = await ethers.getSigners();
 
