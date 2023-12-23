@@ -94,6 +94,69 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 			}
 		);
 
+		describe("ERC20 with 6 decimals", async () => {
+			it(
+				"[100] Should allow caller to burn ERC20 and cash out..",
+				async () => {
+					const [owner] = await ethers.getSigners();
+
+					// Initialize strategy with mock ERC20
+					await expect(
+						yieldSyncV1AMPStrategy.initializeStrategy(
+							strategyInteractorBlank.address,
+							[mockERC206.address],
+							[HUNDRED_PERCENT]
+						)
+					).to.not.be.reverted;
+
+					const strategyTotalSupplyBefore = await yieldSyncV1AMPStrategy.totalSupply();
+
+					const strategyInteractorMockERC206BalanceBefore = await mockERC206.balanceOf(
+						strategyInteractorBlank.address
+					);
+
+					const ownerMockERC206BalanceBefore = await mockERC206.balanceOf(owner.address);
+
+					const mockERC206depositAmount = ethers.utils.parseUnits("1", 6);
+
+					// Approve the StrategyInteractorBlank contract to spend tokens on behalf of owner
+					await mockERC206.approve(strategyInteractorBlank.address, mockERC206depositAmount);
+
+					// Deposit mockERC206 tokens into the strategy
+					yieldSyncV1AMPStrategy.utilizedERC20Deposit([mockERC206depositAmount])
+
+					// mockERC206 BalanceOf strategy interactor should equal to deposit amount
+					expect(await mockERC206.balanceOf(strategyInteractorBlank.address)).to.be.equal(
+						strategyInteractorMockERC206BalanceBefore.add(mockERC206depositAmount)
+					);
+
+					// Strategy totalSupply has increased
+					expect(await yieldSyncV1AMPStrategy.totalSupply()).to.be.greaterThan(strategyTotalSupplyBefore);
+
+					// Strategy BalanceOf owner should be newly minted tokens (Current Supply - Before supply)
+					expect(await yieldSyncV1AMPStrategy.balanceOf(owner.address)).to.be.equal(
+						(await yieldSyncV1AMPStrategy.balanceOf(owner.address)).sub(strategyTotalSupplyBefore)
+					);
+
+					// [main-test] Withdraw ERC20 tokens into the strategy
+					await expect(
+						yieldSyncV1AMPStrategy.utilizedERC20Withdraw(await yieldSyncV1AMPStrategy.balanceOf(owner.address))
+					).to.be.not.reverted;
+
+					// Strategy token burned
+					expect(await yieldSyncV1AMPStrategy.balanceOf(owner.address)).to.be.equal(
+						strategyInteractorMockERC206BalanceBefore
+					);
+
+					// Supply put back to original
+					expect(await yieldSyncV1AMPStrategy.totalSupply()).to.be.equal(strategyTotalSupplyBefore);
+
+					// Check that the balance been returned to original or greater
+					expect(await mockERC206.balanceOf(owner.address)).to.be.greaterThanOrEqual(ownerMockERC206BalanceBefore);
+				}
+			);
+		});
+
 		describe("MULTIPLE ERC20", async () => {
 			it(
 				"[50/50] Should allow caller to burn ERC20 and cash out..",
