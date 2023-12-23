@@ -88,7 +88,10 @@ contract YieldSyncV1AMPStrategy is
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
-			balanceOfETHValue_ += uTAPB[i] * yieldSyncV1AMPStrategyInteractor.eRC20ETHValue(_utilizedERC20[i]) * balanceOf(_target);
+			balanceOfETHValue_ += SafeMath.mul(
+				uTAPB[i],
+				balanceOf(_target) * yieldSyncV1AMPStrategyInteractor.eRC20ETHValue(_utilizedERC20[i])
+			);
 		}
 	}
 
@@ -102,13 +105,13 @@ contract YieldSyncV1AMPStrategy is
 
 		utilizedERC20AmountValid_ = true;
 
-		uint256 totalETHValue;
+		uint256 utilizedERC20AmountTotalETHValue;
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
-			totalETHValue += SafeMath.div(
+			utilizedERC20AmountTotalETHValue += SafeMath.div(
 				SafeMath.mul(
-				_utilizedERC20Amount[i] * 10 ** (18 - ERC20(_utilizedERC20[i]).decimals()),
+					SafeMath.mul(_utilizedERC20Amount[i], 10 ** (18 - ERC20(_utilizedERC20[i]).decimals())),
 					yieldSyncV1AMPStrategyInteractor.eRC20ETHValue(_utilizedERC20[i])
 				),
 				10 ** 18
@@ -128,7 +131,7 @@ contract YieldSyncV1AMPStrategy is
 					),
 					1e18
 				),
-				totalETHValue
+				utilizedERC20AmountTotalETHValue
 			);
 
 			require(computed, "!computed");
@@ -175,19 +178,20 @@ contract YieldSyncV1AMPStrategy is
 		require(manager == msg.sender, "manager != msg.sender");
 
 		require(
-			address(yieldSyncV1AMPStrategyInteractor) == address(0), "address(yieldSyncV1AMPStrategyInteractor) != address(0)"
-		);
-
-		require(
 			__utilizedERC20.length == __utilizedERC20Allocation.length,
 			"__utilizedERC20.length != __utilizedERC20Allocation.length"
 		);
 
-		yieldSyncV1AMPStrategyInteractor = IYieldSyncV1AMPStrategyInteractor(_strategy);
+		require(
+			address(yieldSyncV1AMPStrategyInteractor) == address(0),
+			"address(yieldSyncV1AMPStrategyInteractor) != address(0)"
+		);
 
 		_utilizedERC20 = __utilizedERC20;
 
 		utilizedERC20AllocationSet(__utilizedERC20Allocation);
+
+		yieldSyncV1AMPStrategyInteractor = IYieldSyncV1AMPStrategyInteractor(_strategy);
 	}
 
 	/// @inheritdoc IYieldSyncV1AMPStrategy
@@ -228,11 +232,11 @@ contract YieldSyncV1AMPStrategy is
 
 		yieldSyncV1AMPStrategyInteractor.eRC20Deposit(msg.sender, _utilizedERC20, _utilizedERC20Amount);
 
-		uint256 utilizedERC20AmountETHValue;
+		uint256 utilizedERC20AmountTotalETHValue;
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
-			utilizedERC20AmountETHValue += SafeMath.div(
+			utilizedERC20AmountTotalETHValue += SafeMath.div(
 				SafeMath.mul(
 					_utilizedERC20Amount[i] * 10 ** (18 - ERC20(_utilizedERC20[i]).decimals()),
 					yieldSyncV1AMPStrategyInteractor.eRC20ETHValue(_utilizedERC20[i])
@@ -241,7 +245,7 @@ contract YieldSyncV1AMPStrategy is
 			);
 		}
 
-		_mint(msg.sender, utilizedERC20AmountETHValue);
+		_mint(msg.sender, utilizedERC20AmountTotalETHValue);
 	}
 
 	/// @inheritdoc IYieldSyncV1AMPStrategy
