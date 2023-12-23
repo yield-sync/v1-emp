@@ -20,6 +20,7 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Deposit", async () => {
 	let strategyInteractorBlank: Contract;
 	let yieldSyncV1AMPStrategy: Contract;
 
+
 	beforeEach("[beforeEach] Set up contracts..", async () => {
 		const [owner] = await ethers.getSigners();
 
@@ -35,16 +36,19 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Deposit", async () => {
 		yieldSyncV1AMPStrategy = await (await YieldSyncV1AMPStrategy.deploy(owner.address, "Exampe", "EX")).deployed();
 	});
 
+
 	describe("function utilizedERC20Deposit()", async () => {
 		it(
 			"Should revert if invalid length for utilizedERC20Amount passed..",
 			async () => {
 				// Initialize strategy with mock ERC20
-				await yieldSyncV1AMPStrategy.initializeStrategy(
-					strategyInteractorBlank.address,
-					[mockERC20A.address],
-					[HUNDRED_PERCENT]
-				);
+				await expect(
+					yieldSyncV1AMPStrategy.initializeStrategy(
+						strategyInteractorBlank.address,
+						[mockERC20A.address],
+						[HUNDRED_PERCENT]
+					)
+				).to.not.be.reverted;
 
 				const mockERC20AdepositAmount = ethers.utils.parseUnits("1", 18);
 
@@ -62,11 +66,13 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Deposit", async () => {
 			"Should be able to deposit ERC20 into strategy interactor..",
 			async () => {
 				// Initialize strategy with mock ERC20
-				await yieldSyncV1AMPStrategy.initializeStrategy(
-					strategyInteractorBlank.address,
-					[mockERC20A.address],
-					[HUNDRED_PERCENT]
-				);
+				await expect(
+					yieldSyncV1AMPStrategy.initializeStrategy(
+						strategyInteractorBlank.address,
+						[mockERC20A.address],
+						[HUNDRED_PERCENT]
+					)
+				).to.not.be.reverted;
 
 				const mockERC20AdepositAmount = ethers.utils.parseUnits("1", 18);
 
@@ -88,11 +94,13 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Deposit", async () => {
 				const [owner] = await ethers.getSigners();
 
 				// Initialize strategy with mock ERC20
-				await yieldSyncV1AMPStrategy.initializeStrategy(
-					strategyInteractorBlank.address,
-					[mockERC20A.address],
-					[HUNDRED_PERCENT]
-				);
+				await expect(
+					yieldSyncV1AMPStrategy.initializeStrategy(
+						strategyInteractorBlank.address,
+						[mockERC20A.address],
+						[HUNDRED_PERCENT]
+					)
+				).to.not.be.reverted;
 
 				const mockERC20AdepositAmount = ethers.utils.parseUnits("1", 18);
 
@@ -111,11 +119,13 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Deposit", async () => {
 				"Should revert if invalid length for utilizedERC20Amount passed..",
 				async () => {
 					// Initialize strategy with mock ERC20
-					await yieldSyncV1AMPStrategy.initializeStrategy(
-						strategyInteractorBlank.address,
-						[mockERC20A.address, mockERC20B.address],
-						[FIFTY_PERCENT, FIFTY_PERCENT]
-					);
+					await expect(
+						yieldSyncV1AMPStrategy.initializeStrategy(
+							strategyInteractorBlank.address,
+							[mockERC20A.address, mockERC20B.address],
+							[FIFTY_PERCENT, FIFTY_PERCENT]
+						)
+					).to.not.be.reverted;
 
 					const mockERC20AdepositAmount = ethers.utils.parseUnits("1", 18);
 
@@ -217,11 +227,13 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Deposit", async () => {
 					const [owner] = await ethers.getSigners();
 
 					// Initialize strategy with mock ERC20
-					await yieldSyncV1AMPStrategy.initializeStrategy(
-						strategyInteractorBlank.address,
-						[mockERC20A.address, mockERC20B.address],
-						[FIFTY_PERCENT, FIFTY_PERCENT]
-					);
+					await expect(
+						yieldSyncV1AMPStrategy.initializeStrategy(
+							strategyInteractorBlank.address,
+							[mockERC20A.address, mockERC20B.address],
+							[FIFTY_PERCENT, FIFTY_PERCENT]
+						)
+					).to.not.be.reverted;
 
 					const mockERC20AdepositAmount = ethers.utils.parseUnits("1", 18);
 					const mockERC20BdepositAmount = ethers.utils.parseUnits("1", 18);
@@ -248,11 +260,13 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Deposit", async () => {
 						const [owner] = await ethers.getSigners();
 
 						// Initialize strategy with mock ERC20
-						await yieldSyncV1AMPStrategy.initializeStrategy(
-							strategyInteractorBlank.address,
-							[mockERC20A.address, mockERC206.address],
-							[FIFTY_PERCENT, FIFTY_PERCENT]
-						);
+						await expect(
+							yieldSyncV1AMPStrategy.initializeStrategy(
+								strategyInteractorBlank.address,
+								[mockERC20A.address, mockERC206.address],
+								[FIFTY_PERCENT, FIFTY_PERCENT]
+							)
+						).to.not.be.reverted;
 
 						const mockERC20AdepositAmount = ethers.utils.parseUnits("1", 18);
 						const mockERC206depositAmount = ethers.utils.parseUnits("1", 6);
@@ -281,11 +295,13 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Deposit", async () => {
 						const [owner] = await ethers.getSigners();
 
 						// Initialize strategy with mock ERC20
-						await yieldSyncV1AMPStrategy.initializeStrategy(
-							strategyInteractorBlank.address,
-							[mockERC20A.address, mockERC206.address],
-							[SEVENTY_FIVE_PERCENT, TWENTY_FIVE_PERCENT]
-						);
+						await expect(
+							yieldSyncV1AMPStrategy.initializeStrategy(
+								strategyInteractorBlank.address,
+								[mockERC20A.address, mockERC206.address],
+								[SEVENTY_FIVE_PERCENT, TWENTY_FIVE_PERCENT]
+							)
+						).to.not.be.reverted;
 
 						const mockERC20AdepositAmount = ethers.utils.parseUnits(".75", 18);
 						const mockERC206depositAmount = ethers.utils.parseUnits(".25", 6);
@@ -312,11 +328,13 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Deposit", async () => {
 					"[75/25] Should revert if invalid utilizedERC20Amounts passed..",
 					async () => {
 						// Initialize strategy with mock ERC20
-						await yieldSyncV1AMPStrategy.initializeStrategy(
-							strategyInteractorBlank.address,
-							[mockERC20A.address, mockERC20B.address],
-							[SEVENTY_FIVE_PERCENT, TWENTY_FIVE_PERCENT]
-						);
+						await expect(
+							yieldSyncV1AMPStrategy.initializeStrategy(
+								strategyInteractorBlank.address,
+								[mockERC20A.address, mockERC206.address],
+								[SEVENTY_FIVE_PERCENT, TWENTY_FIVE_PERCENT]
+							)
+						).to.not.be.reverted;
 
 						const mockERC20AdepositAmount = ethers.utils.parseUnits(".5", 18);
 						const mockERC206depositAmount = ethers.utils.parseUnits(".25", 6);

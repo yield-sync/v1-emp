@@ -39,11 +39,13 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 				const [owner] = await ethers.getSigners();
 
 				// Initialize strategy with mock ERC20
-				await yieldSyncV1AMPStrategy.initializeStrategy(
-					strategyInteractorBlank.address,
-					[mockERC20A.address],
-					[HUNDRED_PERCENT]
-				);
+				await expect(
+					yieldSyncV1AMPStrategy.initializeStrategy(
+						strategyInteractorBlank.address,
+						[mockERC20A.address],
+						[HUNDRED_PERCENT]
+					)
+				).to.not.be.reverted;
 
 				const strategyTotalSupplyBefore = await yieldSyncV1AMPStrategy.totalSupply();
 
@@ -99,11 +101,13 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 					const [owner] = await ethers.getSigners();
 
 					// Initialize strategy with mock ERC20
-					await yieldSyncV1AMPStrategy.initializeStrategy(
-						strategyInteractorBlank.address,
-						[mockERC20A.address, mockERC20B.address],
-						[FIFTY_PERCENT, FIFTY_PERCENT]
-					);
+					await expect(
+						yieldSyncV1AMPStrategy.initializeStrategy(
+							strategyInteractorBlank.address,
+							[mockERC20A.address, mockERC20B.address],
+							[FIFTY_PERCENT, FIFTY_PERCENT]
+						)
+					).to.not.be.reverted;
 
 					const strategyTotalSupplyBefore = await yieldSyncV1AMPStrategy.totalSupply();
 
@@ -173,11 +177,13 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 					const [owner] = await ethers.getSigners();
 
 					// Initialize strategy with mock ERC20
-					await yieldSyncV1AMPStrategy.initializeStrategy(
-						strategyInteractorBlank.address,
-						[mockERC20A.address, mockERC20B.address],
-						[SEVENTY_FIVE_PERCENT, TWENTY_FIVE_PERCENT]
-					);
+					await expect(
+						yieldSyncV1AMPStrategy.initializeStrategy(
+							strategyInteractorBlank.address,
+							[mockERC20A.address, mockERC20B.address],
+							[SEVENTY_FIVE_PERCENT, TWENTY_FIVE_PERCENT]
+						)
+					).to.not.be.reverted;
 
 					const strategyTotalSupplyBefore = await yieldSyncV1AMPStrategy.totalSupply();
 

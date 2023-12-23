@@ -20,6 +20,7 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol - Setup", async () => {
 	let strategyInteractorBlank: Contract;
 	let yieldSyncV1AMPStrategy: Contract;
 
+
 	beforeEach("[beforeEach] Set up contracts..", async () => {
 		const [owner] = await ethers.getSigners();
 
@@ -32,6 +33,7 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol - Setup", async () => {
 		strategyInteractorBlank = await (await StrategyInteractorBlank.deploy()).deployed();
 		yieldSyncV1AMPStrategy = await (await YieldSyncV1AMPStrategy.deploy(owner.address, "Exampe", "EX")).deployed();
 	});
+
 
 	describe("function initializeStrategy()", async () => {
 		it(
@@ -88,7 +90,7 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol - Setup", async () => {
 			async () => {
 				// Initialize strategy with mock ERC20
 				await expect(
-					await yieldSyncV1AMPStrategy.initializeStrategy(
+					yieldSyncV1AMPStrategy.initializeStrategy(
 						strategyInteractorBlank.address,
 						[mockERC20A.address],
 						[HUNDRED_PERCENT]
@@ -111,11 +113,13 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol - Setup", async () => {
 				"It should be able to set multiple _utilizedERC20..",
 				async () => {
 					// Initialize strategy with mock ERC20
-					await yieldSyncV1AMPStrategy.initializeStrategy(
-						strategyInteractorBlank.address,
-						[mockERC20A.address, mockERC20B.address],
-						[FIFTY_PERCENT, FIFTY_PERCENT]
-					);
+					await expect(
+						yieldSyncV1AMPStrategy.initializeStrategy(
+							strategyInteractorBlank.address,
+							[mockERC20A.address, mockERC20B.address],
+							[FIFTY_PERCENT, FIFTY_PERCENT]
+						)
+					).to.not.be.reverted;
 
 					expect(await yieldSyncV1AMPStrategy.yieldSyncV1AMPStrategyInteractor()).to.be.equal(
 						strategyInteractorBlank.address
@@ -148,11 +152,13 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol - Setup", async () => {
 			"[MULTIPLE-ONLY] Should be able to update utilizedERC20Allocation..",
 			async () => {
 				// Initialize strategy with mock ERC20
-				await yieldSyncV1AMPStrategy.initializeStrategy(
-					strategyInteractorBlank.address,
-					[mockERC20A.address, mockERC20B.address],
-					[FIFTY_PERCENT, FIFTY_PERCENT]
-				);
+				await expect(
+					yieldSyncV1AMPStrategy.initializeStrategy(
+						strategyInteractorBlank.address,
+						[mockERC20A.address, mockERC20B.address],
+						[FIFTY_PERCENT, FIFTY_PERCENT]
+					)
+				).to.not.be.reverted;
 
 				const mockERC20AdepositAmount = ethers.utils.parseUnits("1", 18);
 
