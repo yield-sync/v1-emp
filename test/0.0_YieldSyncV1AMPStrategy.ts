@@ -147,7 +147,7 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol - Setup", async () => {
 		});
 	});
 
-	describe("function utilizedERC20AllocationSet()", async () => {
+	describe("function utilizedERC20AllocationUpdate()", async () => {
 		it(
 			"[MULTIPLE-ONLY] Should be able to update utilizedERC20Allocation..",
 			async () => {
@@ -167,7 +167,7 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol - Setup", async () => {
 
 				const NEW_ALLOCATION = [SEVENTY_FIVE_PERCENT, TWENTY_FIVE_PERCENT]
 
-				await expect(yieldSyncV1AMPStrategy.utilizedERC20AllocationSet(NEW_ALLOCATION)).to.not.be.reverted;
+				await expect(yieldSyncV1AMPStrategy.utilizedERC20AllocationUpdate(NEW_ALLOCATION)).to.not.be.reverted;
 
 				expect(await yieldSyncV1AMPStrategy.utilizedERC20_allocation(mockERC20A.address)).to.be.equal(
 					SEVENTY_FIVE_PERCENT

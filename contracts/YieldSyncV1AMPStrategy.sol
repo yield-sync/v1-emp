@@ -200,13 +200,13 @@ contract YieldSyncV1AMPStrategy is
 
 		_utilizedERC20 = __utilizedERC20;
 
-		utilizedERC20AllocationSet(__utilizedERC20Allocation);
+		utilizedERC20AllocationUpdate(__utilizedERC20Allocation);
 
 		yieldSyncV1AMPStrategyInteractor = IYieldSyncV1AMPStrategyInteractor(_strategy);
 	}
 
 	/// @inheritdoc IYieldSyncV1AMPStrategy
-	function utilizedERC20AllocationSet(uint256[] memory _utilizedERC20Allocation)
+	function utilizedERC20AllocationUpdate(uint256[] memory _utilizedERC20Allocation)
 		public
 		override
 	{

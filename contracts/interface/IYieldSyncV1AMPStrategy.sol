@@ -121,7 +121,7 @@ interface IYieldSyncV1AMPStrategy is
 	* @notice Set allocation for utilized ERC20s
 	* @param _utilizedERC20Allocation {uint256[]}
 	*/
-	function utilizedERC20AllocationSet(uint256[] memory _utilizedERC20Allocation)
+	function utilizedERC20AllocationUpdate(uint256[] memory _utilizedERC20Allocation)
 		external
 	;
 
