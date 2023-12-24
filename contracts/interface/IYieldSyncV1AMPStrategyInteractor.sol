@@ -5,43 +5,43 @@ pragma solidity 0.8.18;
 interface IYieldSyncV1AMPStrategyInteractor
 {
 	/**
-	* @notice ERC20 value in ETH
-	* @param _eRC20 {address}
+	* @notice utilizedERC20 value in ETH
+	* @param _utilizedERC20 {address}
 	*/
-	function eRC20ETHValue(address _eRC20)
+	function utilizedERC20ETHValue(address _utilizedERC20)
 		external
 		view
-		returns (uint256 eRC20ETHValue_)
+		returns (uint256 utilizedERC20ETHValue_)
 	;
 
 	/**
 	* @notice Total amounts locked
-	* @param _eRC20 {address[]}
+	* @param _utilizedERC20 {address[]}
 	*/
-	function eRC20TotalAmount(address[] memory _eRC20)
+	function utilizedERC20TotalAmount(address[] memory _utilizedERC20)
 		external
 		view
-		returns (uint256[] memory eRC20Amount_)
+		returns (uint256[] memory utilizedERC20Amount_)
 	;
 
 
 	/**
-	* @notice Deposit ERC20s
+	* @notice Deposit utilizedERC20s
 	* @param _from {address}
-	* @param _eRC20 {address[]}
-	* @param _eRC20Amount {uint256[]}
+	* @param _utilizedERC20 {address[]}
+	* @param _utilizedERC20Amount {uint256[]}
 	*/
-	function eRC20Deposit(address _from, address[] memory _eRC20, uint256[] memory _eRC20Amount)
+	function utilizedERC20Deposit(address _from, address[] memory _utilizedERC20, uint256[] memory _utilizedERC20Amount)
 		external
 	;
 
 	/**
-	* @notice Withdraw ERC20s
+	* @notice Withdraw utilizedERC20s
 	* @param _to {address}
-	* @param _eRC20 {address[]}
-	* @param _eRC20Amount {uint256[]}
+	* @param _utilizedERC20 {address[]}
+	* @param _utilizedERC20Amount {uint256[]}
 	*/
-	function eRC20Withdraw(address _to, address[] memory _eRC20, uint256[] memory _eRC20Amount)
+	function utilizedERC20Withdraw(address _to, address[] memory _utilizedERC20, uint256[] memory _utilizedERC20Amount)
 		external
 	;
 }

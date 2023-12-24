@@ -36,72 +36,72 @@ contract StrategyInteractorBlank is
 
 
 	/// @inheritdoc IYieldSyncV1AMPStrategyInteractor
-	function eRC20ETHValue(address _eRC20)
+	function utilizedERC20ETHValue(address _utilizedERC20)
 		public
 		view
 		override
-		returns (uint256 eRC20ETHValue_)
+		returns (uint256 utilizedERC20ETHValue_)
 	{
 		require(
-			yieldSyncV1AMPStrategy.utilizedERC20_allocation(_eRC20) > 0,
-			"yieldSyncV1AMPStrategy.utilizedERC20_allocation(_eRC20) = 0"
+			yieldSyncV1AMPStrategy.utilizedERC20_allocation(_utilizedERC20) > 0,
+			"yieldSyncV1AMPStrategy.utilizedERC20_allocation(_utilizedERC20) = 0"
 		);
 
 		return 10 ** 18;
 	}
 
 	/// @inheritdoc IYieldSyncV1AMPStrategyInteractor
-	function eRC20TotalAmount(address[] memory _eRC20)
+	function utilizedERC20TotalAmount(address[] memory _utilizedERC20)
 		public
 		view
 		override
-		returns (uint256[] memory eRC20TotalAmount_)
+		returns (uint256[] memory utilizedERC20TotalAmount_)
 	{
-		eRC20TotalAmount_ = new uint256[](_eRC20.length);
+		utilizedERC20TotalAmount_ = new uint256[](_utilizedERC20.length);
 
-		for (uint256 i = 0; i < _eRC20.length; i++)
+		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
 			require(
-				yieldSyncV1AMPStrategy.utilizedERC20_allocation(_eRC20[i]) > 0,
-				"yieldSyncV1AMPStrategy.utilizedERC20_allocation(_eRC20[i]) = 0"
+				yieldSyncV1AMPStrategy.utilizedERC20_allocation(_utilizedERC20[i]) > 0,
+				"yieldSyncV1AMPStrategy.utilizedERC20_allocation(_utilizedERC20[i]) = 0"
 			);
 
-			eRC20TotalAmount_[i] += IERC20(_eRC20[i]).balanceOf(address(this));
+			utilizedERC20TotalAmount_[i] += IERC20(_utilizedERC20[i]).balanceOf(address(this));
 		}
 	}
 
 
 	/// @inheritdoc IYieldSyncV1AMPStrategyInteractor
-	function eRC20Deposit(address _from, address[] memory _eRC20, uint256[] memory _eRC20Amount)
+	function utilizedERC20Deposit(address _from, address[] memory _utilizedERC20, uint256[] memory _utilizedERC20Amount)
 		public
 		override
 		onlyStrategy()
 	{
-		for (uint256 i = 0; i < _eRC20.length; i++)
+		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
 			require(
-				yieldSyncV1AMPStrategy.utilizedERC20_allocation(_eRC20[i]) > 0,
-				"yieldSyncV1AMPStrategy.utilizedERC20_allocation(_eRC20[i]) = 0"
+				yieldSyncV1AMPStrategy.utilizedERC20_allocation(_utilizedERC20[i]) > 0,
+				"yieldSyncV1AMPStrategy.utilizedERC20_allocation(_utilizedERC20[i]) = 0"
 			);
 
-			IERC20(_eRC20[i]).safeTransferFrom(_from, address(this), _eRC20Amount[i]);
+			IERC20(_utilizedERC20[i]).safeTransferFrom(_from, address(this), _utilizedERC20Amount[i]);
 		}
 	}
 
 	/// @inheritdoc IYieldSyncV1AMPStrategyInteractor
-	function eRC20Withdraw(address _to, address[] memory _eRC20, uint256[] memory _eRC20Amount)
+	function utilizedERC20Withdraw(address _to, address[] memory _utilizedERC20, uint256[] memory _utilizedERC20Amount)
 		public
 		override
 		onlyStrategy()
 	{
-		for (uint256 i = 0; i < _eRC20.length; i++)
+		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
 			require(
-				yieldSyncV1AMPStrategy.utilizedERC20_allocation(_eRC20[i]) > 0,
-				"yieldSyncV1AMPStrategy.utilizedERC20_allocation(_eRC20[i]) = 0"
+				yieldSyncV1AMPStrategy.utilizedERC20_allocation(_utilizedERC20[i]) > 0,
+				"yieldSyncV1AMPStrategy.utilizedERC20_allocation(_utilizedERC20[i]) = 0"
 			);
 
-			IERC20(_eRC20[i]).safeTransfer(_to, _eRC20Amount[i]);
+			IERC20(_utilizedERC20[i]).safeTransfer(_to, _utilizedERC20Amount[i]);
 		}
 	}
 }
