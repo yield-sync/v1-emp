@@ -12,29 +12,16 @@ using SafeERC20 for IERC20;
 
 
 /**
-* @notice Empty strategy interactor. This contract does not deposit tokens into any protocol
+* @notice THIS IS A DANGEROUS CONTRACT MEANT ONLY FOR TESTING
+* This contract lacks authorization and all functions can be called from anyone. Balances on this smart contract are not
+* safe.
+* The purpose of this contract is strictly for testing.
 */
-contract StrategyInteractorBlank is
+contract StrategyInteractorDummy is
 	IYieldSyncV1AMPStrategyInteractor
 {
-	address internal immutable _STRATEGY;
-
 	bool internal _eRC20DepositsOpen = true;
 	bool internal _eRC20WithdrawalsOpen = true;
-
-
-	constructor (address __STRATEGY)
-	{
-		_STRATEGY = __STRATEGY;
-	}
-
-
-	modifier onlyStrategy()
-	{
-		require(_STRATEGY == msg.sender, "_STRATEGY != msg.sender");
-
-		_;
-	}
 
 
 	/// @inheritdoc IYieldSyncV1AMPStrategyInteractor
@@ -90,7 +77,6 @@ contract StrategyInteractorBlank is
 	function eRC20Deposit(address _from, address[] memory _eRC20, uint256[] memory _eRC20Amount)
 		public
 		override
-		onlyStrategy()
 	{
 		for (uint256 i = 0; i < _eRC20.length; i++)
 		{
@@ -102,7 +88,6 @@ contract StrategyInteractorBlank is
 	function eRC20Withdraw(address _to, address[] memory _eRC20, uint256[] memory _eRC20Amount)
 		public
 		override
-		onlyStrategy()
 	{
 		for (uint256 i = 0; i < _eRC20.length; i++)
 		{

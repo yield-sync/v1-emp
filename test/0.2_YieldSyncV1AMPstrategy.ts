@@ -14,7 +14,7 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;
 	let mockERC206: Contract;
-	let strategyInteractorBlank: Contract;
+	let strategyInteractorDummy: Contract;
 	let yieldSyncV1AMPStrategy: Contract;
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
@@ -22,13 +22,13 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 
 		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
 		const MockERC206: ContractFactory = await ethers.getContractFactory("MockERC206");
-		const StrategyInteractorBlank: ContractFactory = await ethers.getContractFactory("StrategyInteractorBlank");
+		const StrategyInteractorDummy: ContractFactory = await ethers.getContractFactory("StrategyInteractorDummy");
 		const YieldSyncV1AMPStrategy: ContractFactory = await ethers.getContractFactory("YieldSyncV1AMPStrategy");
 
 		mockERC20A = await (await MockERC20.deploy()).deployed();
 		mockERC20B = await (await MockERC20.deploy()).deployed();
 		mockERC206 = await (await MockERC206.deploy()).deployed();
-		strategyInteractorBlank = await (await StrategyInteractorBlank.deploy()).deployed();
+		strategyInteractorDummy = await (await StrategyInteractorDummy.deploy()).deployed();
 		yieldSyncV1AMPStrategy = await (await YieldSyncV1AMPStrategy.deploy(owner.address, "Exampe", "EX")).deployed();
 	});
 
@@ -41,7 +41,7 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 				// Initialize strategy with mock ERC20
 				await expect(
 					yieldSyncV1AMPStrategy.initializeStrategy(
-						strategyInteractorBlank.address,
+						strategyInteractorDummy.address,
 						[mockERC20A.address],
 						[HUNDRED_PERCENT]
 					)
@@ -50,21 +50,21 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 				const strategyTotalSupplyBefore = await yieldSyncV1AMPStrategy.totalSupply();
 
 				const strategyInteractorMockERC20ABalanceBefore = await mockERC20A.balanceOf(
-					strategyInteractorBlank.address
+					strategyInteractorDummy.address
 				);
 
 				const ownerMockERC20ABalanceBefore = await mockERC20A.balanceOf(owner.address);
 
 				const mockERC20AdepositAmount = ethers.utils.parseUnits("1", 18);
 
-				// Approve the StrategyInteractorBlank contract to spend tokens on behalf of owner
-				await mockERC20A.approve(strategyInteractorBlank.address, mockERC20AdepositAmount);
+				// Approve the StrategyInteractorDummy contract to spend tokens on behalf of owner
+				await mockERC20A.approve(strategyInteractorDummy.address, mockERC20AdepositAmount);
 
 				// Deposit mockERC20A tokens into the strategy
 				yieldSyncV1AMPStrategy.utilizedERC20Deposit([mockERC20AdepositAmount])
 
 				// mockERC20A BalanceOf strategy interactor should equal to deposit amount
-				expect(await mockERC20A.balanceOf(strategyInteractorBlank.address)).to.be.equal(
+				expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.be.equal(
 					strategyInteractorMockERC20ABalanceBefore.add(mockERC20AdepositAmount)
 				);
 
@@ -103,7 +103,7 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 					// Initialize strategy with mock ERC20
 					await expect(
 						yieldSyncV1AMPStrategy.initializeStrategy(
-							strategyInteractorBlank.address,
+							strategyInteractorDummy.address,
 							[mockERC206.address],
 							[HUNDRED_PERCENT]
 						)
@@ -112,21 +112,21 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 					const strategyTotalSupplyBefore = await yieldSyncV1AMPStrategy.totalSupply();
 
 					const strategyInteractorMockERC206BalanceBefore = await mockERC206.balanceOf(
-						strategyInteractorBlank.address
+						strategyInteractorDummy.address
 					);
 
 					const ownerMockERC206BalanceBefore = await mockERC206.balanceOf(owner.address);
 
 					const mockERC206depositAmount = ethers.utils.parseUnits("1", 6);
 
-					// Approve the StrategyInteractorBlank contract to spend tokens on behalf of owner
-					await mockERC206.approve(strategyInteractorBlank.address, mockERC206depositAmount);
+					// Approve the StrategyInteractorDummy contract to spend tokens on behalf of owner
+					await mockERC206.approve(strategyInteractorDummy.address, mockERC206depositAmount);
 
 					// Deposit mockERC206 tokens into the strategy
 					yieldSyncV1AMPStrategy.utilizedERC20Deposit([mockERC206depositAmount])
 
 					// mockERC206 BalanceOf strategy interactor should equal to deposit amount
-					expect(await mockERC206.balanceOf(strategyInteractorBlank.address)).to.be.equal(
+					expect(await mockERC206.balanceOf(strategyInteractorDummy.address)).to.be.equal(
 						strategyInteractorMockERC206BalanceBefore.add(mockERC206depositAmount)
 					);
 
@@ -166,7 +166,7 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 					// Initialize strategy with mock ERC20
 					await expect(
 						yieldSyncV1AMPStrategy.initializeStrategy(
-							strategyInteractorBlank.address,
+							strategyInteractorDummy.address,
 							[mockERC20A.address, mockERC20B.address],
 							[FIFTY_PERCENT, FIFTY_PERCENT]
 						)
@@ -175,11 +175,11 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 					const strategyTotalSupplyBefore = await yieldSyncV1AMPStrategy.totalSupply();
 
 					const strategyInteractorMockERC20ABalanceBefore = await mockERC20A.balanceOf(
-						strategyInteractorBlank.address
+						strategyInteractorDummy.address
 					);
 
 					const strategyInteractorMockERC20BBalanceBefore = await mockERC20B.balanceOf(
-						strategyInteractorBlank.address
+						strategyInteractorDummy.address
 					);
 
 					const ownerMockERC20ABalanceBefore = await mockERC20A.balanceOf(owner.address);
@@ -187,20 +187,20 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 
 					const mockERC20DepositAmount = ethers.utils.parseUnits("1", 18);
 
-					// Approve the StrategyInteractorBlank contract to spend tokens on behalf of owner
-					await mockERC20A.approve(strategyInteractorBlank.address, mockERC20DepositAmount);
-					await mockERC20B.approve(strategyInteractorBlank.address, mockERC20DepositAmount);
+					// Approve the StrategyInteractorDummy contract to spend tokens on behalf of owner
+					await mockERC20A.approve(strategyInteractorDummy.address, mockERC20DepositAmount);
+					await mockERC20B.approve(strategyInteractorDummy.address, mockERC20DepositAmount);
 
 					// Deposit mockERC20A tokens into the strategy
 					yieldSyncV1AMPStrategy.utilizedERC20Deposit([mockERC20DepositAmount, mockERC20DepositAmount])
 
 					// mockERC20A BalanceOf strategy interactor should equal to deposit amount
-					expect(await mockERC20A.balanceOf(strategyInteractorBlank.address)).to.be.equal(
+					expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.be.equal(
 						strategyInteractorMockERC20ABalanceBefore.add(mockERC20DepositAmount)
 					);
 
 					// mockERC20B BalanceOf strategy interactor should equal to deposit amount
-					expect(await mockERC20B.balanceOf(strategyInteractorBlank.address)).to.be.equal(
+					expect(await mockERC20B.balanceOf(strategyInteractorDummy.address)).to.be.equal(
 						strategyInteractorMockERC20BBalanceBefore.add(mockERC20DepositAmount)
 					);
 
@@ -242,7 +242,7 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 					// Initialize strategy with mock ERC20
 					await expect(
 						yieldSyncV1AMPStrategy.initializeStrategy(
-							strategyInteractorBlank.address,
+							strategyInteractorDummy.address,
 							[mockERC20A.address, mockERC20B.address],
 							[SEVENTY_FIVE_PERCENT, TWENTY_FIVE_PERCENT]
 						)
@@ -251,11 +251,11 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 					const strategyTotalSupplyBefore = await yieldSyncV1AMPStrategy.totalSupply();
 
 					const strategyInteractorMockERC20ABalanceBefore = await mockERC20A.balanceOf(
-						strategyInteractorBlank.address
+						strategyInteractorDummy.address
 					);
 
 					const strategyInteractorMockERC20BBalanceBefore = await mockERC20B.balanceOf(
-						strategyInteractorBlank.address
+						strategyInteractorDummy.address
 					);
 
 					const ownerMockERC20ABalanceBefore = await mockERC20A.balanceOf(owner.address);
@@ -264,20 +264,20 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 					const mockERC20ADepositAmount = ethers.utils.parseUnits(".75", 18);
 					const mockERC20BDepositAmount = ethers.utils.parseUnits(".25", 18);
 
-					// Approve the StrategyInteractorBlank contract to spend tokens on behalf of owner
-					await mockERC20A.approve(strategyInteractorBlank.address, mockERC20ADepositAmount);
-					await mockERC20B.approve(strategyInteractorBlank.address, mockERC20BDepositAmount);
+					// Approve the StrategyInteractorDummy contract to spend tokens on behalf of owner
+					await mockERC20A.approve(strategyInteractorDummy.address, mockERC20ADepositAmount);
+					await mockERC20B.approve(strategyInteractorDummy.address, mockERC20BDepositAmount);
 
 					// Deposit mockERC20A tokens into the strategy
 					yieldSyncV1AMPStrategy.utilizedERC20Deposit([mockERC20ADepositAmount, mockERC20BDepositAmount])
 
 					// mockERC20A BalanceOf strategy interactor should equal to deposit amount
-					expect(await mockERC20A.balanceOf(strategyInteractorBlank.address)).to.be.equal(
+					expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.be.equal(
 						strategyInteractorMockERC20ABalanceBefore.add(mockERC20ADepositAmount)
 					);
 
 					// mockERC20B BalanceOf strategy interactor should equal to deposit amount
-					expect(await mockERC20B.balanceOf(strategyInteractorBlank.address)).to.be.equal(
+					expect(await mockERC20B.balanceOf(strategyInteractorDummy.address)).to.be.equal(
 						strategyInteractorMockERC20BBalanceBefore.add(mockERC20BDepositAmount)
 					);
 
@@ -320,7 +320,7 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 						// Initialize strategy with mock ERC20
 						await expect(
 							yieldSyncV1AMPStrategy.initializeStrategy(
-								strategyInteractorBlank.address,
+								strategyInteractorDummy.address,
 								[mockERC20A.address, mockERC206.address],
 								[FIFTY_PERCENT, FIFTY_PERCENT]
 							)
@@ -329,11 +329,11 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 						const strategyTotalSupplyBefore = await yieldSyncV1AMPStrategy.totalSupply();
 
 						const strategyInteractorMockERC20ABalanceBefore = await mockERC20A.balanceOf(
-							strategyInteractorBlank.address
+							strategyInteractorDummy.address
 						);
 
 						const strategyInteractorMockERC206BalanceBefore = await mockERC206.balanceOf(
-							strategyInteractorBlank.address
+							strategyInteractorDummy.address
 						);
 
 						const ownerMockERC20ABalanceBefore = await mockERC20A.balanceOf(owner.address);
@@ -342,20 +342,20 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 						const mockERC20ADepositAmount = ethers.utils.parseUnits("1", 18);
 						const mockERC206DepositAmount = ethers.utils.parseUnits("1", 6);
 
-						// Approve the StrategyInteractorBlank contract to spend tokens on behalf of owner
-						await mockERC20A.approve(strategyInteractorBlank.address, mockERC20ADepositAmount);
-						await mockERC206.approve(strategyInteractorBlank.address, mockERC206DepositAmount);
+						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of owner
+						await mockERC20A.approve(strategyInteractorDummy.address, mockERC20ADepositAmount);
+						await mockERC206.approve(strategyInteractorDummy.address, mockERC206DepositAmount);
 
 						// Deposit mockERC20A tokens into the strategy
 						yieldSyncV1AMPStrategy.utilizedERC20Deposit([mockERC20ADepositAmount, mockERC206DepositAmount])
 
 						// mockERC20A BalanceOf strategy interactor should equal to deposit amount
-						expect(await mockERC20A.balanceOf(strategyInteractorBlank.address)).to.be.equal(
+						expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.be.equal(
 							strategyInteractorMockERC20ABalanceBefore.add(mockERC20ADepositAmount)
 						);
 
 						// mockERC206 BalanceOf strategy interactor should equal to deposit amount
-						expect(await mockERC206.balanceOf(strategyInteractorBlank.address)).to.be.equal(
+						expect(await mockERC206.balanceOf(strategyInteractorDummy.address)).to.be.equal(
 							strategyInteractorMockERC206BalanceBefore.add(mockERC206DepositAmount)
 						);
 
@@ -403,7 +403,7 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 						// Initialize strategy with mock ERC20
 						await expect(
 							yieldSyncV1AMPStrategy.initializeStrategy(
-								strategyInteractorBlank.address,
+								strategyInteractorDummy.address,
 								[mockERC20A.address, mockERC206.address],
 								[SEVENTY_FIVE_PERCENT, TWENTY_FIVE_PERCENT]
 							)
@@ -412,11 +412,11 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 						const strategyTotalSupplyBefore = await yieldSyncV1AMPStrategy.totalSupply();
 
 						const strategyInteractorMockERC20ABalanceBefore = await mockERC20A.balanceOf(
-							strategyInteractorBlank.address
+							strategyInteractorDummy.address
 						);
 
 						const strategyInteractorMockERC206BalanceBefore = await mockERC206.balanceOf(
-							strategyInteractorBlank.address
+							strategyInteractorDummy.address
 						);
 
 						const ownerMockERC20ABalanceBefore = await mockERC20A.balanceOf(owner.address);
@@ -425,20 +425,20 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 						const mockERC20ADepositAmount = ethers.utils.parseUnits(".75", 18);
 						const mockERC206DepositAmount = ethers.utils.parseUnits(".25", 6);
 
-						// Approve the StrategyInteractorBlank contract to spend tokens on behalf of owner
-						await mockERC20A.approve(strategyInteractorBlank.address, mockERC20ADepositAmount);
-						await mockERC206.approve(strategyInteractorBlank.address, mockERC206DepositAmount);
+						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of owner
+						await mockERC20A.approve(strategyInteractorDummy.address, mockERC20ADepositAmount);
+						await mockERC206.approve(strategyInteractorDummy.address, mockERC206DepositAmount);
 
 						// Deposit mockERC20A tokens into the strategy
 						yieldSyncV1AMPStrategy.utilizedERC20Deposit([mockERC20ADepositAmount, mockERC206DepositAmount])
 
 						// mockERC20A BalanceOf strategy interactor should equal to deposit amount
-						expect(await mockERC20A.balanceOf(strategyInteractorBlank.address)).to.be.equal(
+						expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.be.equal(
 							strategyInteractorMockERC20ABalanceBefore.add(mockERC20ADepositAmount)
 						);
 
 						// mockERC206 BalanceOf strategy interactor should equal to deposit amount
-						expect(await mockERC206.balanceOf(strategyInteractorBlank.address)).to.be.equal(
+						expect(await mockERC206.balanceOf(strategyInteractorDummy.address)).to.be.equal(
 							strategyInteractorMockERC206BalanceBefore.add(mockERC206DepositAmount)
 						);
 
