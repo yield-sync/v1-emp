@@ -47,6 +47,10 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 					)
 				).to.not.be.reverted;
 
+				await yieldSyncV1AMPStrategy.utilizedERC20DepositOpenToggle();
+				await yieldSyncV1AMPStrategy.utilizedERC20WithdrawOpenToggle();
+
+
 				const strategyTotalSupplyBefore = await yieldSyncV1AMPStrategy.totalSupply();
 
 				const strategyInteractorMockERC20ABalanceBefore = await mockERC20A.balanceOf(
@@ -108,6 +112,10 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 							[HUNDRED_PERCENT]
 						)
 					).to.not.be.reverted;
+
+					await yieldSyncV1AMPStrategy.utilizedERC20DepositOpenToggle();
+					await yieldSyncV1AMPStrategy.utilizedERC20WithdrawOpenToggle();
+
 
 					const strategyTotalSupplyBefore = await yieldSyncV1AMPStrategy.totalSupply();
 
@@ -171,6 +179,10 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 							[FIFTY_PERCENT, FIFTY_PERCENT]
 						)
 					).to.not.be.reverted;
+
+					await yieldSyncV1AMPStrategy.utilizedERC20DepositOpenToggle();
+					await yieldSyncV1AMPStrategy.utilizedERC20WithdrawOpenToggle();
+
 
 					const strategyTotalSupplyBefore = await yieldSyncV1AMPStrategy.totalSupply();
 
@@ -247,6 +259,10 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 							[SEVENTY_FIVE_PERCENT, TWENTY_FIVE_PERCENT]
 						)
 					).to.not.be.reverted;
+
+					await yieldSyncV1AMPStrategy.utilizedERC20DepositOpenToggle();
+					await yieldSyncV1AMPStrategy.utilizedERC20WithdrawOpenToggle();
+
 
 					const strategyTotalSupplyBefore = await yieldSyncV1AMPStrategy.totalSupply();
 
@@ -325,6 +341,10 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 								[FIFTY_PERCENT, FIFTY_PERCENT]
 							)
 						).to.not.be.reverted;
+
+						await yieldSyncV1AMPStrategy.utilizedERC20DepositOpenToggle();
+						await yieldSyncV1AMPStrategy.utilizedERC20WithdrawOpenToggle();
+
 
 						const strategyTotalSupplyBefore = await yieldSyncV1AMPStrategy.totalSupply();
 
@@ -408,6 +428,10 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 								[SEVENTY_FIVE_PERCENT, TWENTY_FIVE_PERCENT]
 							)
 						).to.not.be.reverted;
+
+						await yieldSyncV1AMPStrategy.utilizedERC20DepositOpenToggle();
+						await yieldSyncV1AMPStrategy.utilizedERC20WithdrawOpenToggle();
+
 
 						const strategyTotalSupplyBefore = await yieldSyncV1AMPStrategy.totalSupply();
 

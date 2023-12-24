@@ -37,6 +37,24 @@ interface IYieldSyncV1AMPStrategy is
 	;
 
 	/**
+	* @notice Utilized ERC20 Deposit Open
+	*/
+	function utilizedERC20DepositOpen()
+		external
+		view
+		returns (bool)
+	;
+
+	/**
+	* @notice Utilized ERC20 Withdraw Open
+	*/
+	function utilizedERC20WithdrawOpen()
+		external
+		view
+		returns (bool)
+	;
+
+	/**
 	* @dev [view-uint256]
 	* @notice One Hundred Percent
 	* @return {uint256}
@@ -134,10 +152,24 @@ interface IYieldSyncV1AMPStrategy is
 	;
 
 	/**
+	* @notice Utilized ERC20 Deposit Open Toggle
+	*/
+	function utilizedERC20DepositOpenToggle()
+		external
+	;
+
+	/**
 	* @notice Withdraw utilized ERC20s
 	* @param _ERC20Amount {uint256}
 	*/
 	function utilizedERC20Withdraw(uint256 _ERC20Amount)
+		external
+	;
+
+	/**
+	* @notice Utilized ERC20 Deposit Open Toggle
+	*/
+	function utilizedERC20WithdrawOpenToggle()
 		external
 	;
 }

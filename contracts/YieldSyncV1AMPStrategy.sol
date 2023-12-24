@@ -27,8 +27,8 @@ contract YieldSyncV1AMPStrategy is
 
 	address[] internal _utilizedERC20;
 
-	bool internal _utilizedERC20DepositsOpen = true;
-	bool internal _utilizedERC20WithdrawalsOpen = true;
+	bool public override utilizedERC20DepositOpen;
+	bool public override utilizedERC20WithdrawOpen;
 
 	uint256 constant public override ONE_HUNDRED_PERCENT = 1e18;
 
@@ -52,11 +52,21 @@ contract YieldSyncV1AMPStrategy is
 	constructor (address _manager, string memory _name, string memory _symbol)
 		ERC20(_name, _symbol)
 	{
+		utilizedERC20DepositOpen = false;
+		utilizedERC20WithdrawOpen = false;
+
 		manager = _manager;
 	}
 
 
-	modifier yieldSyncV1AMPStrategyInteractorSet()
+	modifier authManager()
+	{
+		require(manager == msg.sender, "manager != msg.sender");
+
+		_;
+	}
+
+	modifier setYieldSyncV1AMPStrategyInteractor()
 	{
 		require(
 			address(yieldSyncV1AMPStrategyInteractor) != address(0),
@@ -65,7 +75,6 @@ contract YieldSyncV1AMPStrategy is
 
 		_;
 	}
-
 
 	//// @notice view
 
@@ -95,7 +104,7 @@ contract YieldSyncV1AMPStrategy is
 		public
 		view
 		override
-		yieldSyncV1AMPStrategyInteractorSet()
+		setYieldSyncV1AMPStrategyInteractor()
 		returns (uint256 balanceOfETHValue_)
 	{
 		uint256[] memory uTAPB = utilizedERC20AmountPerBurn();
@@ -113,7 +122,7 @@ contract YieldSyncV1AMPStrategy is
 	function utilizedERC20AmountValid(uint256[] memory _utilizedERC20Amount)
 		public
 		view
-		yieldSyncV1AMPStrategyInteractorSet()
+		setYieldSyncV1AMPStrategyInteractor()
 		returns (bool utilizedERC20AmountValid_)
 	{
 		require(_utilizedERC20.length == _utilizedERC20Amount.length, "_utilizedERC20.length != _utilizedERC20Amount.length");
@@ -165,7 +174,7 @@ contract YieldSyncV1AMPStrategy is
 		public
 		view
 		override
-		yieldSyncV1AMPStrategyInteractorSet()
+		setYieldSyncV1AMPStrategyInteractor()
 		returns (uint256[] memory utilizedERC20Amount_)
 	{
 		utilizedERC20Amount_ = yieldSyncV1AMPStrategyInteractor.eRC20TotalAmount(_utilizedERC20);
@@ -190,9 +199,8 @@ contract YieldSyncV1AMPStrategy is
 	)
 		public
 		override
+		authManager()
 	{
-		require(manager == msg.sender, "manager != msg.sender");
-
 		require(
 			address(yieldSyncV1AMPStrategyInteractor) == address(0),
 			"address(yieldSyncV1AMPStrategyInteractor) != address(0)"
@@ -209,9 +217,8 @@ contract YieldSyncV1AMPStrategy is
 	function utilizedERC20AllocationUpdate(uint256[] memory _utilizedERC20Allocation)
 		public
 		override
+		authManager()
 	{
-		require(manager == msg.sender, "manager != msg.sender");
-
 		uint256 _utilizedERC20AllocationTotal;
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
@@ -232,9 +239,9 @@ contract YieldSyncV1AMPStrategy is
 		public
 		override
 		nonReentrant()
-		yieldSyncV1AMPStrategyInteractorSet()
+		setYieldSyncV1AMPStrategyInteractor()
 	{
-		require(_utilizedERC20DepositsOpen, "!_utilizedERC20DepositsOpen");
+		require(utilizedERC20DepositOpen, "!utilizedERC20DepositOpen");
 
 		require(_utilizedERC20.length == _utilizedERC20Amount.length, "_utilizedERC20.length != _utilizedERC20Amount.length");
 
@@ -259,13 +266,23 @@ contract YieldSyncV1AMPStrategy is
 	}
 
 	/// @inheritdoc IYieldSyncV1AMPStrategy
+	function utilizedERC20DepositOpenToggle()
+		public
+		override
+		authManager()
+		setYieldSyncV1AMPStrategyInteractor()
+	{
+		utilizedERC20DepositOpen = !utilizedERC20DepositOpen;
+	}
+
+	/// @inheritdoc IYieldSyncV1AMPStrategy
 	function utilizedERC20Withdraw(uint256 _tokenAmount)
 		public
 		override
 		nonReentrant()
-		yieldSyncV1AMPStrategyInteractorSet()
+		setYieldSyncV1AMPStrategyInteractor()
 	{
-		require(_utilizedERC20WithdrawalsOpen, "!_utilizedERC20WithdrawalsOpen");
+		require(utilizedERC20WithdrawOpen, "!utilizedERC20WithdrawOpen");
 
 		require(balanceOf(msg.sender) >= _tokenAmount, "!_tokenAmount");
 
@@ -279,5 +296,15 @@ contract YieldSyncV1AMPStrategy is
 		yieldSyncV1AMPStrategyInteractor.eRC20Withdraw(msg.sender, _utilizedERC20, uTAPB);
 
 		_burn(msg.sender, _tokenAmount);
+	}
+
+	/// @inheritdoc IYieldSyncV1AMPStrategy
+	function utilizedERC20WithdrawOpenToggle()
+		public
+		override
+		authManager()
+		setYieldSyncV1AMPStrategyInteractor()
+	{
+		utilizedERC20WithdrawOpen = !utilizedERC20WithdrawOpen;
 	}
 }
