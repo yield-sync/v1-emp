@@ -23,10 +23,12 @@ contract YieldSyncV1AMPStrategy is
 	IYieldSyncV1AMPStrategy,
 	ReentrancyGuard
 {
-	using SafeERC20 for uint256;
 	address public immutable manager;
 
 	address[] internal _utilizedERC20;
+
+	bool internal _utilizedERC20DepositsOpen = true;
+	bool internal _utilizedERC20WithdrawalsOpen = true;
 
 	uint256 constant public override ONE_HUNDRED_PERCENT = 1e18;
 
@@ -51,6 +53,17 @@ contract YieldSyncV1AMPStrategy is
 		ERC20(_name, _symbol)
 	{
 		manager = _manager;
+	}
+
+
+	modifier yieldSyncV1AMPStrategyInteractorSet()
+	{
+		require(
+			address(yieldSyncV1AMPStrategyInteractor) != address(0),
+			"address(yieldSyncV1AMPStrategyInteractor) == address(0)"
+		);
+
+		_;
 	}
 
 
@@ -82,6 +95,7 @@ contract YieldSyncV1AMPStrategy is
 		public
 		view
 		override
+		yieldSyncV1AMPStrategyInteractorSet()
 		returns (uint256 balanceOfETHValue_)
 	{
 		uint256[] memory uTAPB = utilizedERC20AmountPerBurn();
@@ -99,6 +113,7 @@ contract YieldSyncV1AMPStrategy is
 	function utilizedERC20AmountValid(uint256[] memory _utilizedERC20Amount)
 		public
 		view
+		yieldSyncV1AMPStrategyInteractorSet()
 		returns (bool utilizedERC20AmountValid_)
 	{
 		require(_utilizedERC20.length == _utilizedERC20Amount.length, "_utilizedERC20.length != _utilizedERC20Amount.length");
@@ -150,6 +165,7 @@ contract YieldSyncV1AMPStrategy is
 		public
 		view
 		override
+		yieldSyncV1AMPStrategyInteractorSet()
 		returns (uint256[] memory utilizedERC20Amount_)
 	{
 		utilizedERC20Amount_ = yieldSyncV1AMPStrategyInteractor.eRC20TotalAmount(_utilizedERC20);
@@ -216,12 +232,13 @@ contract YieldSyncV1AMPStrategy is
 		public
 		override
 		nonReentrant()
+		yieldSyncV1AMPStrategyInteractorSet()
 	{
+		require(_utilizedERC20DepositsOpen, "!_utilizedERC20DepositsOpen");
+
 		require(_utilizedERC20.length == _utilizedERC20Amount.length, "_utilizedERC20.length != _utilizedERC20Amount.length");
 
 		require(utilizedERC20AmountValid(_utilizedERC20Amount), "!utilizedERC20AmountValid(_utilizedERC20Amount)");
-
-		require(yieldSyncV1AMPStrategyInteractor.eRC20DepositsOpen(), "!yieldSyncV1AMPStrategyInteractor.eRC20DepositsOpen()");
 
 		yieldSyncV1AMPStrategyInteractor.eRC20Deposit(msg.sender, _utilizedERC20, _utilizedERC20Amount);
 
@@ -246,13 +263,11 @@ contract YieldSyncV1AMPStrategy is
 		public
 		override
 		nonReentrant()
+		yieldSyncV1AMPStrategyInteractorSet()
 	{
-		require(balanceOf(msg.sender) >= _tokenAmount, "!_tokenAmount");
+		require(_utilizedERC20WithdrawalsOpen, "!_utilizedERC20WithdrawalsOpen");
 
-		require(
-			yieldSyncV1AMPStrategyInteractor.eRC20WithdrawalsOpen(),
-			"!yieldSyncV1AMPStrategyInteractor.eRC20WithdrawalsOpen()"
-		);
+		require(balanceOf(msg.sender) >= _tokenAmount, "!_tokenAmount");
 
 		uint256[] memory uTAPB = utilizedERC20AmountPerBurn();
 

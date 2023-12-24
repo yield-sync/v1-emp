@@ -20,20 +20,6 @@ using SafeERC20 for IERC20;
 contract StrategyInteractorDummy is
 	IYieldSyncV1AMPStrategyInteractor
 {
-	bool internal _eRC20DepositsOpen = true;
-	bool internal _eRC20WithdrawalsOpen = true;
-
-
-	/// @inheritdoc IYieldSyncV1AMPStrategyInteractor
-	function eRC20DepositsOpen()
-		public
-		view
-		override
-		returns (bool eRC20DepositsOpen_)
-	{
-		return _eRC20DepositsOpen;
-	}
-
 	/// @inheritdoc IYieldSyncV1AMPStrategyInteractor
 	function eRC20ETHValue(address _eRC20)
 		public
@@ -58,16 +44,6 @@ contract StrategyInteractorDummy is
 		{
 			eRC20TotalAmount_[i] += IERC20(_eRC20[i]).balanceOf(address(this));
 		}
-	}
-
-	/// @inheritdoc IYieldSyncV1AMPStrategyInteractor
-	function eRC20WithdrawalsOpen()
-		public
-		view
-		override
-		returns (bool eRC20WithdrawalsOpen_)
-	{
-		return _eRC20WithdrawalsOpen;
 	}
 
 

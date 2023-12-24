@@ -111,16 +111,6 @@ contract StrategyInteractorUniswapV2LiquidityPool is
 
 
 	/// @inheritdoc IYieldSyncV1AMPStrategyInteractor
-	function eRC20DepositsOpen()
-		public
-		view
-		override
-		returns (bool eRC20DepositsOpen_)
-	{
-		return _eRC20DepositsOpen;
-	}
-
-	/// @inheritdoc IYieldSyncV1AMPStrategyInteractor
 	function eRC20ETHValue(address _eRC20)
 		public
 		view
@@ -182,16 +172,6 @@ contract StrategyInteractorUniswapV2LiquidityPool is
 		}
 
 		return returnAmounts;
-	}
-
-	/// @inheritdoc IYieldSyncV1AMPStrategyInteractor
-	function eRC20WithdrawalsOpen()
-		public
-		view
-		override
-		returns (bool eRC20WithdrawalsOpen_)
-	{
-		return _eRC20WithdrawalsOpen;
 	}
 
 

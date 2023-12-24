@@ -5,15 +5,6 @@ pragma solidity 0.8.18;
 interface IYieldSyncV1AMPStrategyInteractor
 {
 	/**
-	* @notice ERC20 Withdrawals open
-	*/
-	function eRC20DepositsOpen()
-		external
-		view
-		returns (bool eRC20DepositsOpen_)
-	;
-
-	/**
 	* @notice ERC20 value in ETH
 	* @param _eRC20 {address}
 	*/
@@ -33,14 +24,6 @@ interface IYieldSyncV1AMPStrategyInteractor
 		returns (uint256[] memory eRC20Amount_)
 	;
 
-	/**
-	* @notice ERC20 Withdrawals open
-	*/
-	function eRC20WithdrawalsOpen()
-		external
-		view
-		returns (bool eRC20WithdrawalsOpen_)
-	;
 
 	/**
 	* @notice Deposit ERC20s

@@ -18,9 +18,6 @@ using SafeERC20 for IERC20;
 contract StrategyInteractorBlank is
 	IYieldSyncV1AMPStrategyInteractor
 {
-	bool internal _eRC20DepositsOpen = true;
-	bool internal _eRC20WithdrawalsOpen = true;
-
 	IYieldSyncV1AMPStrategy public immutable yieldSyncV1AMPStrategy;
 
 
@@ -39,16 +36,6 @@ contract StrategyInteractorBlank is
 
 
 	/// @inheritdoc IYieldSyncV1AMPStrategyInteractor
-	function eRC20DepositsOpen()
-		public
-		view
-		override
-		returns (bool eRC20DepositsOpen_)
-	{
-		return _eRC20DepositsOpen;
-	}
-
-	/// @inheritdoc IYieldSyncV1AMPStrategyInteractor
 	function eRC20ETHValue(address _eRC20)
 		public
 		view
@@ -60,7 +47,6 @@ contract StrategyInteractorBlank is
 			"yieldSyncV1AMPStrategy.utilizedERC20_allocation(_eRC20) = 0"
 		);
 
-		// Must return decimals 18
 		return 10 ** 18;
 	}
 
@@ -82,16 +68,6 @@ contract StrategyInteractorBlank is
 
 			eRC20TotalAmount_[i] += IERC20(_eRC20[i]).balanceOf(address(this));
 		}
-	}
-
-	/// @inheritdoc IYieldSyncV1AMPStrategyInteractor
-	function eRC20WithdrawalsOpen()
-		public
-		view
-		override
-		returns (bool eRC20WithdrawalsOpen_)
-	{
-		return _eRC20WithdrawalsOpen;
 	}
 
 
