@@ -48,6 +48,17 @@ interface IYieldSyncV1AMPStrategy is
 	;
 
 	/**
+	* @dev [view-IYieldSyncV1AMPStrategyInteractor]
+	* @notice Implemented IYieldSyncV1AMPStrategyInteractor
+	* @return {IYieldSyncV1AMPStrategyInteractor}
+	*/
+	function yieldSyncV1AMPStrategyInteractor()
+		external
+		view
+		returns (IYieldSyncV1AMPStrategyInteractor)
+	;
+
+	/**
 	* @dev [view-mapping]
 	* @notice Utilized ERC20 Allocation
 	* @param __utilizedERC20 {address}
@@ -57,17 +68,6 @@ interface IYieldSyncV1AMPStrategy is
 		external
 		view
 		returns (uint256 _allocation)
-	;
-
-	/**
-	* @dev [view-IYieldSyncV1AMPStrategyInteractor]
-	* @notice Implemented IYieldSyncV1AMPStrategyInteractor
-	* @return {IYieldSyncV1AMPStrategyInteractor}
-	*/
-	function yieldSyncV1AMPStrategyInteractor()
-		external
-		view
-		returns (IYieldSyncV1AMPStrategyInteractor)
 	;
 
 	/**
