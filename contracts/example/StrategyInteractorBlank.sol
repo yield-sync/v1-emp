@@ -4,6 +4,7 @@ pragma solidity 0.8.18;
 
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
+import { IYieldSyncV1AMPStrategy } from "../interface/IYieldSyncV1AMPStrategy.sol";
 import { IYieldSyncV1AMPStrategyInteractor } from "../interface/IYieldSyncV1AMPStrategyInteractor.sol";
 import { IERC20, SafeERC20 } from "../interface/IYieldSyncV1AMPStrategy.sol";
 
@@ -17,21 +18,21 @@ using SafeERC20 for IERC20;
 contract StrategyInteractorBlank is
 	IYieldSyncV1AMPStrategyInteractor
 {
-	address internal immutable _STRATEGY;
-
 	bool internal _eRC20DepositsOpen = true;
 	bool internal _eRC20WithdrawalsOpen = true;
 
+	IYieldSyncV1AMPStrategy public immutable yieldSyncV1AMPStrategy;
 
-	constructor (address __STRATEGY)
+
+	constructor (address _strategy)
 	{
-		_STRATEGY = __STRATEGY;
+		yieldSyncV1AMPStrategy = IYieldSyncV1AMPStrategy(_strategy);
 	}
 
 
 	modifier onlyStrategy()
 	{
-		require(_STRATEGY == msg.sender, "_STRATEGY != msg.sender");
+		require(address(yieldSyncV1AMPStrategy) == msg.sender, "address(yieldSyncV1AMPStrategy) != msg.sender");
 
 		_;
 	}

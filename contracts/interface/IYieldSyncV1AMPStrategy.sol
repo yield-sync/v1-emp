@@ -48,14 +48,15 @@ interface IYieldSyncV1AMPStrategy is
 	;
 
 	/**
-	* @dev [view-uint256[]]
-	* @notice Utilized ERC20 Allocations
-	* @return {uint256[]}
+	* @dev [view-mapping]
+	* @notice Utilized ERC20 Allocation
+	* @param __utilizedERC20 {address}
+	* @return _allocation {uint256}
 	*/
-	function utilizedERC20Allocation()
+	function utilizedERC20_allocation(address __utilizedERC20)
 		external
 		view
-		returns (uint256[] memory)
+		returns (uint256 _allocation)
 	;
 
 	/**

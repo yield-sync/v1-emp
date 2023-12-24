@@ -30,7 +30,7 @@ contract YieldSyncV1AMPStrategy is
 
 	uint256 constant public override ONE_HUNDRED_PERCENT = 1e18;
 
-	uint256[] internal _utilizedERC20Allocation;
+	mapping (address utilizedERC20 => uint256 allocation) internal _utilizedERC20_allocation;
 
 	IYieldSyncV1AMPStrategyInteractor public override yieldSyncV1AMPStrategyInteractor;
 
@@ -68,13 +68,13 @@ contract YieldSyncV1AMPStrategy is
 	}
 
 	/// @inheritdoc IYieldSyncV1AMPStrategy
-	function utilizedERC20Allocation()
+	function utilizedERC20_allocation(address __utilizedERC20)
 		public
 		view
 		override
-		returns (uint256[] memory)
+		returns (uint256 _allocation)
 	{
-		return _utilizedERC20Allocation;
+		return _utilizedERC20_allocation[__utilizedERC20];
 	}
 
 	/// @inheritdoc IYieldSyncV1AMPStrategy
@@ -136,7 +136,7 @@ contract YieldSyncV1AMPStrategy is
 
 			require(computed, "!computed");
 
-			if (_utilizedERC20Allocation[i] != amountAllocationActual)
+			if (_utilizedERC20_allocation[_utilizedERC20[i]] != amountAllocationActual)
 			{
 				utilizedERC20AmountValid_ = false;
 
@@ -178,11 +178,6 @@ contract YieldSyncV1AMPStrategy is
 		require(manager == msg.sender, "manager != msg.sender");
 
 		require(
-			__utilizedERC20.length == __utilizedERC20Allocation.length,
-			"__utilizedERC20.length != __utilizedERC20Allocation.length"
-		);
-
-		require(
 			address(yieldSyncV1AMPStrategyInteractor) == address(0),
 			"address(yieldSyncV1AMPStrategyInteractor) != address(0)"
 		);
@@ -195,27 +190,25 @@ contract YieldSyncV1AMPStrategy is
 	}
 
 	/// @inheritdoc IYieldSyncV1AMPStrategy
-	function utilizedERC20AllocationSet(uint256[] memory __utilizedERC20Allocation)
+	function utilizedERC20AllocationSet(uint256[] memory _utilizedERC20Allocation)
 		public
 		override
 	{
 		require(manager == msg.sender, "manager != msg.sender");
 
-		require(
-			_utilizedERC20.length == __utilizedERC20Allocation.length,
-			"_utilizedERC20.length != __utilizedERC20Allocation.length"
-		);
-
 		uint256 _utilizedERC20AllocationTotal;
 
-		for (uint256 i = 0; i < __utilizedERC20Allocation.length; i++)
+		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
-			_utilizedERC20AllocationTotal += __utilizedERC20Allocation[i];
+			_utilizedERC20AllocationTotal += _utilizedERC20Allocation[i];
 		}
 
 		require(_utilizedERC20AllocationTotal == ONE_HUNDRED_PERCENT, "_utilizedERC20AllocationTotal != ONE_HUNDRED_PERCENT");
 
-		_utilizedERC20Allocation = __utilizedERC20Allocation;
+		for (uint256 i = 0; i < _utilizedERC20.length; i++)
+		{
+			_utilizedERC20_allocation[_utilizedERC20[i]] = _utilizedERC20Allocation[i];
+		}
 	}
 
 	/// @inheritdoc IYieldSyncV1AMPStrategy

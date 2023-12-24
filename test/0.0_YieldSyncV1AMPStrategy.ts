@@ -81,7 +81,7 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol - Setup", async () => {
 				);
 				expect((await yieldSyncV1AMPStrategy.utilizedERC20()).length).to.be.equal(1);
 				expect((await yieldSyncV1AMPStrategy.utilizedERC20())[0]).to.be.equal(mockERC20A.address);
-				expect((await yieldSyncV1AMPStrategy.utilizedERC20Allocation())[0]).to.be.equal(HUNDRED_PERCENT);
+				expect(await yieldSyncV1AMPStrategy.utilizedERC20_allocation(mockERC20A.address)).to.be.equal(HUNDRED_PERCENT);
 			}
 		);
 
@@ -127,8 +127,8 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol - Setup", async () => {
 					expect((await yieldSyncV1AMPStrategy.utilizedERC20()).length).to.be.equal(2);
 					expect((await yieldSyncV1AMPStrategy.utilizedERC20())[0]).to.be.equal(mockERC20A.address);
 					expect((await yieldSyncV1AMPStrategy.utilizedERC20())[1]).to.be.equal(mockERC20B.address);
-					expect((await yieldSyncV1AMPStrategy.utilizedERC20Allocation())[0]).to.be.equal(FIFTY_PERCENT);
-					expect((await yieldSyncV1AMPStrategy.utilizedERC20Allocation())[1]).to.be.equal(FIFTY_PERCENT);
+					expect(await yieldSyncV1AMPStrategy.utilizedERC20_allocation(mockERC20A.address)).to.be.equal(FIFTY_PERCENT);
+					expect(await yieldSyncV1AMPStrategy.utilizedERC20_allocation(mockERC20B.address)).to.be.equal(FIFTY_PERCENT);
 				}
 			);
 
@@ -169,12 +169,12 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol - Setup", async () => {
 
 				await expect(yieldSyncV1AMPStrategy.utilizedERC20AllocationSet(NEW_ALLOCATION)).to.not.be.reverted;
 
-				const ALLOCATION = await yieldSyncV1AMPStrategy.utilizedERC20Allocation();
-
-				for (let i = 0; i < NEW_ALLOCATION.length; i++)
-				{
-					expect(NEW_ALLOCATION[i]).to.be.equal(ALLOCATION[i]);
-				}
+				expect(await yieldSyncV1AMPStrategy.utilizedERC20_allocation(mockERC20A.address)).to.be.equal(
+					SEVENTY_FIVE_PERCENT
+				);
+				expect(await yieldSyncV1AMPStrategy.utilizedERC20_allocation(mockERC20B.address)).to.be.equal(
+					TWENTY_FIVE_PERCENT
+				);
 			}
 		);
 	});
