@@ -79,11 +79,6 @@ contract StrategyInteractorBlank is
 	{
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
-			require(
-				yieldSyncV1AMPStrategy.utilizedERC20_allocation(_utilizedERC20[i]) > 0,
-				"yieldSyncV1AMPStrategy.utilizedERC20_allocation(_utilizedERC20[i]) = 0"
-			);
-
 			IERC20(_utilizedERC20[i]).safeTransferFrom(_from, address(this), _utilizedERC20Amount[i]);
 		}
 	}
@@ -96,11 +91,6 @@ contract StrategyInteractorBlank is
 	{
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
-			require(
-				yieldSyncV1AMPStrategy.utilizedERC20_allocation(_utilizedERC20[i]) > 0,
-				"yieldSyncV1AMPStrategy.utilizedERC20_allocation(_utilizedERC20[i]) = 0"
-			);
-
 			IERC20(_utilizedERC20[i]).safeTransfer(_to, _utilizedERC20Amount[i]);
 		}
 	}
