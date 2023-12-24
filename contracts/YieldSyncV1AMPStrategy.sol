@@ -137,7 +137,7 @@ contract YieldSyncV1AMPStrategy is
 					SafeMath.mul(_utilizedERC20Amount[i], 10 ** (18 - ERC20(_utilizedERC20[i]).decimals())),
 					yieldSyncV1AMPStrategyInteractor.eRC20ETHValue(_utilizedERC20[i])
 				),
-				10 ** 18
+				1e18
 			);
 		}
 
