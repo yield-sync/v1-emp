@@ -39,34 +39,6 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Deposit", async () => {
 
 	describe("function utilizedERC20Deposit()", async () => {
 		it(
-			"Should revert if invalid length for utilizedERC20Amount passed..",
-			async () => {
-				// Initialize strategy with mock ERC20
-				await expect(
-					yieldSyncV1AMPStrategy.initializeStrategy(
-						strategyInteractorDummy.address,
-						[mockERC20A.address],
-						[HUNDRED_PERCENT]
-					)
-				).to.not.be.reverted;
-
-				await yieldSyncV1AMPStrategy.utilizedERC20DepositOpenToggle();
-				await yieldSyncV1AMPStrategy.utilizedERC20WithdrawOpenToggle();
-
-
-				const mockERC20AdepositAmount = ethers.utils.parseUnits("1", 18);
-
-				// Approve the StrategyInteractorDummy contract to spend tokens on behalf of owner
-				await mockERC20A.approve(strategyInteractorDummy.address, mockERC20AdepositAmount);
-
-				// Deposit ERC20 tokens into the strategy
-				await expect(
-					yieldSyncV1AMPStrategy.utilizedERC20Deposit([mockERC20AdepositAmount, mockERC20AdepositAmount])
-				).to.be.revertedWith(ERR0R_INVALID_UTILIZEDERC20AMOUNT_LENGTH);
-			}
-		);
-
-		it(
 			"Should be able to deposit ERC20 into strategy interactor..",
 			async () => {
 				// Initialize strategy with mock ERC20
@@ -191,35 +163,6 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Deposit", async () => {
 		});
 
 		describe("MULTIPLE ERC20", async () => {
-			it(
-				"Should revert if invalid length for utilizedERC20Amount passed..",
-				async () => {
-					// Initialize strategy with mock ERC20
-					await expect(
-						yieldSyncV1AMPStrategy.initializeStrategy(
-							strategyInteractorDummy.address,
-							[mockERC20A.address, mockERC20B.address],
-							[FIFTY_PERCENT, FIFTY_PERCENT]
-						)
-					).to.not.be.reverted;
-
-					await yieldSyncV1AMPStrategy.utilizedERC20DepositOpenToggle();
-					await yieldSyncV1AMPStrategy.utilizedERC20WithdrawOpenToggle();
-
-
-					const mockERC20AdepositAmount = ethers.utils.parseUnits("1", 18);
-
-					// Approve the StrategyInteractorDummy contract to spend tokens on behalf of owner
-					await mockERC20A.approve(strategyInteractorDummy.address, mockERC20AdepositAmount);
-					await mockERC20B.approve(strategyInteractorDummy.address, mockERC20AdepositAmount);
-
-					// Deposit ERC20 tokens into the strategy
-					await expect(
-						yieldSyncV1AMPStrategy.utilizedERC20Deposit([mockERC20AdepositAmount])
-					).to.be.revertedWith(ERR0R_INVALID_UTILIZEDERC20AMOUNT_LENGTH);
-				}
-			);
-
 			it(
 				"[50/50] Should revert if invalid utilizedERC20Amounts passed..",
 				async () => {

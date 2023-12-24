@@ -76,6 +76,7 @@ contract YieldSyncV1AMPStrategy is
 		_;
 	}
 
+
 	//// @notice view
 
 
@@ -125,8 +126,6 @@ contract YieldSyncV1AMPStrategy is
 		setYieldSyncV1AMPStrategyInteractor()
 		returns (bool utilizedERC20AmountValid_)
 	{
-		require(_utilizedERC20.length == _utilizedERC20Amount.length, "_utilizedERC20.length != _utilizedERC20Amount.length");
-
 		utilizedERC20AmountValid_ = true;
 
 		uint256 utilizedERC20AmountTotalETHValue;
@@ -242,8 +241,6 @@ contract YieldSyncV1AMPStrategy is
 		setYieldSyncV1AMPStrategyInteractor()
 	{
 		require(utilizedERC20DepositOpen, "!utilizedERC20DepositOpen");
-
-		require(_utilizedERC20.length == _utilizedERC20Amount.length, "_utilizedERC20.length != _utilizedERC20Amount.length");
 
 		require(utilizedERC20AmountValid(_utilizedERC20Amount), "!utilizedERC20AmountValid(_utilizedERC20Amount)");
 
