@@ -114,7 +114,7 @@ contract YieldSyncV1AMPStrategy is
 		{
 			balanceOfETHValue_ += SafeMath.mul(
 				uTAPB[i],
-				balanceOf(_target) * yieldSyncV1AMPStrategyInteractor.eRC20ETHValue(_utilizedERC20[i])
+				balanceOf(_target) * yieldSyncV1AMPStrategyInteractor.utilizedERC20ETHValue(_utilizedERC20[i])
 			);
 		}
 	}
@@ -135,7 +135,7 @@ contract YieldSyncV1AMPStrategy is
 			utilizedERC20AmountTotalETHValue += SafeMath.div(
 				SafeMath.mul(
 					SafeMath.mul(_utilizedERC20Amount[i], 10 ** (18 - ERC20(_utilizedERC20[i]).decimals())),
-					yieldSyncV1AMPStrategyInteractor.eRC20ETHValue(_utilizedERC20[i])
+					yieldSyncV1AMPStrategyInteractor.utilizedERC20ETHValue(_utilizedERC20[i])
 				),
 				1e18
 			);
@@ -148,7 +148,7 @@ contract YieldSyncV1AMPStrategy is
 					SafeMath.div(
 						SafeMath.mul(
 							_utilizedERC20Amount[i],
-							yieldSyncV1AMPStrategyInteractor.eRC20ETHValue(_utilizedERC20[i])
+							yieldSyncV1AMPStrategyInteractor.utilizedERC20ETHValue(_utilizedERC20[i])
 						),
 						10 ** ERC20(_utilizedERC20[i]).decimals()
 					),
@@ -176,7 +176,7 @@ contract YieldSyncV1AMPStrategy is
 		setYieldSyncV1AMPStrategyInteractor()
 		returns (uint256[] memory utilizedERC20Amount_)
 	{
-		utilizedERC20Amount_ = yieldSyncV1AMPStrategyInteractor.eRC20TotalAmount(_utilizedERC20);
+		utilizedERC20Amount_ = yieldSyncV1AMPStrategyInteractor.utilizedERC20TotalAmount(_utilizedERC20);
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
@@ -244,7 +244,7 @@ contract YieldSyncV1AMPStrategy is
 
 		require(utilizedERC20AmountValid(_utilizedERC20Amount), "!utilizedERC20AmountValid(_utilizedERC20Amount)");
 
-		yieldSyncV1AMPStrategyInteractor.eRC20Deposit(msg.sender, _utilizedERC20, _utilizedERC20Amount);
+		yieldSyncV1AMPStrategyInteractor.utilizedERC20Deposit(msg.sender, _utilizedERC20, _utilizedERC20Amount);
 
 		uint256 utilizedERC20AmountTotalETHValue;
 
@@ -253,7 +253,7 @@ contract YieldSyncV1AMPStrategy is
 			utilizedERC20AmountTotalETHValue += SafeMath.div(
 				SafeMath.mul(
 					_utilizedERC20Amount[i] * 10 ** (18 - ERC20(_utilizedERC20[i]).decimals()),
-					yieldSyncV1AMPStrategyInteractor.eRC20ETHValue(_utilizedERC20[i])
+					yieldSyncV1AMPStrategyInteractor.utilizedERC20ETHValue(_utilizedERC20[i])
 				),
 				1e18
 			);
@@ -290,7 +290,7 @@ contract YieldSyncV1AMPStrategy is
 			uTAPB[i] = SafeMath.div(uTAPB[i] * _tokenAmount, 1e18);
 		}
 
-		yieldSyncV1AMPStrategyInteractor.eRC20Withdraw(msg.sender, _utilizedERC20, uTAPB);
+		yieldSyncV1AMPStrategyInteractor.utilizedERC20Withdraw(msg.sender, _utilizedERC20, uTAPB);
 
 		_burn(msg.sender, _tokenAmount);
 	}
