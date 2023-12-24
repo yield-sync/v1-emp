@@ -50,16 +50,14 @@ contract StrategyInteractorDummy is
 		public
 		view
 		override
-		returns (uint256[] memory eRC20okenAmount_)
+		returns (uint256[] memory eRC20TotalAmount_)
 	{
-		uint256[] memory returnAmounts = new uint256[](_eRC20.length);
+		eRC20TotalAmount_ = new uint256[](_eRC20.length);
 
 		for (uint256 i = 0; i < _eRC20.length; i++)
 		{
-			returnAmounts[i] += IERC20(_eRC20[i]).balanceOf(address(this));
+			eRC20TotalAmount_[i] += IERC20(_eRC20[i]).balanceOf(address(this));
 		}
-
-		return returnAmounts;
 	}
 
 	/// @inheritdoc IYieldSyncV1AMPStrategyInteractor

@@ -151,7 +151,7 @@ contract StrategyInteractorUniswapV2LiquidityPool is
 		public
 		view
 		override
-		returns (uint256[] memory eRC20okenAmount_)
+		returns (uint256[] memory eRC20TotalAmount_)
 	{
 		uint256[] memory returnAmounts = new uint256[](_eRC20.length);
 

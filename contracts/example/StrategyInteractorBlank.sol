@@ -55,6 +55,11 @@ contract StrategyInteractorBlank is
 		override
 		returns (uint256 eRC20ETHValue_)
 	{
+		require(
+			yieldSyncV1AMPStrategy.utilizedERC20_allocation(_eRC20) > 0,
+			"yieldSyncV1AMPStrategy.utilizedERC20_allocation(_eRC20) = 0"
+		);
+
 		// Must return decimals 18
 		return 10 ** 18;
 	}
@@ -64,16 +69,19 @@ contract StrategyInteractorBlank is
 		public
 		view
 		override
-		returns (uint256[] memory eRC20okenAmount_)
+		returns (uint256[] memory eRC20TotalAmount_)
 	{
-		uint256[] memory returnAmounts = new uint256[](_eRC20.length);
+		eRC20TotalAmount_ = new uint256[](_eRC20.length);
 
 		for (uint256 i = 0; i < _eRC20.length; i++)
 		{
-			returnAmounts[i] += IERC20(_eRC20[i]).balanceOf(address(this));
-		}
+			require(
+				yieldSyncV1AMPStrategy.utilizedERC20_allocation(_eRC20[i]) > 0,
+				"yieldSyncV1AMPStrategy.utilizedERC20_allocation(_eRC20[i]) = 0"
+			);
 
-		return returnAmounts;
+			eRC20TotalAmount_[i] += IERC20(_eRC20[i]).balanceOf(address(this));
+		}
 	}
 
 	/// @inheritdoc IYieldSyncV1AMPStrategyInteractor
@@ -95,6 +103,11 @@ contract StrategyInteractorBlank is
 	{
 		for (uint256 i = 0; i < _eRC20.length; i++)
 		{
+			require(
+				yieldSyncV1AMPStrategy.utilizedERC20_allocation(_eRC20[i]) > 0,
+				"yieldSyncV1AMPStrategy.utilizedERC20_allocation(_eRC20[i]) = 0"
+			);
+
 			IERC20(_eRC20[i]).safeTransferFrom(_from, address(this), _eRC20Amount[i]);
 		}
 	}
@@ -107,6 +120,11 @@ contract StrategyInteractorBlank is
 	{
 		for (uint256 i = 0; i < _eRC20.length; i++)
 		{
+			require(
+				yieldSyncV1AMPStrategy.utilizedERC20_allocation(_eRC20[i]) > 0,
+				"yieldSyncV1AMPStrategy.utilizedERC20_allocation(_eRC20[i]) = 0"
+			);
+
 			IERC20(_eRC20[i]).safeTransfer(_to, _eRC20Amount[i]);
 		}
 	}
