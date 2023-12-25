@@ -2,8 +2,8 @@
 pragma solidity 0.8.18;
 
 
-import { IYieldSyncV1AMPStrategyInteractor } from "../interface/IYieldSyncV1AMPStrategyInteractor.sol";
-import { IERC20, SafeERC20 } from "../interface/IYieldSyncV1AMPStrategy.sol";
+import { IYieldSyncV1EMPStrategyInteractor } from "../interface/IYieldSyncV1EMPStrategyInteractor.sol";
+import { IERC20, SafeERC20 } from "../interface/IYieldSyncV1EMPStrategy.sol";
 
 
 using SafeERC20 for IERC20;
@@ -60,7 +60,7 @@ interface IUniswapV2Router
 * @notice This strategy adds liquidity to a uniswap pool
 */
 contract StrategyInteractorUniswapV2LiquidityPool is
-	IYieldSyncV1AMPStrategyInteractor
+	IYieldSyncV1EMPStrategyInteractor
 {
 	address public immutable liquidityPool;
     address public immutable weth;
@@ -95,14 +95,14 @@ contract StrategyInteractorUniswapV2LiquidityPool is
 	}
 
 
-	modifier onlyYieldSyncV1AMPStrategy()
+	modifier onlyYieldSyncV1EMPStrategy()
 	{
 		require(msg.sender == strategyController, "msg.sender != strategyController");
 
 		_;
 	}
 
-	modifier onlyYieldSyncV1AMPStrategyManager()
+	modifier onlyYieldSyncV1EMPStrategyManager()
 	{
 		require(true, "");
 
@@ -110,7 +110,7 @@ contract StrategyInteractorUniswapV2LiquidityPool is
 	}
 
 
-	/// @inheritdoc IYieldSyncV1AMPStrategyInteractor
+	/// @inheritdoc IYieldSyncV1EMPStrategyInteractor
 	function utilizedERC20ETHValue(address _utilizedERC20)
 		public
 		view
@@ -136,7 +136,7 @@ contract StrategyInteractorUniswapV2LiquidityPool is
 		}
 	}
 
-	/// @inheritdoc IYieldSyncV1AMPStrategyInteractor
+	/// @inheritdoc IYieldSyncV1EMPStrategyInteractor
 	function utilizedERC20TotalAmount(address[] memory _utilizedERC20)
 		public
 		view
@@ -175,11 +175,11 @@ contract StrategyInteractorUniswapV2LiquidityPool is
 	}
 
 
-	/// @inheritdoc IYieldSyncV1AMPStrategyInteractor
+	/// @inheritdoc IYieldSyncV1EMPStrategyInteractor
 	function utilizedERC20Deposit(address _from, address[] memory _utilizedERC20, uint256[] memory _utilizedERC20Amount)
 		public
 		override
-		onlyYieldSyncV1AMPStrategy()
+		onlyYieldSyncV1EMPStrategy()
 	{
 		IERC20(_utilizedERC20[0]).safeTransferFrom(_from, address(this), _utilizedERC20Amount[0]);
 		IERC20(_utilizedERC20[1]).safeTransferFrom(_from, address(this), _utilizedERC20Amount[1]);
@@ -188,11 +188,11 @@ contract StrategyInteractorUniswapV2LiquidityPool is
 		IERC20(_utilizedERC20[1]).safeApprove(address(uniswapV2Router), _utilizedERC20Amount[1]);
 	}
 
-	/// @inheritdoc IYieldSyncV1AMPStrategyInteractor
+	/// @inheritdoc IYieldSyncV1EMPStrategyInteractor
 	function utilizedERC20Withdraw(address _to, address[] memory _utilizedERC20, uint256[] memory _utilizedERC20Amount)
 		public
 		override
-		onlyYieldSyncV1AMPStrategy()
+		onlyYieldSyncV1EMPStrategy()
 	{
 		// Transfer the withdrawn utilizedERC20s to the recipient
 		IERC20(_utilizedERC20[0]).safeTransfer(_to, _utilizedERC20Amount[0]);
@@ -201,7 +201,7 @@ contract StrategyInteractorUniswapV2LiquidityPool is
 
 
 	/////////////////////////////////////////////
-	/// NON-YIELD-SYNC-V1-AMP IMPLEMENTATIONS ///
+	/// NON-YIELD-SYNC-V1-EMP IMPLEMENTATIONS ///
 	/////////////////////////////////////////////
 
 
@@ -216,7 +216,7 @@ contract StrategyInteractorUniswapV2LiquidityPool is
 
 	function addLiquidity(address[] memory _utilizedERC20, uint256[] memory _utilizedERC20Amount)
 		public
-		onlyYieldSyncV1AMPStrategyManager()
+		onlyYieldSyncV1EMPStrategyManager()
 	{
 		uniswapV2Router.addLiquidity(
 			_utilizedERC20[0],
@@ -232,7 +232,7 @@ contract StrategyInteractorUniswapV2LiquidityPool is
 
 	function removeLiquidity(address[] memory _utilizedERC20, uint256[] memory _utilizedERC20Amount)
 		public
-		onlyYieldSyncV1AMPStrategyManager()
+		onlyYieldSyncV1EMPStrategyManager()
 	{
 		// Retrieve the current reserves to estimate the withdrawn amounts
 		(uint256 reserveA, uint256 reserveB, ) = uniswapV2Pair.getReserves();

@@ -2,12 +2,12 @@
 pragma solidity 0.8.18;
 
 
-import { YieldSyncV1AMP } from "./YieldSyncV1AMP.sol";
-import { IYieldSyncV1AMPDeployer } from "./interface/IYieldSyncV1AMPDeployer.sol";
+import { YieldSyncV1EMP } from "./YieldSyncV1EMP.sol";
+import { IYieldSyncV1EMPDeployer } from "./interface/IYieldSyncV1EMPDeployer.sol";
 
 
-contract YieldSyncV1AMPDeployer is
-	IYieldSyncV1AMPDeployer
+contract YieldSyncV1EMPDeployer is
+	IYieldSyncV1EMPDeployer
 {
 	receive ()
 		external
@@ -36,20 +36,20 @@ contract YieldSyncV1AMPDeployer is
 	}
 
 
-	function deployYieldSyncV1AMP(string memory _name, bool _onlyPrioritizedStrategy, string memory _symbol)
+	function deployYieldSyncV1EMP(string memory _name, bool _onlyPrioritizedStrategy, string memory _symbol)
 		public
 		payable
-		returns (address yieldSyncV1AMP_)
+		returns (address yieldSyncV1EMP_)
 	{
 		require(msg.value >= fee, "!msg.value");
 
-		YieldSyncV1AMP yieldSyncV1AMP = new YieldSyncV1AMP(
+		YieldSyncV1EMP yieldSyncV1EMP = new YieldSyncV1EMP(
 			msg.sender,
 			_onlyPrioritizedStrategy,
 			_name,
 			_symbol
 		);
 
-		return address(yieldSyncV1AMP);
+		return address(yieldSyncV1EMP);
 	}
 }

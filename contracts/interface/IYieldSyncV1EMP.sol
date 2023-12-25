@@ -17,7 +17,7 @@ struct Allocation
 }
 
 
-interface IYieldSyncV1AMP is
+interface IYieldSyncV1EMP is
 	IERC20
 {
 	/**

@@ -2,6 +2,6 @@
 pragma solidity 0.8.18;
 
 
-contract YieldSyncV1AMPRegistry
+interface IYieldSyncV1EMPStrategyDeployer
 {
 }

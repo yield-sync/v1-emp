@@ -2,7 +2,7 @@
 pragma solidity 0.8.18;
 
 
-interface IYieldSyncV1AMPStrategyInteractor
+interface IYieldSyncV1EMPStrategyInteractor
 {
 	/**
 	* @notice utilizedERC20 value in ETH

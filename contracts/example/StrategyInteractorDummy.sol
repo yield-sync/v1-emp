@@ -4,8 +4,8 @@ pragma solidity 0.8.18;
 
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-import { IYieldSyncV1AMPStrategyInteractor } from "../interface/IYieldSyncV1AMPStrategyInteractor.sol";
-import { IERC20, SafeERC20 } from "../interface/IYieldSyncV1AMPStrategy.sol";
+import { IYieldSyncV1EMPStrategyInteractor } from "../interface/IYieldSyncV1EMPStrategyInteractor.sol";
+import { IERC20, SafeERC20 } from "../interface/IYieldSyncV1EMPStrategy.sol";
 
 
 using SafeERC20 for IERC20;
@@ -18,9 +18,9 @@ using SafeERC20 for IERC20;
 * The purpose of this contract is strictly for testing.
 */
 contract StrategyInteractorDummy is
-	IYieldSyncV1AMPStrategyInteractor
+	IYieldSyncV1EMPStrategyInteractor
 {
-	/// @inheritdoc IYieldSyncV1AMPStrategyInteractor
+	/// @inheritdoc IYieldSyncV1EMPStrategyInteractor
 	function utilizedERC20ETHValue(address _utilizedERC20)
 		public
 		view
@@ -31,7 +31,7 @@ contract StrategyInteractorDummy is
 		return 10 ** 18;
 	}
 
-	/// @inheritdoc IYieldSyncV1AMPStrategyInteractor
+	/// @inheritdoc IYieldSyncV1EMPStrategyInteractor
 	function utilizedERC20TotalAmount(address[] memory _utilizedERC20)
 		public
 		view
@@ -47,7 +47,7 @@ contract StrategyInteractorDummy is
 	}
 
 
-	/// @inheritdoc IYieldSyncV1AMPStrategyInteractor
+	/// @inheritdoc IYieldSyncV1EMPStrategyInteractor
 	function utilizedERC20Deposit(address _from, address[] memory _utilizedERC20, uint256[] memory _utilizedERC20Amount)
 		public
 		override
@@ -58,7 +58,7 @@ contract StrategyInteractorDummy is
 		}
 	}
 
-	/// @inheritdoc IYieldSyncV1AMPStrategyInteractor
+	/// @inheritdoc IYieldSyncV1EMPStrategyInteractor
 	function utilizedERC20Withdraw(address _to, address[] memory _utilizedERC20, uint256[] memory _utilizedERC20Amount)
 		public
 		override

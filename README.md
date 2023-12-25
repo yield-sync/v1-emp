@@ -1,6 +1,6 @@
-# Yield Sync V1 AMP
+# Yield Sync V1 EMP
 
-AMP (Asset Management Protocol) is a protocol that allows automated allocations for managing assets. Whether it be for yield optimization or public goods funding, this protocol allows developers to create the tool they need to direct funds accordingly.
+EMP (Asset Management Protocol) is a protocol that allows automated allocations for managing assets. Whether it be for yield optimization or public goods funding, this protocol allows developers to create the tool they need to direct funds accordingly.
 
 ## Note
 

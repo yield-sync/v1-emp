@@ -6,16 +6,16 @@ import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-import { Allocation, IYieldSyncV1AMP } from "./interface/IYieldSyncV1AMP.sol";
-import { IYieldSyncV1AMPStrategy } from "./interface/IYieldSyncV1AMPStrategy.sol";
+import { Allocation, IYieldSyncV1EMP } from "./interface/IYieldSyncV1EMP.sol";
+import { IYieldSyncV1EMPStrategy } from "./interface/IYieldSyncV1EMPStrategy.sol";
 
 
 using SafeERC20 for ERC20;
 
 
-contract YieldSyncV1AMP is
+contract YieldSyncV1EMP is
 	ERC20,
-	IYieldSyncV1AMP
+	IYieldSyncV1EMP
 {
 	address public override manager;
 	address[] internal _activeStrategy;
@@ -44,7 +44,7 @@ contract YieldSyncV1AMP is
 	}
 
 
-	/// @inheritdoc IYieldSyncV1AMP
+	/// @inheritdoc IYieldSyncV1EMP
 	function activeStrategy()
 		external
 		view
@@ -53,7 +53,7 @@ contract YieldSyncV1AMP is
 		return _activeStrategy;
 	}
 
-	/// @inheritdoc IYieldSyncV1AMP
+	/// @inheritdoc IYieldSyncV1EMP
 	function strategy_allocation(address _strategy)
 		public
 		view
@@ -64,7 +64,7 @@ contract YieldSyncV1AMP is
 	}
 
 
-	/// @inheritdoc IYieldSyncV1AMP
+	/// @inheritdoc IYieldSyncV1EMP
 	function prioritizedStrategy()
 		public
 		view
@@ -79,7 +79,7 @@ contract YieldSyncV1AMP is
 		for (uint256 i = 0; i < _activeStrategy.length; i++)
 		{
 			(, uint256 strategyAllocation) = SafeMath.tryDiv(
-				IYieldSyncV1AMPStrategy(_activeStrategy[i]).balanceOfETHValue(msg.sender),
+				IYieldSyncV1EMPStrategy(_activeStrategy[i]).balanceOfETHValue(msg.sender),
 				_totalValueOfAssetsInWETH
 			);
 
@@ -93,14 +93,14 @@ contract YieldSyncV1AMP is
 		return strategy;
 	}
 
-	/// @inheritdoc IYieldSyncV1AMP
+	/// @inheritdoc IYieldSyncV1EMP
 	function depositTokens(address _strategy, address[] memory _utilizedToken, uint256[] memory _utilizedTokenAmount)
 		public
 	{
 		require(_utilizedToken.length > 0, "Must deposit at least one token");
 
 		require(
-			_utilizedToken.length == IYieldSyncV1AMPStrategy(_strategy).utilizedERC20().length,
+			_utilizedToken.length == IYieldSyncV1EMPStrategy(_strategy).utilizedERC20().length,
 			"!utilizedToken.length"
 		);
 
@@ -114,14 +114,14 @@ contract YieldSyncV1AMP is
 		for (uint256 i = 0; i < _utilizedToken.length; i++)
 		{
 			//require(
-			//	IYieldSyncV1AMPStrategy(_strategy).token_utilized(_utilizedToken[i]),
-			//	"!IYieldSyncV1AMPStrategy(_strategy).token_utilized(_utilizedToken[i])"
+			//	IYieldSyncV1EMPStrategy(_strategy).token_utilized(_utilizedToken[i]),
+			//	"!IYieldSyncV1EMPStrategy(_strategy).token_utilized(_utilizedToken[i])"
 			//);
 
 			ERC20(_utilizedToken[i]).safeTransferFrom(msg.sender, address(this), _utilizedTokenAmount[i]);
 
 			// Calculate the value of the deposited tokens
-			//totalDepositValue += IYieldSyncV1AMPStrategy(_strategy).utilizedTokenETHValue(
+			//totalDepositValue += IYieldSyncV1EMPStrategy(_strategy).utilizedTokenETHValue(
 			//	_utilizedToken[i]
 			//) * _utilizedTokenAmount[i];
 		}
@@ -143,7 +143,7 @@ contract YieldSyncV1AMP is
 		_mint(msg.sender, tokensToMint);
 	}
 
-	/// @inheritdoc IYieldSyncV1AMP
+	/// @inheritdoc IYieldSyncV1EMP
 	function strategyAllocationUpdate(address _strategy, uint8 _denominator, uint8 _numerator)
 		public
 		accessManager()
@@ -154,7 +154,7 @@ contract YieldSyncV1AMP is
 		});
 	}
 
-	/// @inheritdoc IYieldSyncV1AMP
+	/// @inheritdoc IYieldSyncV1EMP
 	function strategyAdd(address _strategy, uint8 _denominator, uint8 _numerator)
 		public
 		accessManager()
@@ -167,7 +167,7 @@ contract YieldSyncV1AMP is
 		});
 	}
 
-	/// @inheritdoc IYieldSyncV1AMP
+	/// @inheritdoc IYieldSyncV1EMP
 	function strategySubtract(address _strategy)
 		public
 		accessManager()
@@ -190,7 +190,7 @@ contract YieldSyncV1AMP is
 		}
 	}
 
-	/// @inheritdoc IYieldSyncV1AMP
+	/// @inheritdoc IYieldSyncV1EMP
 	function totalValueOfAssetsInWETH()
 		public
 		view
@@ -200,7 +200,7 @@ contract YieldSyncV1AMP is
 
 		for (uint256 i = 0; i < _activeStrategy.length; i++)
 		{
-			_totalETHValue += IYieldSyncV1AMPStrategy(_activeStrategy[i]).balanceOfETHValue(address(this));
+			_totalETHValue += IYieldSyncV1EMPStrategy(_activeStrategy[i]).balanceOfETHValue(address(this));
 		}
 
 		return _totalETHValue;
