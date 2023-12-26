@@ -102,7 +102,7 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 			}
 		);
 
-		describe("ERC20 with 6 decimals", async () => {
+		describe("[DECIMALS = 6]", async () => {
 			it(
 				"[100] Should allow caller to burn ERC20 and cash out..",
 				async () => {
@@ -334,7 +334,7 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 				}
 			);
 
-			describe("ERC20 with 6 decimals", async () => {
+			describe("[DECIMALS = 6]", async () => {
 				it(
 					"[50/50] Should allow caller to burn ERC20 and cash out..",
 					async () => {

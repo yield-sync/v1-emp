@@ -104,7 +104,7 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Deposit", async () => {
 			}
 		);
 
-		describe("ERC20 with 6 decimals", async () => {
+		describe("[DECIMALS = 6]", async () => {
 			it(
 				"Should be able to deposit ERC20 into strategy interactor..",
 				async () => {
@@ -408,7 +408,7 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Deposit", async () => {
 				}
 			);
 
-			describe("ERC20 with 6 decimals", async () => {
+			describe("[DECIMALS = 6]", async () => {
 				it(
 					"[50/50] Should be able to deposit ERC20s into strategy interactor..",
 					async () => {
