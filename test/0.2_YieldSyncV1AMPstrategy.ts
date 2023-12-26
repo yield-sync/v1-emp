@@ -14,7 +14,7 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;
 	let mockERC206: Contract;
-	let priceFeedDummy: Contract;
+	let eTHValueFeedDummy: Contract;
 	let strategyInteractorDummy: Contract;
 	let yieldSyncV1EMPStrategy: Contract;
 
@@ -23,14 +23,14 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 
 		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
 		const MockERC206: ContractFactory = await ethers.getContractFactory("MockERC206");
-		const PriceFeedDummy: ContractFactory = await ethers.getContractFactory("PriceFeedDummy");
+		const ETHValueFeedDummy: ContractFactory = await ethers.getContractFactory("ETHValueFeedDummy");
 		const StrategyInteractorDummy: ContractFactory = await ethers.getContractFactory("StrategyInteractorDummy");
 		const YieldSyncV1EMPStrategy: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPStrategy");
 
 		mockERC20A = await (await MockERC20.deploy()).deployed();
 		mockERC20B = await (await MockERC20.deploy()).deployed();
 		mockERC206 = await (await MockERC206.deploy()).deployed();
-		priceFeedDummy = await (await PriceFeedDummy.deploy()).deployed();
+		eTHValueFeedDummy = await (await ETHValueFeedDummy.deploy()).deployed();
 		strategyInteractorDummy = await (await StrategyInteractorDummy.deploy()).deployed();
 		yieldSyncV1EMPStrategy = await (await YieldSyncV1EMPStrategy.deploy(owner.address, "Exampe", "EX")).deployed();
 	});
@@ -44,7 +44,7 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 				// Initialize strategy with mock ERC20
 				await expect(
 					yieldSyncV1EMPStrategy.initializeStrategy(
-						priceFeedDummy.address,
+						eTHValueFeedDummy.address,
 						strategyInteractorDummy.address,
 						[mockERC20A.address],
 						[HUNDRED_PERCENT]
@@ -111,7 +111,7 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 					// Initialize strategy with mock ERC20
 					await expect(
 						yieldSyncV1EMPStrategy.initializeStrategy(
-							priceFeedDummy.address,
+							eTHValueFeedDummy.address,
 							strategyInteractorDummy.address,
 							[mockERC206.address],
 							[HUNDRED_PERCENT]
@@ -179,7 +179,7 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 					// Initialize strategy with mock ERC20
 					await expect(
 						yieldSyncV1EMPStrategy.initializeStrategy(
-							priceFeedDummy.address,
+							eTHValueFeedDummy.address,
 							strategyInteractorDummy.address,
 							[mockERC20A.address, mockERC20B.address],
 							[FIFTY_PERCENT, FIFTY_PERCENT]
@@ -260,7 +260,7 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 					// Initialize strategy with mock ERC20
 					await expect(
 						yieldSyncV1EMPStrategy.initializeStrategy(
-							priceFeedDummy.address,
+							eTHValueFeedDummy.address,
 							strategyInteractorDummy.address,
 							[mockERC20A.address, mockERC20B.address],
 							[SEVENTY_FIVE_PERCENT, TWENTY_FIVE_PERCENT]
@@ -343,7 +343,7 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 						// Initialize strategy with mock ERC20
 						await expect(
 							yieldSyncV1EMPStrategy.initializeStrategy(
-								priceFeedDummy.address,
+								eTHValueFeedDummy.address,
 								strategyInteractorDummy.address,
 								[mockERC20A.address, mockERC206.address],
 								[FIFTY_PERCENT, FIFTY_PERCENT]
@@ -431,7 +431,7 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 						// Initialize strategy with mock ERC20
 						await expect(
 							yieldSyncV1EMPStrategy.initializeStrategy(
-								priceFeedDummy.address,
+								eTHValueFeedDummy.address,
 								strategyInteractorDummy.address,
 								[mockERC20A.address, mockERC206.address],
 								[SEVENTY_FIVE_PERCENT, TWENTY_FIVE_PERCENT]

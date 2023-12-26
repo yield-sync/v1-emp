@@ -5,7 +5,7 @@ pragma solidity 0.8.18;
 import { AggregatorV3Interface } from "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
 
-interface IYieldSyncV1EMPPriceFeed
+interface IYieldSyncV1EMPETHValueFeed
 {
 	/**
 	* Return the value of the ERC 20 in ETH

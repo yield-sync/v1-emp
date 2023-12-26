@@ -4,11 +4,11 @@ pragma solidity 0.8.18;
 
 import { AggregatorV3Interface } from "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
-import { IYieldSyncV1EMPPriceFeed } from "../interface/IYieldSyncV1EMPPriceFeed.sol";
+import { IYieldSyncV1EMPETHValueFeed } from "../interface/IYieldSyncV1EMPETHValueFeed.sol";
 
 
-contract PriceFeedOracle is
-	IYieldSyncV1EMPPriceFeed
+contract ETHValueFeedOracle is
+	IYieldSyncV1EMPETHValueFeed
 {
 	address public manager;
 
@@ -29,7 +29,7 @@ contract PriceFeedOracle is
 	}
 
 
-	/// @inheritdoc IYieldSyncV1EMPPriceFeed
+	/// @inheritdoc IYieldSyncV1EMPETHValueFeed
 	function utilizedERC20ETHValue(address _utilizedERC20)
 		public
 		view

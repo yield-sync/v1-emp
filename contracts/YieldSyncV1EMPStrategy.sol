@@ -9,7 +9,7 @@ import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 import {
 	IERC20,
-	IYieldSyncV1EMPPriceFeed,
+	IYieldSyncV1EMPETHValueFeed,
 	IYieldSyncV1EMPStrategyInteractor,
 	IYieldSyncV1EMPStrategy,
 	SafeERC20
@@ -35,7 +35,7 @@ contract YieldSyncV1EMPStrategy is
 
 	mapping (address utilizedERC20 => uint256 allocation) internal _utilizedERC20_allocation;
 
-	IYieldSyncV1EMPPriceFeed public override yieldSyncV1EMPPriceFeed;
+	IYieldSyncV1EMPETHValueFeed public override yieldSyncV1EMPETHValueFeed;
 	IYieldSyncV1EMPStrategyInteractor public override yieldSyncV1EMPStrategyInteractor;
 
 
@@ -99,7 +99,7 @@ contract YieldSyncV1EMPStrategy is
 		override
 		returns (uint256 utilizedERC20ETHValue_)
 	{
-		return yieldSyncV1EMPPriceFeed.utilizedERC20ETHValue(__utilizedERC20);
+		return yieldSyncV1EMPETHValueFeed.utilizedERC20ETHValue(__utilizedERC20);
 	}
 
 	/// @inheritdoc IYieldSyncV1EMPStrategy
@@ -201,7 +201,7 @@ contract YieldSyncV1EMPStrategy is
 
 	/// @inheritdoc IYieldSyncV1EMPStrategy
 	function initializeStrategy(
-		address _yieldSyncV1EMPPriceFeed,
+		address _yieldSyncV1EMPETHValueFeed,
 		address _yieldSyncV1EMPStrategyInteractor,
 		address[] memory __utilizedERC20,
 		uint256[] memory __utilizedERC20Allocation
@@ -219,7 +219,7 @@ contract YieldSyncV1EMPStrategy is
 
 		utilizedERC20AllocationUpdate(__utilizedERC20Allocation);
 
-		yieldSyncV1EMPPriceFeed = IYieldSyncV1EMPPriceFeed(_yieldSyncV1EMPPriceFeed);
+		yieldSyncV1EMPETHValueFeed = IYieldSyncV1EMPETHValueFeed(_yieldSyncV1EMPETHValueFeed);
 		yieldSyncV1EMPStrategyInteractor = IYieldSyncV1EMPStrategyInteractor(_yieldSyncV1EMPStrategyInteractor);
 	}
 

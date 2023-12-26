@@ -5,7 +5,7 @@ pragma solidity 0.8.18;
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
-import { IYieldSyncV1EMPPriceFeed } from "./IYieldSyncV1EMPPriceFeed.sol";
+import { IYieldSyncV1EMPETHValueFeed } from "./IYieldSyncV1EMPETHValueFeed.sol";
 import { IYieldSyncV1EMPStrategyInteractor } from "./IYieldSyncV1EMPStrategyInteractor.sol";
 
 
@@ -78,14 +78,14 @@ interface IYieldSyncV1EMPStrategy is
 	;
 
 	/**
-	* @dev [view-IYieldSyncV1EMPPriceFeed]
-	* @notice Implemented IYieldSyncV1EMPPriceFeed
-	* @return {IYieldSyncV1EMPPriceFeed}
+	* @dev [view-IYieldSyncV1EMPETHValueFeed]
+	* @notice Implemented IYieldSyncV1EMPETHValueFeed
+	* @return {IYieldSyncV1EMPETHValueFeed}
 	*/
-	function yieldSyncV1EMPPriceFeed()
+	function yieldSyncV1EMPETHValueFeed()
 		external
 		view
-		returns (IYieldSyncV1EMPPriceFeed)
+		returns (IYieldSyncV1EMPETHValueFeed)
 	;
 
 	/**
@@ -146,13 +146,13 @@ interface IYieldSyncV1EMPStrategy is
 	/**
 	* @dev [called-once]
 	* @notice Initialize strategy
-	* @param _yieldSyncV1EMPPriceFeed {address}
+	* @param _yieldSyncV1EMPETHValueFeed {address}
 	* @param _yieldSyncV1EMPStrategyInteractor {address}
 	* @param __utilizedERC20 {address[]}
 	* @param __utilizedERC20Allocation {uint256[]}
 	*/
 	function initializeStrategy(
-		address _yieldSyncV1EMPPriceFeed,
+		address _yieldSyncV1EMPETHValueFeed,
 		address _yieldSyncV1EMPStrategyInteractor,
 		address[] memory __utilizedERC20,
 		uint256[] memory __utilizedERC20Allocation
