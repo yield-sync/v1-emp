@@ -5,16 +5,6 @@ pragma solidity 0.8.18;
 interface IYieldSyncV1EMPStrategyInteractor
 {
 	/**
-	* @notice utilizedERC20 value in ETH
-	* @param _utilizedERC20 {address}
-	*/
-	function utilizedERC20ETHValue(address _utilizedERC20)
-		external
-		view
-		returns (uint256 utilizedERC20ETHValue_)
-	;
-
-	/**
 	* @notice Total amounts locked
 	* @param _utilizedERC20 {address[]}
 	*/

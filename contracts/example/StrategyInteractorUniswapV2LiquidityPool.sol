@@ -110,11 +110,10 @@ contract StrategyInteractorUniswapV2LiquidityPool is
 	}
 
 
-	/// @inheritdoc IYieldSyncV1EMPStrategyInteractor
+	// Moved to another contract
 	function utilizedERC20ETHValue(address _utilizedERC20)
 		public
 		view
-		override
 		returns (uint256 utilizedERC20ETHValue_)
 	{
 		(uint112 reserve0, uint112 reserve1, ) = uniswapV2Pair.getReserves();

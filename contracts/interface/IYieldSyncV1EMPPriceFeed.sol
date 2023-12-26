@@ -9,10 +9,10 @@ interface IYieldSyncV1EMPPriceFeed
 {
 	/**
 	* Return the value of the ERC 20 in ETH
-	* @param _utilizedERC20 {address}
+	* @param __utilizedERC20 {address}
 	* @return utilizedERC20ETHValue_ {uint256}
 	*/
-	function utilizedERC20ETHValue(address _utilizedERC20)
+	function utilizedERC20ETHValue(address __utilizedERC20)
 		external
 		view
 		returns (uint256 utilizedERC20ETHValue_)

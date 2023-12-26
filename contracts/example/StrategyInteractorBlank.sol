@@ -2,7 +2,6 @@
 pragma solidity 0.8.18;
 
 
-import { AggregatorV3Interface } from "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 import { IYieldSyncV1EMPStrategy } from "../interface/IYieldSyncV1EMPStrategy.sol";
@@ -19,13 +18,11 @@ using SafeERC20 for IERC20;
 contract StrategyInteractorBlank is
 	IYieldSyncV1EMPStrategyInteractor
 {
-    AggregatorV3Interface public immutable aggregatorV3Interface;
 	IYieldSyncV1EMPStrategy public immutable yieldSyncV1EMPStrategy;
 
 
-	constructor (address _aggregatorV3Interface, address _strategy)
+	constructor (address _strategy)
 	{
-        aggregatorV3Interface = AggregatorV3Interface(_aggregatorV3Interface);
 		yieldSyncV1EMPStrategy = IYieldSyncV1EMPStrategy(_strategy);
 	}
 
@@ -37,23 +34,6 @@ contract StrategyInteractorBlank is
 		_;
 	}
 
-
-	/// @inheritdoc IYieldSyncV1EMPStrategyInteractor
-	function utilizedERC20ETHValue(address _utilizedERC20)
-		public
-		view
-		override
-		returns (uint256 utilizedERC20ETHValue_)
-	{
-		require(
-			yieldSyncV1EMPStrategy.utilizedERC20_allocation(_utilizedERC20) > 0,
-			"yieldSyncV1EMPStrategy.utilizedERC20_allocation(_utilizedERC20) = 0"
-		);
-
-		(, int256 price, , , ) = aggregatorV3Interface.latestRoundData();
-
-		return uint256(price);
-	}
 
 	/// @inheritdoc IYieldSyncV1EMPStrategyInteractor
 	function utilizedERC20TotalAmount(address[] memory _utilizedERC20)

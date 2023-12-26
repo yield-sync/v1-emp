@@ -20,17 +20,11 @@ using SafeERC20 for IERC20;
 contract StrategyInteractorDummy is
 	IYieldSyncV1EMPStrategyInteractor
 {
-	/// @inheritdoc IYieldSyncV1EMPStrategyInteractor
-	function utilizedERC20ETHValue(address _utilizedERC20)
-		public
-		view
-		override
-		returns (uint256 utilizedERC20ETHValue_)
-	{
-		// Must return decimals 18
-		return 10 ** 18;
-	}
-
+	/**
+	* @dev This function is supposed to remain in this contract because their is no standard way of determining the balance
+	* of a wallet's position. Every protocol has its own unique way of keeping track of balance.
+	* For example an LP tokens could be utilized or an internal mapping integar.
+	*/
 	/// @inheritdoc IYieldSyncV1EMPStrategyInteractor
 	function utilizedERC20TotalAmount(address[] memory _utilizedERC20)
 		public

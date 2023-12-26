@@ -7,7 +7,7 @@ import { AggregatorV3Interface } from "@chainlink/contracts/src/v0.8/interfaces/
 import { IYieldSyncV1EMPPriceFeed } from "../interface/IYieldSyncV1EMPPriceFeed.sol";
 
 
-contract YieldSyncV1EMPPriceFeedOracle is
+contract PriceFeedOracle is
 	IYieldSyncV1EMPPriceFeed
 {
 	address public manager;
