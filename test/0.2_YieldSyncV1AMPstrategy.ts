@@ -10,7 +10,8 @@ const TWENTY_FIVE_PERCENT = ethers.utils.parseUnits('.25', 18);
 const SEVENTY_FIVE_PERCENT = ethers.utils.parseUnits('.75', 18);
 
 
-describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
+describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async ()  =>
+{
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;
 	let mockERC206: Contract;
@@ -18,7 +19,9 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 	let strategyInteractorDummy: Contract;
 	let yieldSyncV1EMPStrategy: Contract;
 
-	beforeEach("[beforeEach] Set up contracts..", async () => {
+
+	beforeEach("[beforeEach] Set up contracts..", async ()  =>
+	{
 		const [owner] = await ethers.getSigners();
 
 		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
@@ -35,12 +38,17 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 		yieldSyncV1EMPStrategy = await (await YieldSyncV1EMPStrategy.deploy(owner.address, "Exampe", "EX")).deployed();
 	});
 
-	describe("function utilizedERC20Withdraw()", async () => {
-		describe("[SINGLE ERC20]", async () => {
-			describe("[DECIMALS = 18]", async () => {
+
+	describe("function utilizedERC20Withdraw()", async ()  =>
+	{
+		describe("[SINGLE ERC20]", async ()  =>
+		{
+			describe("[DECIMALS = 18]", async ()  =>
+			{
 				it(
 					"[100] Should allow caller to burn ERC20 and cash out..",
-					async () => {
+					async ()  =>
+					{
 						const [owner] = await ethers.getSigners();
 
 						// Initialize strategy with mock ERC20
@@ -105,10 +113,12 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 				);
 			});
 
-			describe("[DECIMALS = 6]", async () => {
+			describe("[DECIMALS = 6]", async ()  =>
+			{
 				it(
 					"[100] Should allow caller to burn ERC20 and cash out..",
-					async () => {
+					async ()  =>
+{
 						const [owner] = await ethers.getSigners();
 
 						// Initialize strategy with mock ERC20
@@ -174,11 +184,14 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 			});
 		});
 
-		describe("[MULTIPLE ERC20]", async () => {
-			describe("[DECIMALS = 18]", async () => {
+		describe("[MULTIPLE ERC20]", async ()  =>
+		{
+			describe("[DECIMALS = 18]", async ()  =>
+			{
 				it(
 					"[50/50] Should allow caller to burn ERC20 and cash out..",
-					async () => {
+					async ()  =>
+					{
 						const [owner] = await ethers.getSigners();
 
 						// Initialize strategy with mock ERC20
@@ -259,7 +272,8 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 
 				it(
 					"[75/25] Should allow caller to burn ERC20 and cash out..",
-					async () => {
+					async ()  =>
+					{
 						const [owner] = await ethers.getSigners();
 
 						// Initialize strategy with mock ERC20
@@ -340,10 +354,12 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 				);
 			});
 
-			describe("[DECIMALS = 6]", async () => {
+			describe("[DECIMALS = 6]", async ()  =>
+			{
 				it(
 					"[50/50] Should allow caller to burn ERC20 and cash out..",
-					async () => {
+					async ()  =>
+					{
 						const [owner] = await ethers.getSigners();
 
 						// Initialize strategy with mock ERC20
@@ -431,7 +447,8 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Withdraw", async () => {
 
 				it(
 					"[75/25] Should allow caller to burn ERC20 and cash out..",
-					async () => {
+					async ()  =>
+					{
 						const [owner] = await ethers.getSigners();
 
 						// Initialize strategy with mock ERC20

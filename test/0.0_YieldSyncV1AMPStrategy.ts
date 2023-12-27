@@ -14,7 +14,8 @@ const TWENTY_FIVE_PERCENT = ethers.utils.parseUnits('.25', 18);
 const SEVENTY_FIVE_PERCENT = ethers.utils.parseUnits('.75', 18);
 
 
-describe("[0.0] YieldSyncV1VaultDeployer.sol - Setup", async () => {
+describe("[0.0] YieldSyncV1VaultDeployer.sol - Setup", async ()  =>
+{
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;
 	let eTHValueFeedDummy: Contract;
@@ -22,7 +23,8 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol - Setup", async () => {
 	let yieldSyncV1EMPStrategy: Contract;
 
 
-	beforeEach("[beforeEach] Set up contracts..", async () => {
+	beforeEach("[beforeEach] Set up contracts..", async ()  =>
+	{
 		const [owner] = await ethers.getSigners();
 
 		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
@@ -38,10 +40,12 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol - Setup", async () => {
 	});
 
 
-	describe("function initializeStrategy()", async () => {
+	describe("function initializeStrategy()", async ()  =>
+	{
 		it(
 			"[auth] Should revert when unauthorized msg.sender calls..",
-			async () => {
+			async ()  =>
+			{
 				const [, addr1] = await ethers.getSigners();
 
 				await expect(
@@ -57,7 +61,8 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol - Setup", async () => {
 
 		it(
 			"Should revert when invalid allocation passed..",
-			async () => {
+			async ()  =>
+			{
 				await expect(
 					yieldSyncV1EMPStrategy.initializeStrategy(
 						eTHValueFeedDummy.address,
@@ -71,7 +76,8 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol - Setup", async () => {
 
 		it(
 			"It should be able to set _strategy and _utilizedERC20..",
-			async () => {
+			async ()  =>
+			{
 				// Initialize strategy with mock ERC20
 				await expect(
 					yieldSyncV1EMPStrategy.initializeStrategy(
@@ -95,7 +101,8 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol - Setup", async () => {
 
 		it(
 			"It should be able only be able to set once..",
-			async () => {
+			async ()  =>
+			{
 				// Initialize strategy with mock ERC20
 				await expect(
 					yieldSyncV1EMPStrategy.initializeStrategy(
@@ -117,10 +124,12 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol - Setup", async () => {
 			}
 		);
 
-		describe("[MULTIPLE ERC20]", async () => {
+		describe("[MULTIPLE ERC20]", async ()  =>
+		{
 			it(
 				"It should be able to set multiple _utilizedERC20..",
-				async () => {
+				async ()  =>
+				{
 					// Initialize strategy with mock ERC20
 					await expect(
 						yieldSyncV1EMPStrategy.initializeStrategy(
@@ -148,7 +157,8 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol - Setup", async () => {
 
 			it(
 				"Should revert when invalid allocation passed..",
-				async () => {
+				async ()  =>
+				{
 					await expect(
 						yieldSyncV1EMPStrategy.initializeStrategy(
 							eTHValueFeedDummy.address,
@@ -162,10 +172,12 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol - Setup", async () => {
 		});
 	});
 
-	describe("function utilizedERC20AllocationUpdate()", async () => {
+	describe("function utilizedERC20AllocationUpdate()", async ()  =>
+	{
 		it(
 			"[MULTIPLE-ONLY] Should be able to update utilizedERC20Allocation..",
-			async () => {
+			async ()  =>
+			{
 				// Initialize strategy with mock ERC20
 				await expect(
 					yieldSyncV1EMPStrategy.initializeStrategy(
