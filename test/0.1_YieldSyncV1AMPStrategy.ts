@@ -361,7 +361,7 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Deposit", async () => {
 						expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.be.equal(mockERC20AdepositAmount);
 						expect(await mockERC20B.balanceOf(strategyInteractorDummy.address)).to.be.equal(mockERC20BdepositAmount);
 
-						// [calculate] YSS balance
+						// [calculate] YSS balance = (a * p(a)) / (1e18 + (b * p(b) / 1e18))
 						const yssBalance = mockERC20AdepositAmount.mul(
 							await eTHValueFeedDummy.utilizedERC20ETHValue(mockERC20A.address)
 						).div(
@@ -373,7 +373,6 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Deposit", async () => {
 								D_18
 							)
 						);
-
 
 						expect(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).to.be.equal(yssBalance);
 					}
@@ -500,6 +499,7 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Deposit", async () => {
 							mockERC206depositAmount
 						);
 
+						// [calculate] YSS balance
 						const yssBalance = mockERC20AdepositAmount.add(
 							// Convert to base 18 with 10**12
 							mockERC206depositAmount.mul(ethers.BigNumber.from("1000000000000"))
@@ -551,6 +551,7 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Deposit", async () => {
 							mockERC206depositAmount
 						);
 
+						// [calculate] YSS balance
 						const yssBalance = mockERC20AdepositAmount.add(
 							// Convert to base 18 with 10**12
 							mockERC206depositAmount.mul(ethers.BigNumber.from("1000000000000"))
