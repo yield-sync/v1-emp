@@ -10,6 +10,7 @@ contract ETHValueFeedDummy is
 {
 	uint256 public eTHValue = 1e18;
 
+
 	/// @inheritdoc IYieldSyncV1EMPETHValueFeed
 	function utilizedERC20ETHValue(address _utilizedERC20)
 		public
@@ -18,5 +19,12 @@ contract ETHValueFeedDummy is
 		returns (uint256 utilizedERC20ETHValue_)
 	{
 		return eTHValue;
+	}
+
+
+	function updateETHValue(uint256 _eTHValue)
+		public
+	{
+		eTHValue = _eTHValue;
 	}
 }
