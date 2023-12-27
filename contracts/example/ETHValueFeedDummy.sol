@@ -8,6 +8,8 @@ import { IYieldSyncV1EMPETHValueFeed } from "../interface/IYieldSyncV1EMPETHValu
 contract ETHValueFeedDummy is
 	IYieldSyncV1EMPETHValueFeed
 {
+	uint256 public eTHValue = .5e18;
+
 	/// @inheritdoc IYieldSyncV1EMPETHValueFeed
 	function utilizedERC20ETHValue(address _utilizedERC20)
 		public
@@ -15,6 +17,6 @@ contract ETHValueFeedDummy is
 		override
 		returns (uint256 utilizedERC20ETHValue_)
 	{
-		return 1e18;
+		return eTHValue;
 	}
 }
