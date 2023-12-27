@@ -87,7 +87,9 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol - Setup", async () => {
 				);
 				expect((await yieldSyncV1EMPStrategy.utilizedERC20()).length).to.be.equal(1);
 				expect((await yieldSyncV1EMPStrategy.utilizedERC20())[0]).to.be.equal(mockERC20A.address);
-				expect(await yieldSyncV1EMPStrategy.utilizedERC20_allocation(mockERC20A.address)).to.be.equal(HUNDRED_PERCENT);
+				expect(await yieldSyncV1EMPStrategy.utilizedERC20_allocation(mockERC20A.address)).to.be.equal(
+					HUNDRED_PERCENT
+				);
 			}
 		);
 
@@ -115,8 +117,7 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol - Setup", async () => {
 			}
 		);
 
-
-		describe("MULTIPLE ERC20", async () => {
+		describe("[MULTIPLE ERC20]", async () => {
 			it(
 				"It should be able to set multiple _utilizedERC20..",
 				async () => {
@@ -136,8 +137,12 @@ describe("[0.0] YieldSyncV1VaultDeployer.sol - Setup", async () => {
 					expect((await yieldSyncV1EMPStrategy.utilizedERC20()).length).to.be.equal(2);
 					expect((await yieldSyncV1EMPStrategy.utilizedERC20())[0]).to.be.equal(mockERC20A.address);
 					expect((await yieldSyncV1EMPStrategy.utilizedERC20())[1]).to.be.equal(mockERC20B.address);
-					expect(await yieldSyncV1EMPStrategy.utilizedERC20_allocation(mockERC20A.address)).to.be.equal(FIFTY_PERCENT);
-					expect(await yieldSyncV1EMPStrategy.utilizedERC20_allocation(mockERC20B.address)).to.be.equal(FIFTY_PERCENT);
+					expect(await yieldSyncV1EMPStrategy.utilizedERC20_allocation(mockERC20A.address)).to.be.equal(
+						FIFTY_PERCENT
+					);
+					expect(await yieldSyncV1EMPStrategy.utilizedERC20_allocation(mockERC20B.address)).to.be.equal(
+						FIFTY_PERCENT
+					);
 				}
 			);
 
