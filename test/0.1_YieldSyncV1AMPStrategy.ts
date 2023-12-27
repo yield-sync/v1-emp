@@ -7,6 +7,7 @@ import { Contract, ContractFactory } from "ethers";
 const ERR0R_INVALID_UTILIZEDERC20AMOUNT = "!utilizedERC20AmountValid(_utilizedERC20Amount)";
 
 const D_18 = ethers.utils.parseUnits('1', 18);
+
 const HUNDRED_PERCENT = D_18;
 const FIFTY_PERCENT = ethers.utils.parseUnits('.5', 18);
 const TWENTY_FIVE_PERCENT = ethers.utils.parseUnits('.25', 18);
@@ -22,7 +23,8 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Deposit", async () => {
 	let yieldSyncV1EMPStrategy: Contract;
 
 
-	beforeEach("[beforeEach] Set up contracts..", async () => {
+	beforeEach("[beforeEach] Set up contracts..", async () =>
+	{
 		const [owner] = await ethers.getSigners();
 
 		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
@@ -170,6 +172,7 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Deposit", async () => {
 
 						// [calculate] YSS balance
 						const yssBalance = mockERC206depositAmount.mul(
+							// Convert to base 18 with 10**12
 							ethers.BigNumber.from("1000000000000")
 						).mul(
 							await eTHValueFeedDummy.utilizedERC20ETHValue(mockERC20A.address)
@@ -504,7 +507,7 @@ describe("[0.1] YieldSyncV1VaultDeployer.sol - Deposit", async () => {
 							await eTHValueFeedDummy.utilizedERC20ETHValue(mockERC20A.address)
 						).div(
 							D_18
-						);;
+						);
 
 						expect(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).to.be.equal(yssBalance);
 					}
