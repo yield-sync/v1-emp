@@ -5,9 +5,6 @@ import { expect } from "chai";
 import { Contract, ContractFactory } from "ethers";
 
 const HUNDRED_PERCENT = ethers.utils.parseUnits('1', 18);
-const FIFTY_PERCENT = ethers.utils.parseUnits('.5', 18);
-const TWENTY_FIVE_PERCENT = ethers.utils.parseUnits('.25', 18);
-const SEVENTY_FIVE_PERCENT = ethers.utils.parseUnits('.75', 18);
 
 
 describe("[0.3] YieldSyncV1EMPStrategy.sol - Market Movement", async ()  =>
@@ -57,7 +54,8 @@ describe("[0.3] YieldSyncV1EMPStrategy.sol - Market Movement", async ()  =>
 								eTHValueFeedDummy.address,
 								strategyInteractorDummy.address,
 								[mockERC20A.address],
-								[HUNDRED_PERCENT]
+								[HUNDRED_PERCENT],
+								[[true, false, HUNDRED_PERCENT],],
 							)
 						).to.not.be.reverted;
 
@@ -114,7 +112,8 @@ describe("[0.3] YieldSyncV1EMPStrategy.sol - Market Movement", async ()  =>
 								eTHValueFeedDummy.address,
 								strategyInteractorDummy.address,
 								[mockERC20A.address],
-								[HUNDRED_PERCENT]
+								[HUNDRED_PERCENT],
+								[[true, false, HUNDRED_PERCENT],],
 							)
 						).to.not.be.reverted;
 

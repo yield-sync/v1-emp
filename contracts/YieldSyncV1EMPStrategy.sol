@@ -8,15 +8,11 @@ import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 import {
-	IERC20,
 	IYieldSyncV1EMPETHValueFeed,
 	IYieldSyncV1EMPStrategyInteractor,
 	IYieldSyncV1EMPStrategy,
-	SafeERC20
+	Purpose
 } from "./interface/IYieldSyncV1EMPStrategy.sol";
-
-
-using SafeERC20 for IERC20;
 
 
 contract YieldSyncV1EMPStrategy is
@@ -34,6 +30,7 @@ contract YieldSyncV1EMPStrategy is
 	uint256 constant public override ONE_HUNDRED_PERCENT = 1e18;
 
 	mapping (address utilizedERC20 => uint256 allocation) internal _utilizedERC20_allocation;
+	mapping (address utilizedERC20 => Purpose purpose) internal _utilizedERC20_purpose;
 
 	IYieldSyncV1EMPETHValueFeed public override yieldSyncV1EMPETHValueFeed;
 	IYieldSyncV1EMPStrategyInteractor public override yieldSyncV1EMPStrategyInteractor;
@@ -204,7 +201,8 @@ contract YieldSyncV1EMPStrategy is
 		address _yieldSyncV1EMPETHValueFeed,
 		address _yieldSyncV1EMPStrategyInteractor,
 		address[] memory __utilizedERC20,
-		uint256[] memory __utilizedERC20Allocation
+		uint256[] memory __utilizedERC20Allocation,
+		Purpose[] memory _purpose
 	)
 		public
 		override
@@ -217,14 +215,14 @@ contract YieldSyncV1EMPStrategy is
 
 		_utilizedERC20 = __utilizedERC20;
 
-		utilizedERC20AllocationUpdate(__utilizedERC20Allocation);
+		utilizedERC20AllocationUpdate(__utilizedERC20Allocation, _purpose);
 
 		yieldSyncV1EMPETHValueFeed = IYieldSyncV1EMPETHValueFeed(_yieldSyncV1EMPETHValueFeed);
 		yieldSyncV1EMPStrategyInteractor = IYieldSyncV1EMPStrategyInteractor(_yieldSyncV1EMPStrategyInteractor);
 	}
 
 	/// @inheritdoc IYieldSyncV1EMPStrategy
-	function utilizedERC20AllocationUpdate(uint256[] memory _utilizedERC20Allocation)
+	function utilizedERC20AllocationUpdate(uint256[] memory _utilizedERC20Allocation, Purpose[] memory _purpose)
 		public
 		override
 		authManager()
@@ -237,6 +235,20 @@ contract YieldSyncV1EMPStrategy is
 		}
 
 		require(_utilizedERC20AllocationTotal == ONE_HUNDRED_PERCENT, "_utilizedERC20AllocationTotal != ONE_HUNDRED_PERCENT");
+
+		uint256 _utilizedERC20AllocationTotal2;
+
+		for (uint256 i = 0; i < _utilizedERC20.length; i++)
+		{
+			_utilizedERC20_purpose[_utilizedERC20[i]] = _purpose[i];
+
+			if (_purpose[i].deposit)
+			{
+				_utilizedERC20AllocationTotal2 += _purpose[i].allocation;
+			}
+		}
+
+		require(_utilizedERC20AllocationTotal2 == ONE_HUNDRED_PERCENT, "_utilizedERC20AllocationTotal != ONE_HUNDRED_PERCENT");
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{

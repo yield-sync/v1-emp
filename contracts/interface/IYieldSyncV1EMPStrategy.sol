@@ -12,6 +12,14 @@ import { IYieldSyncV1EMPStrategyInteractor } from "./IYieldSyncV1EMPStrategyInte
 using SafeERC20 for IERC20;
 
 
+struct Purpose
+{
+	bool deposit;
+	bool withdraw;
+	uint256 allocation;
+}
+
+
 interface IYieldSyncV1EMPStrategy is
 	IERC20
 {
@@ -150,12 +158,14 @@ interface IYieldSyncV1EMPStrategy is
 	* @param _yieldSyncV1EMPStrategyInteractor {address}
 	* @param __utilizedERC20 {address[]}
 	* @param __utilizedERC20Allocation {uint256[]}
+	* @param _purpose {uint256[]}
 	*/
 	function initializeStrategy(
 		address _yieldSyncV1EMPETHValueFeed,
 		address _yieldSyncV1EMPStrategyInteractor,
 		address[] memory __utilizedERC20,
-		uint256[] memory __utilizedERC20Allocation
+		uint256[] memory __utilizedERC20Allocation,
+		Purpose[] memory _purpose
 	)
 		external
 	;
@@ -164,7 +174,7 @@ interface IYieldSyncV1EMPStrategy is
 	* @notice Set allocation for utilized ERC20s
 	* @param _utilizedERC20Allocation {uint256[]}
 	*/
-	function utilizedERC20AllocationUpdate(uint256[] memory _utilizedERC20Allocation)
+	function utilizedERC20AllocationUpdate(uint256[] memory _utilizedERC20Allocation, Purpose[] memory _purpose)
 		external
 	;
 

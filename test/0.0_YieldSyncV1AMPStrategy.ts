@@ -53,7 +53,8 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 						eTHValueFeedDummy.address,
 						strategyInteractorDummy.address,
 						[mockERC20A.address],
-						[HUNDRED_PERCENT]
+						[HUNDRED_PERCENT],
+						[[true, false, HUNDRED_PERCENT]]
 					)
 				).to.be.rejectedWith(ERROR_NOT_MANAGER);
 			}
@@ -68,7 +69,8 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 						eTHValueFeedDummy.address,
 						strategyInteractorDummy.address,
 						[mockERC20A.address],
-						[FIFTY_PERCENT]
+						[FIFTY_PERCENT],
+						[[true, false, FIFTY_PERCENT]]
 					)
 				).to.be.rejectedWith(ERROR_INVALID_ALLOCATION);
 			}
@@ -84,7 +86,8 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 						eTHValueFeedDummy.address,
 						strategyInteractorDummy.address,
 						[mockERC20A.address],
-						[HUNDRED_PERCENT]
+						[HUNDRED_PERCENT],
+						[[true, false, HUNDRED_PERCENT]]
 					)
 				).to.not.be.reverted;
 
@@ -109,7 +112,8 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 						eTHValueFeedDummy.address,
 						strategyInteractorDummy.address,
 						[mockERC20A.address],
-						[HUNDRED_PERCENT]
+						[HUNDRED_PERCENT],
+						[[true, false, HUNDRED_PERCENT]]
 					)
 				).to.not.be.reverted;
 
@@ -118,7 +122,8 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 						eTHValueFeedDummy.address,
 						strategyInteractorDummy.address,
 						[mockERC20A.address],
-						[HUNDRED_PERCENT]
+						[HUNDRED_PERCENT],
+						[[true, false, HUNDRED_PERCENT]]
 					)
 				).to.be.rejectedWith(ERROR_STRATEGY_ALREADY_SET);
 			}
@@ -136,7 +141,8 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 							eTHValueFeedDummy.address,
 							strategyInteractorDummy.address,
 							[mockERC20A.address, mockERC20B.address],
-							[FIFTY_PERCENT, FIFTY_PERCENT]
+							[FIFTY_PERCENT, FIFTY_PERCENT],
+							[[true, false, FIFTY_PERCENT], [true, false, FIFTY_PERCENT]]
 						)
 					).to.not.be.reverted;
 
@@ -164,7 +170,8 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 							eTHValueFeedDummy.address,
 							strategyInteractorDummy.address,
 							[mockERC20A.address, mockERC20B.address],
-							[FIFTY_PERCENT, TWENTY_FIVE_PERCENT]
+							[FIFTY_PERCENT, TWENTY_FIVE_PERCENT],
+							[[true, false, FIFTY_PERCENT], [true, false, TWENTY_FIVE_PERCENT]]
 						)
 					).to.be.rejectedWith(ERROR_INVALID_ALLOCATION);
 				}
@@ -184,8 +191,9 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 						eTHValueFeedDummy.address,
 						strategyInteractorDummy.address,
 						[mockERC20A.address, mockERC20B.address],
-						[FIFTY_PERCENT, FIFTY_PERCENT]
-					)
+						[FIFTY_PERCENT, FIFTY_PERCENT],
+						[[true, false, FIFTY_PERCENT], [true, false, FIFTY_PERCENT]]
+						)
 				).to.not.be.reverted;
 
 				const mockERC20AdepositAmount = ethers.utils.parseUnits("1", 18);
@@ -193,9 +201,12 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 				// Approve the StrategyInteractorDummy contract to spend tokens on behalf of owner
 				await mockERC20A.approve(strategyInteractorDummy.address, mockERC20AdepositAmount);
 
-				const NEW_ALLOCATION = [SEVENTY_FIVE_PERCENT, TWENTY_FIVE_PERCENT]
+				const NEW_ALLOCATION = [SEVENTY_FIVE_PERCENT, TWENTY_FIVE_PERCENT];
+				const NEW_ALLOCATION2 = [[true, false, FIFTY_PERCENT], [true, false, FIFTY_PERCENT]];
 
-				await expect(yieldSyncV1EMPStrategy.utilizedERC20AllocationUpdate(NEW_ALLOCATION)).to.not.be.reverted;
+				await expect(
+					yieldSyncV1EMPStrategy.utilizedERC20AllocationUpdate(NEW_ALLOCATION, NEW_ALLOCATION2)
+				).to.not.be.reverted;
 
 				expect(await yieldSyncV1EMPStrategy.utilizedERC20_allocation(mockERC20A.address)).to.be.equal(
 					SEVENTY_FIVE_PERCENT
