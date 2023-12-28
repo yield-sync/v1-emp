@@ -59,7 +59,6 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 								eTHValueFeedDummy.address,
 								strategyInteractorDummy.address,
 								[mockERC20A.address],
-								[HUNDRED_PERCENT],
 								[[true, false, HUNDRED_PERCENT]]
 						)
 						).to.not.be.reverted;
@@ -94,7 +93,6 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 								eTHValueFeedDummy.address,
 								strategyInteractorDummy.address,
 								[mockERC20A.address],
-								[HUNDRED_PERCENT],
 								[[true, false, HUNDRED_PERCENT]]
 						)
 						).to.not.be.reverted;
@@ -133,7 +131,6 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 								eTHValueFeedDummy.address,
 								strategyInteractorDummy.address,
 								[mockERC206.address],
-								[HUNDRED_PERCENT],
 								[[true, false, HUNDRED_PERCENT]]
 						)
 						).to.not.be.reverted;
@@ -168,7 +165,6 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 								eTHValueFeedDummy.address,
 								strategyInteractorDummy.address,
 								[mockERC206.address],
-								[HUNDRED_PERCENT],
 								[[true, false, HUNDRED_PERCENT]]
 							)
 						).to.not.be.reverted;
@@ -214,7 +210,6 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 							eTHValueFeedDummy.address,
 							strategyInteractorDummy.address,
 							[mockERC20A.address, mockERC20B.address],
-							[FIFTY_PERCENT, FIFTY_PERCENT],
 							[[true, false, FIFTY_PERCENT], [true, false, FIFTY_PERCENT]]
 						);
 
@@ -247,7 +242,6 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 							eTHValueFeedDummy.address,
 							strategyInteractorDummy.address,
 							[mockERC20A.address, mockERC20B.address],
-							[FIFTY_PERCENT, FIFTY_PERCENT],
 							[[true, false, FIFTY_PERCENT], [true, false, FIFTY_PERCENT]]
 						);
 
@@ -296,7 +290,6 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 							eTHValueFeedDummy.address,
 							strategyInteractorDummy.address,
 							[mockERC20A.address, mockERC20B.address],
-							[FIFTY_PERCENT, FIFTY_PERCENT],
 							[[true, false, FIFTY_PERCENT], [true, false, FIFTY_PERCENT]]
 						);
 
@@ -333,7 +326,6 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 								eTHValueFeedDummy.address,
 								strategyInteractorDummy.address,
 								[mockERC20A.address, mockERC20B.address],
-								[FIFTY_PERCENT, FIFTY_PERCENT],
 								[[true, false, FIFTY_PERCENT], [true, false, FIFTY_PERCENT]]
 							)
 						).to.not.be.reverted;
@@ -380,7 +372,6 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 							eTHValueFeedDummy.address,
 							strategyInteractorDummy.address,
 							[mockERC20A.address, mockERC20B.address],
-							[SEVENTY_FIVE_PERCENT, TWENTY_FIVE_PERCENT],
 							[[true, false, SEVENTY_FIVE_PERCENT], [true, false, TWENTY_FIVE_PERCENT]]
 						);
 
@@ -413,7 +404,6 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 							eTHValueFeedDummy.address,
 							strategyInteractorDummy.address,
 							[mockERC20A.address, mockERC20B.address],
-							[SEVENTY_FIVE_PERCENT, TWENTY_FIVE_PERCENT],
 							[[true, false, SEVENTY_FIVE_PERCENT], [true, false, TWENTY_FIVE_PERCENT]]
 						);
 
@@ -461,7 +451,6 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 							eTHValueFeedDummy.address,
 							strategyInteractorDummy.address,
 							[mockERC20A.address, mockERC20B.address],
-							[SEVENTY_FIVE_PERCENT, TWENTY_FIVE_PERCENT],
 							[[true, false, SEVENTY_FIVE_PERCENT], [true, false, TWENTY_FIVE_PERCENT]]
 						);
 
@@ -498,7 +487,6 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 								eTHValueFeedDummy.address,
 								strategyInteractorDummy.address,
 								[mockERC20A.address, mockERC20B.address],
-								[SEVENTY_FIVE_PERCENT, TWENTY_FIVE_PERCENT],
 								[[true, false, SEVENTY_FIVE_PERCENT], [true, false, TWENTY_FIVE_PERCENT]]
 							)
 						).to.not.be.reverted;
@@ -549,7 +537,6 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 								eTHValueFeedDummy.address,
 								strategyInteractorDummy.address,
 								[mockERC20A.address, mockERC206.address],
-								[SEVENTY_FIVE_PERCENT, TWENTY_FIVE_PERCENT],
 								[[true, false, SEVENTY_FIVE_PERCENT], [true, false, TWENTY_FIVE_PERCENT]]
 							)
 						).to.not.be.reverted;
@@ -584,7 +571,6 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 								eTHValueFeedDummy.address,
 								strategyInteractorDummy.address,
 								[mockERC20A.address, mockERC206.address],
-								[SEVENTY_FIVE_PERCENT, TWENTY_FIVE_PERCENT],
 								[[true, false, SEVENTY_FIVE_PERCENT], [true, false, TWENTY_FIVE_PERCENT]]
 							)
 						).to.not.be.reverted;

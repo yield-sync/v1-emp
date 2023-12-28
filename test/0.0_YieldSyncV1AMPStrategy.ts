@@ -5,7 +5,7 @@ import { expect } from "chai";
 import { Contract, ContractFactory } from "ethers";
 
 const ERROR_NOT_MANAGER = "manager != msg.sender";
-const ERROR_INVALID_ALLOCATION = "_utilizedERC20AllocationTotal != ONE_HUNDRED_PERCENT";
+const ERROR_INVALID_ALLOCATION = "_utilizedERC20_purposeAllocationTotal != ONE_HUNDRED_PERCENT";
 const ERROR_STRATEGY_ALREADY_SET = "address(yieldSyncV1EMPStrategyInteractor) != address(0)";
 
 const HUNDRED_PERCENT = ethers.utils.parseUnits('1', 18);
@@ -53,7 +53,6 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 						eTHValueFeedDummy.address,
 						strategyInteractorDummy.address,
 						[mockERC20A.address],
-						[HUNDRED_PERCENT],
 						[[true, false, HUNDRED_PERCENT]]
 					)
 				).to.be.rejectedWith(ERROR_NOT_MANAGER);
@@ -69,7 +68,6 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 						eTHValueFeedDummy.address,
 						strategyInteractorDummy.address,
 						[mockERC20A.address],
-						[FIFTY_PERCENT],
 						[[true, false, FIFTY_PERCENT]]
 					)
 				).to.be.rejectedWith(ERROR_INVALID_ALLOCATION);
@@ -86,7 +84,6 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 						eTHValueFeedDummy.address,
 						strategyInteractorDummy.address,
 						[mockERC20A.address],
-						[HUNDRED_PERCENT],
 						[[true, false, HUNDRED_PERCENT]]
 					)
 				).to.not.be.reverted;
@@ -96,9 +93,10 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 				);
 				expect((await yieldSyncV1EMPStrategy.utilizedERC20()).length).to.be.equal(1);
 				expect((await yieldSyncV1EMPStrategy.utilizedERC20())[0]).to.be.equal(mockERC20A.address);
-				expect(await yieldSyncV1EMPStrategy.utilizedERC20_allocation(mockERC20A.address)).to.be.equal(
-					HUNDRED_PERCENT
-				);
+
+				const PURPOSE = await yieldSyncV1EMPStrategy.utilizedERC20_purpose(mockERC20A.address);
+
+				expect(PURPOSE.allocation).to.be.equal(HUNDRED_PERCENT);
 			}
 		);
 
@@ -112,7 +110,6 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 						eTHValueFeedDummy.address,
 						strategyInteractorDummy.address,
 						[mockERC20A.address],
-						[HUNDRED_PERCENT],
 						[[true, false, HUNDRED_PERCENT]]
 					)
 				).to.not.be.reverted;
@@ -122,7 +119,6 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 						eTHValueFeedDummy.address,
 						strategyInteractorDummy.address,
 						[mockERC20A.address],
-						[HUNDRED_PERCENT],
 						[[true, false, HUNDRED_PERCENT]]
 					)
 				).to.be.rejectedWith(ERROR_STRATEGY_ALREADY_SET);
@@ -141,7 +137,6 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 							eTHValueFeedDummy.address,
 							strategyInteractorDummy.address,
 							[mockERC20A.address, mockERC20B.address],
-							[FIFTY_PERCENT, FIFTY_PERCENT],
 							[[true, false, FIFTY_PERCENT], [true, false, FIFTY_PERCENT]]
 						)
 					).to.not.be.reverted;
@@ -152,12 +147,14 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 					expect((await yieldSyncV1EMPStrategy.utilizedERC20()).length).to.be.equal(2);
 					expect((await yieldSyncV1EMPStrategy.utilizedERC20())[0]).to.be.equal(mockERC20A.address);
 					expect((await yieldSyncV1EMPStrategy.utilizedERC20())[1]).to.be.equal(mockERC20B.address);
-					expect(await yieldSyncV1EMPStrategy.utilizedERC20_allocation(mockERC20A.address)).to.be.equal(
-						FIFTY_PERCENT
-					);
-					expect(await yieldSyncV1EMPStrategy.utilizedERC20_allocation(mockERC20B.address)).to.be.equal(
-						FIFTY_PERCENT
-					);
+
+					const PURPOSE_A = await yieldSyncV1EMPStrategy.utilizedERC20_purpose(mockERC20A.address);
+
+					expect(PURPOSE_A.allocation).to.be.equal(FIFTY_PERCENT);
+
+					const PURPOSE_B = await yieldSyncV1EMPStrategy.utilizedERC20_purpose(mockERC20B.address);
+
+					expect(PURPOSE_B.allocation).to.be.equal(FIFTY_PERCENT);
 				}
 			);
 
@@ -170,7 +167,6 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 							eTHValueFeedDummy.address,
 							strategyInteractorDummy.address,
 							[mockERC20A.address, mockERC20B.address],
-							[FIFTY_PERCENT, TWENTY_FIVE_PERCENT],
 							[[true, false, FIFTY_PERCENT], [true, false, TWENTY_FIVE_PERCENT]]
 						)
 					).to.be.rejectedWith(ERROR_INVALID_ALLOCATION);
@@ -191,7 +187,6 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 						eTHValueFeedDummy.address,
 						strategyInteractorDummy.address,
 						[mockERC20A.address, mockERC20B.address],
-						[FIFTY_PERCENT, FIFTY_PERCENT],
 						[[true, false, FIFTY_PERCENT], [true, false, FIFTY_PERCENT]]
 						)
 				).to.not.be.reverted;
@@ -201,19 +196,17 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 				// Approve the StrategyInteractorDummy contract to spend tokens on behalf of owner
 				await mockERC20A.approve(strategyInteractorDummy.address, mockERC20AdepositAmount);
 
-				const NEW_ALLOCATION = [SEVENTY_FIVE_PERCENT, TWENTY_FIVE_PERCENT];
-				const NEW_ALLOCATION2 = [[true, false, FIFTY_PERCENT], [true, false, FIFTY_PERCENT]];
+				const NEW_ALLOCATION = [[true, false, SEVENTY_FIVE_PERCENT], [true, false, TWENTY_FIVE_PERCENT]];
 
-				await expect(
-					yieldSyncV1EMPStrategy.utilizedERC20AllocationUpdate(NEW_ALLOCATION, NEW_ALLOCATION2)
-				).to.not.be.reverted;
+				await expect(yieldSyncV1EMPStrategy.utilizedERC20_purposeUpdate(NEW_ALLOCATION)).to.not.be.reverted;
 
-				expect(await yieldSyncV1EMPStrategy.utilizedERC20_allocation(mockERC20A.address)).to.be.equal(
-					SEVENTY_FIVE_PERCENT
-				);
-				expect(await yieldSyncV1EMPStrategy.utilizedERC20_allocation(mockERC20B.address)).to.be.equal(
-					TWENTY_FIVE_PERCENT
-				);
+				const PURPOSE_A = await yieldSyncV1EMPStrategy.utilizedERC20_purpose(mockERC20A.address);
+
+				expect(PURPOSE_A.allocation).to.be.equal(SEVENTY_FIVE_PERCENT);
+
+				const PURPOSE_B = await yieldSyncV1EMPStrategy.utilizedERC20_purpose(mockERC20B.address);
+
+				expect(PURPOSE_B.allocation).to.be.equal(TWENTY_FIVE_PERCENT);
 			}
 		);
 	});

@@ -29,7 +29,6 @@ contract YieldSyncV1EMPStrategy is
 
 	uint256 constant public override ONE_HUNDRED_PERCENT = 1e18;
 
-	mapping (address utilizedERC20 => uint256 allocation) internal _utilizedERC20_allocation;
 	mapping (address utilizedERC20 => Purpose purpose) internal _utilizedERC20_purpose;
 
 	IYieldSyncV1EMPETHValueFeed public override yieldSyncV1EMPETHValueFeed;
@@ -100,13 +99,13 @@ contract YieldSyncV1EMPStrategy is
 	}
 
 	/// @inheritdoc IYieldSyncV1EMPStrategy
-	function utilizedERC20_allocation(address __utilizedERC20)
+	function utilizedERC20_purpose(address __utilizedERC20)
 		public
 		view
 		override
-		returns (uint256 _allocation)
+		returns (Purpose memory purpopse_)
 	{
-		return _utilizedERC20_allocation[__utilizedERC20];
+		return _utilizedERC20_purpose[__utilizedERC20];
 	}
 
 	/// @inheritdoc IYieldSyncV1EMPStrategy
@@ -141,35 +140,41 @@ contract YieldSyncV1EMPStrategy is
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
-			utilizedERC20AmountTotalETHValue += SafeMath.div(
-				SafeMath.mul(
-					SafeMath.mul(_utilizedERC20Amount[i], 10 ** (18 - ERC20(_utilizedERC20[i]).decimals())),
-					utilizedERC20ETHValue(_utilizedERC20[i])
-				),
-				1e18
-			);
+			if (_utilizedERC20_purpose[_utilizedERC20[i]].deposit)
+			{
+				utilizedERC20AmountTotalETHValue += SafeMath.div(
+					SafeMath.mul(
+						SafeMath.mul(_utilizedERC20Amount[i], 10 ** (18 - ERC20(_utilizedERC20[i]).decimals())),
+						utilizedERC20ETHValue(_utilizedERC20[i])
+					),
+					1e18
+				);
+			}
 		}
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
-			(bool computed, uint256 amountAllocationActual) = SafeMath.tryDiv(
-				SafeMath.mul(
-					SafeMath.div(
-						SafeMath.mul(_utilizedERC20Amount[i], utilizedERC20ETHValue(_utilizedERC20[i])),
-						10 ** ERC20(_utilizedERC20[i]).decimals()
-					),
-					1e18
-				),
-				utilizedERC20AmountTotalETHValue
-			);
-
-			require(computed, "!computed");
-
-			if (_utilizedERC20_allocation[_utilizedERC20[i]] != amountAllocationActual)
+			if (_utilizedERC20_purpose[_utilizedERC20[i]].deposit)
 			{
-				utilizedERC20AmountValid_ = false;
+				(bool computed, uint256 amountAllocationActual) = SafeMath.tryDiv(
+					SafeMath.mul(
+						SafeMath.div(
+							SafeMath.mul(_utilizedERC20Amount[i], utilizedERC20ETHValue(_utilizedERC20[i])),
+							10 ** ERC20(_utilizedERC20[i]).decimals()
+						),
+						1e18
+					),
+					utilizedERC20AmountTotalETHValue
+				);
 
-				break;
+				require(computed, "!computed");
+
+				if (_utilizedERC20_purpose[_utilizedERC20[i]].allocation != amountAllocationActual)
+				{
+					utilizedERC20AmountValid_ = false;
+
+					break;
+				}
 			}
 		}
 	}
@@ -201,7 +206,6 @@ contract YieldSyncV1EMPStrategy is
 		address _yieldSyncV1EMPETHValueFeed,
 		address _yieldSyncV1EMPStrategyInteractor,
 		address[] memory __utilizedERC20,
-		uint256[] memory __utilizedERC20Allocation,
 		Purpose[] memory _purpose
 	)
 		public
@@ -215,28 +219,19 @@ contract YieldSyncV1EMPStrategy is
 
 		_utilizedERC20 = __utilizedERC20;
 
-		utilizedERC20AllocationUpdate(__utilizedERC20Allocation, _purpose);
+		utilizedERC20_purposeUpdate(_purpose);
 
 		yieldSyncV1EMPETHValueFeed = IYieldSyncV1EMPETHValueFeed(_yieldSyncV1EMPETHValueFeed);
 		yieldSyncV1EMPStrategyInteractor = IYieldSyncV1EMPStrategyInteractor(_yieldSyncV1EMPStrategyInteractor);
 	}
 
 	/// @inheritdoc IYieldSyncV1EMPStrategy
-	function utilizedERC20AllocationUpdate(uint256[] memory _utilizedERC20Allocation, Purpose[] memory _purpose)
+	function utilizedERC20_purposeUpdate(Purpose[] memory _purpose)
 		public
 		override
 		authManager()
 	{
-		uint256 _utilizedERC20AllocationTotal;
-
-		for (uint256 i = 0; i < _utilizedERC20.length; i++)
-		{
-			_utilizedERC20AllocationTotal += _utilizedERC20Allocation[i];
-		}
-
-		require(_utilizedERC20AllocationTotal == ONE_HUNDRED_PERCENT, "_utilizedERC20AllocationTotal != ONE_HUNDRED_PERCENT");
-
-		uint256 _utilizedERC20AllocationTotal2;
+		uint256 _utilizedERC20_purposeAllocationTotal;
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
@@ -244,15 +239,18 @@ contract YieldSyncV1EMPStrategy is
 
 			if (_purpose[i].deposit)
 			{
-				_utilizedERC20AllocationTotal2 += _purpose[i].allocation;
+				_utilizedERC20_purposeAllocationTotal += _purpose[i].allocation;
 			}
 		}
 
-		require(_utilizedERC20AllocationTotal2 == ONE_HUNDRED_PERCENT, "_utilizedERC20AllocationTotal != ONE_HUNDRED_PERCENT");
+		require(
+			_utilizedERC20_purposeAllocationTotal == ONE_HUNDRED_PERCENT,
+			"_utilizedERC20_purposeAllocationTotal != ONE_HUNDRED_PERCENT"
+	);
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
-			_utilizedERC20_allocation[_utilizedERC20[i]] = _utilizedERC20Allocation[i];
+			_utilizedERC20_purpose[_utilizedERC20[i]] = _purpose[i];
 		}
 	}
 

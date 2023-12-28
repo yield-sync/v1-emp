@@ -111,12 +111,12 @@ interface IYieldSyncV1EMPStrategy is
 	* @dev [view-mapping]
 	* @notice Utilized ERC20 Allocation
 	* @param __utilizedERC20 {address}
-	* @return _allocation {uint256}
+	* @return purpopse_ {Purpose}
 	*/
-	function utilizedERC20_allocation(address __utilizedERC20)
+	function utilizedERC20_purpose(address __utilizedERC20)
 		external
 		view
-		returns (uint256 _allocation)
+		returns (Purpose memory purpopse_)
 	;
 
 	/**
@@ -157,14 +157,12 @@ interface IYieldSyncV1EMPStrategy is
 	* @param _yieldSyncV1EMPETHValueFeed {address}
 	* @param _yieldSyncV1EMPStrategyInteractor {address}
 	* @param __utilizedERC20 {address[]}
-	* @param __utilizedERC20Allocation {uint256[]}
 	* @param _purpose {uint256[]}
 	*/
 	function initializeStrategy(
 		address _yieldSyncV1EMPETHValueFeed,
 		address _yieldSyncV1EMPStrategyInteractor,
 		address[] memory __utilizedERC20,
-		uint256[] memory __utilizedERC20Allocation,
 		Purpose[] memory _purpose
 	)
 		external
@@ -172,9 +170,9 @@ interface IYieldSyncV1EMPStrategy is
 
 	/**
 	* @notice Set allocation for utilized ERC20s
-	* @param _utilizedERC20Allocation {uint256[]}
+	* @param _purpose {Purpose[]}
 	*/
-	function utilizedERC20AllocationUpdate(uint256[] memory _utilizedERC20Allocation, Purpose[] memory _purpose)
+	function utilizedERC20_purposeUpdate(Purpose[] memory _purpose)
 		external
 	;
 

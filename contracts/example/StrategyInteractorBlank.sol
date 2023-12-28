@@ -4,7 +4,7 @@ pragma solidity 0.8.18;
 
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-import { IYieldSyncV1EMPStrategy } from "../interface/IYieldSyncV1EMPStrategy.sol";
+import { IYieldSyncV1EMPStrategy, Purpose } from "../interface/IYieldSyncV1EMPStrategy.sol";
 import { IYieldSyncV1EMPStrategyInteractor } from "../interface/IYieldSyncV1EMPStrategyInteractor.sol";
 import { IERC20, SafeERC20 } from "../interface/IYieldSyncV1EMPStrategy.sol";
 
@@ -46,10 +46,9 @@ contract StrategyInteractorBlank is
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
-			require(
-				yieldSyncV1EMPStrategy.utilizedERC20_allocation(_utilizedERC20[i]) > 0,
-				"yieldSyncV1EMPStrategy.utilizedERC20_allocation(_utilizedERC20[i]) = 0"
-			);
+			Purpose memory purpose = yieldSyncV1EMPStrategy.utilizedERC20_purpose(_utilizedERC20[i]);
+
+			require(purpose.deposit || purpose.withdraw, "!purpose.deposit && !purpose.withdraw");
 
 			utilizedERC20TotalAmount_[i] += IERC20(_utilizedERC20[i]).balanceOf(address(this));
 		}
