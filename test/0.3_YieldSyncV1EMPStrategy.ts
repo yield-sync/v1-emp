@@ -54,7 +54,7 @@ describe("[0.3] YieldSyncV1EMPStrategy.sol - Market Movement", async ()  =>
 								eTHValueFeedDummy.address,
 								strategyInteractorDummy.address,
 								[mockERC20A.address],
-								[[true, false, HUNDRED_PERCENT],],
+								[[true, true, HUNDRED_PERCENT],],
 							)
 						).to.not.be.reverted;
 
@@ -111,7 +111,7 @@ describe("[0.3] YieldSyncV1EMPStrategy.sol - Market Movement", async ()  =>
 								eTHValueFeedDummy.address,
 								strategyInteractorDummy.address,
 								[mockERC20A.address],
-								[[true, false, HUNDRED_PERCENT],],
+								[[true, true, HUNDRED_PERCENT],],
 							)
 						).to.not.be.reverted;
 
