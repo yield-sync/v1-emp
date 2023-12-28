@@ -63,7 +63,10 @@ contract StrategyInteractorBlank is
 	{
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
-			IERC20(_utilizedERC20[i]).safeTransferFrom(_from, address(this), _utilizedERC20Amount[i]);
+			if (yieldSyncV1EMPStrategy.utilizedERC20_purpose(_utilizedERC20[i]).deposit)
+			{
+				IERC20(_utilizedERC20[i]).safeTransferFrom(_from, address(this), _utilizedERC20Amount[i]);
+			}
 		}
 	}
 
