@@ -237,16 +237,16 @@ contract YieldSyncV1EMPStrategy is
 		{
 			_utilizedERC20_purpose[_utilizedERC20[i]] = _purpose[i];
 
-			if (_purpose[i].deposit)
+			if (_utilizedERC20_purpose[_utilizedERC20[i]].deposit)
 			{
-				_utilizedERC20_purposeAllocationTotal += _purpose[i].allocation;
+				_utilizedERC20_purposeAllocationTotal += _utilizedERC20_purpose[_utilizedERC20[i]].allocation;
 			}
 		}
 
 		require(
 			_utilizedERC20_purposeAllocationTotal == ONE_HUNDRED_PERCENT,
 			"_utilizedERC20_purposeAllocationTotal != ONE_HUNDRED_PERCENT"
-	);
+		);
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
@@ -271,13 +271,16 @@ contract YieldSyncV1EMPStrategy is
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
-			utilizedERC20AmountTotalETHValue += SafeMath.div(
-				SafeMath.mul(
-					_utilizedERC20Amount[i] * 10 ** (18 - ERC20(_utilizedERC20[i]).decimals()),
-					utilizedERC20ETHValue(_utilizedERC20[i])
-				),
-				1e18
-			);
+			if (_utilizedERC20_purpose[_utilizedERC20[i]].deposit)
+			{
+				utilizedERC20AmountTotalETHValue += SafeMath.div(
+					SafeMath.mul(
+						_utilizedERC20Amount[i] * 10 ** (18 - ERC20(_utilizedERC20[i]).decimals()),
+						utilizedERC20ETHValue(_utilizedERC20[i])
+					),
+					1e18
+				);
+			}
 		}
 
 		_mint(msg.sender, utilizedERC20AmountTotalETHValue);
