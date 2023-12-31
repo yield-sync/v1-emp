@@ -120,7 +120,7 @@ describe("[0.3] YieldSyncV1EMPStrategy.sol - Market Movement", async ()  =>
 
 
 						// Capture
-						const strategyTotalSupplyBefore = await yieldSyncV1EMPStrategy.totalSupply();
+						const strategyTotalSupplyB4 = await yieldSyncV1EMPStrategy.totalSupply();
 
 						const strategyInteractorMockERC20ABalanceB4 = await mockERC20A.balanceOf(
 							strategyInteractorDummy.address
@@ -151,7 +151,7 @@ describe("[0.3] YieldSyncV1EMPStrategy.sol - Market Movement", async ()  =>
 						);
 
 						// Supply put back to original
-						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.equal(strategyTotalSupplyBefore);
+						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.equal(strategyTotalSupplyB4);
 
 						// Check that the balance been returned to original or greater
 						expect(await mockERC20A.balanceOf(owner.address)).to.be.equal(ownerMockERC20ABalanceB4);
@@ -159,5 +159,25 @@ describe("[0.3] YieldSyncV1EMPStrategy.sol - Market Movement", async ()  =>
 				)
 			});
 		});
+	});
+
+	describe("Strategy that accepts A and B but returns C", async () => {
+		it(
+			"Should fail to return C if withdraw is not set to true..",
+			async () => {
+				// Initialize strategy with mock ERC20
+				await expect(
+					yieldSyncV1EMPStrategy.initializeStrategy(
+						eTHValueFeedDummy.address,
+						strategyInteractorDummy.address,
+						[mockERC20A.address],
+						[[true, true, HUNDRED_PERCENT],],
+					)
+				).to.not.be.reverted;
+
+				await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
+				await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
+			}
+		);
 	});
 });

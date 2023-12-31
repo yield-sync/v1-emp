@@ -200,9 +200,16 @@ contract YieldSyncV1EMPStrategy is
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
-			(, uint256 utilizedERC20Amount) = SafeMath.tryDiv(SafeMath.mul(utilizedERC20Amount_[i], 1e18), totalSupply());
+			if (_utilizedERC20_purpose[_utilizedERC20[i]].withdraw)
+			{
+				(, uint256 utilizedERC20Amount) = SafeMath.tryDiv(SafeMath.mul(utilizedERC20Amount_[i], 1e18), totalSupply());
 
-			utilizedERC20Amount_[i] = utilizedERC20Amount;
+				utilizedERC20Amount_[i] = utilizedERC20Amount;
+			}
+			else
+			{
+				utilizedERC20Amount_[i] = 0;
+			}
 		}
 	}
 

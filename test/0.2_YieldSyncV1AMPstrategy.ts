@@ -46,6 +46,83 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 			describe("[DECIMALS = 18]", async ()  =>
 			{
 				it(
+					"[100] Should fail to return ERC20 if purpose.withdraw != true..",
+					async ()  =>
+					{
+						const [owner] = await ethers.getSigners();
+
+						// Initialize strategy with mock ERC20
+						await expect(
+							yieldSyncV1EMPStrategy.initializeStrategy(
+								eTHValueFeedDummy.address,
+								strategyInteractorDummy.address,
+								[mockERC20A.address],
+								[[true, false, HUNDRED_PERCENT]],
+							)
+						).to.not.be.reverted;
+
+						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
+						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
+
+
+						const strategyTotalSupplyB4 = await yieldSyncV1EMPStrategy.totalSupply();
+						const ownerMockERC20ABalanceB4 = await mockERC20A.balanceOf(owner.address);
+
+						const mockERC20AdepositAmount = ethers.utils.parseUnits("1", 18);
+
+						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of owner
+						await mockERC20A.approve(strategyInteractorDummy.address, mockERC20AdepositAmount);
+
+						// Deposit mockERC20A tokens into the strategy
+						yieldSyncV1EMPStrategy.utilizedERC20Deposit([mockERC20AdepositAmount])
+
+						const ownerMockERC20ABalanceAfterDeposit = await mockERC20A.balanceOf(owner.address);
+
+						// Check that the balance remains less than original
+						expect(ownerMockERC20ABalanceAfterDeposit).to.be.lessThan(ownerMockERC20ABalanceB4);
+
+						// mockERC20A BalanceOf strategy interactor should equal to deposit amount
+						expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.be.equal(
+							mockERC20AdepositAmount
+						);
+
+						// Strategy totalSupply has increased (b4 should be 0)
+						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.greaterThan(strategyTotalSupplyB4);
+
+						// Strategy BalanceOf owner should be newly minted tokens (Current Supply - B4 supply)
+						expect(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).to.be.equal(
+							(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).sub(strategyTotalSupplyB4)
+						);
+
+						// [main-test] Withdraw ERC20 tokens into the strategy
+						await expect(
+							yieldSyncV1EMPStrategy.utilizedERC20Withdraw(
+								await yieldSyncV1EMPStrategy.balanceOf(owner.address)
+							)
+						).to.be.not.reverted;
+
+						// Unchanged balance of strategy interactor
+						expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.be.equal(
+							mockERC20AdepositAmount
+						);
+
+						// Strategy token burned
+						expect(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).to.be.equal(0);
+
+						// Supply put back to original
+						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.equal(strategyTotalSupplyB4);
+
+						// Check that the balance remains less than original
+						expect(await mockERC20A.balanceOf(owner.address)).to.be.greaterThanOrEqual(
+							ownerMockERC20ABalanceAfterDeposit
+						);
+
+						// Check that the balance remains less than original
+						expect(await mockERC20A.balanceOf(owner.address)).to.be.lessThan(ownerMockERC20ABalanceB4);
+					}
+				);
+
+				it(
 					"[100] Should allow caller to burn ERC20 and cash out..",
 					async ()  =>
 					{
@@ -65,7 +142,7 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
 
 
-						const strategyTotalSupplyBefore = await yieldSyncV1EMPStrategy.totalSupply();
+						const strategyTotalSupplyB4 = await yieldSyncV1EMPStrategy.totalSupply();
 
 						const strategyInteractorMockERC20ABalanceB4 = await mockERC20A.balanceOf(
 							strategyInteractorDummy.address
@@ -87,11 +164,11 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 						);
 
 						// Strategy totalSupply has increased
-						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.greaterThan(strategyTotalSupplyBefore);
+						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.greaterThan(strategyTotalSupplyB4);
 
-						// Strategy BalanceOf owner should be newly minted tokens (Current Supply - Before supply)
+						// Strategy BalanceOf owner should be newly minted tokens (Current Supply - B4 supply)
 						expect(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).to.be.equal(
-							(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).sub(strategyTotalSupplyBefore)
+							(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).sub(strategyTotalSupplyB4)
 						);
 
 						// [main-test] Withdraw ERC20 tokens into the strategy
@@ -105,7 +182,7 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 						);
 
 						// Supply put back to original
-						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.equal(strategyTotalSupplyBefore);
+						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.equal(strategyTotalSupplyB4);
 
 						// Check that the balance been returned to original or greater
 						expect(await mockERC20A.balanceOf(owner.address)).to.be.greaterThanOrEqual(ownerMockERC20ABalanceB4);
@@ -135,7 +212,7 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
 
 
-						const strategyTotalSupplyBefore = await yieldSyncV1EMPStrategy.totalSupply();
+						const strategyTotalSupplyB4 = await yieldSyncV1EMPStrategy.totalSupply();
 
 						const strategyInteractorMockERC206BalanceB4 = await mockERC206.balanceOf(
 							strategyInteractorDummy.address
@@ -157,11 +234,11 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 						);
 
 						// Strategy totalSupply has increased
-						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.greaterThan(strategyTotalSupplyBefore);
+						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.greaterThan(strategyTotalSupplyB4);
 
-						// Strategy BalanceOf owner should be newly minted tokens (Current Supply - Before supply)
+						// Strategy BalanceOf owner should be newly minted tokens (Current Supply - B4 supply)
 						expect(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).to.be.equal(
-							(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).sub(strategyTotalSupplyBefore)
+							(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).sub(strategyTotalSupplyB4)
 						);
 
 						// [main-test] Withdraw ERC20 tokens into the strategy
@@ -175,7 +252,7 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 						);
 
 						// Supply put back to original
-						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.equal(strategyTotalSupplyBefore);
+						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.equal(strategyTotalSupplyB4);
 
 						// Check that the balance been returned to original or greater
 						expect(await mockERC206.balanceOf(owner.address)).to.be.greaterThanOrEqual(ownerMockERC206BalanceB4);
@@ -209,7 +286,7 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
 
 
-						const strategyTotalSupplyBefore = await yieldSyncV1EMPStrategy.totalSupply();
+						const strategyTotalSupplyB4 = await yieldSyncV1EMPStrategy.totalSupply();
 
 						const strategyInteractorMockERC20ABalanceB4 = await mockERC20A.balanceOf(
 							strategyInteractorDummy.address
@@ -242,11 +319,11 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 						);
 
 						// Strategy totalSupply has increased
-						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.greaterThan(strategyTotalSupplyBefore);
+						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.greaterThan(strategyTotalSupplyB4);
 
-						// Strategy BalanceOf owner should be newly minted tokens (Current Supply - Before supply)
+						// Strategy BalanceOf owner should be newly minted tokens (Current Supply - B4 supply)
 						expect(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).to.be.equal(
-							(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).sub(strategyTotalSupplyBefore)
+							(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).sub(strategyTotalSupplyB4)
 						);
 
 						// [main-test] Withdraw ERC20 tokens into the strategy
@@ -261,7 +338,7 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 						);
 
 						// Supply put back to original
-						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.equal(strategyTotalSupplyBefore);
+						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.equal(strategyTotalSupplyB4);
 
 						// Check that the balance been returned to original or greater
 						expect(await mockERC20A.balanceOf(owner.address)).to.be.greaterThanOrEqual(ownerMockERC20ABalanceB4);
@@ -291,7 +368,7 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
 
 
-						const strategyTotalSupplyBefore = await yieldSyncV1EMPStrategy.totalSupply();
+						const strategyTotalSupplyB4 = await yieldSyncV1EMPStrategy.totalSupply();
 
 						const strategyInteractorMockERC20ABalanceB4 = await mockERC20A.balanceOf(
 							strategyInteractorDummy.address
@@ -325,11 +402,11 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 						);
 
 						// Strategy totalSupply has increased
-						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.greaterThan(strategyTotalSupplyBefore);
+						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.greaterThan(strategyTotalSupplyB4);
 
-						// Strategy BalanceOf owner should be newly minted tokens (Current Supply - Before supply)
+						// Strategy BalanceOf owner should be newly minted tokens (Current Supply - B4 supply)
 						expect(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).to.be.equal(
-							(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).sub(strategyTotalSupplyBefore)
+							(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).sub(strategyTotalSupplyB4)
 						);
 
 						// [main-test] Withdraw ERC20 tokens into the strategy
@@ -344,7 +421,7 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 						);
 
 						// Supply put back to original
-						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.equal(strategyTotalSupplyBefore);
+						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.equal(strategyTotalSupplyB4);
 
 						// Check that the balance been returned to original or greater
 						expect(await mockERC20A.balanceOf(owner.address)).to.be.greaterThanOrEqual(ownerMockERC20ABalanceB4);
@@ -377,7 +454,7 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
 
 
-						const strategyTotalSupplyBefore = await yieldSyncV1EMPStrategy.totalSupply();
+						const strategyTotalSupplyB4 = await yieldSyncV1EMPStrategy.totalSupply();
 
 						const strategyInteractorMockERC20ABalanceB4 = await mockERC20A.balanceOf(
 							strategyInteractorDummy.address
@@ -411,11 +488,11 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 						);
 
 						// Strategy totalSupply has increased
-						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.greaterThan(strategyTotalSupplyBefore);
+						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.greaterThan(strategyTotalSupplyB4);
 
-						// Strategy BalanceOf owner should be newly minted tokens (Current Supply - Before supply)
+						// Strategy BalanceOf owner should be newly minted tokens (Current Supply - B4 supply)
 						expect(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).to.be.equal(
-							(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).sub(strategyTotalSupplyBefore)
+							(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).sub(strategyTotalSupplyB4)
 						);
 
 						// [main-test] Withdraw ERC20 tokens into the strategy
@@ -432,7 +509,7 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 						);
 
 						// Supply put back to original
-						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.equal(strategyTotalSupplyBefore);
+						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.equal(strategyTotalSupplyB4);
 
 						// Check that the balance been returned to original or greater
 						expect(await mockERC20A.balanceOf(owner.address)).to.be.greaterThanOrEqual(
@@ -466,7 +543,7 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
 
 
-						const strategyTotalSupplyBefore = await yieldSyncV1EMPStrategy.totalSupply();
+						const strategyTotalSupplyB4 = await yieldSyncV1EMPStrategy.totalSupply();
 
 						const strategyInteractorMockERC20ABalanceB4 = await mockERC20A.balanceOf(
 							strategyInteractorDummy.address
@@ -500,11 +577,11 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 						);
 
 						// Strategy totalSupply has increased
-						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.greaterThan(strategyTotalSupplyBefore);
+						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.greaterThan(strategyTotalSupplyB4);
 
-						// Strategy BalanceOf owner should be newly minted tokens (Current Supply - Before supply)
+						// Strategy BalanceOf owner should be newly minted tokens (Current Supply - B4 supply)
 						expect(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).to.be.equal(
-							(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).sub(strategyTotalSupplyBefore)
+							(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).sub(strategyTotalSupplyB4)
 						);
 
 						// [main-test] Withdraw ERC20 tokens into the strategy
@@ -521,7 +598,7 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 						);
 
 						// Supply put back to original
-						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.equal(strategyTotalSupplyBefore);
+						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.equal(strategyTotalSupplyB4);
 
 						// Check that the balance been returned to original or greater
 						expect(await mockERC20A.balanceOf(owner.address)).to.be.greaterThanOrEqual(
