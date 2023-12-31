@@ -240,6 +240,8 @@ contract YieldSyncV1EMPStrategy is
 		override
 		authManager()
 	{
+		require(_utilizedERC20.length == _purpose.length, "_utilizedERC20.length != _purpose.length");
+
 		uint256 _utilizedERC20_purposeAllocationTotal;
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
