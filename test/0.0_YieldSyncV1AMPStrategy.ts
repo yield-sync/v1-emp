@@ -39,6 +39,44 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 		yieldSyncV1EMPStrategy = await (await YieldSyncV1EMPStrategy.deploy(owner.address, "Exampe", "EX")).deployed();
 	});
 
+	describe("function utilizedERC20_purposeUpdate() (1/2)", async ()  => {
+		it(
+			"[auth] Should revert when unauthorized msg.sender calls..",
+			async ()  =>
+			{
+				const [, addr1] = await ethers.getSigners();
+
+				await expect(
+					yieldSyncV1EMPStrategy.connect(addr1).utilizedERC20_purposeUpdate(
+						[[true, true, HUNDRED_PERCENT]]
+					)
+				).to.be.rejectedWith(ERROR_NOT_MANAGER);
+			}
+		);
+
+		it(
+			"Should revert when invalid allocation passed..",
+			async ()  =>
+			{
+				const POSSIBLE_INVALID_INPUTS = [
+					[true, true, FIFTY_PERCENT],
+					[true, false, FIFTY_PERCENT],
+					[false, false, FIFTY_PERCENT],
+					[false, true, HUNDRED_PERCENT],
+					[false, false, HUNDRED_PERCENT],
+				];
+
+				for (let i = 0; i < POSSIBLE_INVALID_INPUTS.length; i++)
+				{
+					await expect(
+						yieldSyncV1EMPStrategy.utilizedERC20_purposeUpdate(
+							[POSSIBLE_INVALID_INPUTS[i]]
+						)
+					).to.be.rejectedWith(ERROR_INVALID_ALLOCATION);
+				}
+			}
+		);
+	});
 
 	describe("function initializeStrategy()", async ()  =>
 	{
@@ -175,7 +213,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 		});
 	});
 
-	describe("function utilizedERC20AllocationUpdate()", async ()  =>
+	describe("function utilizedERC20_purposeUpdate() (2/2)", async ()  =>
 	{
 		it(
 			"[MULTIPLE-ONLY] Should be able to update utilizedERC20Allocation..",
@@ -209,5 +247,10 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 				expect(PURPOSE_B.allocation).to.be.equal(TWENTY_FIVE_PERCENT);
 			}
 		);
+	});
+
+	describe("function utilizedERC20AmountValid()", async ()  =>
+	{
+
 	});
 });

@@ -176,6 +176,15 @@ contract YieldSyncV1EMPStrategy is
 					break;
 				}
 			}
+			else
+			{
+				if (_utilizedERC20Amount[i] > 0)
+				{
+					utilizedERC20AmountValid_ = false;
+
+					break;
+				}
+			}
 		}
 	}
 
