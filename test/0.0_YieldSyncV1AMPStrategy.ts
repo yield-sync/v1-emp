@@ -163,6 +163,10 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 						addresses: [mockERC20A.address, mockERC20B.address, mockERC20C.address,],
 						purpose: [[false, true, ZERO_PERCENT], [true, true, FIFTY_PERCENT], [true, true, FIFTY_PERCENT]]
 					},
+					{
+						addresses: [mockERC20A.address, mockERC20B.address, mockERC20C.address,],
+						purpose: [[false, true, HUNDRED_PERCENT], [true, true, FIFTY_PERCENT], [true, true, FIFTY_PERCENT]]
+					},
 				];
 
 				for (let i = 0; i < VALID_ALLOCATION.length; i++)

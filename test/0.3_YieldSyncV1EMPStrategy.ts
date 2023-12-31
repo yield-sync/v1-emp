@@ -4,13 +4,18 @@ const { ethers } = require("hardhat");
 import { expect } from "chai";
 import { Contract, ContractFactory } from "ethers";
 
+const ZERO = ethers.utils.parseUnits('0', 18);
+
 const HUNDRED_PERCENT = ethers.utils.parseUnits('1', 18);
+const FIFTY_PERCENT = ethers.utils.parseUnits('.5', 18);
+const ZERO_PERCENT = ethers.utils.parseUnits('0', 18);
 
 
-describe("[0.3] YieldSyncV1EMPStrategy.sol - Market Movement", async ()  =>
+describe("[0.3] YieldSyncV1EMPStrategy.sol - Scenarios", async ()  =>
 {
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;
+	let mockERC20C: Contract;
 	let mockERC206: Contract;
 	let eTHValueFeedDummy: Contract;
 	let strategyInteractorDummy: Contract;
@@ -29,6 +34,7 @@ describe("[0.3] YieldSyncV1EMPStrategy.sol - Market Movement", async ()  =>
 
 		mockERC20A = await (await MockERC20.deploy()).deployed();
 		mockERC20B = await (await MockERC20.deploy()).deployed();
+		mockERC20C = await (await MockERC20.deploy()).deployed();
 		mockERC206 = await (await MockERC206.deploy()).deployed();
 		eTHValueFeedDummy = await (await ETHValueFeedDummy.deploy()).deployed();
 		strategyInteractorDummy = await (await StrategyInteractorDummy.deploy()).deployed();
@@ -36,7 +42,7 @@ describe("[0.3] YieldSyncV1EMPStrategy.sol - Market Movement", async ()  =>
 	});
 
 
-	describe("function utilizedERC20Deposit()", async ()  =>
+	describe("function utilizedERC20Deposit() - Utilized ERC20 price change", async ()  =>
 	{
 		describe("[SINGLE ERC20]", async ()  =>
 		{
@@ -73,7 +79,7 @@ describe("[0.3] YieldSyncV1EMPStrategy.sol - Market Movement", async ()  =>
 						// Supply put back to original
 						expect(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).to.be.equal(mockERC20AdepositAmount);
 
-						// Update Ether value of MockERC20A
+						// [PRICE-UPDATE] Update Ether value of MockERC20A
 						await eTHValueFeedDummy.updateETHValue(ethers.utils.parseUnits("2", 18));
 
 						const mockERC20AdepositAmount2 = ethers.utils.parseUnits("1", 18);
@@ -93,7 +99,7 @@ describe("[0.3] YieldSyncV1EMPStrategy.sol - Market Movement", async ()  =>
 		});
 	});
 
-	describe("function utilizedERC20Withdraw()", async ()  =>
+	describe("function utilizedERC20Withdraw() - Utilized ERC20 price change", async ()  =>
 	{
 		describe("[SINGLE ERC20]", async ()  =>
 		{
@@ -142,7 +148,7 @@ describe("[0.3] YieldSyncV1EMPStrategy.sol - Market Movement", async ()  =>
 							await yieldSyncV1EMPStrategy.balanceOf(owner.address)
 						);
 
-						// Update Ether value of MockERC20A
+						// [PRICE-UPDATE] Update Ether value of MockERC20A
 						await eTHValueFeedDummy.updateETHValue(ethers.utils.parseUnits("2", 18));
 
 						// Strategy token burned
@@ -161,22 +167,72 @@ describe("[0.3] YieldSyncV1EMPStrategy.sol - Market Movement", async ()  =>
 		});
 	});
 
-	describe("Strategy that accepts A and B but returns C", async () => {
+	describe("Strategy that accepts ERC20 A and ERC20 B but returns ERC20 C", async () => {
 		it(
 			"Should fail to return C if withdraw is not set to true..",
 			async () => {
+				const [owner] = await ethers.getSigners();
+
 				// Initialize strategy with mock ERC20
 				await expect(
 					yieldSyncV1EMPStrategy.initializeStrategy(
 						eTHValueFeedDummy.address,
 						strategyInteractorDummy.address,
-						[mockERC20A.address],
-						[[true, true, HUNDRED_PERCENT],],
+						[mockERC20A.address, mockERC20B.address, mockERC20C.address],
+						[[true, false, FIFTY_PERCENT], [true, false, FIFTY_PERCENT], [false, true, ZERO_PERCENT],],
 					)
 				).to.not.be.reverted;
 
 				await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
 				await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
+
+				// Capture
+				const strategyTotalSupplyB4 = await yieldSyncV1EMPStrategy.totalSupply();
+
+				const ownerABalanceB4 = await mockERC20A.balanceOf(owner.address);
+				const ownerBBalanceB4 = await mockERC20B.balanceOf(owner.address);
+				const ownerCBalanceB4 = await mockERC20C.balanceOf(owner.address);
+				const sIABalanceB4 = await mockERC20A.balanceOf(strategyInteractorDummy.address);
+				const sIBBalanceB4 = await mockERC20A.balanceOf(strategyInteractorDummy.address);
+				const sICBalanceB4 = await mockERC20A.balanceOf(strategyInteractorDummy.address);
+
+				const erc20DepositAmount = ethers.utils.parseUnits("1", 18);
+
+				// Approve the StrategyInteractorDummy contract to spend tokens on behalf of owner
+				await mockERC20A.approve(strategyInteractorDummy.address, erc20DepositAmount);
+
+				// Approve the StrategyInteractorDummy contract to spend tokens on behalf of owner
+				await mockERC20B.approve(strategyInteractorDummy.address, erc20DepositAmount);
+
+				// Deposit ERC20 A and ERC20 B tokens into the strategy
+				await yieldSyncV1EMPStrategy.utilizedERC20Deposit([erc20DepositAmount, erc20DepositAmount, ZERO]);
+
+				// Mock ERC20 C to strategy interactor accrual by transferring
+				await mockERC20C.transfer(strategyInteractorDummy.address, erc20DepositAmount);
+
+				expect(await mockERC20A.balanceOf(owner.address)).to.equal(ownerABalanceB4.sub(erc20DepositAmount));
+
+				expect(await mockERC20B.balanceOf(owner.address)).to.equal(ownerBBalanceB4.sub(erc20DepositAmount));
+
+				expect(await mockERC20B.balanceOf(owner.address)).to.equal(ownerCBalanceB4.sub(erc20DepositAmount));
+
+				expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.equal(
+					sIABalanceB4.add(erc20DepositAmount)
+				);
+				expect(await mockERC20B.balanceOf(strategyInteractorDummy.address)).to.equal(
+					sIBBalanceB4.add(erc20DepositAmount)
+				);
+				expect(await mockERC20C.balanceOf(strategyInteractorDummy.address)).to.equal(
+					sICBalanceB4.add(erc20DepositAmount)
+				);
+
+				// [main-test] Withdraw ERC20 tokens into the strategy
+				await yieldSyncV1EMPStrategy.utilizedERC20Withdraw(await yieldSyncV1EMPStrategy.balanceOf(owner.address));
+
+				// Supply put back to original
+				expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.equal(strategyTotalSupplyB4);
+
+				expect(await mockERC20C.balanceOf(owner.address)).to.equal(ownerCBalanceB4);
 			}
 		);
 	});

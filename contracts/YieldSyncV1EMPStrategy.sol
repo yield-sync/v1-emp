@@ -134,6 +134,8 @@ contract YieldSyncV1EMPStrategy is
 		setYieldSyncV1EMPStrategyInteractor()
 		returns (bool utilizedERC20AmountValid_)
 	{
+		require(_utilizedERC20.length == _utilizedERC20Amount.length, "_utilizedERC20.length != _utilizedERC20Amount.length");
+
 		utilizedERC20AmountValid_ = true;
 
 		uint256 utilizedERC20AmountTotalETHValue;
