@@ -304,7 +304,7 @@ contract YieldSyncV1EMPStrategy is
 	{
 		require(utilizedERC20WithdrawOpen, "!utilizedERC20WithdrawOpen");
 
-		require(balanceOf(msg.sender) >= _tokenAmount, "!_tokenAmount");
+		require(balanceOf(msg.sender) >= _tokenAmount, "balanceOf(msg.sender) < _tokenAmount");
 
 		uint256[] memory uTAPB = utilizedERC20AmountPerBurn();
 
