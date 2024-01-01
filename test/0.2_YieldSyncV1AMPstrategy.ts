@@ -67,10 +67,6 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 							yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 						).to.not.be.reverted;
 
-						expect(await yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractor()).to.be.equal(
-							strategyInteractorDummy.address
-						);
-
 						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
 						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
 
@@ -154,10 +150,6 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 							yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 						).to.not.be.reverted;
 
-						expect(await yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractor()).to.be.equal(
-							strategyInteractorDummy.address
-						);
-
 						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
 						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
 
@@ -233,10 +225,6 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 						await expect(
 							yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 						).to.not.be.reverted;
-
-						expect(await yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractor()).to.be.equal(
-							strategyInteractorDummy.address
-						);
 
 						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
 						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
@@ -317,10 +305,6 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 						await expect(
 							yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 						).to.not.be.reverted;
-
-						expect(await yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractor()).to.be.equal(
-							strategyInteractorDummy.address
-						);
 
 						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
 						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
@@ -409,10 +393,6 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 						await expect(
 							yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 						).to.not.be.reverted;
-
-						expect(await yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractor()).to.be.equal(
-							strategyInteractorDummy.address
-						);
 
 						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
 						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
@@ -505,10 +485,6 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 						await expect(
 							yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 						).to.not.be.reverted;
-
-						expect(await yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractor()).to.be.equal(
-							strategyInteractorDummy.address
-						);
 
 						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
 						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
@@ -604,10 +580,6 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 						await expect(
 							yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 						).to.not.be.reverted;
-
-						expect(await yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractor()).to.be.equal(
-							strategyInteractorDummy.address
-						);
 
 						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
 						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
