@@ -118,7 +118,6 @@ contract YieldSyncV1EMPStrategy is
 		public
 		view
 		override
-		operational()
 		returns (uint256 balanceOfETHValue_)
 	{
 		uint256[] memory uTAPB = utilizedERC20AmountPerBurn();
