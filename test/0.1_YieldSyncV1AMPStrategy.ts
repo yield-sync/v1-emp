@@ -6,6 +6,8 @@ import { Contract, ContractFactory } from "ethers";
 
 const ERR0R_INVALID_UTILIZEDERC20AMOUNT = "!utilizedERC20AmountValid(_utilizedERC20Amount)";
 const ERROR_INVALID_AMOUNT_LENGTH = "_utilizedERC20.length != _utilizedERC20Amount.length";
+const ERROR_ETH_FEED_NOT_SET = "address(yieldSyncV1EMPETHValueFeed) == address(0)";
+const ERROR_STRATEGY_NOT_SET = "address(yieldSyncV1EMPStrategyInteractor) == address(0)";
 
 const D_18 = ethers.utils.parseUnits('1', 18);
 
@@ -46,6 +48,33 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 	describe("function utilizedERC20Deposit()", async ()  =>
 	{
+		describe("modifier operational()", async ()  =>
+		{
+			it(
+				"Should revert if ETH FEED is not set..",
+				async ()  =>
+				{
+					await expect(
+						yieldSyncV1EMPStrategy.utilizedERC20Deposit([])
+					).to.be.rejectedWith(ERROR_ETH_FEED_NOT_SET);
+				}
+			);
+
+			it(
+				"Should revert if strategy is not set..",
+				async ()  =>
+				{
+					await expect(
+						yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+					).to.not.be.reverted;
+
+					await expect(
+						yieldSyncV1EMPStrategy.utilizedERC20Deposit([])
+					).to.be.rejectedWith(ERROR_STRATEGY_NOT_SET);
+				}
+			);
+		});
+
 		describe("[SINGLE ERC20]", async ()  =>
 		{
 			describe("[DECIMALS = 18]", async () =>

@@ -7,6 +7,8 @@ import { Contract, ContractFactory } from "ethers";
 const ERROR_NOT_MANAGER = "manager != msg.sender";
 const ERROR_INVALID_PURPOSE_LENGTH = "__utilizedERC20.length != _purpose.length";
 const ERROR_INVALID_ALLOCATION = "_utilizedERC20AllocationTotal != ONE_HUNDRED_PERCENT";
+const ERROR_ETH_FEED_NOT_SET = "address(yieldSyncV1EMPETHValueFeed) == address(0)";
+const ERROR_STRATEGY_NOT_SET = "address(yieldSyncV1EMPStrategyInteractor) == address(0)";
 
 const HUNDRED_PERCENT = ethers.utils.parseUnits('1', 18);
 const FIFTY_PERCENT = ethers.utils.parseUnits('.5', 18);
@@ -240,8 +242,166 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 		);
 	});
 
+	describe("function balanceOfETHValue()", async () =>
+	{
+		it(
+			"Should revert if ETH FEED is not set..",
+			async ()  =>
+			{
+				const [owner] = await ethers.getSigners();
+
+				await expect(yieldSyncV1EMPStrategy.balanceOfETHValue(owner.address)).to.be.rejectedWith(
+					ERROR_ETH_FEED_NOT_SET
+				);
+			}
+		);
+
+		it(
+			"Should revert if strategy is not set..",
+			async ()  =>
+			{
+				const [owner] = await ethers.getSigners();
+
+				await expect(
+					yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+				).to.not.be.reverted;
+
+				await expect(yieldSyncV1EMPStrategy.balanceOfETHValue(owner.address)).to.be.rejectedWith(
+					ERROR_STRATEGY_NOT_SET
+				);
+			}
+		)
+	});
+
+	describe("function utilizedERC20AmountPerBurn()", async () =>
+	{
+		it(
+			"Should revert if ETH FEED is not set..",
+			async ()  =>
+			{
+				await expect(
+					yieldSyncV1EMPStrategy.utilizedERC20AmountPerBurn()
+				).to.be.rejectedWith(ERROR_ETH_FEED_NOT_SET);
+			}
+		);
+
+		it(
+			"Should revert if strategy is not set..",
+			async ()  =>
+			{
+				await expect(
+					yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+				).to.not.be.reverted;
+
+				await expect(
+					yieldSyncV1EMPStrategy.utilizedERC20AmountPerBurn()
+				).to.be.rejectedWith(ERROR_STRATEGY_NOT_SET);
+			}
+		);
+	});
+
 	describe("function utilizedERC20AmountValid()", async ()  =>
 	{
-		// operational test
+		it(
+			"Should revert if ETH FEED is not set..",
+			async ()  =>
+			{
+				await expect(
+					yieldSyncV1EMPStrategy.utilizedERC20AmountValid([])
+				).to.be.rejectedWith(ERROR_ETH_FEED_NOT_SET);
+			}
+		);
+
+		it(
+			"Should revert if strategy is not set..",
+			async ()  =>
+			{
+				await expect(
+					yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+				).to.not.be.reverted;
+
+				await expect(
+					yieldSyncV1EMPStrategy.utilizedERC20AmountValid([])
+				).to.be.rejectedWith(ERROR_STRATEGY_NOT_SET);
+			}
+		);
+	});
+
+	describe("function utilizedERC20DepositOpenToggle()", async () =>
+	{
+		it(
+			"[auth] Should revert when unauthorized msg.sender calls..",
+			async ()  =>
+			{
+				const [, addr1] = await ethers.getSigners();
+
+				await expect(
+					yieldSyncV1EMPStrategy.connect(addr1).utilizedERC20DepositOpenToggle()
+				).to.be.rejectedWith(ERROR_NOT_MANAGER);
+			}
+		);
+
+		it(
+			"Should revert if ETH FEED is not set..",
+			async ()  =>
+			{
+				await expect(
+					yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()
+				).to.be.rejectedWith(ERROR_ETH_FEED_NOT_SET);
+			}
+		);
+
+		it(
+			"Should revert if strategy is not set..",
+			async ()  =>
+			{
+				await expect(
+					yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+				).to.not.be.reverted;
+
+				await expect(
+					yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()
+				).to.be.rejectedWith(ERROR_STRATEGY_NOT_SET);
+			}
+		);
+	});
+
+	describe("function utilizedERC20WithdrawOpenToggle()", async () =>
+	{
+		it(
+			"[auth] Should revert when unauthorized msg.sender calls..",
+			async ()  =>
+			{
+				const [, addr1] = await ethers.getSigners();
+
+				await expect(
+					yieldSyncV1EMPStrategy.connect(addr1).utilizedERC20WithdrawOpenToggle()
+				).to.be.rejectedWith(ERROR_NOT_MANAGER);
+			}
+		);
+
+		it(
+			"Should revert if ETH FEED is not set..",
+			async ()  =>
+			{
+				await expect(
+					yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle()
+				).to.be.rejectedWith(ERROR_ETH_FEED_NOT_SET);
+			}
+		);
+
+		it(
+			"Should revert if strategy is not set..",
+			async ()  =>
+			{
+				await expect(
+					yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+				).to.not.be.reverted;
+
+				await expect(
+					yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle()
+				).to.be.rejectedWith(ERROR_STRATEGY_NOT_SET);
+			}
+		);
 	});
 });

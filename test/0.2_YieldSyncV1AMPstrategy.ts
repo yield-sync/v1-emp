@@ -4,6 +4,9 @@ const { ethers } = require("hardhat");
 import { expect } from "chai";
 import { Contract, ContractFactory } from "ethers";
 
+const ERROR_ETH_FEED_NOT_SET = "address(yieldSyncV1EMPETHValueFeed) == address(0)";
+const ERROR_STRATEGY_NOT_SET = "address(yieldSyncV1EMPStrategyInteractor) == address(0)";
+
 const HUNDRED_PERCENT = ethers.utils.parseUnits('1', 18);
 const FIFTY_PERCENT = ethers.utils.parseUnits('.5', 18);
 const TWENTY_FIVE_PERCENT = ethers.utils.parseUnits('.25', 18);
@@ -41,6 +44,33 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 
 	describe("function utilizedERC20Withdraw()", async ()  =>
 	{
+		describe("modifier operational()", async ()  =>
+		{
+			it(
+				"Should revert if ETH FEED is not set..",
+				async ()  =>
+				{
+					await expect(yieldSyncV1EMPStrategy.utilizedERC20Withdraw(0)).to.be.rejectedWith(
+						ERROR_ETH_FEED_NOT_SET
+					);
+				}
+			);
+
+			it(
+				"Should revert if strategy is not set..",
+				async ()  =>
+				{
+					await expect(
+						yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+					).to.not.be.reverted;
+
+					await expect(yieldSyncV1EMPStrategy.utilizedERC20Withdraw(0)).to.be.rejectedWith(
+						ERROR_STRATEGY_NOT_SET
+					);
+				}
+			);
+		});
+
 		describe("[SINGLE ERC20]", async ()  =>
 		{
 			describe("[DECIMALS = 18]", async ()  =>

@@ -133,6 +133,31 @@ contract YieldSyncV1EMPStrategy is
 	}
 
 	/// @inheritdoc IYieldSyncV1EMPStrategy
+	function utilizedERC20AmountPerBurn()
+		public
+		view
+		override
+		operational()
+		returns (uint256[] memory utilizedERC20Amount_)
+	{
+		utilizedERC20Amount_ = yieldSyncV1EMPStrategyInteractor.utilizedERC20TotalAmount(_utilizedERC20);
+
+		for (uint256 i = 0; i < _utilizedERC20.length; i++)
+		{
+			if (_utilizedERC20_purpose[_utilizedERC20[i]].withdraw)
+			{
+				(, uint256 utilizedERC20Amount) = SafeMath.tryDiv(SafeMath.mul(utilizedERC20Amount_[i], 1e18), totalSupply());
+
+				utilizedERC20Amount_[i] = utilizedERC20Amount;
+			}
+			else
+			{
+				utilizedERC20Amount_[i] = 0;
+			}
+		}
+	}
+
+	/// @inheritdoc IYieldSyncV1EMPStrategy
 	function utilizedERC20AmountValid(uint256[] memory _utilizedERC20Amount)
 		public
 		view
@@ -191,31 +216,6 @@ contract YieldSyncV1EMPStrategy is
 
 					break;
 				}
-			}
-		}
-	}
-
-	/// @inheritdoc IYieldSyncV1EMPStrategy
-	function utilizedERC20AmountPerBurn()
-		public
-		view
-		override
-		operational()
-		returns (uint256[] memory utilizedERC20Amount_)
-	{
-		utilizedERC20Amount_ = yieldSyncV1EMPStrategyInteractor.utilizedERC20TotalAmount(_utilizedERC20);
-
-		for (uint256 i = 0; i < _utilizedERC20.length; i++)
-		{
-			if (_utilizedERC20_purpose[_utilizedERC20[i]].withdraw)
-			{
-				(, uint256 utilizedERC20Amount) = SafeMath.tryDiv(SafeMath.mul(utilizedERC20Amount_[i], 1e18), totalSupply());
-
-				utilizedERC20Amount_[i] = utilizedERC20Amount;
-			}
-			else
-			{
-				utilizedERC20Amount_[i] = 0;
 			}
 		}
 	}
