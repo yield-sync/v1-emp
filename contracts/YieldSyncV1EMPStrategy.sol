@@ -64,7 +64,7 @@ contract YieldSyncV1EMPStrategy is
 		_;
 	}
 
-	modifier operational()
+	modifier initialized()
 	{
 		require(
 			address(yieldSyncV1EMPETHValueFeed) != address(0),
@@ -136,7 +136,7 @@ contract YieldSyncV1EMPStrategy is
 		public
 		view
 		override
-		operational()
+		initialized()
 		returns (uint256[] memory utilizedERC20Amount_)
 	{
 		utilizedERC20Amount_ = yieldSyncV1EMPStrategyInteractor.utilizedERC20TotalAmount(_utilizedERC20);
@@ -160,7 +160,7 @@ contract YieldSyncV1EMPStrategy is
 	function utilizedERC20AmountValid(uint256[] memory _utilizedERC20Amount)
 		public
 		view
-		operational()
+		initialized()
 		returns (bool utilizedERC20AmountValid_)
 	{
 		require(_utilizedERC20.length == _utilizedERC20Amount.length, "_utilizedERC20.length != _utilizedERC20Amount.length");
@@ -258,7 +258,7 @@ contract YieldSyncV1EMPStrategy is
 		public
 		override
 		nonReentrant()
-		operational()
+		initialized()
 	{
 		require(utilizedERC20DepositOpen, "!utilizedERC20DepositOpen");
 
@@ -290,7 +290,7 @@ contract YieldSyncV1EMPStrategy is
 		public
 		override
 		authManager()
-		operational()
+		initialized()
 	{
 		utilizedERC20DepositOpen = !utilizedERC20DepositOpen;
 	}
@@ -300,7 +300,7 @@ contract YieldSyncV1EMPStrategy is
 		public
 		override
 		nonReentrant()
-		operational()
+		initialized()
 	{
 		require(utilizedERC20WithdrawOpen, "!utilizedERC20WithdrawOpen");
 
@@ -323,7 +323,7 @@ contract YieldSyncV1EMPStrategy is
 		public
 		override
 		authManager()
-		operational()
+		initialized()
 	{
 		utilizedERC20WithdrawOpen = !utilizedERC20WithdrawOpen;
 	}
