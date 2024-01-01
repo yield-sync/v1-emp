@@ -14,6 +14,7 @@ const SEVENTY_FIVE_PERCENT = ethers.utils.parseUnits('.75', 18);
 const TWENTY_FIVE_PERCENT = ethers.utils.parseUnits('.25', 18);
 const ZERO_PERCENT = ethers.utils.parseUnits('0', 18);
 
+// TODO: Add test for operational modifier
 
 describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 {
@@ -42,7 +43,9 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 		yieldSyncV1EMPStrategy = await (await YieldSyncV1EMPStrategy.deploy(owner.address, "Exampe", "EX")).deployed();
 	});
 
-	describe("function utilizedERC20AndPurposeUpdate() (1/2)", async ()  => {
+
+	describe("function utilizedERC20AndPurposeUpdate()", async () =>
+	{
 		it(
 			"[auth] Should revert when unauthorized msg.sender calls..",
 			async ()  =>
@@ -68,27 +71,9 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 				).to.be.rejectedWith(ERROR_INVALID_PURPOSE_LENGTH);
 			}
 		);
-	});
-
-	describe("function utilizedERC20AndPurposeUpdate()", async () =>
-	{
-		it(
-			"[auth] Should revert when unauthorized msg.sender calls..",
-			async ()  =>
-			{
-				const [, addr1] = await ethers.getSigners();
-
-				await expect(
-					yieldSyncV1EMPStrategy.connect(addr1).utilizedERC20AndPurposeUpdate(
-						[mockERC20A.address],
-						[[true, true, HUNDRED_PERCENT]]
-					)
-				).to.be.rejectedWith(ERROR_NOT_MANAGER);
-			}
-		);
 
 		it(
-			"Should revert when invalid allocation passed..",
+			"Should revert when INVALID allocation passed..",
 			async ()  =>
 			{
 				const [owner] = await ethers.getSigners();
@@ -145,7 +130,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 		);
 
 		it(
-			"Should NOT revert when invalid allocation passed..",
+			"Should not revert when VALID allocation passed..",
 			async ()  =>
 			{
 				const [owner] = await ethers.getSigners();
@@ -185,10 +170,10 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 					for (let ii = 0; ii < VALID_ALLOCATION[i].addresses.length; ii++)
 					{
 						const v = VALID_ALLOCATION[i];
-						const a = (await _yieldSyncV1EMPStrategy.utilizedERC20())[ii];
-						const p = await _yieldSyncV1EMPStrategy.utilizedERC20_purpose(a);
+						const u = (await _yieldSyncV1EMPStrategy.utilizedERC20())[ii];
+						const p = await _yieldSyncV1EMPStrategy.utilizedERC20_purpose(u);
 
-						expect(a).to.be.equal(v.addresses[ii]);
+						expect(u).to.be.equal(v.addresses[ii]);
 						expect(p.deposit).to.be.equal(v.purpose[ii][0]);
 						expect(p.withdraw).to.be.equal(v.purpose[ii][1]);
 						expect(p.allocation.eq(v.purpose[ii][2])).to.be.true;
@@ -256,137 +241,8 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 		);
 	});
 
-	describe("function initializeStrategy()", async ()  =>
-	{
-		it(
-			"[auth] Should revert when unauthorized msg.sender calls..",
-			async ()  =>
-			{
-				const [, addr1] = await ethers.getSigners();
-
-				await expect(
-					yieldSyncV1EMPStrategy.connect(addr1).initializeStrategy(
-						eTHValueFeedDummy.address,
-						strategyInteractorDummy.address,
-						[mockERC20A.address],
-						[[true, true, HUNDRED_PERCENT]]
-					)
-				).to.be.rejectedWith(ERROR_NOT_MANAGER);
-			}
-		);
-
-		it(
-			"It should be able to set _strategy and _utilizedERC20..",
-			async ()  =>
-			{
-				// Initialize strategy with mock ERC20
-				await expect(
-					yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-						[mockERC20A.address],
-						[[true, true, HUNDRED_PERCENT]]
-					)
-				).to.not.be.reverted;
-
-				await expect(
-					yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
-				).to.not.be.reverted;
-
-				await expect(
-					yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
-				).to.not.be.reverted;
-
-				expect(await yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractor()).to.be.equal(
-					strategyInteractorDummy.address
-				);
-
-				expect((await yieldSyncV1EMPStrategy.utilizedERC20()).length).to.be.equal(1);
-
-				expect((await yieldSyncV1EMPStrategy.utilizedERC20())[0]).to.be.equal(mockERC20A.address);
-
-				const PURPOSE = await yieldSyncV1EMPStrategy.utilizedERC20_purpose(mockERC20A.address);
-
-				expect(PURPOSE.allocation).to.be.equal(HUNDRED_PERCENT);
-			}
-		);
-
-		describe("[MULTIPLE ERC20]", async ()  =>
-		{
-			it(
-				"It should be able to set multiple _utilizedERC20..",
-				async ()  =>
-				{
-					// Initialize strategy with mock ERC20
-					await expect(
-						yieldSyncV1EMPStrategy.initializeStrategy(
-							eTHValueFeedDummy.address,
-							strategyInteractorDummy.address,
-							[mockERC20A.address, mockERC20B.address],
-							[[true, true, FIFTY_PERCENT], [true, true, FIFTY_PERCENT]]
-						)
-					).to.not.be.reverted;
-
-					expect(await yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractor()).to.be.equal(
-						strategyInteractorDummy.address
-					);
-					expect((await yieldSyncV1EMPStrategy.utilizedERC20()).length).to.be.equal(2);
-					expect((await yieldSyncV1EMPStrategy.utilizedERC20())[0]).to.be.equal(mockERC20A.address);
-					expect((await yieldSyncV1EMPStrategy.utilizedERC20())[1]).to.be.equal(mockERC20B.address);
-
-					const PURPOSE_A = await yieldSyncV1EMPStrategy.utilizedERC20_purpose(mockERC20A.address);
-
-					expect(PURPOSE_A.allocation).to.be.equal(FIFTY_PERCENT);
-
-					const PURPOSE_B = await yieldSyncV1EMPStrategy.utilizedERC20_purpose(mockERC20B.address);
-
-					expect(PURPOSE_B.allocation).to.be.equal(FIFTY_PERCENT);
-				}
-			);
-		});
-	});
-
-	describe("function utilizedERC20AndPurposeUpdate() (2/2)", async ()  =>
-	{
-		it(
-			"[MULTIPLE-ONLY] Should be able to update utilizedERC20Allocation..",
-			async ()  =>
-			{
-				// Initialize strategy with mock ERC20
-				await expect(
-					yieldSyncV1EMPStrategy.initializeStrategy(
-						eTHValueFeedDummy.address,
-						strategyInteractorDummy.address,
-						[mockERC20A.address, mockERC20B.address],
-						[[true, true, FIFTY_PERCENT], [true, true, FIFTY_PERCENT]]
-						)
-				).to.not.be.reverted;
-
-				const mockERC20AdepositAmount = ethers.utils.parseUnits("1", 18);
-
-				// Approve the StrategyInteractorDummy contract to spend tokens on behalf of owner
-				await mockERC20A.approve(strategyInteractorDummy.address, mockERC20AdepositAmount);
-
-				const NEW_ALLOCATION = [[true, true, SEVENTY_FIVE_PERCENT], [true, true, TWENTY_FIVE_PERCENT]];
-
-				await expect(
-					yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-						[mockERC20A.address, mockERC20B.address],
-						NEW_ALLOCATION
-					)
-				).to.not.be.reverted;
-
-				const PURPOSE_A = await yieldSyncV1EMPStrategy.utilizedERC20_purpose(mockERC20A.address);
-
-				expect(PURPOSE_A.allocation).to.be.equal(SEVENTY_FIVE_PERCENT);
-
-				const PURPOSE_B = await yieldSyncV1EMPStrategy.utilizedERC20_purpose(mockERC20B.address);
-
-				expect(PURPOSE_B.allocation).to.be.equal(TWENTY_FIVE_PERCENT);
-			}
-		);
-	});
-
 	describe("function utilizedERC20AmountValid()", async ()  =>
 	{
-
+		// operational test
 	});
 });

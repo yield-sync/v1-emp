@@ -56,13 +56,23 @@ describe("[0.3] YieldSyncV1EMPStrategy.sol - Scenarios", async ()  =>
 
 						// Initialize strategy with mock ERC20
 						await expect(
-							yieldSyncV1EMPStrategy.initializeStrategy(
-								eTHValueFeedDummy.address,
-								strategyInteractorDummy.address,
+							yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
 								[mockERC20A.address],
 								[[true, true, HUNDRED_PERCENT],],
 							)
 						).to.not.be.reverted;
+
+						await expect(
+							yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+						).to.not.be.reverted;
+
+						await expect(
+							yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
+						).to.not.be.reverted;
+
+						expect(await yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractor()).to.be.equal(
+							strategyInteractorDummy.address
+						);
 
 						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
 						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
@@ -113,13 +123,23 @@ describe("[0.3] YieldSyncV1EMPStrategy.sol - Scenarios", async ()  =>
 
 						// Initialize strategy with mock ERC20
 						await expect(
-							yieldSyncV1EMPStrategy.initializeStrategy(
-								eTHValueFeedDummy.address,
-								strategyInteractorDummy.address,
+							yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
 								[mockERC20A.address],
 								[[true, true, HUNDRED_PERCENT],],
 							)
 						).to.not.be.reverted;
+
+						await expect(
+							yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+						).to.not.be.reverted;
+
+						await expect(
+							yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
+						).to.not.be.reverted;
+
+						expect(await yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractor()).to.be.equal(
+							strategyInteractorDummy.address
+						);
 
 						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
 						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
@@ -175,13 +195,23 @@ describe("[0.3] YieldSyncV1EMPStrategy.sol - Scenarios", async ()  =>
 
 				// Initialize strategy with mock ERC20
 				await expect(
-					yieldSyncV1EMPStrategy.initializeStrategy(
-						eTHValueFeedDummy.address,
-						strategyInteractorDummy.address,
+					yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
 						[mockERC20A.address, mockERC20B.address, mockERC20C.address],
 						[[true, false, FIFTY_PERCENT], [true, false, FIFTY_PERCENT], [false, true, ZERO_PERCENT],],
 					)
 				).to.not.be.reverted;
+
+				await expect(
+					yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+				).to.not.be.reverted;
+
+				await expect(
+					yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
+				).to.not.be.reverted;
+
+				expect(await yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractor()).to.be.equal(
+					strategyInteractorDummy.address
+				);
 
 				await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
 				await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
