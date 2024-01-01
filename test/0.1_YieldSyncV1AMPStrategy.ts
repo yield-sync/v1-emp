@@ -30,7 +30,7 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 	beforeEach("[beforeEach] Set up contracts..", async () =>
 	{
-		const [owner] = await ethers.getSigners();
+		const [OWNER] = await ethers.getSigners();
 
 		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
 		const MockERC206: ContractFactory = await ethers.getContractFactory("MockERC206");
@@ -43,7 +43,7 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 		mockERC206 = await (await MockERC206.deploy()).deployed();
 		eTHValueFeedDummy = await (await ETHValueFeedDummy.deploy()).deployed();
 		strategyInteractorDummy = await (await StrategyInteractorDummy.deploy()).deployed();
-		yieldSyncV1EMPStrategy = await (await YieldSyncV1EMPStrategy.deploy(owner.address, "Exampe", "EX")).deployed();
+		yieldSyncV1EMPStrategy = await (await YieldSyncV1EMPStrategy.deploy(OWNER.address, "Exampe", "EX")).deployed();
 	});
 
 
@@ -101,7 +101,7 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 						const DEPOSIT_AMOUNT = ethers.utils.parseUnits("1", 18);
 
-						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of owner
+						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
 						await mockERC20A.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT);
 
 						// [main-test] Deposit ERC20 tokens into the strategy
@@ -135,7 +135,7 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 						const depositAmount = ethers.utils.parseUnits("1", 18);
 
-						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of owner
+						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
 						await mockERC20A.approve(strategyInteractorDummy.address, depositAmount);
 
 						// [main-test] Deposit ERC20 tokens into the strategy
@@ -170,7 +170,7 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 						const DEPOSIT_AMOUNT_A = ethers.utils.parseUnits("1", 18);
 
-						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of owner
+						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
 						await mockERC20A.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_A);
 
 						// Deposit ERC20 tokens into the strategy
@@ -186,7 +186,7 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 					"[100] Should issue strategy ERC20 tokens upon utilized ERC20 deposit..",
 					async ()  =>
 					{
-						const [owner] = await ethers.getSigners();
+						const [OWNER] = await ethers.getSigners();
 
 						// Initialize strategy with mock ERC20
 						await expect(
@@ -209,7 +209,7 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 						const DEPOSIT_AMOUNT_A = ethers.utils.parseUnits("2", 18);
 
-						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of owner
+						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
 						await mockERC20A.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_A);
 
 						// Deposit ERC20 tokens into the strategy
@@ -220,7 +220,7 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 							await eTHValueFeedDummy.utilizedERC20ETHValue(mockERC20A.address)
 						).div(D_18);
 
-						expect(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).to.be.equal(yssBalance);
+						expect(await yieldSyncV1EMPStrategy.balanceOf(OWNER.address)).to.be.equal(yssBalance);
 					}
 				);
 			});
@@ -250,17 +250,17 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
 
 
-						const mockERC206depositAmount = ethers.utils.parseUnits("1", 6);
+						const DEPOSIT_AMOUNT_6 = ethers.utils.parseUnits("1", 6);
 
-						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of owner
-						await mockERC206.approve(strategyInteractorDummy.address, mockERC206depositAmount);
+						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
+						await mockERC206.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_6);
 
 						// Deposit ERC20 tokens into the strategy
 						await expect(
-							yieldSyncV1EMPStrategy.utilizedERC20Deposit([mockERC206depositAmount])
+							yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT_6])
 						).to.not.be.reverted;
 
-						expect(await mockERC206.balanceOf(strategyInteractorDummy.address)).to.be.equal(mockERC206depositAmount);
+						expect(await mockERC206.balanceOf(strategyInteractorDummy.address)).to.be.equal(DEPOSIT_AMOUNT_6);
 					}
 				);
 
@@ -268,7 +268,7 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 					"[100] Should issue strategy ERC20 tokens upon utilzied ERC20 deposit..",
 					async ()  =>
 					{
-						const [owner] = await ethers.getSigners();
+						const [OWNER] = await ethers.getSigners();
 
 						// Initialize strategy with mock ERC20
 						await expect(
@@ -289,16 +289,16 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
 
 
-						const mockERC206depositAmount = ethers.utils.parseUnits("1", 6);
+						const DEPOSIT_AMOUNT_6 = ethers.utils.parseUnits("1", 6);
 
-						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of owner
-						await mockERC206.approve(strategyInteractorDummy.address, mockERC206depositAmount);
+						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
+						await mockERC206.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_6);
 
 						// Deposit ERC20 tokens into the strategy
-						await yieldSyncV1EMPStrategy.utilizedERC20Deposit([mockERC206depositAmount])
+						await yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT_6])
 
 						// [calculate] YSS balance
-						const yssBalance = mockERC206depositAmount.mul(
+						const yssBalance = DEPOSIT_AMOUNT_6.mul(
 							// Convert to base 18 with 10**12
 							ethers.BigNumber.from("1000000000000")
 						).mul(
@@ -307,7 +307,7 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 							D_18
 						);
 
-						expect(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).to.be.equal(yssBalance);
+						expect(await yieldSyncV1EMPStrategy.balanceOf(OWNER.address)).to.be.equal(yssBalance);
 					}
 				);
 			});
@@ -344,7 +344,7 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 						const DEPOSIT_AMOUNT_A = ethers.utils.parseUnits("1", 18);
 						const DEPOSIT_AMOUNT_B = ethers.utils.parseUnits(".8", 18);
 
-						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of owner
+						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
 						await mockERC20A.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_A);
 						await mockERC20B.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_A);
 
@@ -359,7 +359,7 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 					"[50/50] Should be able to deposit ERC20s into strategy interactor..",
 					async ()  =>
 					{
-						const [owner] = await ethers.getSigners();
+						const [OWNER] = await ethers.getSigners();
 
 						// Initialize strategy with mock ERC20
 						await expect(
@@ -383,7 +383,7 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 						const DEPOSIT_AMOUNT_A = ethers.utils.parseUnits("1", 18);
 						const DEPOSIT_AMOUNT_B = ethers.utils.parseUnits("1", 18);
 
-						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of owner
+						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
 						await mockERC20A.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_A);
 						await mockERC20B.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_B);
 
@@ -409,7 +409,7 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 						);
 
 
-						expect(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).to.be.equal(yssBalance);
+						expect(await yieldSyncV1EMPStrategy.balanceOf(OWNER.address)).to.be.equal(yssBalance);
 					}
 				);
 
@@ -417,7 +417,7 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 					"[50/50] Should issue strategy ERC20 tokens upon utilized ERC20 deposit..",
 					async ()  =>
 					{
-						const [owner] = await ethers.getSigners();
+						const [OWNER] = await ethers.getSigners();
 
 						// Initialize strategy with mock ERC20
 						await expect(
@@ -441,7 +441,7 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 						const DEPOSIT_AMOUNT_A = ethers.utils.parseUnits("1", 18);
 						const DEPOSIT_AMOUNT_B = ethers.utils.parseUnits("1", 18);
 
-						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of owner
+						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
 						await mockERC20A.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_A);
 						await mockERC20B.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_B);
 
@@ -463,7 +463,7 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 							)
 						);
 
-						expect(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).to.be.equal(yssBalance);
+						expect(await yieldSyncV1EMPStrategy.balanceOf(OWNER.address)).to.be.equal(yssBalance);
 					}
 				);
 
@@ -493,7 +493,7 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 						const DEPOSIT_AMOUNT_A = ethers.utils.parseUnits(".5", 18);
 						const DEPOSIT_AMOUNT_B = ethers.utils.parseUnits(".25", 18);
 
-						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of owner
+						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
 						await mockERC20A.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_A);
 						await mockERC20B.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_A);
 
@@ -508,7 +508,7 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 					"[75/25] Should be able to deposit ERC20s into strategy interactor..",
 					async ()  =>
 					{
-						const [owner] = await ethers.getSigners();
+						const [OWNER] = await ethers.getSigners();
 
 						// Initialize strategy with mock ERC20
 						await expect(
@@ -532,7 +532,7 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 						const DEPOSIT_AMOUNT_A = ethers.utils.parseUnits("1.5", 18);
 						const DEPOSIT_AMOUNT_B = ethers.utils.parseUnits(".5", 18);
 
-						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of owner
+						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
 						await mockERC20A.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_A);
 						await mockERC20B.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_B);
 
@@ -557,7 +557,7 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 							)
 						);
 
-						expect(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).to.be.equal(yssBalance);
+						expect(await yieldSyncV1EMPStrategy.balanceOf(OWNER.address)).to.be.equal(yssBalance);
 					}
 				);
 
@@ -565,7 +565,7 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 					"[75/25] Should issue strategy ERC20 tokens upon utilized ERC20 deposit..",
 					async ()  =>
 					{
-						const [owner] = await ethers.getSigners();
+						const [OWNER] = await ethers.getSigners();
 
 						// Initialize strategy with mock ERC20
 						await expect(
@@ -589,7 +589,7 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 						const DEPOSIT_AMOUNT_A = ethers.utils.parseUnits(".75", 18);
 						const DEPOSIT_AMOUNT_B = ethers.utils.parseUnits(".25", 18);
 
-						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of owner
+						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
 						await mockERC20A.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_A);
 						await mockERC20B.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_B);
 
@@ -611,7 +611,7 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 							)
 						);
 
-						expect(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).to.be.equal(yssBalance);
+						expect(await yieldSyncV1EMPStrategy.balanceOf(OWNER.address)).to.be.equal(yssBalance);
 					}
 				);
 			});
@@ -642,15 +642,15 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 
 						const DEPOSIT_AMOUNT_A = ethers.utils.parseUnits(".5", 18);
-						const mockERC206depositAmount = ethers.utils.parseUnits(".25", 6);
+						const DEPOSIT_AMOUNT_6 = ethers.utils.parseUnits(".25", 6);
 
-						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of owner
+						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
 						await mockERC20A.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_A);
-						await mockERC206.approve(strategyInteractorDummy.address, mockERC206depositAmount);
+						await mockERC206.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_6);
 
 						// Deposit ERC20 tokens into the strategy
 						await expect(
-							yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT_A, mockERC206depositAmount])
+							yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT_A, DEPOSIT_AMOUNT_6])
 						).to.be.revertedWith(ERR0R_INVALID_UTILIZEDERC20AMOUNT);
 					}
 				);
@@ -659,7 +659,7 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 					"[75/25] Should be able to deposit ERC20s into strategy interactor..",
 					async ()  =>
 					{
-						const [owner] = await ethers.getSigners();
+						const [OWNER] = await ethers.getSigners();
 
 						// Initialize strategy with mock ERC20
 						await expect(
@@ -681,35 +681,35 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 
 						const DEPOSIT_AMOUNT_A = ethers.utils.parseUnits(".75", 18);
-						const mockERC206depositAmount = ethers.utils.parseUnits(".25", 6);
+						const DEPOSIT_AMOUNT_6 = ethers.utils.parseUnits(".25", 6);
 
-						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of owner
+						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
 						await mockERC20A.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_A);
-						await mockERC206.approve(strategyInteractorDummy.address, mockERC206depositAmount);
+						await mockERC206.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_6);
 
 						// Deposit ERC20 tokens into the strategy
 						await expect(
-							yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT_A, mockERC206depositAmount])
+							yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT_A, DEPOSIT_AMOUNT_6])
 						).to.not.be.reverted;
 
 						expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.be.equal(
 							DEPOSIT_AMOUNT_A
 						);
 						expect(await mockERC206.balanceOf(strategyInteractorDummy.address)).to.be.equal(
-							mockERC206depositAmount
+							DEPOSIT_AMOUNT_6
 						);
 
 						// [calculate] YSS balance
 						const yssBalance = DEPOSIT_AMOUNT_A.add(
 							// Convert to base 18 with 10**12
-							mockERC206depositAmount.mul(ethers.BigNumber.from("1000000000000"))
+							DEPOSIT_AMOUNT_6.mul(ethers.BigNumber.from("1000000000000"))
 						).mul(
 							await eTHValueFeedDummy.utilizedERC20ETHValue(mockERC20A.address)
 						).div(
 							D_18
 						);
 
-						expect(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).to.be.equal(yssBalance);
+						expect(await yieldSyncV1EMPStrategy.balanceOf(OWNER.address)).to.be.equal(yssBalance);
 					}
 				);
 			});

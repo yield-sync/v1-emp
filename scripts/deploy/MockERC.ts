@@ -10,10 +10,10 @@ const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 
 async function main() {
-	const [owner] = await ethers.getSigners();
+	const [OWNER] = await ethers.getSigners();
 
-	console.log("Deploying contract with Account:", owner.address);
-	console.log("Account Balance:", await owner.getBalance());
+	console.log("Deploying contract with Account:", OWNER.address);
+	console.log("Account Balance:", await OWNER.getBalance());
 
 	// Get factories
 	const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
@@ -67,7 +67,7 @@ async function main() {
 
 	console.log("mockERC20 Contract address:", mockERC20.address);
 	console.log("MockERC721 Contract address:", mockERC721.address);
-	console.log("Account Balance:", await owner.getBalance());
+	console.log("Account Balance:", await OWNER.getBalance());
 }
 
 
