@@ -5,9 +5,8 @@ import { expect } from "chai";
 import { Contract, ContractFactory } from "ethers";
 
 const ERROR_NOT_MANAGER = "manager != msg.sender";
-const ERROR_INVALID_PURPOSE_LENGTH = "_utilizedERC20.length != _purpose.length";
-const ERROR_INVALID_ALLOCATION = "_utilizedERC20_purposeAllocationTotal != ONE_HUNDRED_PERCENT";
-const ERROR_STRATEGY_ALREADY_SET = "address(yieldSyncV1EMPStrategyInteractor) != address(0)";
+const ERROR_INVALID_PURPOSE_LENGTH = "__utilizedERC20.length != _purpose.length";
+const ERROR_INVALID_ALLOCATION = "_utilizedERC20AllocationTotal != ONE_HUNDRED_PERCENT";
 
 const HUNDRED_PERCENT = ethers.utils.parseUnits('1', 18);
 const FIFTY_PERCENT = ethers.utils.parseUnits('.5', 18);
@@ -43,7 +42,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 		yieldSyncV1EMPStrategy = await (await YieldSyncV1EMPStrategy.deploy(owner.address, "Exampe", "EX")).deployed();
 	});
 
-	describe("function utilizedERC20_purposeUpdate() (1/2)", async ()  => {
+	describe("function utilizedERC20AndPurposeUpdate() (1/2)", async ()  => {
 		it(
 			"[auth] Should revert when unauthorized msg.sender calls..",
 			async ()  =>
@@ -51,7 +50,8 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 				const [, addr1] = await ethers.getSigners();
 
 				await expect(
-					yieldSyncV1EMPStrategy.connect(addr1).utilizedERC20_purposeUpdate(
+					yieldSyncV1EMPStrategy.connect(addr1).utilizedERC20AndPurposeUpdate(
+						[mockERC20A.address],
 						[[true, true, HUNDRED_PERCENT]]
 					)
 				).to.be.rejectedWith(ERROR_NOT_MANAGER);
@@ -64,13 +64,13 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 			{
 				// Keep in mind at this point utilizedTokens is an empty array
 				await expect(
-					yieldSyncV1EMPStrategy.utilizedERC20_purposeUpdate([[true, true, FIFTY_PERCENT],])
+					yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate([], [[true, true, FIFTY_PERCENT],])
 				).to.be.rejectedWith(ERROR_INVALID_PURPOSE_LENGTH);
 			}
 		);
 	});
 
-	describe("function initializeStrategy()", async ()  =>
+	describe("function utilizedERC20AndPurposeUpdate()", async () =>
 	{
 		it(
 			"[auth] Should revert when unauthorized msg.sender calls..",
@@ -79,9 +79,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 				const [, addr1] = await ethers.getSigners();
 
 				await expect(
-					yieldSyncV1EMPStrategy.connect(addr1).initializeStrategy(
-						eTHValueFeedDummy.address,
-						strategyInteractorDummy.address,
+					yieldSyncV1EMPStrategy.connect(addr1).utilizedERC20AndPurposeUpdate(
 						[mockERC20A.address],
 						[[true, true, HUNDRED_PERCENT]]
 					)
@@ -137,9 +135,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 					).deployed();
 
 					await expect(
-						_yieldSyncV1EMPStrategy.initializeStrategy(
-							eTHValueFeedDummy.address,
-							strategyInteractorDummy.address,
+						_yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
 							INVALID_ALLOCATIONS[i].addresses,
 							INVALID_ALLOCATIONS[i].purpose,
 						)
@@ -180,14 +176,102 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 					).deployed();
 
 					await expect(
-						_yieldSyncV1EMPStrategy.initializeStrategy(
-							eTHValueFeedDummy.address,
-							strategyInteractorDummy.address,
+						_yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
 							VALID_ALLOCATION[i].addresses,
 							VALID_ALLOCATION[i].purpose
 						)
 					).to.be.not.reverted;
+
+					for (let ii = 0; ii < VALID_ALLOCATION[i].addresses.length; ii++)
+					{
+						const v = VALID_ALLOCATION[i];
+						const a = (await _yieldSyncV1EMPStrategy.utilizedERC20())[ii];
+						const p = await _yieldSyncV1EMPStrategy.utilizedERC20_purpose(a);
+
+						expect(a).to.be.equal(v.addresses[ii]);
+						expect(p.deposit).to.be.equal(v.purpose[ii][0]);
+						expect(p.withdraw).to.be.equal(v.purpose[ii][1]);
+						expect(p.allocation.eq(v.purpose[ii][2])).to.be.true;
+					}
 				}
+			}
+		);
+	});
+
+	describe("function yieldSyncV1EMPETHValueFeedUpdate()", async () =>
+	{
+		it(
+			"[auth] Should revert when unauthorized msg.sender calls..",
+			async ()  =>
+			{
+				const [, addr1] = await ethers.getSigners();
+
+				await expect(
+					yieldSyncV1EMPStrategy.connect(addr1).yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+				).to.be.rejectedWith(ERROR_NOT_MANAGER);
+			}
+		);
+
+		it(
+			"Should be able to set yieldSyncV1EMPETHValueFeed..",
+			async ()  =>
+			{
+				await expect(
+					yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+				).to.not.be.reverted;
+
+				expect(await yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeed()).to.be.equal(eTHValueFeedDummy.address);
+			}
+		);
+	});
+
+	describe("function yieldSyncV1EMPStrategyInteractorUpdate()", async () =>
+	{
+		it(
+			"[auth] Should revert when unauthorized msg.sender calls..",
+			async ()  =>
+			{
+				const [, addr1] = await ethers.getSigners();
+
+				await expect(
+					yieldSyncV1EMPStrategy.connect(addr1).yieldSyncV1EMPStrategyInteractorUpdate(
+						strategyInteractorDummy.address
+					)
+				).to.be.rejectedWith(ERROR_NOT_MANAGER);
+			}
+		);
+
+		it(
+			"Should be able to set yieldSyncV1EMPStrategyInteractor..",
+			async ()  =>
+			{
+				await expect(
+					yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
+				).to.not.be.reverted;
+
+				expect(await yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractor()).to.be.equal(
+					strategyInteractorDummy.address
+				);
+			}
+		);
+	});
+
+	describe("function initializeStrategy()", async ()  =>
+	{
+		it(
+			"[auth] Should revert when unauthorized msg.sender calls..",
+			async ()  =>
+			{
+				const [, addr1] = await ethers.getSigners();
+
+				await expect(
+					yieldSyncV1EMPStrategy.connect(addr1).initializeStrategy(
+						eTHValueFeedDummy.address,
+						strategyInteractorDummy.address,
+						[mockERC20A.address],
+						[[true, true, HUNDRED_PERCENT]]
+					)
+				).to.be.rejectedWith(ERROR_NOT_MANAGER);
 			}
 		);
 
@@ -197,48 +281,31 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 			{
 				// Initialize strategy with mock ERC20
 				await expect(
-					yieldSyncV1EMPStrategy.initializeStrategy(
-						eTHValueFeedDummy.address,
-						strategyInteractorDummy.address,
+					yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
 						[mockERC20A.address],
 						[[true, true, HUNDRED_PERCENT]]
 					)
+				).to.not.be.reverted;
+
+				await expect(
+					yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+				).to.not.be.reverted;
+
+				await expect(
+					yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 				).to.not.be.reverted;
 
 				expect(await yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractor()).to.be.equal(
 					strategyInteractorDummy.address
 				);
+
 				expect((await yieldSyncV1EMPStrategy.utilizedERC20()).length).to.be.equal(1);
+
 				expect((await yieldSyncV1EMPStrategy.utilizedERC20())[0]).to.be.equal(mockERC20A.address);
 
 				const PURPOSE = await yieldSyncV1EMPStrategy.utilizedERC20_purpose(mockERC20A.address);
 
 				expect(PURPOSE.allocation).to.be.equal(HUNDRED_PERCENT);
-			}
-		);
-
-		it(
-			"It should be able only be able to set once..",
-			async ()  =>
-			{
-				// Initialize strategy with mock ERC20
-				await expect(
-					yieldSyncV1EMPStrategy.initializeStrategy(
-						eTHValueFeedDummy.address,
-						strategyInteractorDummy.address,
-						[mockERC20A.address],
-						[[true, true, HUNDRED_PERCENT]]
-					)
-				).to.not.be.reverted;
-
-				await expect(
-					yieldSyncV1EMPStrategy.initializeStrategy(
-						eTHValueFeedDummy.address,
-						strategyInteractorDummy.address,
-						[mockERC20A.address],
-						[[true, true, HUNDRED_PERCENT]]
-					)
-				).to.be.rejectedWith(ERROR_STRATEGY_ALREADY_SET);
 			}
 		);
 
@@ -277,7 +344,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 		});
 	});
 
-	describe("function utilizedERC20_purposeUpdate() (2/2)", async ()  =>
+	describe("function utilizedERC20AndPurposeUpdate() (2/2)", async ()  =>
 	{
 		it(
 			"[MULTIPLE-ONLY] Should be able to update utilizedERC20Allocation..",
@@ -300,7 +367,12 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 
 				const NEW_ALLOCATION = [[true, true, SEVENTY_FIVE_PERCENT], [true, true, TWENTY_FIVE_PERCENT]];
 
-				await expect(yieldSyncV1EMPStrategy.utilizedERC20_purposeUpdate(NEW_ALLOCATION)).to.not.be.reverted;
+				await expect(
+					yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
+						[mockERC20A.address, mockERC20B.address],
+						NEW_ALLOCATION
+					)
+				).to.not.be.reverted;
 
 				const PURPOSE_A = await yieldSyncV1EMPStrategy.utilizedERC20_purpose(mockERC20A.address);
 

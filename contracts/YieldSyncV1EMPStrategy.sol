@@ -64,8 +64,13 @@ contract YieldSyncV1EMPStrategy is
 		_;
 	}
 
-	modifier setYieldSyncV1EMPStrategyInteractor()
+	modifier operational()
 	{
+		require(
+			address(yieldSyncV1EMPETHValueFeed) != address(0),
+			"address(yieldSyncV1EMPETHValueFeed) == address(0)"
+		);
+
 		require(
 			address(yieldSyncV1EMPStrategyInteractor) != address(0),
 			"address(yieldSyncV1EMPStrategyInteractor) == address(0)"
@@ -113,7 +118,7 @@ contract YieldSyncV1EMPStrategy is
 		public
 		view
 		override
-		setYieldSyncV1EMPStrategyInteractor()
+		operational()
 		returns (uint256 balanceOfETHValue_)
 	{
 		uint256[] memory uTAPB = utilizedERC20AmountPerBurn();
@@ -131,7 +136,7 @@ contract YieldSyncV1EMPStrategy is
 	function utilizedERC20AmountValid(uint256[] memory _utilizedERC20Amount)
 		public
 		view
-		setYieldSyncV1EMPStrategyInteractor()
+		operational()
 		returns (bool utilizedERC20AmountValid_)
 	{
 		require(_utilizedERC20.length == _utilizedERC20Amount.length, "_utilizedERC20.length != _utilizedERC20Amount.length");
@@ -195,7 +200,7 @@ contract YieldSyncV1EMPStrategy is
 		public
 		view
 		override
-		setYieldSyncV1EMPStrategyInteractor()
+		operational()
 		returns (uint256[] memory utilizedERC20Amount_)
 	{
 		utilizedERC20Amount_ = yieldSyncV1EMPStrategyInteractor.utilizedERC20TotalAmount(_utilizedERC20);
@@ -230,28 +235,22 @@ contract YieldSyncV1EMPStrategy is
 		override
 		authManager()
 	{
-		require(
-			address(yieldSyncV1EMPStrategyInteractor) == address(0),
-			"address(yieldSyncV1EMPStrategyInteractor) != address(0)"
-		);
-
-		_utilizedERC20 = __utilizedERC20;
-
-		utilizedERC20_purposeUpdate(_purpose);
-
-		yieldSyncV1EMPETHValueFeed = IYieldSyncV1EMPETHValueFeed(_yieldSyncV1EMPETHValueFeed);
-		yieldSyncV1EMPStrategyInteractor = IYieldSyncV1EMPStrategyInteractor(_yieldSyncV1EMPStrategyInteractor);
+		utilizedERC20AndPurposeUpdate(__utilizedERC20, _purpose);
+		yieldSyncV1EMPETHValueFeedUpdate(_yieldSyncV1EMPETHValueFeed);
+		yieldSyncV1EMPStrategyInteractorUpdate(_yieldSyncV1EMPStrategyInteractor);
 	}
 
 	/// @inheritdoc IYieldSyncV1EMPStrategy
-	function utilizedERC20_purposeUpdate(Purpose[] memory _purpose)
+	function utilizedERC20AndPurposeUpdate(address[] memory __utilizedERC20, Purpose[] memory _purpose)
 		public
 		override
 		authManager()
 	{
-		require(_utilizedERC20.length == _purpose.length, "_utilizedERC20.length != _purpose.length");
+		require(__utilizedERC20.length == _purpose.length, "__utilizedERC20.length != _purpose.length");
 
-		uint256 _utilizedERC20_purposeAllocationTotal;
+		_utilizedERC20 = __utilizedERC20;
+
+		uint256 _utilizedERC20AllocationTotal;
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
@@ -259,14 +258,11 @@ contract YieldSyncV1EMPStrategy is
 
 			if (_utilizedERC20_purpose[_utilizedERC20[i]].deposit)
 			{
-				_utilizedERC20_purposeAllocationTotal += _utilizedERC20_purpose[_utilizedERC20[i]].allocation;
+				_utilizedERC20AllocationTotal += _utilizedERC20_purpose[_utilizedERC20[i]].allocation;
 			}
 		}
 
-		require(
-			_utilizedERC20_purposeAllocationTotal == ONE_HUNDRED_PERCENT,
-			"_utilizedERC20_purposeAllocationTotal != ONE_HUNDRED_PERCENT"
-		);
+		require(_utilizedERC20AllocationTotal == ONE_HUNDRED_PERCENT, "_utilizedERC20AllocationTotal != ONE_HUNDRED_PERCENT");
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
@@ -279,7 +275,7 @@ contract YieldSyncV1EMPStrategy is
 		public
 		override
 		nonReentrant()
-		setYieldSyncV1EMPStrategyInteractor()
+		operational()
 	{
 		require(utilizedERC20DepositOpen, "!utilizedERC20DepositOpen");
 
@@ -311,7 +307,7 @@ contract YieldSyncV1EMPStrategy is
 		public
 		override
 		authManager()
-		setYieldSyncV1EMPStrategyInteractor()
+		operational()
 	{
 		utilizedERC20DepositOpen = !utilizedERC20DepositOpen;
 	}
@@ -321,7 +317,7 @@ contract YieldSyncV1EMPStrategy is
 		public
 		override
 		nonReentrant()
-		setYieldSyncV1EMPStrategyInteractor()
+		operational()
 	{
 		require(utilizedERC20WithdrawOpen, "!utilizedERC20WithdrawOpen");
 
@@ -344,8 +340,26 @@ contract YieldSyncV1EMPStrategy is
 		public
 		override
 		authManager()
-		setYieldSyncV1EMPStrategyInteractor()
+		operational()
 	{
 		utilizedERC20WithdrawOpen = !utilizedERC20WithdrawOpen;
+	}
+
+	/// @inheritdoc IYieldSyncV1EMPStrategy
+	function yieldSyncV1EMPETHValueFeedUpdate(address _yieldSyncV1EMPETHValueFeed)
+		public
+		override
+		authManager()
+	{
+		yieldSyncV1EMPETHValueFeed = IYieldSyncV1EMPETHValueFeed(_yieldSyncV1EMPETHValueFeed);
+	}
+
+	/// @inheritdoc IYieldSyncV1EMPStrategy
+	function yieldSyncV1EMPStrategyInteractorUpdate(address _yieldSyncV1EMPStrategyInteractor)
+		public
+		override
+		authManager()
+	{
+		yieldSyncV1EMPStrategyInteractor = IYieldSyncV1EMPStrategyInteractor(_yieldSyncV1EMPStrategyInteractor);
 	}
 }

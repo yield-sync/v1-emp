@@ -169,10 +169,11 @@ interface IYieldSyncV1EMPStrategy is
 	;
 
 	/**
-	* @notice Set allocation for utilized ERC20s
+	* @notice Set utilized ERC20s and purpose
+	* @param __utilizedERC20 {address[]}
 	* @param _purpose {Purpose[]}
 	*/
-	function utilizedERC20_purposeUpdate(Purpose[] memory _purpose)
+	function utilizedERC20AndPurposeUpdate(address[] memory __utilizedERC20, Purpose[] memory _purpose)
 		external
 	;
 
@@ -203,6 +204,22 @@ interface IYieldSyncV1EMPStrategy is
 	* @notice Utilized ERC20 Deposit Open Toggle
 	*/
 	function utilizedERC20WithdrawOpenToggle()
+		external
+	;
+
+	/**
+	* @notice Update yieldSyncV1EMPETHValueFeed
+	* @param _yieldSyncV1EMPETHValueFeed {address}
+	*/
+	function yieldSyncV1EMPETHValueFeedUpdate(address _yieldSyncV1EMPETHValueFeed)
+		external
+	;
+
+	/**
+	* @notice Update yieldSyncV1EMPStrategyInteractor
+	* @param _yieldSyncV1EMPStrategyInteractor {address}
+	*/
+	function yieldSyncV1EMPStrategyInteractorUpdate(address _yieldSyncV1EMPStrategyInteractor)
 		external
 	;
 }
