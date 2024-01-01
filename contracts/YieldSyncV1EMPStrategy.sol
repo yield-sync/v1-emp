@@ -225,22 +225,6 @@ contract YieldSyncV1EMPStrategy is
 
 
 	/// @inheritdoc IYieldSyncV1EMPStrategy
-	function initializeStrategy(
-		address _yieldSyncV1EMPETHValueFeed,
-		address _yieldSyncV1EMPStrategyInteractor,
-		address[] memory __utilizedERC20,
-		Purpose[] memory _purpose
-	)
-		public
-		override
-		authManager()
-	{
-		utilizedERC20AndPurposeUpdate(__utilizedERC20, _purpose);
-		yieldSyncV1EMPETHValueFeedUpdate(_yieldSyncV1EMPETHValueFeed);
-		yieldSyncV1EMPStrategyInteractorUpdate(_yieldSyncV1EMPStrategyInteractor);
-	}
-
-	/// @inheritdoc IYieldSyncV1EMPStrategy
 	function utilizedERC20AndPurposeUpdate(address[] memory __utilizedERC20, Purpose[] memory _purpose)
 		public
 		override

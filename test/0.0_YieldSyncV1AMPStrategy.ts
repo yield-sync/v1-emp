@@ -10,7 +10,6 @@ const ERROR_INVALID_ALLOCATION = "_utilizedERC20AllocationTotal != ONE_HUNDRED_P
 
 const HUNDRED_PERCENT = ethers.utils.parseUnits('1', 18);
 const FIFTY_PERCENT = ethers.utils.parseUnits('.5', 18);
-const SEVENTY_FIVE_PERCENT = ethers.utils.parseUnits('.75', 18);
 const TWENTY_FIVE_PERCENT = ethers.utils.parseUnits('.25', 18);
 const ZERO_PERCENT = ethers.utils.parseUnits('0', 18);
 

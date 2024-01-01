@@ -150,24 +150,6 @@ interface IYieldSyncV1EMPStrategy is
 		returns (uint256[] memory utilizedERC20Amount_)
 	;
 
-
-	/**
-	* @dev [called-once]
-	* @notice Initialize strategy
-	* @param _yieldSyncV1EMPETHValueFeed {address}
-	* @param _yieldSyncV1EMPStrategyInteractor {address}
-	* @param __utilizedERC20 {address[]}
-	* @param _purpose {uint256[]}
-	*/
-	function initializeStrategy(
-		address _yieldSyncV1EMPETHValueFeed,
-		address _yieldSyncV1EMPStrategyInteractor,
-		address[] memory __utilizedERC20,
-		Purpose[] memory _purpose
-	)
-		external
-	;
-
 	/**
 	* @notice Set utilized ERC20s and purpose
 	* @param __utilizedERC20 {address[]}
