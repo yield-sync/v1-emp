@@ -244,7 +244,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 	describe("function balanceOfETHValue()", async () =>
 	{
 		it(
-			"Should revert if ETH FEED is not set..",
+			"[requirement] Should revert if ETH FEED is not set..",
 			async ()  =>
 			{
 				const [OWNER] = await ethers.getSigners();
@@ -256,7 +256,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 		);
 
 		it(
-			"Should revert if strategy is not set..",
+			"[requirement] Should revert if strategy is not set..",
 			async ()  =>
 			{
 				const [OWNER] = await ethers.getSigners();
@@ -275,7 +275,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 	describe("function utilizedERC20AmountPerBurn()", async () =>
 	{
 		it(
-			"Should revert if ETH FEED is not set..",
+			"[requirement] Should revert if ETH FEED is not set..",
 			async ()  =>
 			{
 				await expect(
@@ -285,7 +285,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 		);
 
 		it(
-			"Should revert if strategy is not set..",
+			"[requirement] Should revert if strategy is not set..",
 			async ()  =>
 			{
 				await expect(
@@ -302,7 +302,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 	describe("function utilizedERC20AmountValid()", async ()  =>
 	{
 		it(
-			"Should revert if ETH FEED is not set..",
+			"[requirement] Should revert if ETH FEED is not set..",
 			async ()  =>
 			{
 				await expect(
@@ -312,7 +312,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 		);
 
 		it(
-			"Should revert if strategy is not set..",
+			"[requirement] Should revert if strategy is not set..",
 			async ()  =>
 			{
 				await expect(
@@ -393,7 +393,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 		);
 
 		it(
-			"Should revert if ETH FEED is not set..",
+			"[requirement] Should revert if ETH FEED is not set..",
 			async ()  =>
 			{
 				await expect(
@@ -403,7 +403,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 		);
 
 		it(
-			"Should revert if strategy is not set..",
+			"[requirement] Should revert if strategy is not set..",
 			async ()  =>
 			{
 				await expect(
@@ -432,7 +432,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 		);
 
 		it(
-			"Should revert if ETH FEED is not set..",
+			"[requirement] Should revert if ETH FEED is not set..",
 			async ()  =>
 			{
 				await expect(
@@ -442,7 +442,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 		);
 
 		it(
-			"Should revert if strategy is not set..",
+			"[requirement] Should revert if strategy is not set..",
 			async ()  =>
 			{
 				await expect(
