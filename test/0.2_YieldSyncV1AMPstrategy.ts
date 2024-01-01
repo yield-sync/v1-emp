@@ -6,6 +6,7 @@ import { Contract, ContractFactory } from "ethers";
 
 const ERROR_ETH_FEED_NOT_SET = "address(yieldSyncV1EMPETHValueFeed) == address(0)";
 const ERROR_STRATEGY_NOT_SET = "address(yieldSyncV1EMPStrategyInteractor) == address(0)";
+const ERROR_WITHDRAW_NOT_OPEN = "!utilizedERC20WithdrawOpen";
 
 const HUNDRED_PERCENT = ethers.utils.parseUnits('1', 18);
 const FIFTY_PERCENT = ethers.utils.parseUnits('.5', 18);
@@ -76,6 +77,68 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 			describe("[DECIMALS = 18]", async ()  =>
 			{
 				it(
+					"Should revert if withdrawals is not open..",
+					async ()  =>
+					{
+						const [owner] = await ethers.getSigners();
+
+						// Initialize strategy with mock ERC20
+						await expect(
+							yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
+								[mockERC20A.address],
+								[[true, false, HUNDRED_PERCENT]],
+							)
+						).to.not.be.reverted;
+
+						await expect(
+							yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+						).to.not.be.reverted;
+
+						await expect(
+							yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
+						).to.not.be.reverted;
+
+						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
+
+						const STRAT_TOTAL_SUPPLY = await yieldSyncV1EMPStrategy.totalSupply();
+						const OWNER_MOCK_A_BALANCE_B4 = await mockERC20A.balanceOf(owner.address);
+
+						const DEPOSIT_AMOUNT = ethers.utils.parseUnits("1", 18);
+
+						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of owner
+						await mockERC20A.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT);
+
+						// Deposit mockERC20A tokens into the strategy
+						await expect(
+							yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT])
+						).to.not.be.reverted;
+
+						const OWNER_MOCK_A_BALANCE_AFTER = await mockERC20A.balanceOf(owner.address);
+
+						// Check that the balance remains less than original
+						expect(OWNER_MOCK_A_BALANCE_AFTER).to.be.lessThan(OWNER_MOCK_A_BALANCE_B4);
+
+						// mockERC20A BalanceOf strategy interactor should equal to deposit amount
+						expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.be.equal(
+							DEPOSIT_AMOUNT
+						);
+
+						// Strategy totalSupply has increased (b4 should be 0)
+						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.greaterThan(STRAT_TOTAL_SUPPLY);
+
+						// Strategy BalanceOf owner should be newly minted tokens (Current Supply - B4 supply)
+						expect(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).to.be.equal(
+							(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).sub(STRAT_TOTAL_SUPPLY)
+						);
+
+						// [main-test] Withdraw ERC20 tokens into the strategy
+						await expect(yieldSyncV1EMPStrategy.utilizedERC20Withdraw(0)).to.be.rejectedWith(
+							ERROR_WITHDRAW_NOT_OPEN
+						);
+					}
+				);
+
+				it(
 					"[100] Should fail to return ERC20 if purpose.withdraw != true..",
 					async ()  =>
 					{
@@ -101,33 +164,35 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
 
 
-						const strategyTotalSupplyB4 = await yieldSyncV1EMPStrategy.totalSupply();
-						const ownerMockERC20ABalanceB4 = await mockERC20A.balanceOf(owner.address);
+						const STRAT_TOTAL_SUPPLY_B4 = await yieldSyncV1EMPStrategy.totalSupply();
+						const OWNER_MOCK_A_BALANCE_B4 = await mockERC20A.balanceOf(owner.address);
 
-						const mockERC20AdepositAmount = ethers.utils.parseUnits("1", 18);
+						const DEPOSIT_AMOUNT = ethers.utils.parseUnits("1", 18);
 
 						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of owner
-						await mockERC20A.approve(strategyInteractorDummy.address, mockERC20AdepositAmount);
+						await mockERC20A.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT);
 
 						// Deposit mockERC20A tokens into the strategy
-						yieldSyncV1EMPStrategy.utilizedERC20Deposit([mockERC20AdepositAmount])
+						await expect(
+							yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT])
+						).to.not.be.reverted;
 
 						const ownerMockERC20ABalanceAfterDeposit = await mockERC20A.balanceOf(owner.address);
 
 						// Check that the balance remains less than original
-						expect(ownerMockERC20ABalanceAfterDeposit).to.be.lessThan(ownerMockERC20ABalanceB4);
+						expect(ownerMockERC20ABalanceAfterDeposit).to.be.lessThan(OWNER_MOCK_A_BALANCE_B4);
 
 						// mockERC20A BalanceOf strategy interactor should equal to deposit amount
 						expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.be.equal(
-							mockERC20AdepositAmount
+							DEPOSIT_AMOUNT
 						);
 
 						// Strategy totalSupply has increased (b4 should be 0)
-						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.greaterThan(strategyTotalSupplyB4);
+						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.greaterThan(STRAT_TOTAL_SUPPLY_B4);
 
 						// Strategy BalanceOf owner should be newly minted tokens (Current Supply - B4 supply)
 						expect(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).to.be.equal(
-							(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).sub(strategyTotalSupplyB4)
+							(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).sub(STRAT_TOTAL_SUPPLY_B4)
 						);
 
 						// [main-test] Withdraw ERC20 tokens into the strategy
@@ -139,14 +204,14 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 
 						// Unchanged balance of strategy interactor
 						expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.be.equal(
-							mockERC20AdepositAmount
+							DEPOSIT_AMOUNT
 						);
 
 						// Strategy token burned
 						expect(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).to.be.equal(0);
 
 						// Supply put back to original
-						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.equal(strategyTotalSupplyB4);
+						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.equal(STRAT_TOTAL_SUPPLY_B4);
 
 						// Check that the balance remains less than original
 						expect(await mockERC20A.balanceOf(owner.address)).to.be.greaterThanOrEqual(
@@ -154,7 +219,7 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 						);
 
 						// Check that the balance remains less than original
-						expect(await mockERC20A.balanceOf(owner.address)).to.be.lessThan(ownerMockERC20ABalanceB4);
+						expect(await mockERC20A.balanceOf(owner.address)).to.be.lessThan(OWNER_MOCK_A_BALANCE_B4);
 					}
 				);
 
@@ -184,33 +249,31 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
 
 
-						const strategyTotalSupplyB4 = await yieldSyncV1EMPStrategy.totalSupply();
+						const STRAT_TOTAL_SUPPLY_B4 = await yieldSyncV1EMPStrategy.totalSupply();
 
-						const strategyInteractorMockERC20ABalanceB4 = await mockERC20A.balanceOf(
-							strategyInteractorDummy.address
-						);
+						const STRAT_MOCK_A_BALANCE_B4 = await mockERC20A.balanceOf(strategyInteractorDummy.address);
 
-						const ownerMockERC20ABalanceB4 = await mockERC20A.balanceOf(owner.address);
+						const OWNER_MOCK_A_BALANCE_B4 = await mockERC20A.balanceOf(owner.address);
 
-						const mockERC20AdepositAmount = ethers.utils.parseUnits("1", 18);
+						const DEPOSIT_AMOUNT = ethers.utils.parseUnits("1", 18);
 
 						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of owner
-						await mockERC20A.approve(strategyInteractorDummy.address, mockERC20AdepositAmount);
+						await mockERC20A.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT);
 
 						// Deposit mockERC20A tokens into the strategy
-						yieldSyncV1EMPStrategy.utilizedERC20Deposit([mockERC20AdepositAmount])
+						yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT])
 
 						// mockERC20A BalanceOf strategy interactor should equal to deposit amount
 						expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.be.equal(
-							strategyInteractorMockERC20ABalanceB4.add(mockERC20AdepositAmount)
+							STRAT_MOCK_A_BALANCE_B4.add(DEPOSIT_AMOUNT)
 						);
 
 						// Strategy totalSupply has increased
-						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.greaterThan(strategyTotalSupplyB4);
+						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.greaterThan(STRAT_TOTAL_SUPPLY_B4);
 
 						// Strategy BalanceOf owner should be newly minted tokens (Current Supply - B4 supply)
 						expect(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).to.be.equal(
-							(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).sub(strategyTotalSupplyB4)
+							(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).sub(STRAT_TOTAL_SUPPLY_B4)
 						);
 
 						// [main-test] Withdraw ERC20 tokens into the strategy
@@ -220,14 +283,14 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 
 						// Strategy token burned
 						expect(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).to.be.equal(
-							strategyInteractorMockERC20ABalanceB4
+							STRAT_MOCK_A_BALANCE_B4
 						);
 
 						// Supply put back to original
-						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.equal(strategyTotalSupplyB4);
+						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.equal(STRAT_TOTAL_SUPPLY_B4);
 
 						// Check that the balance been returned to original or greater
-						expect(await mockERC20A.balanceOf(owner.address)).to.be.greaterThanOrEqual(ownerMockERC20ABalanceB4);
+						expect(await mockERC20A.balanceOf(owner.address)).to.be.greaterThanOrEqual(OWNER_MOCK_A_BALANCE_B4);
 					}
 				);
 			});
@@ -260,13 +323,11 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
 
 
-						const strategyTotalSupplyB4 = await yieldSyncV1EMPStrategy.totalSupply();
+						const STRAT_TOTAL_SUPPLY_B4 = await yieldSyncV1EMPStrategy.totalSupply();
 
-						const strategyInteractorMockERC206BalanceB4 = await mockERC206.balanceOf(
-							strategyInteractorDummy.address
-						);
+						const STRAT_MOCK_6_BALANCE_B4 = await mockERC206.balanceOf(strategyInteractorDummy.address);
 
-						const ownerMockERC206BalanceB4 = await mockERC206.balanceOf(owner.address);
+						const OWNER_MOCK_6_BALANCE_B4 = await mockERC206.balanceOf(owner.address);
 
 						const mockERC206depositAmount = ethers.utils.parseUnits("1", 6);
 
@@ -278,15 +339,15 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 
 						// mockERC206 BalanceOf strategy interactor should equal to deposit amount
 						expect(await mockERC206.balanceOf(strategyInteractorDummy.address)).to.be.equal(
-							strategyInteractorMockERC206BalanceB4.add(mockERC206depositAmount)
+							STRAT_MOCK_6_BALANCE_B4.add(mockERC206depositAmount)
 						);
 
 						// Strategy totalSupply has increased
-						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.greaterThan(strategyTotalSupplyB4);
+						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.greaterThan(STRAT_TOTAL_SUPPLY_B4);
 
 						// Strategy BalanceOf owner should be newly minted tokens (Current Supply - B4 supply)
 						expect(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).to.be.equal(
-							(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).sub(strategyTotalSupplyB4)
+							(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).sub(STRAT_TOTAL_SUPPLY_B4)
 						);
 
 						// [main-test] Withdraw ERC20 tokens into the strategy
@@ -296,14 +357,14 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 
 						// Strategy token burned
 						expect(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).to.be.equal(
-							strategyInteractorMockERC206BalanceB4
+							STRAT_MOCK_6_BALANCE_B4
 						);
 
 						// Supply put back to original
-						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.equal(strategyTotalSupplyB4);
+						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.equal(STRAT_TOTAL_SUPPLY_B4);
 
 						// Check that the balance been returned to original or greater
-						expect(await mockERC206.balanceOf(owner.address)).to.be.greaterThanOrEqual(ownerMockERC206BalanceB4);
+						expect(await mockERC206.balanceOf(owner.address)).to.be.greaterThanOrEqual(OWNER_MOCK_6_BALANCE_B4);
 					}
 				);
 			});
@@ -340,44 +401,39 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
 
 
-						const strategyTotalSupplyB4 = await yieldSyncV1EMPStrategy.totalSupply();
+						const STRAT_TOTAL_SUPPLY_B4 = await yieldSyncV1EMPStrategy.totalSupply();
 
-						const strategyInteractorMockERC20ABalanceB4 = await mockERC20A.balanceOf(
-							strategyInteractorDummy.address
-						);
+						const STRAT_MOCK_A_BALANCE_B4 = await mockERC20A.balanceOf(strategyInteractorDummy.address);
+						const STRAT_MOCK_B_BALANCE_B4 = await mockERC20B.balanceOf(strategyInteractorDummy.address);
 
-						const strategyInteractorMockERC20BBalanceB4 = await mockERC20B.balanceOf(
-							strategyInteractorDummy.address
-						);
+						const OWNER_MOCK_A_BALANCE_B4 = await mockERC20A.balanceOf(owner.address);
+						const OWNER_MOCK_B_BALANCE_B4 = await mockERC20B.balanceOf(owner.address);
 
-						const ownerMockERC20ABalanceB4 = await mockERC20A.balanceOf(owner.address);
-						const ownerMockERC20BBalanceB4 = await mockERC20B.balanceOf(owner.address);
-
-						const mockERC20DepositAmount = ethers.utils.parseUnits("1", 18);
+						const DEPOSIT_AMOUNT = ethers.utils.parseUnits("1", 18);
 
 						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of owner
-						await mockERC20A.approve(strategyInteractorDummy.address, mockERC20DepositAmount);
-						await mockERC20B.approve(strategyInteractorDummy.address, mockERC20DepositAmount);
+						await mockERC20A.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT);
+						await mockERC20B.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT);
 
 						// Deposit mockERC20A tokens into the strategy
-						yieldSyncV1EMPStrategy.utilizedERC20Deposit([mockERC20DepositAmount, mockERC20DepositAmount])
+						yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT, DEPOSIT_AMOUNT])
 
 						// mockERC20A BalanceOf strategy interactor should equal to deposit amount
 						expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.be.equal(
-							strategyInteractorMockERC20ABalanceB4.add(mockERC20DepositAmount)
+							STRAT_MOCK_A_BALANCE_B4.add(DEPOSIT_AMOUNT)
 						);
 
 						// mockERC20B BalanceOf strategy interactor should equal to deposit amount
 						expect(await mockERC20B.balanceOf(strategyInteractorDummy.address)).to.be.equal(
-							strategyInteractorMockERC20BBalanceB4.add(mockERC20DepositAmount)
+							STRAT_MOCK_B_BALANCE_B4.add(DEPOSIT_AMOUNT)
 						);
 
 						// Strategy totalSupply has increased
-						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.greaterThan(strategyTotalSupplyB4);
+						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.greaterThan(STRAT_TOTAL_SUPPLY_B4);
 
 						// Strategy BalanceOf owner should be newly minted tokens (Current Supply - B4 supply)
 						expect(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).to.be.equal(
-							(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).sub(strategyTotalSupplyB4)
+							(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).sub(STRAT_TOTAL_SUPPLY_B4)
 						);
 
 						// [main-test] Withdraw ERC20 tokens into the strategy
@@ -388,17 +444,17 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 
 						// Strategy token burned
 						expect(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).to.be.equal(
-							strategyInteractorMockERC20ABalanceB4
+							STRAT_MOCK_A_BALANCE_B4
 						);
 
 						// Supply put back to original
-						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.equal(strategyTotalSupplyB4);
+						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.equal(STRAT_TOTAL_SUPPLY_B4);
 
 						// Check that the balance been returned to original or greater
-						expect(await mockERC20A.balanceOf(owner.address)).to.be.greaterThanOrEqual(ownerMockERC20ABalanceB4);
+						expect(await mockERC20A.balanceOf(owner.address)).to.be.greaterThanOrEqual(OWNER_MOCK_A_BALANCE_B4);
 
 						// Check that the balance been returned to original or greater
-						expect(await mockERC20B.balanceOf(owner.address)).to.be.greaterThanOrEqual(ownerMockERC20BBalanceB4);
+						expect(await mockERC20B.balanceOf(owner.address)).to.be.greaterThanOrEqual(OWNER_MOCK_B_BALANCE_B4);
 					}
 				);
 
@@ -428,66 +484,60 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
 
 
-						const strategyTotalSupplyB4 = await yieldSyncV1EMPStrategy.totalSupply();
+						const STRAT_TOTAL_SUPPLY_B4 = await yieldSyncV1EMPStrategy.totalSupply();
 
-						const strategyInteractorMockERC20ABalanceB4 = await mockERC20A.balanceOf(
-							strategyInteractorDummy.address
-						);
+						const STRAT_MOCK_A_BALANCE_B4 = await mockERC20A.balanceOf(strategyInteractorDummy.address);
+						const STRAT_MOCK_B_BALANCE_B4 = await mockERC20B.balanceOf(strategyInteractorDummy.address);
 
-						const strategyInteractorMockERC20BBalanceB4 = await mockERC20B.balanceOf(
-							strategyInteractorDummy.address
-						);
+						const OWNER_MOCK_A_BALANCE_B4 = await mockERC20A.balanceOf(owner.address);
+						const OWNER_MOCK_B_BALANCE_B4 = await mockERC20B.balanceOf(owner.address);
 
-						const ownerMockERC20ABalanceB4 = await mockERC20A.balanceOf(owner.address);
-						const ownerMockERC20BBalanceB4 = await mockERC20B.balanceOf(owner.address);
-
-						const mockERC20ADepositAmount = ethers.utils.parseUnits(".75", 18);
-						const mockERC20BDepositAmount = ethers.utils.parseUnits(".25", 18);
+						const DEPOSIT_AMOUNT_A = ethers.utils.parseUnits(".75", 18);
+						const DEPOSIT_AMOUNT_B = ethers.utils.parseUnits(".25", 18);
 
 						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of owner
-						await mockERC20A.approve(strategyInteractorDummy.address, mockERC20ADepositAmount);
-						await mockERC20B.approve(strategyInteractorDummy.address, mockERC20BDepositAmount);
+						await mockERC20A.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_A);
+						await mockERC20B.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_B);
 
 						// Deposit mockERC20A tokens into the strategy
-						yieldSyncV1EMPStrategy.utilizedERC20Deposit([mockERC20ADepositAmount, mockERC20BDepositAmount])
+						yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT_A, DEPOSIT_AMOUNT_B])
 
 						// mockERC20A BalanceOf strategy interactor should equal to deposit amount
 						expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.be.equal(
-							strategyInteractorMockERC20ABalanceB4.add(mockERC20ADepositAmount)
+							STRAT_MOCK_A_BALANCE_B4.add(DEPOSIT_AMOUNT_A)
 						);
 
 						// mockERC20B BalanceOf strategy interactor should equal to deposit amount
 						expect(await mockERC20B.balanceOf(strategyInteractorDummy.address)).to.be.equal(
-							strategyInteractorMockERC20BBalanceB4.add(mockERC20BDepositAmount)
+							STRAT_MOCK_B_BALANCE_B4.add(DEPOSIT_AMOUNT_B)
 						);
 
 						// Strategy totalSupply has increased
-						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.greaterThan(strategyTotalSupplyB4);
+						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.greaterThan(STRAT_TOTAL_SUPPLY_B4);
 
 						// Strategy BalanceOf owner should be newly minted tokens (Current Supply - B4 supply)
 						expect(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).to.be.equal(
-							(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).sub(strategyTotalSupplyB4)
+							(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).sub(STRAT_TOTAL_SUPPLY_B4)
 						);
 
 						// [main-test] Withdraw ERC20 tokens into the strategy
 						await expect(
-							yieldSyncV1EMPStrategy.utilizedERC20Withdraw(await yieldSyncV1EMPStrategy.balanceOf(owner.address))
+							yieldSyncV1EMPStrategy.utilizedERC20Withdraw(
+								await yieldSyncV1EMPStrategy.balanceOf(owner.address)
+							)
 						).to.be.not.reverted;
 
-
 						// Strategy token burned
-						expect(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).to.be.equal(
-							strategyInteractorMockERC20ABalanceB4
-						);
+						expect(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).to.be.equal(STRAT_MOCK_A_BALANCE_B4);
 
 						// Supply put back to original
-						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.equal(strategyTotalSupplyB4);
+						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.equal(STRAT_TOTAL_SUPPLY_B4);
 
 						// Check that the balance been returned to original or greater
-						expect(await mockERC20A.balanceOf(owner.address)).to.be.greaterThanOrEqual(ownerMockERC20ABalanceB4);
+						expect(await mockERC20A.balanceOf(owner.address)).to.be.greaterThanOrEqual(OWNER_MOCK_A_BALANCE_B4);
 
 						// Check that the balance been returned to original or greater
-						expect(await mockERC20B.balanceOf(owner.address)).to.be.greaterThanOrEqual(ownerMockERC20BBalanceB4);
+						expect(await mockERC20B.balanceOf(owner.address)).to.be.greaterThanOrEqual(OWNER_MOCK_B_BALANCE_B4);
 					}
 				);
 			});
@@ -520,45 +570,40 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
 
 
-						const strategyTotalSupplyB4 = await yieldSyncV1EMPStrategy.totalSupply();
+						const STRAT_TOTAL_SUPPLY_B4 = await yieldSyncV1EMPStrategy.totalSupply();
 
-						const strategyInteractorMockERC20ABalanceB4 = await mockERC20A.balanceOf(
-							strategyInteractorDummy.address
-						);
+						const STRAT_MOCK_A_BALANCE_B4 = await mockERC20A.balanceOf(strategyInteractorDummy.address);
+						const STRAT_MOCK_6_BALANCE_B4 = await mockERC206.balanceOf(strategyInteractorDummy.address);
 
-						const strategyInteractorMockERC206BalanceB4 = await mockERC206.balanceOf(
-							strategyInteractorDummy.address
-						);
+						const OWNER_MOCK_A_BALANCE_B4 = await mockERC20A.balanceOf(owner.address);
+						const OWNER_MOCK_6_BALANCE_B4 = await mockERC206.balanceOf(owner.address);
 
-						const ownerMockERC20ABalanceB4 = await mockERC20A.balanceOf(owner.address);
-						const ownerMockERC206BalanceB4 = await mockERC206.balanceOf(owner.address);
-
-						const mockERC20ADepositAmount = ethers.utils.parseUnits("1", 18);
+						const DEPOSIT_AMOUNT_A = ethers.utils.parseUnits("1", 18);
 						const mockERC206DepositAmount = ethers.utils.parseUnits("1", 6);
 
 						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of owner
-						await mockERC20A.approve(strategyInteractorDummy.address, mockERC20ADepositAmount);
+						await mockERC20A.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_A);
 						await mockERC206.approve(strategyInteractorDummy.address, mockERC206DepositAmount);
 
 						// Deposit mockERC20A tokens into the strategy
-						yieldSyncV1EMPStrategy.utilizedERC20Deposit([mockERC20ADepositAmount, mockERC206DepositAmount])
+						yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT_A, mockERC206DepositAmount])
 
 						// mockERC20A BalanceOf strategy interactor should equal to deposit amount
 						expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.be.equal(
-							strategyInteractorMockERC20ABalanceB4.add(mockERC20ADepositAmount)
+							STRAT_MOCK_A_BALANCE_B4.add(DEPOSIT_AMOUNT_A)
 						);
 
 						// mockERC206 BalanceOf strategy interactor should equal to deposit amount
 						expect(await mockERC206.balanceOf(strategyInteractorDummy.address)).to.be.equal(
-							strategyInteractorMockERC206BalanceB4.add(mockERC206DepositAmount)
+							STRAT_MOCK_6_BALANCE_B4.add(mockERC206DepositAmount)
 						);
 
 						// Strategy totalSupply has increased
-						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.greaterThan(strategyTotalSupplyB4);
+						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.greaterThan(STRAT_TOTAL_SUPPLY_B4);
 
 						// Strategy BalanceOf owner should be newly minted tokens (Current Supply - B4 supply)
 						expect(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).to.be.equal(
-							(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).sub(strategyTotalSupplyB4)
+							(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).sub(STRAT_TOTAL_SUPPLY_B4)
 						);
 
 						// [main-test] Withdraw ERC20 tokens into the strategy
@@ -571,20 +616,20 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 
 						// Strategy token burned
 						expect(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).to.be.equal(
-							strategyInteractorMockERC20ABalanceB4
+							STRAT_MOCK_A_BALANCE_B4
 						);
 
 						// Supply put back to original
-						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.equal(strategyTotalSupplyB4);
+						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.equal(STRAT_TOTAL_SUPPLY_B4);
 
 						// Check that the balance been returned to original or greater
 						expect(await mockERC20A.balanceOf(owner.address)).to.be.greaterThanOrEqual(
-							ownerMockERC20ABalanceB4
+							OWNER_MOCK_A_BALANCE_B4
 						);
 
 						// Check that the balance been returned to original or greater
 						expect(await mockERC206.balanceOf(owner.address)).to.be.greaterThanOrEqual(
-							ownerMockERC206BalanceB4
+							OWNER_MOCK_6_BALANCE_B4
 						);
 					}
 				);
@@ -614,46 +659,40 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
 						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
 
+						const STRAT_TOTAL_SUPPLY_B4 = await yieldSyncV1EMPStrategy.totalSupply();
 
-						const strategyTotalSupplyB4 = await yieldSyncV1EMPStrategy.totalSupply();
+						const STRAT_MOCK_A_BALANCE_B4 = await mockERC20A.balanceOf(strategyInteractorDummy.address);
+						const STRAT_MOCK_6_BALANCE_B4 = await mockERC206.balanceOf(strategyInteractorDummy.address);
 
-						const strategyInteractorMockERC20ABalanceB4 = await mockERC20A.balanceOf(
-							strategyInteractorDummy.address
-						);
+						const OWNER_MOCK_A_BALANCE_B4 = await mockERC20A.balanceOf(owner.address);
+						const OWNER_MOCK_6_BALANCE_B4 = await mockERC206.balanceOf(owner.address);
 
-						const strategyInteractorMockERC206BalanceB4 = await mockERC206.balanceOf(
-							strategyInteractorDummy.address
-						);
-
-						const ownerMockERC20ABalanceB4 = await mockERC20A.balanceOf(owner.address);
-						const ownerMockERC206BalanceB4 = await mockERC206.balanceOf(owner.address);
-
-						const mockERC20ADepositAmount = ethers.utils.parseUnits(".75", 18);
+						const DEPOSIT_AMOUNT_A = ethers.utils.parseUnits(".75", 18);
 						const mockERC206DepositAmount = ethers.utils.parseUnits(".25", 6);
 
 						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of owner
-						await mockERC20A.approve(strategyInteractorDummy.address, mockERC20ADepositAmount);
+						await mockERC20A.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_A);
 						await mockERC206.approve(strategyInteractorDummy.address, mockERC206DepositAmount);
 
 						// Deposit mockERC20A tokens into the strategy
-						yieldSyncV1EMPStrategy.utilizedERC20Deposit([mockERC20ADepositAmount, mockERC206DepositAmount])
+						yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT_A, mockERC206DepositAmount])
 
 						// mockERC20A BalanceOf strategy interactor should equal to deposit amount
 						expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.be.equal(
-							strategyInteractorMockERC20ABalanceB4.add(mockERC20ADepositAmount)
+							STRAT_MOCK_A_BALANCE_B4.add(DEPOSIT_AMOUNT_A)
 						);
 
 						// mockERC206 BalanceOf strategy interactor should equal to deposit amount
 						expect(await mockERC206.balanceOf(strategyInteractorDummy.address)).to.be.equal(
-							strategyInteractorMockERC206BalanceB4.add(mockERC206DepositAmount)
+							STRAT_MOCK_6_BALANCE_B4.add(mockERC206DepositAmount)
 						);
 
 						// Strategy totalSupply has increased
-						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.greaterThan(strategyTotalSupplyB4);
+						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.greaterThan(STRAT_TOTAL_SUPPLY_B4);
 
 						// Strategy BalanceOf owner should be newly minted tokens (Current Supply - B4 supply)
 						expect(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).to.be.equal(
-							(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).sub(strategyTotalSupplyB4)
+							(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).sub(STRAT_TOTAL_SUPPLY_B4)
 						);
 
 						// [main-test] Withdraw ERC20 tokens into the strategy
@@ -666,20 +705,20 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 
 						// Strategy token burned
 						expect(await yieldSyncV1EMPStrategy.balanceOf(owner.address)).to.be.equal(
-							strategyInteractorMockERC20ABalanceB4
+							STRAT_MOCK_A_BALANCE_B4
 						);
 
 						// Supply put back to original
-						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.equal(strategyTotalSupplyB4);
+						expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.equal(STRAT_TOTAL_SUPPLY_B4);
 
 						// Check that the balance been returned to original or greater
 						expect(await mockERC20A.balanceOf(owner.address)).to.be.greaterThanOrEqual(
-							ownerMockERC20ABalanceB4
+							OWNER_MOCK_A_BALANCE_B4
 						);
 
 						// Check that the balance been returned to original or greater
 						expect(await mockERC206.balanceOf(owner.address)).to.be.greaterThanOrEqual(
-							ownerMockERC206BalanceB4
+							OWNER_MOCK_6_BALANCE_B4
 						);
 					}
 				);
