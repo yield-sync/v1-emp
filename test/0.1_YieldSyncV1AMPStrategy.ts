@@ -49,7 +49,7 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 	describe("function utilizedERC20Deposit()", async ()  =>
 	{
-		describe("modifier operational()", async ()  =>
+		describe("Prereqs", async ()  =>
 		{
 			it(
 				"[requirement] Should revert if ETH FEED is not set..",
@@ -74,43 +74,43 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 					).to.be.rejectedWith(ERROR_STRATEGY_NOT_SET);
 				}
 			);
+
+			it(
+				"Should revert if deposits not open..",
+				async ()  =>
+				{
+					await expect(
+						await yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
+							[mockERC20A.address],
+							[[true, true, HUNDRED_PERCENT]]
+						)
+					).to.not.be.reverted;
+
+					await expect(
+						yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+					).to.not.be.reverted;
+
+					await expect(
+						yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
+					).to.not.be.reverted;
+
+					const DEPOSIT_AMOUNT = ethers.utils.parseUnits("1", 18);
+
+					// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
+					await mockERC20A.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT);
+
+					// [main-test] Deposit ERC20 tokens into the strategy
+					await expect(
+						yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT, DEPOSIT_AMOUNT])
+					).to.revertedWith(ERROR_DEPOSIT_NOT_OPEN);
+				}
+			);
 		});
 
 		describe("[SINGLE ERC20]", async ()  =>
 		{
 			describe("[DECIMALS = 18]", async () =>
 			{
-				it(
-					"Should revert if deposits not open..",
-					async ()  =>
-					{
-						await expect(
-							await yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-								[mockERC20A.address],
-								[[true, true, HUNDRED_PERCENT]]
-							)
-						).to.not.be.reverted;
-
-						await expect(
-							yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
-						).to.not.be.reverted;
-
-						await expect(
-							yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
-						).to.not.be.reverted;
-
-						const DEPOSIT_AMOUNT = ethers.utils.parseUnits("1", 18);
-
-						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
-						await mockERC20A.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT);
-
-						// [main-test] Deposit ERC20 tokens into the strategy
-						await expect(
-							yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT, DEPOSIT_AMOUNT])
-						).to.revertedWith(ERROR_DEPOSIT_NOT_OPEN);
-					}
-				);
-
 				it(
 					"Should revert if invalid _utilizedERC20Amount.length passed..",
 					async ()  =>
