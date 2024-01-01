@@ -15,7 +15,6 @@ const FIFTY_PERCENT = ethers.utils.parseUnits('.5', 18);
 const TWENTY_FIVE_PERCENT = ethers.utils.parseUnits('.25', 18);
 const ZERO_PERCENT = ethers.utils.parseUnits('0', 18);
 
-// TODO: Add test for operational modifier
 
 describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 {
@@ -323,6 +322,58 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 				await expect(
 					yieldSyncV1EMPStrategy.utilizedERC20AmountValid([])
 				).to.be.rejectedWith(ERROR_STRATEGY_NOT_SET);
+			}
+		);
+
+		it(
+			"Should return false if INVALID ERC20 amounts passed..",
+			async ()  =>
+			{
+				// Initialize strategy with mock ERC20
+				await expect(
+					yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
+						[mockERC20A.address, mockERC20B.address],
+						[[true, true, FIFTY_PERCENT], [true, true, FIFTY_PERCENT]]
+					)
+				).to.not.be.reverted;
+
+				await expect(
+					yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+				).to.not.be.reverted;
+
+				await expect(
+					yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
+				).to.not.be.reverted;
+
+				const depositAmount = ethers.utils.parseUnits("1", 18);
+
+				expect(await yieldSyncV1EMPStrategy.utilizedERC20AmountValid([0, depositAmount])).to.be.false;
+			}
+		)
+
+		it(
+			"Should return true if VALID ERC20 amounts passed..",
+			async ()  =>
+			{
+				// Initialize strategy with mock ERC20
+				await expect(
+					yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
+						[mockERC20A.address, mockERC20B.address],
+						[[true, true, FIFTY_PERCENT], [true, true, FIFTY_PERCENT]]
+					)
+				).to.not.be.reverted;
+
+				await expect(
+					yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+				).to.not.be.reverted;
+
+				await expect(
+					yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
+				).to.not.be.reverted;
+
+				const depositAmount = ethers.utils.parseUnits("1", 18);
+
+				expect(await yieldSyncV1EMPStrategy.utilizedERC20AmountValid([depositAmount, depositAmount])).to.be.true;
 			}
 		);
 	});
