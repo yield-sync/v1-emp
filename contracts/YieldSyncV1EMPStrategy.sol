@@ -338,11 +338,11 @@ contract YieldSyncV1EMPStrategy is
 	}
 
 	/// @inheritdoc IYieldSyncV1EMPStrategy
-	function yieldSyncV1EMPStrategyInteractorUpdate(address _yieldSyncV1EMPStrategyInteractor)
+	function yieldSyncV1EMPStrategyInteractorUpdate(address _YSSInteractor)
 		public
 		override
 		authManager()
 	{
-		yieldSyncV1EMPStrategyInteractor = IYieldSyncV1EMPStrategyInteractor(_yieldSyncV1EMPStrategyInteractor);
+		yieldSyncV1EMPStrategyInteractor = IYieldSyncV1EMPStrategyInteractor(_YSSInteractor);
 	}
 }

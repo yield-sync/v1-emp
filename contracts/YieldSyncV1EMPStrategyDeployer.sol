@@ -31,11 +31,11 @@ contract YieldSyncV1EMPStrategyDeployer is
 
 	mapping (
 		address yieldSyncV1EMPStrategy => uint256 yieldSyncV1EMPStrategyId
-	) public yieldSyncV1EMPStrategy_yieldSyncV1EMPStrategyId;
+	) public yieldSyncV1EMPStrategy_YSSId;
 
 	mapping (
 		uint256 yieldSyncV1EMPStrategyId => address yieldSyncV1EMPStrategy
-	) public yieldSyncV1EMPStrategyId_yieldSyncV1EMPStrategy;
+	) public yieldSyncV1EMPStrategyId_YSS;
 
 
 	modifier contractYieldSyncGovernance(bytes32 _role)
@@ -66,8 +66,8 @@ contract YieldSyncV1EMPStrategyDeployer is
 
 		yieldSyncV1EMPStrategy_ = address(new YieldSyncV1EMPStrategy(msg.sender, _name, _symbol));
 
-		yieldSyncV1EMPStrategy_yieldSyncV1EMPStrategyId[yieldSyncV1EMPStrategy_] = yieldSyncStrategyHandlerIdTracker;
-		yieldSyncV1EMPStrategyId_yieldSyncV1EMPStrategy[yieldSyncStrategyHandlerIdTracker] = yieldSyncV1EMPStrategy_;
+		yieldSyncV1EMPStrategy_YSSId[yieldSyncV1EMPStrategy_] = yieldSyncStrategyHandlerIdTracker;
+		yieldSyncV1EMPStrategyId_YSS[yieldSyncStrategyHandlerIdTracker] = yieldSyncV1EMPStrategy_;
 	}
 
 	function feeUpdate(uint256 _fee)

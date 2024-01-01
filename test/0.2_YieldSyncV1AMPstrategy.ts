@@ -15,7 +15,7 @@ const TWENTY_FIVE_PERCENT = ethers.utils.parseUnits('.25', 18);
 const SEVENTY_FIVE_PERCENT = ethers.utils.parseUnits('.75', 18);
 
 
-describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
+describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 {
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;
@@ -25,7 +25,7 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 	let yieldSyncV1EMPStrategy: Contract;
 
 
-	beforeEach("[beforeEach] Set up contracts..", async ()  =>
+	beforeEach("[beforeEach] Set up contracts..", async () =>
 	{
 		const [OWNER] = await ethers.getSigners();
 
@@ -44,13 +44,13 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 	});
 
 
-	describe("function utilizedERC20Withdraw()", async ()  =>
+	describe("function utilizedERC20Withdraw()", async () =>
 	{
-		describe("Prereqs", async ()  =>
+		describe("Prereqs", async () =>
 		{
 			it(
 				"[requirement] Should revert if ETH FEED is not set..",
-				async ()  =>
+				async () =>
 				{
 					await expect(yieldSyncV1EMPStrategy.utilizedERC20Withdraw(0)).to.be.rejectedWith(
 						ERROR_ETH_FEED_NOT_SET
@@ -60,7 +60,7 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 
 			it(
 				"[requirement] Should revert if strategy is not set..",
-				async ()  =>
+				async () =>
 				{
 					await expect(
 						yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
@@ -74,7 +74,7 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 
 			it(
 				"Should revert if withdrawals is not open..",
-				async ()  =>
+				async () =>
 				{
 					const [OWNER] = await ethers.getSigners();
 
@@ -135,13 +135,13 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 			);
 		});
 
-		describe("[SINGLE ERC20]", async ()  =>
+		describe("[SINGLE ERC20]", async () =>
 		{
-			describe("[DECIMALS = 18]", async ()  =>
+			describe("[DECIMALS = 18]", async () =>
 			{
 				it(
 					"[100] Should fail to proccess withdraw request if token balance is not enough..",
-					async ()  =>
+					async () =>
 					{
 						const [OWNER] = await ethers.getSigners();
 
@@ -209,7 +209,7 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 
 				it(
 					"[100] Should fail to return ERC20 if purpose.withdraw != true..",
-					async ()  =>
+					async () =>
 					{
 						const [OWNER] = await ethers.getSigners();
 
@@ -294,7 +294,7 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 
 				it(
 					"[100] Should allow caller to burn ERC20 and cash out..",
-					async ()  =>
+					async () =>
 					{
 						const [OWNER] = await ethers.getSigners();
 
@@ -364,11 +364,11 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 				);
 			});
 
-			describe("[DECIMALS = 6]", async ()  =>
+			describe("[DECIMALS = 6]", async () =>
 			{
 				it(
 					"[100] Should allow caller to burn ERC20 and cash out..",
-					async ()  =>
+					async () =>
 					{
 						const [OWNER] = await ethers.getSigners();
 
@@ -439,13 +439,13 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 			});
 		});
 
-		describe("[MULTIPLE ERC20]", async ()  =>
+		describe("[MULTIPLE ERC20]", async () =>
 		{
-			describe("[DECIMALS = 18]", async ()  =>
+			describe("[DECIMALS = 18]", async () =>
 			{
 				it(
 					"[50/50] Should allow caller to burn ERC20 and cash out..",
-					async ()  =>
+					async () =>
 					{
 						const [OWNER] = await ethers.getSigners();
 
@@ -529,7 +529,7 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 
 				it(
 					"[75/25] Should allow caller to burn ERC20 and cash out..",
-					async ()  =>
+					async () =>
 					{
 						const [OWNER] = await ethers.getSigners();
 
@@ -611,11 +611,11 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 				);
 			});
 
-			describe("[DECIMALS = 6]", async ()  =>
+			describe("[DECIMALS = 6]", async () =>
 			{
 				it(
 					"[50/50] Should allow caller to burn ERC20 and cash out..",
-					async ()  =>
+					async () =>
 					{
 						const [OWNER] = await ethers.getSigners();
 
@@ -705,7 +705,7 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async ()  =>
 
 				it(
 					"[75/25] Should allow caller to burn ERC20 and cash out..",
-					async ()  =>
+					async () =>
 					{
 						const [OWNER] = await ethers.getSigners();
 

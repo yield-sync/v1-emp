@@ -16,7 +16,7 @@ const TWENTY_FIVE_PERCENT = ethers.utils.parseUnits('.25', 18);
 const ZERO_PERCENT = ethers.utils.parseUnits('0', 18);
 
 
-describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
+describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 {
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;
@@ -26,7 +26,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 	let yieldSyncV1EMPStrategy: Contract;
 
 
-	beforeEach("[beforeEach] Set up contracts..", async ()  =>
+	beforeEach("[beforeEach] Set up contracts..", async () =>
 	{
 		const [OWNER] = await ethers.getSigners();
 
@@ -48,7 +48,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 	{
 		it(
 			"[auth] Should revert when unauthorized msg.sender calls..",
-			async ()  =>
+			async () =>
 			{
 				const [, ADDR_1] = await ethers.getSigners();
 
@@ -63,7 +63,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 
 		it(
 			"Should revert when invalid purpose.length passed..",
-			async ()  =>
+			async () =>
 			{
 				// Keep in mind at this point utilizedTokens is an empty array
 				await expect(
@@ -74,7 +74,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 
 		it(
 			"Should revert when INVALID allocation passed..",
-			async ()  =>
+			async () =>
 			{
 				const [OWNER] = await ethers.getSigners();
 
@@ -111,7 +111,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 
 				for (let i = 0; i < INVALID_ALLOCATIONS.length; i++)
 				{
-					const _yieldSyncV1EMPStrategy = await (
+					const _YSS = await (
 						await (await ethers.getContractFactory("YieldSyncV1EMPStrategy")).deploy(
 							OWNER.address,
 							"Exampe",
@@ -120,10 +120,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 					).deployed();
 
 					await expect(
-						_yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-							INVALID_ALLOCATIONS[i].addresses,
-							INVALID_ALLOCATIONS[i].purpose,
-						)
+						_YSS.utilizedERC20AndPurposeUpdate(INVALID_ALLOCATIONS[i].addresses, INVALID_ALLOCATIONS[i].purpose)
 					).to.be.rejectedWith(ERROR_INVALID_ALLOCATION);
 				}
 			}
@@ -131,7 +128,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 
 		it(
 			"Should not revert when VALID allocation passed..",
-			async ()  =>
+			async () =>
 			{
 				const [OWNER] = await ethers.getSigners();
 
@@ -152,7 +149,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 
 				for (let i = 0; i < VALID_ALLOCATION.length; i++)
 				{
-					const _yieldSyncV1EMPStrategy = await (
+					const _YSS = await (
 						await (await ethers.getContractFactory("YieldSyncV1EMPStrategy")).deploy(
 							OWNER.address,
 							"Exampe",
@@ -161,17 +158,14 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 					).deployed();
 
 					await expect(
-						_yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-							VALID_ALLOCATION[i].addresses,
-							VALID_ALLOCATION[i].purpose
-						)
+						_YSS.utilizedERC20AndPurposeUpdate(VALID_ALLOCATION[i].addresses, VALID_ALLOCATION[i].purpose)
 					).to.be.not.reverted;
 
 					for (let ii = 0; ii < VALID_ALLOCATION[i].addresses.length; ii++)
 					{
 						const v = VALID_ALLOCATION[i];
-						const u = (await _yieldSyncV1EMPStrategy.utilizedERC20())[ii];
-						const p = await _yieldSyncV1EMPStrategy.utilizedERC20_purpose(u);
+						const u = (await _YSS.utilizedERC20())[ii];
+						const p = await _YSS.utilizedERC20_purpose(u);
 
 						expect(u).to.be.equal(v.addresses[ii]);
 						expect(p.deposit).to.be.equal(v.purpose[ii][0]);
@@ -187,7 +181,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 	{
 		it(
 			"[auth] Should revert when unauthorized msg.sender calls..",
-			async ()  =>
+			async () =>
 			{
 				const [, ADDR_1] = await ethers.getSigners();
 
@@ -199,7 +193,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 
 		it(
 			"Should be able to set yieldSyncV1EMPETHValueFeed..",
-			async ()  =>
+			async () =>
 			{
 				await expect(
 					yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
@@ -214,7 +208,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 	{
 		it(
 			"[auth] Should revert when unauthorized msg.sender calls..",
-			async ()  =>
+			async () =>
 			{
 				const [, ADDR_1] = await ethers.getSigners();
 
@@ -228,7 +222,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 
 		it(
 			"Should be able to set yieldSyncV1EMPStrategyInteractor..",
-			async ()  =>
+			async () =>
 			{
 				await expect(
 					yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
@@ -245,7 +239,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 	{
 		it(
 			"[requirement] Should revert if ETH FEED is not set..",
-			async ()  =>
+			async () =>
 			{
 				const [OWNER] = await ethers.getSigners();
 
@@ -257,7 +251,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 
 		it(
 			"[requirement] Should revert if strategy is not set..",
-			async ()  =>
+			async () =>
 			{
 				const [OWNER] = await ethers.getSigners();
 
@@ -276,7 +270,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 	{
 		it(
 			"[requirement] Should revert if ETH FEED is not set..",
-			async ()  =>
+			async () =>
 			{
 				await expect(
 					yieldSyncV1EMPStrategy.utilizedERC20AmountPerBurn()
@@ -286,7 +280,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 
 		it(
 			"[requirement] Should revert if strategy is not set..",
-			async ()  =>
+			async () =>
 			{
 				await expect(
 					yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
@@ -299,11 +293,11 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 		);
 	});
 
-	describe("function utilizedERC20AmountValid()", async ()  =>
+	describe("function utilizedERC20AmountValid()", async () =>
 	{
 		it(
 			"[requirement] Should revert if ETH FEED is not set..",
-			async ()  =>
+			async () =>
 			{
 				await expect(
 					yieldSyncV1EMPStrategy.utilizedERC20AmountValid([])
@@ -313,7 +307,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 
 		it(
 			"[requirement] Should revert if strategy is not set..",
-			async ()  =>
+			async () =>
 			{
 				await expect(
 					yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
@@ -327,7 +321,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 
 		it(
 			"Should return false if INVALID ERC20 amounts passed..",
-			async ()  =>
+			async () =>
 			{
 				// Initialize strategy with mock ERC20
 				await expect(
@@ -353,7 +347,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 
 		it(
 			"Should return true if VALID ERC20 amounts passed..",
-			async ()  =>
+			async () =>
 			{
 				// Initialize strategy with mock ERC20
 				await expect(
@@ -382,7 +376,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 	{
 		it(
 			"[auth] Should revert when unauthorized msg.sender calls..",
-			async ()  =>
+			async () =>
 			{
 				const [, ADDR_1] = await ethers.getSigners();
 
@@ -394,7 +388,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 
 		it(
 			"[requirement] Should revert if ETH FEED is not set..",
-			async ()  =>
+			async () =>
 			{
 				await expect(
 					yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()
@@ -404,7 +398,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 
 		it(
 			"[requirement] Should revert if strategy is not set..",
-			async ()  =>
+			async () =>
 			{
 				await expect(
 					yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
@@ -421,7 +415,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 	{
 		it(
 			"[auth] Should revert when unauthorized msg.sender calls..",
-			async ()  =>
+			async () =>
 			{
 				const [, ADDR_1] = await ethers.getSigners();
 
@@ -433,7 +427,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 
 		it(
 			"[requirement] Should revert if ETH FEED is not set..",
-			async ()  =>
+			async () =>
 			{
 				await expect(
 					yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle()
@@ -443,7 +437,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async ()  =>
 
 		it(
 			"[requirement] Should revert if strategy is not set..",
-			async ()  =>
+			async () =>
 			{
 				await expect(
 					yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)

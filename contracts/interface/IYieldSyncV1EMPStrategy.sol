@@ -199,9 +199,9 @@ interface IYieldSyncV1EMPStrategy is
 
 	/**
 	* @notice Update yieldSyncV1EMPStrategyInteractor
-	* @param _yieldSyncV1EMPStrategyInteractor {address}
+	* @param _YSSInteractor {address}
 	*/
-	function yieldSyncV1EMPStrategyInteractorUpdate(address _yieldSyncV1EMPStrategyInteractor)
+	function yieldSyncV1EMPStrategyInteractorUpdate(address _YSSInteractor)
 		external
 	;
 }
