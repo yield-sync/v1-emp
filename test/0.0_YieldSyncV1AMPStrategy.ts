@@ -142,6 +142,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 						addresses: [mockERC20A.address, mockERC20B.address, mockERC20C.address,],
 						purpose: [[false, true, ZERO_PERCENT], [true, true, FIFTY_PERCENT], [true, true, FIFTY_PERCENT]]
 					},
+					// Even if withdraw token is set to 100% it should be accepted
 					{
 						addresses: [mockERC20A.address, mockERC20B.address, mockERC20C.address,],
 						purpose: [[false, true, HUNDRED_PERCENT], [true, true, FIFTY_PERCENT], [true, true, FIFTY_PERCENT]]
@@ -441,6 +442,36 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 				).to.be.rejectedWith(ERROR_STRATEGY_NOT_SET);
 			}
 		);
+
+		it(
+			"Should toogle utilizedERC20DepositOpen..",
+			async () =>
+			{
+				// Initialize strategy with mock ERC20
+				await expect(
+					yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
+						[mockERC20A.address],
+						[[true, true, HUNDRED_PERCENT]]
+					)
+				).to.not.be.reverted;
+
+				await expect(
+					yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+				).to.not.be.reverted;
+
+				await expect(
+					yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
+				).to.not.be.reverted;
+
+				expect(await yieldSyncV1EMPStrategy.utilizedERC20DepositOpen()).to.be.false;
+
+				await expect(
+					yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()
+				).to.be.not.reverted;
+
+				expect(await yieldSyncV1EMPStrategy.utilizedERC20DepositOpen()).to.be.true;
+			}
+		);
 	});
 
 	describe("function utilizedERC20WithdrawOpenToggle()", async () =>
@@ -478,6 +509,36 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 				await expect(
 					yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle()
 				).to.be.rejectedWith(ERROR_STRATEGY_NOT_SET);
+			}
+		);
+
+		it(
+			"Should toogle utilizedERC20WithdrawOpen..",
+			async () =>
+			{
+				// Initialize strategy with mock ERC20
+				await expect(
+					yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
+						[mockERC20A.address],
+						[[true, true, HUNDRED_PERCENT]]
+					)
+				).to.not.be.reverted;
+
+				await expect(
+					yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+				).to.not.be.reverted;
+
+				await expect(
+					yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
+				).to.not.be.reverted;
+
+				expect(await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpen()).to.be.false;
+
+				await expect(
+					yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle()
+				).to.be.not.reverted;
+
+				expect(await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpen()).to.be.true;
 			}
 		);
 	});
