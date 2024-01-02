@@ -9,6 +9,7 @@ const ERROR_INVALID_PURPOSE_LENGTH = "__utilizedERC20.length != _purpose.length"
 const ERROR_INVALID_ALLOCATION = "_utilizedERC20AllocationTotal != ONE_HUNDRED_PERCENT";
 const ERROR_ETH_FEED_NOT_SET = "address(yieldSyncV1EMPETHValueFeed) == address(0)";
 const ERROR_STRATEGY_NOT_SET = "address(yieldSyncV1EMPStrategyInteractor) == address(0)";
+const ERROR_NOT_COMPUTED = "!computed";
 
 const HUNDRED_PERCENT = ethers.utils.parseUnits('1', 18);
 const FIFTY_PERCENT = ethers.utils.parseUnits('.5', 18);
@@ -320,6 +321,37 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 		);
 
 		it(
+			"Should revert if denominator is 0..",
+			async () =>
+			{
+				// Initialize strategy with mock ERC20
+				await expect(
+					yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
+						[mockERC20A.address],
+						[[true, true, HUNDRED_PERCENT]]
+					)
+				).to.not.be.reverted;
+
+				await expect(
+					yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+				).to.not.be.reverted;
+
+				await expect(
+					yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
+				).to.not.be.reverted;
+
+				// Set ETH value to ZERO
+				await eTHValueFeedDummy.updateETHValue(0);
+
+				const DEPOSIT_AMOUNT = ethers.utils.parseUnits("1", 18);
+
+				await expect(yieldSyncV1EMPStrategy.utilizedERC20AmountValid([DEPOSIT_AMOUNT])).to.revertedWith(
+					ERROR_NOT_COMPUTED
+				);
+			}
+		)
+
+		it(
 			"Should return false if INVALID ERC20 amounts passed..",
 			async () =>
 			{
@@ -339,9 +371,9 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 					yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 				).to.not.be.reverted;
 
-				const depositAmount = ethers.utils.parseUnits("1", 18);
+				const DEPOSIT_AMOUNT = ethers.utils.parseUnits("1", 18);
 
-				expect(await yieldSyncV1EMPStrategy.utilizedERC20AmountValid([0, depositAmount])).to.be.false;
+				expect(await yieldSyncV1EMPStrategy.utilizedERC20AmountValid([0, DEPOSIT_AMOUNT])).to.be.false;
 			}
 		)
 
@@ -365,9 +397,9 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 					yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 				).to.not.be.reverted;
 
-				const depositAmount = ethers.utils.parseUnits("1", 18);
+				const DEPOSIT_AMOUNT = ethers.utils.parseUnits("1", 18);
 
-				expect(await yieldSyncV1EMPStrategy.utilizedERC20AmountValid([depositAmount, depositAmount])).to.be.true;
+				expect(await yieldSyncV1EMPStrategy.utilizedERC20AmountValid([DEPOSIT_AMOUNT, DEPOSIT_AMOUNT])).to.be.true;
 			}
 		);
 	});

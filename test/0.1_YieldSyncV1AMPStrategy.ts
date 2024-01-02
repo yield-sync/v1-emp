@@ -133,14 +133,14 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
 
 
-						const depositAmount = ethers.utils.parseUnits("1", 18);
+						const DEPOSIT_AMOUNT = ethers.utils.parseUnits("1", 18);
 
 						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
-						await mockERC20A.approve(strategyInteractorDummy.address, depositAmount);
+						await mockERC20A.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT);
 
 						// [main-test] Deposit ERC20 tokens into the strategy
 						await expect(
-							yieldSyncV1EMPStrategy.utilizedERC20Deposit([depositAmount, depositAmount])
+							yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT, DEPOSIT_AMOUNT])
 						).to.revertedWith(ERROR_INVALID_AMOUNT_LENGTH);
 					}
 				);
