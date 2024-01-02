@@ -52,7 +52,7 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 		describe("Prereqs", async () =>
 		{
 			it(
-				"[requirement] Should revert if ETH FEED is not set..",
+				"[modifier] Should revert if ETH FEED is not set..",
 				async () =>
 				{
 					await expect(
@@ -62,7 +62,7 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 			);
 
 			it(
-				"[requirement] Should revert if strategy is not set..",
+				"[modifier] Should revert if strategy is not set..",
 				async () =>
 				{
 					await expect(

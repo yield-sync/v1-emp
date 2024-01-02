@@ -49,7 +49,7 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 		describe("Prereqs", async () =>
 		{
 			it(
-				"[requirement] Should revert if ETH FEED is not set..",
+				"[modifier] Should revert if ETH FEED is not set..",
 				async () =>
 				{
 					await expect(yieldSyncV1EMPStrategy.utilizedERC20Withdraw(0)).to.be.rejectedWith(
@@ -59,7 +59,7 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 			);
 
 			it(
-				"[requirement] Should revert if strategy is not set..",
+				"[modifier] Should revert if strategy is not set..",
 				async () =>
 				{
 					await expect(
