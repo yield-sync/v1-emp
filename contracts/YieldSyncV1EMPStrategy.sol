@@ -57,6 +57,13 @@ contract YieldSyncV1EMPStrategy is
 	}
 
 
+	modifier authEMP()
+	{
+		// Only EMP should be able to call
+
+		_;
+	}
+
 	modifier authManager()
 	{
 		require(manager == msg.sender, "manager != msg.sender");
