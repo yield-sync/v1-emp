@@ -6,6 +6,7 @@ import { IAccessControlEnumerable } from "@openzeppelin/contracts/access/IAccess
 
 import { IYieldSyncV1EMPStrategyDeployer } from "./interface/IYieldSyncV1EMPStrategyDeployer.sol";
 import { YieldSyncV1EMPStrategy } from "./YieldSyncV1EMPStrategy.sol";
+import { IYieldSyncV1EMPRegistry } from "./interface/IYieldSyncV1EMPRegistry.sol";
 
 
 contract YieldSyncV1EMPStrategyDeployer is
@@ -28,6 +29,8 @@ contract YieldSyncV1EMPStrategyDeployer is
 	uint256 public fee;
 	uint256 public yieldSyncStrategyHandlerIdTracker;
 
+	IYieldSyncV1EMPRegistry public immutable iYieldSyncV1EMPRegistry;
+
 
 	mapping (
 		address yieldSyncV1EMPStrategy => uint256 yieldSyncV1EMPStrategyId
@@ -46,12 +49,14 @@ contract YieldSyncV1EMPStrategyDeployer is
 	}
 
 
-	constructor (address _YieldSyncGovernance)
+	constructor (address _iYieldSyncV1EMPRegistry, address _YieldSyncGovernance)
 	{
 		fee = 0;
 		yieldSyncStrategyHandlerIdTracker = 0;
 
 		YieldSyncGovernance = _YieldSyncGovernance;
+
+		iYieldSyncV1EMPRegistry = IYieldSyncV1EMPRegistry(_iYieldSyncV1EMPRegistry);
 	}
 
 
@@ -64,7 +69,15 @@ contract YieldSyncV1EMPStrategyDeployer is
 
 		yieldSyncStrategyHandlerIdTracker++;
 
-		yieldSyncV1EMPStrategy_ = address(new YieldSyncV1EMPStrategy(msg.sender, _name, _symbol));
+		yieldSyncV1EMPStrategy_ = address(
+			new YieldSyncV1EMPStrategy(
+				address(this),
+				address(iYieldSyncV1EMPRegistry),
+				msg.sender,
+				_name,
+				_symbol
+			)
+		);
 
 		yieldSyncV1EMPStrategy_YSSId[yieldSyncV1EMPStrategy_] = yieldSyncStrategyHandlerIdTracker;
 		yieldSyncV1EMPStrategyId_YSS[yieldSyncStrategyHandlerIdTracker] = yieldSyncV1EMPStrategy_;

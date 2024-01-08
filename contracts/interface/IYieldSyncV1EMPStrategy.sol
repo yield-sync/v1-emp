@@ -6,6 +6,7 @@ import { IERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 import { IYieldSyncV1EMPETHValueFeed } from "./IYieldSyncV1EMPETHValueFeed.sol";
+import { IYieldSyncV1EMPRegistry } from "./IYieldSyncV1EMPRegistry.sol";
 import { IYieldSyncV1EMPStrategyInteractor } from "./IYieldSyncV1EMPStrategyInteractor.sol";
 
 
@@ -28,7 +29,18 @@ interface IYieldSyncV1EMPStrategy is
 	* @notice Manager
 	* @return {address}
 	*/
-	function manager()
+	function Manager()
+		external
+		view
+		returns (address)
+	;
+
+	/**
+	* @dev [view-address]
+	* @notice YieldSyncV1EMPDeployer
+	* @return {address}
+	*/
+	function YieldSyncV1EMPDeployer()
 		external
 		view
 		returns (address)
@@ -90,10 +102,21 @@ interface IYieldSyncV1EMPStrategy is
 	* @notice Implemented IYieldSyncV1EMPETHValueFeed
 	* @return {IYieldSyncV1EMPETHValueFeed}
 	*/
-	function yieldSyncV1EMPETHValueFeed()
+	function iYieldSyncV1EMPETHValueFeed()
 		external
 		view
 		returns (IYieldSyncV1EMPETHValueFeed)
+	;
+
+	/**
+	* @dev [view-IYieldSyncV1EMPRegistry]
+	* @notice Implemented IYieldSyncV1EMPRegistry
+	* @return {IYieldSyncV1EMPRegistry}
+	*/
+	function iYieldSyncV1EMPRegistry()
+		external
+		view
+		returns (IYieldSyncV1EMPRegistry)
 	;
 
 	/**
@@ -101,7 +124,7 @@ interface IYieldSyncV1EMPStrategy is
 	* @notice Implemented IYieldSyncV1EMPStrategyInteractor
 	* @return {IYieldSyncV1EMPStrategyInteractor}
 	*/
-	function yieldSyncV1EMPStrategyInteractor()
+	function iYieldSyncV1EMPStrategyInteractor()
 		external
 		view
 		returns (IYieldSyncV1EMPStrategyInteractor)
@@ -193,15 +216,15 @@ interface IYieldSyncV1EMPStrategy is
 	* @notice Update yieldSyncV1EMPETHValueFeed
 	* @param _yieldSyncV1EMPETHValueFeed {address}
 	*/
-	function yieldSyncV1EMPETHValueFeedUpdate(address _yieldSyncV1EMPETHValueFeed)
+	function iYieldSyncV1EMPETHValueFeedUpdate(address _yieldSyncV1EMPETHValueFeed)
 		external
 	;
 
 	/**
-	* @notice Update yieldSyncV1EMPStrategyInteractor
+	* @notice Update iYieldSyncV1EMPStrategyInteractor
 	* @param _YSSInteractor {address}
 	*/
-	function yieldSyncV1EMPStrategyInteractorUpdate(address _YSSInteractor)
+	function iYieldSyncV1EMPStrategyInteractorUpdate(address _YSSInteractor)
 		external
 	;
 }

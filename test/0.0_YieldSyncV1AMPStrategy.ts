@@ -4,11 +4,11 @@ const { ethers } = require("hardhat");
 import { expect } from "chai";
 import { Contract, ContractFactory } from "ethers";
 
-const ERROR_NOT_MANAGER = "manager != msg.sender";
+const ERROR_NOT_MANAGER = "Manager != msg.sender";
 const ERROR_INVALID_PURPOSE_LENGTH = "__utilizedERC20.length != _purpose.length";
 const ERROR_INVALID_ALLOCATION = "_utilizedERC20AllocationTotal != ONE_HUNDRED_PERCENT";
-const ERROR_ETH_FEED_NOT_SET = "address(yieldSyncV1EMPETHValueFeed) == address(0)";
-const ERROR_STRATEGY_NOT_SET = "address(yieldSyncV1EMPStrategyInteractor) == address(0)";
+const ERROR_ETH_FEED_NOT_SET = "address(iYieldSyncV1EMPETHValueFeed) == address(0)";
+const ERROR_STRATEGY_NOT_SET = "address(iYieldSyncV1EMPStrategyInteractor) == address(0)";
 const ERROR_NOT_COMPUTED = "!computed";
 
 const HUNDRED_PERCENT = ethers.utils.parseUnits('1', 18);
@@ -24,6 +24,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 	let mockERC20C: Contract;
 	let eTHValueFeedDummy: Contract;
 	let strategyInteractorDummy: Contract;
+	let yieldSyncV1EMPRegistry: Contract;
 	let yieldSyncV1EMPStrategy: Contract;
 
 
@@ -34,6 +35,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
 		const ETHValueFeedDummy: ContractFactory = await ethers.getContractFactory("ETHValueFeedDummy");
 		const StrategyInteractorDummy: ContractFactory = await ethers.getContractFactory("StrategyInteractorDummy");
+		const YieldSyncV1EMPRegistry: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPRegistry");
 		const YieldSyncV1EMPStrategy: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPStrategy");
 
 		mockERC20A = await (await MockERC20.deploy()).deployed();
@@ -41,7 +43,17 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 		mockERC20C = await (await MockERC20.deploy()).deployed();
 		eTHValueFeedDummy = await (await ETHValueFeedDummy.deploy()).deployed();
 		strategyInteractorDummy = await (await StrategyInteractorDummy.deploy()).deployed();
-		yieldSyncV1EMPStrategy = await (await YieldSyncV1EMPStrategy.deploy(OWNER.address, "Exampe", "EX")).deployed();
+		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy()).deployed();
+		yieldSyncV1EMPStrategy = await (
+			await YieldSyncV1EMPStrategy.deploy(
+				// For now set the deployer as OWNER to bypass auth
+				OWNER.address,
+				yieldSyncV1EMPRegistry.address,
+				OWNER.address,
+				"Exampe",
+				"EX"
+			)
+		).deployed();
 	});
 
 
@@ -115,6 +127,8 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 					const _YSS = await (
 						await (await ethers.getContractFactory("YieldSyncV1EMPStrategy")).deploy(
 							OWNER.address,
+							yieldSyncV1EMPRegistry.address,
+							OWNER.address,
 							"Exampe",
 							"EX"
 						)
@@ -154,6 +168,8 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 					const _YSS = await (
 						await (await ethers.getContractFactory("YieldSyncV1EMPStrategy")).deploy(
 							OWNER.address,
+							yieldSyncV1EMPRegistry.address,
+							OWNER.address,
 							"Exampe",
 							"EX"
 						)
@@ -179,7 +195,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 		);
 	});
 
-	describe("function yieldSyncV1EMPETHValueFeedUpdate()", async () =>
+	describe("function iYieldSyncV1EMPETHValueFeedUpdate()", async () =>
 	{
 		it(
 			"[auth] Should revert when unauthorized msg.sender calls..",
@@ -188,7 +204,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 				const [, ADDR_1] = await ethers.getSigners();
 
 				await expect(
-					yieldSyncV1EMPStrategy.connect(ADDR_1).yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+					yieldSyncV1EMPStrategy.connect(ADDR_1).iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
 				).to.be.rejectedWith(ERROR_NOT_MANAGER);
 			}
 		);
@@ -198,15 +214,15 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 			async () =>
 			{
 				await expect(
-					yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+					yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
 				).to.not.be.reverted;
 
-				expect(await yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeed()).to.be.equal(eTHValueFeedDummy.address);
+				expect(await yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeed()).to.be.equal(eTHValueFeedDummy.address);
 			}
 		);
 	});
 
-	describe("function yieldSyncV1EMPStrategyInteractorUpdate()", async () =>
+	describe("function iYieldSyncV1EMPStrategyInteractorUpdate()", async () =>
 	{
 		it(
 			"[auth] Should revert when unauthorized msg.sender calls..",
@@ -215,7 +231,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 				const [, ADDR_1] = await ethers.getSigners();
 
 				await expect(
-					yieldSyncV1EMPStrategy.connect(ADDR_1).yieldSyncV1EMPStrategyInteractorUpdate(
+					yieldSyncV1EMPStrategy.connect(ADDR_1).iYieldSyncV1EMPStrategyInteractorUpdate(
 						strategyInteractorDummy.address
 					)
 				).to.be.rejectedWith(ERROR_NOT_MANAGER);
@@ -223,14 +239,14 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 		);
 
 		it(
-			"Should be able to set yieldSyncV1EMPStrategyInteractor..",
+			"Should be able to set iYieldSyncV1EMPStrategyInteractor..",
 			async () =>
 			{
 				await expect(
-					yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
+					yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 				).to.not.be.reverted;
 
-				expect(await yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractor()).to.be.equal(
+				expect(await yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractor()).to.be.equal(
 					strategyInteractorDummy.address
 				);
 			}
@@ -258,7 +274,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 				const [OWNER] = await ethers.getSigners();
 
 				await expect(
-					yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+					yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
 				).to.not.be.reverted;
 
 				await expect(yieldSyncV1EMPStrategy.balanceOfETHValue(OWNER.address)).to.be.rejectedWith(
@@ -285,7 +301,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 			async () =>
 			{
 				await expect(
-					yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+					yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
 				).to.not.be.reverted;
 
 				await expect(
@@ -312,7 +328,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 			async () =>
 			{
 				await expect(
-					yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+					yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
 				).to.not.be.reverted;
 
 				await expect(
@@ -334,11 +350,11 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 				).to.not.be.reverted;
 
 				await expect(
-					yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+					yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
 				).to.not.be.reverted;
 
 				await expect(
-					yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
+					yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 				).to.not.be.reverted;
 
 				// Set ETH value to ZERO
@@ -365,11 +381,11 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 				).to.not.be.reverted;
 
 				await expect(
-					yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+					yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
 				).to.not.be.reverted;
 
 				await expect(
-					yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
+					yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 				).to.not.be.reverted;
 
 				const DEPOSIT_AMOUNT = ethers.utils.parseUnits("1", 18);
@@ -391,11 +407,11 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 				).to.not.be.reverted;
 
 				await expect(
-					yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+					yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
 				).to.not.be.reverted;
 
 				await expect(
-					yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
+					yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 				).to.not.be.reverted;
 
 				const DEPOSIT_AMOUNT = ethers.utils.parseUnits("1", 18);
@@ -434,7 +450,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 			async () =>
 			{
 				await expect(
-					yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+					yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
 				).to.not.be.reverted;
 
 				await expect(
@@ -456,11 +472,11 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 				).to.not.be.reverted;
 
 				await expect(
-					yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+					yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
 				).to.not.be.reverted;
 
 				await expect(
-					yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
+					yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 				).to.not.be.reverted;
 
 				expect(await yieldSyncV1EMPStrategy.utilizedERC20DepositOpen()).to.be.false;
@@ -503,7 +519,7 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 			async () =>
 			{
 				await expect(
-					yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+					yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
 				).to.not.be.reverted;
 
 				await expect(
@@ -525,11 +541,11 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 				).to.not.be.reverted;
 
 				await expect(
-					yieldSyncV1EMPStrategy.yieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+					yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
 				).to.not.be.reverted;
 
 				await expect(
-					yieldSyncV1EMPStrategy.yieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
+					yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 				).to.not.be.reverted;
 
 				expect(await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpen()).to.be.false;
