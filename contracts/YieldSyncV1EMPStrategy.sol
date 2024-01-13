@@ -124,49 +124,6 @@ contract YieldSyncV1EMPStrategy is
 		return _utilizedERC20_purpose[__utilizedERC20];
 	}
 
-	/// @inheritdoc IYieldSyncV1EMPStrategy
-	function balanceOfETHValue(address _target)
-		public
-		view
-		override
-		returns (uint256 balanceOfETHValue_)
-	{
-		uint256[] memory uTAPB = utilizedERC20AmountPerBurn();
-
-		for (uint256 i = 0; i < _utilizedERC20.length; i++)
-		{
-			balanceOfETHValue_ += SafeMath.mul(
-				uTAPB[i],
-				SafeMath.mul(balanceOf(_target), utilizedERC20ETHValue(_utilizedERC20[i]))
-			);
-		}
-	}
-
-	/// @inheritdoc IYieldSyncV1EMPStrategy
-	function utilizedERC20AmountPerBurn()
-		public
-		view
-		override
-		initialized()
-		returns (uint256[] memory utilizedERC20Amount_)
-	{
-		utilizedERC20Amount_ = iYieldSyncV1EMPStrategyInteractor.utilizedERC20TotalAmount(_utilizedERC20);
-
-		for (uint256 i = 0; i < _utilizedERC20.length; i++)
-		{
-			if (_utilizedERC20_purpose[_utilizedERC20[i]].withdraw)
-			{
-				(, uint256 utilizedERC20Amount) = SafeMath.tryDiv(SafeMath.mul(utilizedERC20Amount_[i], 1e18), totalSupply());
-
-				utilizedERC20Amount_[i] = utilizedERC20Amount;
-			}
-			else
-			{
-				utilizedERC20Amount_[i] = 0;
-			}
-		}
-	}
-
 
 	/// @notice mutative
 
@@ -298,14 +255,28 @@ contract YieldSyncV1EMPStrategy is
 
 		require(balanceOf(msg.sender) >= _tokenAmount, "balanceOf(msg.sender) < _tokenAmount");
 
-		uint256[] memory uTAPB = utilizedERC20AmountPerBurn();
+		uint256[] memory utilizedERC20AmountPerBurn = iYieldSyncV1EMPStrategyInteractor.utilizedERC20TotalAmount(_utilizedERC20);
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
-			uTAPB[i] = SafeMath.div(uTAPB[i] * _tokenAmount, 1e18);
+			if (_utilizedERC20_purpose[_utilizedERC20[i]].withdraw)
+			{
+				(, uint256 utilizedERC20Amount) = SafeMath.tryDiv(SafeMath.mul(utilizedERC20AmountPerBurn[i], 1e18), totalSupply());
+
+				utilizedERC20AmountPerBurn[i] = utilizedERC20Amount;
+			}
+			else
+			{
+				utilizedERC20AmountPerBurn[i] = 0;
+			}
 		}
 
-		iYieldSyncV1EMPStrategyInteractor.utilizedERC20Withdraw(msg.sender, _utilizedERC20, uTAPB);
+		for (uint256 i = 0; i < _utilizedERC20.length; i++)
+		{
+			utilizedERC20AmountPerBurn[i] = SafeMath.div(utilizedERC20AmountPerBurn[i] * _tokenAmount, 1e18);
+		}
+
+		iYieldSyncV1EMPStrategyInteractor.utilizedERC20Withdraw(msg.sender, _utilizedERC20, utilizedERC20AmountPerBurn);
 
 		_burn(msg.sender, _tokenAmount);
 	}

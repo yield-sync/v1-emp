@@ -142,27 +142,6 @@ interface IYieldSyncV1EMPStrategy is
 		returns (Purpose memory purpopse_)
 	;
 
-	/**
-	* @notice Eth value of position
-	* @param target {address}
-	* @return balanceOfETHValue_ {uint256}
-	*/
-	function balanceOfETHValue(address target)
-		external
-		view
-		returns (uint256 balanceOfETHValue_)
-	;
-
-	/**
-	* @notice Utilized ERC20 amounts returned per ERC20
-	* @return utilizedERC20Amount_ {uint256[]}
-	*/
-	function utilizedERC20AmountPerBurn()
-		external
-		view
-		returns (uint256[] memory utilizedERC20Amount_)
-	;
-
 
 	/**
 	* @notice Set utilized ERC20s and purpose
