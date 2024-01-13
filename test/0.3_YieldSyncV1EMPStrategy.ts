@@ -41,6 +41,11 @@ describe("[0.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
 		eTHValueFeedDummy = await (await ETHValueFeedDummy.deploy()).deployed();
 		strategyInteractorDummy = await (await StrategyInteractorDummy.deploy()).deployed();
 		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy()).deployed();
+
+		await expect(
+			yieldSyncV1EMPRegistry.yieldSynV1EMPDeployer_yieldSyncV1EMP_registeredUpdate(OWNER.address)
+		).to.not.be.reverted;
+
 		yieldSyncV1EMPStrategy = await (
 			await YieldSyncV1EMPStrategy.deploy(
 				// For now set the deployer as OWNER to bypass auth

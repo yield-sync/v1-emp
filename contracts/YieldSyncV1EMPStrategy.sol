@@ -281,6 +281,7 @@ contract YieldSyncV1EMPStrategy is
 		override
 		nonReentrant()
 		initialized()
+		authEMP()
 	{
 		require(utilizedERC20DepositOpen, "!utilizedERC20DepositOpen");
 

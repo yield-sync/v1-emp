@@ -4,6 +4,7 @@ const { ethers } = require("hardhat");
 import { expect } from "chai";
 import { Contract, ContractFactory } from "ethers";
 
+const ERROR_AUTH_CALLER = "!iYieldSyncV1EMPRegistry.yieldSynV1EMPDeployer_yieldSyncV1EMP_registered(YieldSyncV1EMPDeployer, msg.sender)";
 const ERR0R_INVALID_UTILIZEDERC20AMOUNT = "!utilizedERC20AmountValid(_utilizedERC20Amount)";
 const ERROR_INVALID_AMOUNT_LENGTH = "_utilizedERC20.length != _utilizedERC20Amount.length";
 const ERROR_ETH_FEED_NOT_SET = "address(iYieldSyncV1EMPETHValueFeed) == address(0)";
@@ -46,6 +47,11 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 		eTHValueFeedDummy = await (await ETHValueFeedDummy.deploy()).deployed();
 		strategyInteractorDummy = await (await StrategyInteractorDummy.deploy()).deployed();
 		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy()).deployed();
+
+		await expect(
+			yieldSyncV1EMPRegistry.yieldSynV1EMPDeployer_yieldSyncV1EMP_registeredUpdate(OWNER.address)
+		).to.not.be.reverted;
+
 		yieldSyncV1EMPStrategy = await (
 			await YieldSyncV1EMPStrategy.deploy(
 				// For now set the deployer as OWNER to bypass auth
@@ -84,6 +90,33 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 					await expect(
 						yieldSyncV1EMPStrategy.utilizedERC20Deposit([])
 					).to.be.rejectedWith(ERROR_STRATEGY_NOT_SET);
+				}
+			);
+
+			it(
+				"[modifier] Should only authorize authorized caller..",
+				async () =>
+				{
+					const [, ADDR_1] = await ethers.getSigners();
+
+					await expect(
+						await yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
+							[mockERC20A.address],
+							[[true, true, HUNDRED_PERCENT]]
+						)
+					).to.not.be.reverted;
+
+					await expect(
+						yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+					).to.not.be.reverted;
+
+					await expect(
+						yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
+					).to.not.be.reverted;
+
+					await expect(
+						yieldSyncV1EMPStrategy.connect(ADDR_1).utilizedERC20Deposit([])
+					).to.be.rejectedWith(ERROR_AUTH_CALLER);
 				}
 			);
 
