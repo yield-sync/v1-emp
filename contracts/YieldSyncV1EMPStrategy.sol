@@ -68,17 +68,6 @@ contract YieldSyncV1EMPStrategy is
 		iYieldSyncV1EMPRegistry = IYieldSyncV1EMPRegistry(_iYieldSyncV1EMPRegistry);
 	}
 
-
-	modifier authEMP()
-	{
-		require(
-			iYieldSyncV1EMPRegistry.yieldSynV1EMPDeployer_yieldSyncV1EMP_registered(YieldSyncV1EMPDeployer, msg.sender),
-			"!iYieldSyncV1EMPRegistry.yieldSynV1EMPDeployer_yieldSyncV1EMP_registered(YieldSyncV1EMPDeployer, msg.sender)"
-		);
-
-		_;
-	}
-
 	modifier authManager()
 	{
 		require(Manager == msg.sender, "Manager != msg.sender");
@@ -281,8 +270,12 @@ contract YieldSyncV1EMPStrategy is
 		override
 		nonReentrant()
 		initialized()
-		authEMP()
 	{
+		require(
+			iYieldSyncV1EMPRegistry.yieldSynV1EMPDeployer_yieldSyncV1EMP_registered(YieldSyncV1EMPDeployer, msg.sender),
+			"!iYieldSyncV1EMPRegistry.yieldSynV1EMPDeployer_yieldSyncV1EMP_registered(YieldSyncV1EMPDeployer, msg.sender)"
+		);
+
 		require(utilizedERC20DepositOpen, "!utilizedERC20DepositOpen");
 
 		require(utilizedERC20AmountValid(_utilizedERC20Amount), "!utilizedERC20AmountValid(_utilizedERC20Amount)");
