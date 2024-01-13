@@ -163,15 +163,6 @@ interface IYieldSyncV1EMPStrategy is
 		returns (uint256[] memory utilizedERC20Amount_)
 	;
 
-	/**
-	* @notice Valid utilized ERC20 amounts
-	* @param _utilizedERC20Amount {uint256}
-	* @return utilizedERC20AmountValid_ {bool}
-	*/
-	function utilizedERC20AmountValid(uint256[] memory _utilizedERC20Amount)
-		external
-		returns (bool utilizedERC20AmountValid_)
-	;
 
 	/**
 	* @notice Set utilized ERC20s and purpose

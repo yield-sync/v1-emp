@@ -5,11 +5,12 @@ import { expect } from "chai";
 import { Contract, ContractFactory } from "ethers";
 
 const ERROR_AUTH_CALLER = "!iYieldSyncV1EMPRegistry.yieldSynV1EMPDeployer_yieldSyncV1EMP_registered(YieldSyncV1EMPDeployer, msg.sender)";
-const ERR0R_INVALID_UTILIZEDERC20AMOUNT = "!utilizedERC20AmountValid(_utilizedERC20Amount)";
+const ERR0R_INVALID_UTILIZEDERC20AMOUNT = "!utilizedERC20AmountValid";
 const ERROR_INVALID_AMOUNT_LENGTH = "_utilizedERC20.length != _utilizedERC20Amount.length";
 const ERROR_ETH_FEED_NOT_SET = "address(iYieldSyncV1EMPETHValueFeed) == address(0)";
 const ERROR_STRATEGY_NOT_SET = "address(iYieldSyncV1EMPStrategyInteractor) == address(0)";
 const ERROR_DEPOSIT_NOT_OPEN = "!utilizedERC20DepositOpen";
+const ERROR_NOT_COMPUTED = "!computed";
 
 const D_18 = ethers.utils.parseUnits('1', 18);
 
@@ -150,6 +151,69 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 					).to.revertedWith(ERROR_DEPOSIT_NOT_OPEN);
 				}
 			);
+
+			it(
+				"Should revert if denominator is 0..",
+				async () =>
+				{
+					// Initialize strategy with mock ERC20
+					await expect(
+						yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
+							[mockERC20A.address],
+							[[true, true, HUNDRED_PERCENT]]
+						)
+					).to.not.be.reverted;
+
+					await expect(
+						yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+					).to.not.be.reverted;
+
+					await expect(
+						yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
+					).to.not.be.reverted;
+
+					await expect(yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()).to.not.be.reverted;
+
+					// Set ETH value to ZERO
+					await eTHValueFeedDummy.updateETHValue(0);
+
+					const DEPOSIT_AMOUNT = ethers.utils.parseUnits("1", 18);
+
+					await expect(yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT])).to.be.revertedWith(
+						ERROR_NOT_COMPUTED
+					);
+				}
+			);
+
+			it(
+				"Should return false if INVALID ERC20 amounts passed..",
+				async () =>
+				{
+					// Initialize strategy with mock ERC20
+					await expect(
+						yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
+							[mockERC20A.address, mockERC20B.address],
+							[[true, true, FIFTY_PERCENT], [true, true, FIFTY_PERCENT]]
+						)
+					).to.not.be.reverted;
+
+					await expect(
+						yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+					).to.not.be.reverted;
+
+					await expect(
+						yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
+					).to.not.be.reverted;
+
+					await expect(yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()).to.not.be.reverted;
+
+					const DEPOSIT_AMOUNT = ethers.utils.parseUnits("1", 18);
+
+					await expect(yieldSyncV1EMPStrategy.utilizedERC20Deposit([0, DEPOSIT_AMOUNT])).to.be.revertedWith(
+						ERR0R_INVALID_UTILIZEDERC20AMOUNT
+					);
+				}
+			)
 		});
 
 		describe("[SINGLE ERC20]", async () =>
