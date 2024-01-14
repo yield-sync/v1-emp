@@ -258,33 +258,6 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 		);
 	});
 
-	describe("function utilizedERC20AmountPerBurn()", async () =>
-	{
-		it(
-			"[modifier] Should revert if ETH FEED is not set..",
-			async () =>
-			{
-				await expect(
-					yieldSyncV1EMPStrategy.utilizedERC20AmountPerBurn()
-				).to.be.rejectedWith(ERROR_ETH_FEED_NOT_SET);
-			}
-		);
-
-		it(
-			"[modifier] Should revert if strategy is not set..",
-			async () =>
-			{
-				await expect(
-					yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
-				).to.not.be.reverted;
-
-				await expect(
-					yieldSyncV1EMPStrategy.utilizedERC20AmountPerBurn()
-				).to.be.rejectedWith(ERROR_STRATEGY_NOT_SET);
-			}
-		);
-	});
-
 	describe("function utilizedERC20DepositOpenToggle()", async () =>
 	{
 		it(

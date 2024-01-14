@@ -105,16 +105,6 @@ contract YieldSyncV1EMPStrategy is
 	}
 
 	/// @inheritdoc IYieldSyncV1EMPStrategy
-	function utilizedERC20ETHValue(address __utilizedERC20)
-		public
-		view
-		override
-		returns (uint256 utilizedERC20ETHValue_)
-	{
-		return iYieldSyncV1EMPETHValueFeed.utilizedERC20ETHValue(__utilizedERC20);
-	}
-
-	/// @inheritdoc IYieldSyncV1EMPStrategy
 	function utilizedERC20_purpose(address __utilizedERC20)
 		public
 		view
@@ -185,7 +175,7 @@ contract YieldSyncV1EMPStrategy is
 				utilizedERC20AmountTotalETHValue += SafeMath.div(
 					SafeMath.mul(
 						SafeMath.mul(_utilizedERC20Amount[i], 10 ** (18 - ERC20(_utilizedERC20[i]).decimals())),
-						utilizedERC20ETHValue(_utilizedERC20[i])
+						iYieldSyncV1EMPETHValueFeed.utilizedERC20ETHValue(_utilizedERC20[i])
 					),
 					1e18
 				);
@@ -199,7 +189,7 @@ contract YieldSyncV1EMPStrategy is
 				(bool computed, uint256 amountAllocationActual) = SafeMath.tryDiv(
 					SafeMath.mul(
 						SafeMath.div(
-							SafeMath.mul(_utilizedERC20Amount[i], utilizedERC20ETHValue(_utilizedERC20[i])),
+							SafeMath.mul(_utilizedERC20Amount[i], iYieldSyncV1EMPETHValueFeed.utilizedERC20ETHValue(_utilizedERC20[i])),
 							10 ** ERC20(_utilizedERC20[i]).decimals()
 						),
 						1e18

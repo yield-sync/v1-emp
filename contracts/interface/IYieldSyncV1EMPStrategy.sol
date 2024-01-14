@@ -58,17 +58,6 @@ interface IYieldSyncV1EMPStrategy is
 	;
 
 	/**
-	* @notice Utilized ERC20 ETH Value
-	* @param _utilizedERC20 {address}
-	* @return utilizedERC20ETHValue_ {uint256}
-	*/
-	function utilizedERC20ETHValue(address _utilizedERC20)
-		external
-		view
-		returns (uint256 utilizedERC20ETHValue_)
-	;
-
-	/**
 	* @notice Utilized ERC20 Deposit Open
 	*/
 	function utilizedERC20DepositOpen()
