@@ -133,6 +133,22 @@ interface IYieldSyncV1EMPStrategy is
 
 
 	/**
+	* @notice Update yieldSyncV1EMPETHValueFeed
+	* @param _yieldSyncV1EMPETHValueFeed {address}
+	*/
+	function iYieldSyncV1EMPETHValueFeedUpdate(address _yieldSyncV1EMPETHValueFeed)
+		external
+	;
+
+	/**
+	* @notice Update iYieldSyncV1EMPStrategyInteractor
+	* @param _YSSInteractor {address}
+	*/
+	function iYieldSyncV1EMPStrategyInteractorUpdate(address _YSSInteractor)
+		external
+	;
+
+	/**
 	* @notice Set utilized ERC20s and purpose
 	* @param __utilizedERC20 {address[]}
 	* @param _purpose {Purpose[]}
@@ -168,22 +184,6 @@ interface IYieldSyncV1EMPStrategy is
 	* @notice Utilized ERC20 Deposit Open Toggle
 	*/
 	function utilizedERC20WithdrawOpenToggle()
-		external
-	;
-
-	/**
-	* @notice Update yieldSyncV1EMPETHValueFeed
-	* @param _yieldSyncV1EMPETHValueFeed {address}
-	*/
-	function iYieldSyncV1EMPETHValueFeedUpdate(address _yieldSyncV1EMPETHValueFeed)
-		external
-	;
-
-	/**
-	* @notice Update iYieldSyncV1EMPStrategyInteractor
-	* @param _YSSInteractor {address}
-	*/
-	function iYieldSyncV1EMPStrategyInteractorUpdate(address _YSSInteractor)
 		external
 	;
 }

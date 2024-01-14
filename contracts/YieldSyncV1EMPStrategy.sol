@@ -119,6 +119,24 @@ contract YieldSyncV1EMPStrategy is
 
 
 	/// @inheritdoc IYieldSyncV1EMPStrategy
+	function iYieldSyncV1EMPETHValueFeedUpdate(address _iYieldSyncV1EMPETHValueFeed)
+		public
+		override
+		authManager()
+	{
+		iYieldSyncV1EMPETHValueFeed = IYieldSyncV1EMPETHValueFeed(_iYieldSyncV1EMPETHValueFeed);
+	}
+
+	/// @inheritdoc IYieldSyncV1EMPStrategy
+	function iYieldSyncV1EMPStrategyInteractorUpdate(address _YSSInteractor)
+		public
+		override
+		authManager()
+	{
+		iYieldSyncV1EMPStrategyInteractor = IYieldSyncV1EMPStrategyInteractor(_YSSInteractor);
+	}
+
+	/// @inheritdoc IYieldSyncV1EMPStrategy
 	function utilizedERC20AndPurposeUpdate(address[] memory __utilizedERC20, Purpose[] memory _purpose)
 		public
 		override
@@ -279,23 +297,5 @@ contract YieldSyncV1EMPStrategy is
 		initialized()
 	{
 		utilizedERC20WithdrawOpen = !utilizedERC20WithdrawOpen;
-	}
-
-	/// @inheritdoc IYieldSyncV1EMPStrategy
-	function iYieldSyncV1EMPETHValueFeedUpdate(address _iYieldSyncV1EMPETHValueFeed)
-		public
-		override
-		authManager()
-	{
-		iYieldSyncV1EMPETHValueFeed = IYieldSyncV1EMPETHValueFeed(_iYieldSyncV1EMPETHValueFeed);
-	}
-
-	/// @inheritdoc IYieldSyncV1EMPStrategy
-	function iYieldSyncV1EMPStrategyInteractorUpdate(address _YSSInteractor)
-		public
-		override
-		authManager()
-	{
-		iYieldSyncV1EMPStrategyInteractor = IYieldSyncV1EMPStrategyInteractor(_YSSInteractor);
 	}
 }
