@@ -4,7 +4,7 @@ const { ethers } = require("hardhat");
 import { expect } from "chai";
 import { Contract, ContractFactory } from "ethers";
 
-const ERROR_NOT_MANAGER = "Manager != msg.sender";
+const ERROR_NOT_MANAGER = "manager != msg.sender";
 const ERROR_INVALID_PURPOSE_LENGTH = "__utilizedERC20.length != _purpose.length";
 const ERROR_INVALID_ALLOCATION = "_utilizedERC20AllocationTotal != ONE_HUNDRED_PERCENT";
 const ERROR_ETH_FEED_NOT_SET = "address(iYieldSyncV1EMPETHValueFeed) == address(0)";
@@ -61,6 +61,35 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 		).deployed();
 	});
 
+
+	describe("function managerUpdate()", async () =>
+	{
+		it(
+			"[auth] Should revert when unauthorized msg.sender calls..",
+			async () =>
+			{
+				const [, ADDR_1] = await ethers.getSigners();
+
+				await expect(
+					yieldSyncV1EMPStrategy.connect(ADDR_1).managerUpdate(ADDR_1.address)
+				).to.be.rejectedWith(ERROR_NOT_MANAGER);
+			}
+		);
+
+		it(
+			"Should alow manager to be changed..",
+			async () =>
+			{
+				const [, ADDR_1] = await ethers.getSigners();
+
+				await expect(
+					yieldSyncV1EMPStrategy.managerUpdate(ADDR_1.address)
+				).to.be.not.reverted;
+
+				expect(await yieldSyncV1EMPStrategy.manager()).to.be.equal(ADDR_1.address);
+			}
+		);
+	});
 
 	describe("function utilizedERC20AndPurposeUpdate()", async () =>
 	{

@@ -26,10 +26,10 @@ interface IYieldSyncV1EMPStrategy is
 {
 	/**
 	* @dev [view-address]
-	* @notice Manager
+	* @notice manager
 	* @return {address}
 	*/
-	function Manager()
+	function manager()
 		external
 		view
 		returns (address)
@@ -145,6 +145,14 @@ interface IYieldSyncV1EMPStrategy is
 	* @param _YSSInteractor {address}
 	*/
 	function iYieldSyncV1EMPStrategyInteractorUpdate(address _YSSInteractor)
+		external
+	;
+
+	/**
+	* @notice Update manager
+	* @param _manager {address}
+	*/
+	function managerUpdate(address _manager)
 		external
 	;
 

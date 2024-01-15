@@ -21,8 +21,9 @@ contract YieldSyncV1EMPStrategy is
 	IYieldSyncV1EMPStrategy,
 	ReentrancyGuard
 {
-	address public immutable override Manager;
 	address public immutable override YieldSyncV1EMPDeployer;
+
+	address public override manager;
 
 	address[] internal _utilizedERC20;
 
@@ -33,8 +34,9 @@ contract YieldSyncV1EMPStrategy is
 
 	mapping (address utilizedERC20 => Purpose purpose) internal _utilizedERC20_purpose;
 
+	IYieldSyncV1EMPRegistry public override immutable iYieldSyncV1EMPRegistry;
+
 	IYieldSyncV1EMPETHValueFeed public override iYieldSyncV1EMPETHValueFeed;
-	IYieldSyncV1EMPRegistry public override iYieldSyncV1EMPRegistry;
 	IYieldSyncV1EMPStrategyInteractor public override iYieldSyncV1EMPStrategyInteractor;
 
 
@@ -53,7 +55,7 @@ contract YieldSyncV1EMPStrategy is
 	constructor (
 		address _YieldSyncV1EMPDeployer,
 		address _iYieldSyncV1EMPRegistry,
-		address _Manager,
+		address _manager,
 		string memory _name,
 		string memory _symbol
 	)
@@ -63,14 +65,14 @@ contract YieldSyncV1EMPStrategy is
 		utilizedERC20WithdrawOpen = false;
 
 		YieldSyncV1EMPDeployer = _YieldSyncV1EMPDeployer;
-		Manager = _Manager;
+		manager = _manager;
 
 		iYieldSyncV1EMPRegistry = IYieldSyncV1EMPRegistry(_iYieldSyncV1EMPRegistry);
 	}
 
 	modifier authManager()
 	{
-		require(Manager == msg.sender, "Manager != msg.sender");
+		require(manager == msg.sender, "manager != msg.sender");
 
 		_;
 	}
@@ -134,6 +136,15 @@ contract YieldSyncV1EMPStrategy is
 		authManager()
 	{
 		iYieldSyncV1EMPStrategyInteractor = IYieldSyncV1EMPStrategyInteractor(_YSSInteractor);
+	}
+
+	/// @inheritdoc IYieldSyncV1EMPStrategy
+	function managerUpdate(address _manager)
+		public
+		override
+		authManager()
+	{
+		manager = _manager;
 	}
 
 	/// @inheritdoc IYieldSyncV1EMPStrategy
