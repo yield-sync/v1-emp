@@ -24,13 +24,6 @@ interface IYieldSyncV1EMPRegistry
 
 
 	/**
-	* @param _yieldSyncV1EMPDeployer {address}
-	*/
-	function yieldSyncV1EMPDeployerUpdate(address _yieldSyncV1EMPDeployer)
-		external
-	;
-
-	/**
 	* @param _yieldSyncV1EMP {address}
 	*/
 	function yieldSyncV1EMP_registeredUpdate(address _yieldSyncV1EMP)
@@ -38,9 +31,9 @@ interface IYieldSyncV1EMPRegistry
 	;
 
 	/**
-	* @param _yieldSyncV1EMPStrategyDeployer {address}
+	* @param _yieldSyncV1EMPDeployer {address}
 	*/
-	function yieldSyncV1EMPStrategyDeployerUpdate(address _yieldSyncV1EMPStrategyDeployer)
+	function yieldSyncV1EMPDeployerUpdate(address _yieldSyncV1EMPDeployer)
 		external
 	;
 
@@ -48,6 +41,13 @@ interface IYieldSyncV1EMPRegistry
 	* @param _yieldSyncV1EMPStrategy {address}
 	*/
 	function yieldSyncV1EMPStrategy_registeredUpdate(address _yieldSyncV1EMPStrategy)
+		external
+	;
+
+	/**
+	* @param _yieldSyncV1EMPStrategyDeployer {address}
+	*/
+	function yieldSyncV1EMPStrategyDeployerUpdate(address _yieldSyncV1EMPStrategyDeployer)
 		external
 	;
 }

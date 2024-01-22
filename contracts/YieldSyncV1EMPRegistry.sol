@@ -23,6 +23,26 @@ contract YieldSyncV1EMPRegistry is
 
 
 	/// @inheritdoc IYieldSyncV1EMPRegistry
+	function yieldSyncV1EMP_registeredUpdate(address _yieldSyncV1EMP)
+		public
+		override
+	{
+		require(yieldSyncV1EMPDeployer == msg.sender, "");
+
+		yieldSyncV1EMP_registered[_yieldSyncV1EMP] = true;
+	}
+
+	/// @inheritdoc IYieldSyncV1EMPRegistry
+	function yieldSyncV1EMPStrategy_registeredUpdate(address _yieldSyncV1EMPStrategy)
+		public
+		override
+	{
+		require(yieldSyncV1EMPStrategyDeployer == msg.sender, "");
+
+		yieldSyncV1EMPStrategy_registered[_yieldSyncV1EMPStrategy] = true;
+	}
+
+	/// @inheritdoc IYieldSyncV1EMPRegistry
 	function yieldSyncV1EMPDeployerUpdate(address _yieldSyncV1EMPDeployer)
 		public
 		override
@@ -35,16 +55,6 @@ contract YieldSyncV1EMPRegistry is
 	}
 
 	/// @inheritdoc IYieldSyncV1EMPRegistry
-	function yieldSyncV1EMP_registeredUpdate(address _yieldSyncV1EMP)
-		public
-		override
-	{
-		require(yieldSyncV1EMPDeployer == msg.sender, "");
-
-		yieldSyncV1EMP_registered[_yieldSyncV1EMP] = true;
-	}
-
-	/// @inheritdoc IYieldSyncV1EMPRegistry
 	function yieldSyncV1EMPStrategyDeployerUpdate(address _yieldSyncV1EMPStrategyDeployer)
 		public
 		override
@@ -54,15 +64,5 @@ contract YieldSyncV1EMPRegistry is
 		require(yieldSyncV1EMPStrategyDeployer == address(0), "");
 
 		yieldSyncV1EMPStrategyDeployer = _yieldSyncV1EMPStrategyDeployer;
-	}
-
-	/// @inheritdoc IYieldSyncV1EMPRegistry
-	function yieldSyncV1EMPStrategy_registeredUpdate(address _yieldSyncV1EMPStrategy)
-		public
-		override
-	{
-		require(yieldSyncV1EMPStrategyDeployer == msg.sender, "");
-
-		yieldSyncV1EMPStrategy_registered[_yieldSyncV1EMPStrategy] = true;
 	}
 }
