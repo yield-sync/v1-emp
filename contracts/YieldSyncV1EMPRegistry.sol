@@ -34,13 +34,20 @@ contract YieldSyncV1EMPRegistry is
 	}
 
 
+	modifier authManager()
+	{
+		require(manager == msg.sender, "manager != msg.sender");
+
+		_;
+	}
+
+
 	/// @inheritdoc IYieldSyncV1EMPRegistry
 	function yieldSyncV1EMPDeployerUpdate(address _yieldSyncV1EMPDeployer)
 		public
 		override
+		authManager()
 	{
-		require(manager == msg.sender, "manager != msg.sender");
-
 		require(yieldSyncV1EMPDeployer == address(0), "yieldSyncV1EMPDeployer != address(0)");
 
 		yieldSyncV1EMPDeployer = _yieldSyncV1EMPDeployer;
@@ -63,9 +70,8 @@ contract YieldSyncV1EMPRegistry is
 	function yieldSyncV1EMPStrategyDeployerUpdate(address _yieldSyncV1EMPStrategyDeployer)
 		public
 		override
+		authManager()
 	{
-		require(manager == msg.sender, "manager != msg.sender");
-
 		require(yieldSyncV1EMPStrategyDeployer == address(0), "yieldSyncV1EMPStrategyDeployer != address(0)");
 
 		yieldSyncV1EMPStrategyDeployer = _yieldSyncV1EMPStrategyDeployer;
