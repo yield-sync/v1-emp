@@ -45,10 +45,12 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 		strategyInteractorDummy = await (await StrategyInteractorDummy.deploy()).deployed();
 		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy()).deployed();
 
+		// Mock owner being an EMP Deployer
 		await expect(
 			yieldSyncV1EMPRegistry.yieldSyncV1EMPDeployerUpdate(OWNER.address)
 		).to.not.be.reverted;
 
+		// Mock owner being an EMP
 		await expect(
 			yieldSyncV1EMPRegistry.yieldSyncV1EMPRegister(OWNER.address)
 		).to.not.be.reverted;
