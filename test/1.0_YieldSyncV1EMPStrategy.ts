@@ -4,11 +4,8 @@ const { ethers } = require("hardhat");
 import { expect } from "chai";
 import { Contract, ContractFactory } from "ethers";
 
-const ERROR_NOT_MANAGER = "manager != msg.sender";
-const ERROR_INVALID_PURPOSE_LENGTH = "__utilizedERC20.length != _purpose.length";
-const ERROR_INVALID_ALLOCATION = "_utilizedERC20AllocationTotal != ONE_HUNDRED_PERCENT";
-const ERROR_ETH_FEED_NOT_SET = "address(iYieldSyncV1EMPETHValueFeed) == address(0)";
-const ERROR_STRATEGY_NOT_SET = "address(iYieldSyncV1EMPStrategyInteractor) == address(0)";
+import { ERROR } from "./common";
+
 
 const HUNDRED_PERCENT = ethers.utils.parseUnits('1', 18);
 const FIFTY_PERCENT = ethers.utils.parseUnits('.5', 18);
@@ -75,7 +72,7 @@ describe("[1.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 
 				await expect(
 					yieldSyncV1EMPStrategy.connect(ADDR_1).managerUpdate(ADDR_1.address)
-				).to.be.rejectedWith(ERROR_NOT_MANAGER);
+				).to.be.rejectedWith(ERROR.NOT_MANAGER);
 			}
 		);
 
@@ -107,7 +104,7 @@ describe("[1.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 						[mockERC20A.address],
 						[[true, true, HUNDRED_PERCENT]]
 					)
-				).to.be.rejectedWith(ERROR_NOT_MANAGER);
+				).to.be.rejectedWith(ERROR.NOT_MANAGER);
 			}
 		);
 
@@ -118,7 +115,7 @@ describe("[1.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 				// Keep in mind at this point utilizedTokens is an empty array
 				await expect(
 					yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate([], [[true, true, FIFTY_PERCENT],])
-				).to.be.rejectedWith(ERROR_INVALID_PURPOSE_LENGTH);
+				).to.be.rejectedWith(ERROR.INVALID_PURPOSE_LENGTH);
 			}
 		);
 
@@ -172,7 +169,7 @@ describe("[1.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 
 					await expect(
 						_YSS.utilizedERC20AndPurposeUpdate(INVALID_ALLOCATIONS[i].addresses, INVALID_ALLOCATIONS[i].purpose)
-					).to.be.rejectedWith(ERROR_INVALID_ALLOCATION);
+					).to.be.rejectedWith(ERROR.INVALID_ALLOCATION);
 				}
 			}
 		);
@@ -240,7 +237,7 @@ describe("[1.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 
 				await expect(
 					yieldSyncV1EMPStrategy.connect(ADDR_1).iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
-				).to.be.rejectedWith(ERROR_NOT_MANAGER);
+				).to.be.rejectedWith(ERROR.NOT_MANAGER);
 			}
 		);
 
@@ -269,7 +266,7 @@ describe("[1.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 					yieldSyncV1EMPStrategy.connect(ADDR_1).iYieldSyncV1EMPStrategyInteractorUpdate(
 						strategyInteractorDummy.address
 					)
-				).to.be.rejectedWith(ERROR_NOT_MANAGER);
+				).to.be.rejectedWith(ERROR.NOT_MANAGER);
 			}
 		);
 
@@ -298,7 +295,7 @@ describe("[1.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 
 				await expect(
 					yieldSyncV1EMPStrategy.connect(ADDR_1).utilizedERC20DepositOpenToggle()
-				).to.be.rejectedWith(ERROR_NOT_MANAGER);
+				).to.be.rejectedWith(ERROR.NOT_MANAGER);
 			}
 		);
 
@@ -308,7 +305,7 @@ describe("[1.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 			{
 				await expect(
 					yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()
-				).to.be.rejectedWith(ERROR_ETH_FEED_NOT_SET);
+				).to.be.rejectedWith(ERROR.ETH_FEED_NOT_SET);
 			}
 		);
 
@@ -322,7 +319,7 @@ describe("[1.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 
 				await expect(
 					yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()
-				).to.be.rejectedWith(ERROR_STRATEGY_NOT_SET);
+				).to.be.rejectedWith(ERROR.STRATEGY_NOT_SET);
 			}
 		);
 
@@ -367,7 +364,7 @@ describe("[1.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 
 				await expect(
 					yieldSyncV1EMPStrategy.connect(ADDR_1).utilizedERC20WithdrawOpenToggle()
-				).to.be.rejectedWith(ERROR_NOT_MANAGER);
+				).to.be.rejectedWith(ERROR.NOT_MANAGER);
 			}
 		);
 
@@ -377,7 +374,7 @@ describe("[1.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 			{
 				await expect(
 					yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle()
-				).to.be.rejectedWith(ERROR_ETH_FEED_NOT_SET);
+				).to.be.rejectedWith(ERROR.ETH_FEED_NOT_SET);
 			}
 		);
 
@@ -391,7 +388,7 @@ describe("[1.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 
 				await expect(
 					yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle()
-				).to.be.rejectedWith(ERROR_STRATEGY_NOT_SET);
+				).to.be.rejectedWith(ERROR.STRATEGY_NOT_SET);
 			}
 		);
 

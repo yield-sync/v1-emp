@@ -4,8 +4,7 @@ const { ethers } = require("hardhat");
 import { expect } from "chai";
 import { Contract, ContractFactory } from "ethers";
 
-
-const ERROR_NOT_MANAGER = "manager != msg.sender";
+import { ERROR } from "./common";
 
 
 describe("[0.0] YieldSyncV1EMPRegistry.sol - Setup", async () =>
@@ -30,7 +29,7 @@ describe("[0.0] YieldSyncV1EMPRegistry.sol - Setup", async () =>
 
 				await expect(
 					yieldSyncV1EMPRegistry.connect(ADDR_1).yieldSyncV1EMPDeployerUpdate(ADDR_1.address)
-				).to.be.rejectedWith(ERROR_NOT_MANAGER);
+				).to.be.rejectedWith(ERROR.NOT_MANAGER);
 			}
 		);
 	});

@@ -4,8 +4,8 @@ const { ethers } = require("hardhat");
 import { expect } from "chai";
 import { Contract, ContractFactory } from "ethers";
 
-const ZERO = ethers.utils.parseUnits('0', 18);
 
+const ZERO = ethers.utils.parseUnits('0', 18);
 const HUNDRED_PERCENT = ethers.utils.parseUnits('1', 18);
 const FIFTY_PERCENT = ethers.utils.parseUnits('.5', 18);
 const ZERO_PERCENT = ethers.utils.parseUnits('0', 18);

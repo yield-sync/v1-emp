@@ -4,13 +4,8 @@ const { ethers } = require("hardhat");
 import { expect } from "chai";
 import { Contract, ContractFactory } from "ethers";
 
-const ERROR_DEPOSIT_NOT_OPEN = "!utilizedERC20DepositOpen";
-const ERROR_ETH_FEED_NOT_SET = "address(iYieldSyncV1EMPETHValueFeed) == address(0)";
-const ERR0R_INVALID_UTILIZEDERC20AMOUNT = "!utilizedERC20AmountValid";
-const ERROR_INVALID_AMOUNT_LENGTH = "_utilizedERC20.length != _utilizedERC20Amount.length";
-const ERROR_NOT_EMP = "iYieldSyncV1EMPRegistry.yieldSyncV1EMP_yieldSyncV1EMPId(msg.sender) == 0";
-const ERROR_NOT_COMPUTED = "!computed";
-const ERROR_STRATEGY_NOT_SET = "address(iYieldSyncV1EMPStrategyInteractor) == address(0)";
+import { ERROR } from "./common";
+
 
 const D_18 = ethers.utils.parseUnits('1', 18);
 
@@ -80,7 +75,7 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 				{
 					await expect(
 						yieldSyncV1EMPStrategy.utilizedERC20Deposit([])
-					).to.be.rejectedWith(ERROR_ETH_FEED_NOT_SET);
+					).to.be.rejectedWith(ERROR.ETH_FEED_NOT_SET);
 				}
 			);
 
@@ -94,7 +89,7 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 					await expect(
 						yieldSyncV1EMPStrategy.utilizedERC20Deposit([])
-					).to.be.rejectedWith(ERROR_STRATEGY_NOT_SET);
+					).to.be.rejectedWith(ERROR.STRATEGY_NOT_SET);
 				}
 			);
 
@@ -121,7 +116,7 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 					await expect(
 						yieldSyncV1EMPStrategy.connect(ADDR_1).utilizedERC20Deposit([])
-					).to.be.rejectedWith(ERROR_NOT_EMP);
+					).to.be.rejectedWith(ERROR.NOT_EMP);
 				}
 			);
 
@@ -152,7 +147,7 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 					// [main-test] Deposit ERC20 tokens into the strategy
 					await expect(
 						yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT, DEPOSIT_AMOUNT])
-					).to.revertedWith(ERROR_DEPOSIT_NOT_OPEN);
+					).to.revertedWith(ERROR.DEPOSIT_NOT_OPEN);
 				}
 			);
 
@@ -184,7 +179,7 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 					const DEPOSIT_AMOUNT = ethers.utils.parseUnits("1", 18);
 
 					await expect(yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT])).to.be.revertedWith(
-						ERROR_NOT_COMPUTED
+						ERROR.NOT_COMPUTED
 					);
 				}
 			);
@@ -214,7 +209,7 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 					const DEPOSIT_AMOUNT = ethers.utils.parseUnits("1", 18);
 
 					await expect(yieldSyncV1EMPStrategy.utilizedERC20Deposit([0, DEPOSIT_AMOUNT])).to.be.revertedWith(
-						ERR0R_INVALID_UTILIZEDERC20AMOUNT
+						ERROR.INVALID_UTILIZEDERC20AMOUNT
 					);
 				}
 			)
@@ -254,7 +249,7 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 						// [main-test] Deposit ERC20 tokens into the strategy
 						await expect(
 							yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT, DEPOSIT_AMOUNT])
-						).to.revertedWith(ERROR_INVALID_AMOUNT_LENGTH);
+						).to.revertedWith(ERROR.INVALID_AMOUNT_LENGTH);
 					}
 				);
 
@@ -464,7 +459,7 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 						// Deposit ERC20 tokens into the strategy
 						await expect(
 							yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT_A, DEPOSIT_AMOUNT_B])
-						).to.be.revertedWith(ERR0R_INVALID_UTILIZEDERC20AMOUNT);
+						).to.be.revertedWith(ERROR.INVALID_UTILIZEDERC20AMOUNT);
 					}
 				);
 
@@ -613,7 +608,7 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 						// Deposit ERC20 tokens into the strategy
 						await expect(
 							yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT_A, DEPOSIT_AMOUNT_B])
-						).to.be.revertedWith(ERR0R_INVALID_UTILIZEDERC20AMOUNT);
+						).to.be.revertedWith(ERROR.INVALID_UTILIZEDERC20AMOUNT);
 					}
 				);
 
@@ -764,7 +759,7 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 						// Deposit ERC20 tokens into the strategy
 						await expect(
 							yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT_A, DEPOSIT_AMOUNT_6])
-						).to.be.revertedWith(ERR0R_INVALID_UTILIZEDERC20AMOUNT);
+						).to.be.revertedWith(ERROR.INVALID_UTILIZEDERC20AMOUNT);
 					}
 				);
 

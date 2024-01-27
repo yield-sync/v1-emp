@@ -4,10 +4,8 @@ const { ethers } = require("hardhat");
 import { expect } from "chai";
 import { Contract, ContractFactory } from "ethers";
 
-const ERROR_ETH_FEED_NOT_SET = "address(iYieldSyncV1EMPETHValueFeed) == address(0)";
-const ERROR_STRATEGY_NOT_SET = "address(iYieldSyncV1EMPStrategyInteractor) == address(0)";
-const ERROR_WITHDRAW_NOT_OPEN = "!utilizedERC20WithdrawOpen";
-const ERROR_INVALID_BALANCE = "balanceOf(msg.sender) < _tokenAmount";
+import { ERROR } from "./common";
+
 
 const HUNDRED_PERCENT = ethers.utils.parseUnits('1', 18);
 const FIFTY_PERCENT = ethers.utils.parseUnits('.5', 18);
@@ -74,7 +72,7 @@ describe("[1.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 				async () =>
 				{
 					await expect(yieldSyncV1EMPStrategy.utilizedERC20Withdraw(0)).to.be.rejectedWith(
-						ERROR_ETH_FEED_NOT_SET
+						ERROR.ETH_FEED_NOT_SET
 					);
 				}
 			);
@@ -88,7 +86,7 @@ describe("[1.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 					).to.not.be.reverted;
 
 					await expect(yieldSyncV1EMPStrategy.utilizedERC20Withdraw(0)).to.be.rejectedWith(
-						ERROR_STRATEGY_NOT_SET
+						ERROR.STRATEGY_NOT_SET
 					);
 				}
 			);
@@ -150,7 +148,7 @@ describe("[1.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 
 					// [main-test] Withdraw ERC20 tokens into the strategy
 					await expect(yieldSyncV1EMPStrategy.utilizedERC20Withdraw(0)).to.be.rejectedWith(
-						ERROR_WITHDRAW_NOT_OPEN
+						ERROR.WITHDRAW_NOT_OPEN
 					);
 				}
 			);
@@ -224,7 +222,7 @@ describe("[1.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 									await yieldSyncV1EMPStrategy.balanceOf(OWNER.address)
 								)
 							)
-						).to.be.revertedWith(ERROR_INVALID_BALANCE);
+						).to.be.revertedWith(ERROR.INVALID_BALANCE);
 					}
 				);
 
