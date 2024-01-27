@@ -4,13 +4,7 @@ const { ethers } = require("hardhat");
 import { expect } from "chai";
 import { Contract, ContractFactory } from "ethers";
 
-import { ERROR } from "./common";
-
-
-const HUNDRED_PERCENT = ethers.utils.parseUnits('1', 18);
-const FIFTY_PERCENT = ethers.utils.parseUnits('.5', 18);
-const TWENTY_FIVE_PERCENT = ethers.utils.parseUnits('.25', 18);
-const ZERO_PERCENT = ethers.utils.parseUnits('0', 18);
+import { ERROR, PERCENT } from "./common";
 
 
 describe("[1.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
@@ -102,7 +96,7 @@ describe("[1.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 				await expect(
 					yieldSyncV1EMPStrategy.connect(ADDR_1).utilizedERC20AndPurposeUpdate(
 						[mockERC20A.address],
-						[[true, true, HUNDRED_PERCENT]]
+						[[true, true, PERCENT.HUNDRED]]
 					)
 				).to.be.rejectedWith(ERROR.NOT_MANAGER);
 			}
@@ -114,7 +108,7 @@ describe("[1.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 			{
 				// Keep in mind at this point utilizedTokens is an empty array
 				await expect(
-					yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate([], [[true, true, FIFTY_PERCENT],])
+					yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate([], [[true, true, PERCENT.FIFTY],])
 				).to.be.rejectedWith(ERROR.INVALID_PURPOSE_LENGTH);
 			}
 		);
@@ -128,31 +122,31 @@ describe("[1.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 				const INVALID_ALLOCATIONS = [
 					{
 						addresses: [mockERC20A.address,],
-						purpose: [[true, true, FIFTY_PERCENT],]
+						purpose: [[true, true, PERCENT.FIFTY],]
 					},
 					{
 						addresses: [mockERC20A.address,],
-						purpose: [[true, false, FIFTY_PERCENT],]
+						purpose: [[true, false, PERCENT.FIFTY],]
 					},
 					{
 						addresses: [mockERC20A.address,],
-						purpose: [[false, false, FIFTY_PERCENT],]
+						purpose: [[false, false, PERCENT.FIFTY],]
 					},
 					{
 						addresses: [mockERC20A.address,],
-						purpose: [[false, true, HUNDRED_PERCENT],]
+						purpose: [[false, true, PERCENT.HUNDRED],]
 					},
 					{
 						addresses: [mockERC20A.address,],
-						purpose: [[false, false, HUNDRED_PERCENT],]
+						purpose: [[false, false, PERCENT.HUNDRED],]
 					},
 					{
 						addresses: [mockERC20A.address, mockERC20B.address],
-						purpose: [[true, true, FIFTY_PERCENT], [true, true, TWENTY_FIVE_PERCENT]]
+						purpose: [[true, true, PERCENT.FIFTY], [true, true, PERCENT.TWENTY_FIVE]]
 					},
 					{
 						addresses: [mockERC20A.address, mockERC20B.address],
-						purpose: [[false, true, FIFTY_PERCENT], [true, true, FIFTY_PERCENT]]
+						purpose: [[false, true, PERCENT.FIFTY], [true, true, PERCENT.FIFTY]]
 					}
 				];
 
@@ -183,16 +177,16 @@ describe("[1.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 				const VALID_ALLOCATION = [
 					{
 						addresses: [mockERC20A.address, mockERC20B.address],
-						purpose: [[true, true, FIFTY_PERCENT], [true, true, FIFTY_PERCENT,]],
+						purpose: [[true, true, PERCENT.FIFTY], [true, true, PERCENT.FIFTY,]],
 					},
 					{
 						addresses: [mockERC20A.address, mockERC20B.address, mockERC20C.address,],
-						purpose: [[false, true, ZERO_PERCENT], [true, true, FIFTY_PERCENT], [true, true, FIFTY_PERCENT]]
+						purpose: [[false, true, PERCENT.ZERO], [true, true, PERCENT.FIFTY], [true, true, PERCENT.FIFTY]]
 					},
 					// Even if withdraw token is set to 100% it should be accepted
 					{
 						addresses: [mockERC20A.address, mockERC20B.address, mockERC20C.address,],
-						purpose: [[false, true, HUNDRED_PERCENT], [true, true, FIFTY_PERCENT], [true, true, FIFTY_PERCENT]]
+						purpose: [[false, true, PERCENT.HUNDRED], [true, true, PERCENT.FIFTY], [true, true, PERCENT.FIFTY]]
 					},
 				];
 
@@ -331,7 +325,7 @@ describe("[1.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 				await expect(
 					yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
 						[mockERC20A.address],
-						[[true, true, HUNDRED_PERCENT]]
+						[[true, true, PERCENT.HUNDRED]]
 					)
 				).to.not.be.reverted;
 
@@ -400,7 +394,7 @@ describe("[1.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 				await expect(
 					yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
 						[mockERC20A.address],
-						[[true, true, HUNDRED_PERCENT]]
+						[[true, true, PERCENT.HUNDRED]]
 					)
 				).to.not.be.reverted;
 

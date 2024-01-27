@@ -4,11 +4,10 @@ const { ethers } = require("hardhat");
 import { expect } from "chai";
 import { Contract, ContractFactory } from "ethers";
 
+import { PERCENT } from "./common";
+
 
 const ZERO = ethers.utils.parseUnits('0', 18);
-const HUNDRED_PERCENT = ethers.utils.parseUnits('1', 18);
-const FIFTY_PERCENT = ethers.utils.parseUnits('.5', 18);
-const ZERO_PERCENT = ethers.utils.parseUnits('0', 18);
 
 
 describe("[1.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
@@ -79,7 +78,7 @@ describe("[1.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
 						await expect(
 							yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
 								[mockERC20A.address],
-								[[true, true, HUNDRED_PERCENT],],
+								[[true, true, PERCENT.HUNDRED],],
 							)
 						).to.not.be.reverted;
 
@@ -142,7 +141,7 @@ describe("[1.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
 						await expect(
 							yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
 								[mockERC20A.address],
-								[[true, true, HUNDRED_PERCENT],],
+								[[true, true, PERCENT.HUNDRED],],
 							)
 						).to.not.be.reverted;
 
@@ -208,7 +207,7 @@ describe("[1.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
 				await expect(
 					yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
 						[mockERC20A.address, mockERC20B.address, mockERC20C.address],
-						[[true, false, FIFTY_PERCENT], [true, false, FIFTY_PERCENT], [false, true, ZERO_PERCENT],],
+						[[true, false, PERCENT.FIFTY], [true, false, PERCENT.FIFTY], [false, true, PERCENT.ZERO],],
 					)
 				).to.not.be.reverted;
 
