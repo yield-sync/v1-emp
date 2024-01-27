@@ -11,7 +11,7 @@ const FIFTY_PERCENT = ethers.utils.parseUnits('.5', 18);
 const ZERO_PERCENT = ethers.utils.parseUnits('0', 18);
 
 
-describe("[0.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
+describe("[1.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
 {
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;
