@@ -43,7 +43,11 @@ describe("[0.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
 		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy()).deployed();
 
 		await expect(
-			yieldSyncV1EMPRegistry.yieldSynV1EMPDeployer_yieldSyncV1EMP_registeredUpdate(OWNER.address)
+			yieldSyncV1EMPRegistry.yieldSyncV1EMPDeployerUpdate(OWNER.address)
+		).to.not.be.reverted;
+
+		await expect(
+			yieldSyncV1EMPRegistry.yieldSyncV1EMPRegister(OWNER.address)
 		).to.not.be.reverted;
 
 		yieldSyncV1EMPStrategy = await (

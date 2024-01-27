@@ -12,34 +12,25 @@ contract YieldSyncV1EMPRegistry is
 	address public yieldSyncV1EMPDeployer;
 	address public yieldSyncV1EMPStrategyDeployer;
 
-	mapping (address yieldSyncV1EMP => bool registered) public override yieldSyncV1EMP_registered;
-	mapping (address yieldSyncV1EMPStrategy => bool registered) public override yieldSyncV1EMPStrategy_registered;
+	uint256 public yieldSyncEMPIdTracker;
+	uint256 public yieldSyncEMPStrategyIdTracker;
+
+	mapping (address yieldSyncV1EMP => uint256 yieldSyncV1EMPId) public override yieldSyncV1EMP_yieldSyncV1EMPId;
+	mapping (
+		address yieldSyncV1EMPStrategy => uint256 yieldSyncV1EMPStrategyId
+	) public override yieldSyncV1EMPStrategy_yieldSyncV1EMPStrategyId;
+	mapping (uint256 yieldSyncV1EMPId => address yieldSyncV1EMP) public override yieldSyncV1EMPId_yieldSyncV1EMP;
+	mapping (
+		uint256 yieldSyncV1EMPStrategyId => address yieldSyncV1EMPStrategy
+	) public override yieldSyncV1EMPStrategyId_yieldSyncV1EMPStrategy;
 
 
 	constructor ()
 	{
+		yieldSyncEMPIdTracker = 0;
+		yieldSyncEMPStrategyIdTracker = 0;
+
 		manager = msg.sender;
-	}
-
-
-	/// @inheritdoc IYieldSyncV1EMPRegistry
-	function yieldSyncV1EMP_registeredUpdate(address _yieldSyncV1EMP)
-		public
-		override
-	{
-		require(yieldSyncV1EMPDeployer == msg.sender, "");
-
-		yieldSyncV1EMP_registered[_yieldSyncV1EMP] = true;
-	}
-
-	/// @inheritdoc IYieldSyncV1EMPRegistry
-	function yieldSyncV1EMPStrategy_registeredUpdate(address _yieldSyncV1EMPStrategy)
-		public
-		override
-	{
-		require(yieldSyncV1EMPStrategyDeployer == msg.sender, "");
-
-		yieldSyncV1EMPStrategy_registered[_yieldSyncV1EMPStrategy] = true;
 	}
 
 	/// @inheritdoc IYieldSyncV1EMPRegistry
@@ -47,11 +38,24 @@ contract YieldSyncV1EMPRegistry is
 		public
 		override
 	{
-		require(manager == msg.sender, "");
+		require(manager == msg.sender, "manager != msg.sender");
 
-		require(yieldSyncV1EMPDeployer == address(0), "");
+		require(yieldSyncV1EMPDeployer == address(0), "yieldSyncV1EMPDeployer != address(0)");
 
 		yieldSyncV1EMPDeployer = _yieldSyncV1EMPDeployer;
+	}
+
+	/// @inheritdoc IYieldSyncV1EMPRegistry
+	function yieldSyncV1EMPRegister(address _yieldSyncV1EMP)
+		public
+		override
+	{
+		require(yieldSyncV1EMPDeployer == msg.sender, "yieldSyncV1EMPDeployer != msg.sender");
+
+		yieldSyncEMPIdTracker++;
+
+		yieldSyncV1EMP_yieldSyncV1EMPId[_yieldSyncV1EMP] = yieldSyncEMPIdTracker;
+		yieldSyncV1EMPId_yieldSyncV1EMP[yieldSyncEMPIdTracker] = _yieldSyncV1EMP;
 	}
 
 	/// @inheritdoc IYieldSyncV1EMPRegistry
@@ -59,10 +63,23 @@ contract YieldSyncV1EMPRegistry is
 		public
 		override
 	{
-		require(manager == msg.sender, "");
+		require(manager == msg.sender, "manager != msg.sender");
 
-		require(yieldSyncV1EMPStrategyDeployer == address(0), "");
+		require(yieldSyncV1EMPStrategyDeployer == address(0), "yieldSyncV1EMPStrategyDeployer != address(0)");
 
 		yieldSyncV1EMPStrategyDeployer = _yieldSyncV1EMPStrategyDeployer;
+	}
+
+	/// @inheritdoc IYieldSyncV1EMPRegistry
+	function yieldSyncV1EMPStrategyRegister(address _yieldSyncV1EMPStrategy)
+		public
+		override
+	{
+		require(yieldSyncV1EMPStrategyDeployer == msg.sender, "yieldSyncV1EMPStrategyDeployer != msg.sender");
+
+		yieldSyncEMPStrategyIdTracker++;
+
+		yieldSyncV1EMPStrategy_yieldSyncV1EMPStrategyId[_yieldSyncV1EMPStrategy] = yieldSyncEMPStrategyIdTracker;
+		yieldSyncV1EMPStrategyId_yieldSyncV1EMPStrategy[yieldSyncEMPStrategyIdTracker] = _yieldSyncV1EMPStrategy;
 	}
 }

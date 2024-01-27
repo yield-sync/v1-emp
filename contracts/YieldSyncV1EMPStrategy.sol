@@ -185,8 +185,8 @@ contract YieldSyncV1EMPStrategy is
 		initialized()
 	{
 		require(
-			iYieldSyncV1EMPRegistry.yieldSynV1EMPDeployer_yieldSyncV1EMP_registered(YieldSyncV1EMPDeployer, msg.sender),
-			"!iYieldSyncV1EMPRegistry.yieldSynV1EMPDeployer_yieldSyncV1EMP_registered(YieldSyncV1EMPDeployer, msg.sender)"
+			iYieldSyncV1EMPRegistry.yieldSyncV1EMP_yieldSyncV1EMPId(msg.sender) > 0,
+			"iYieldSyncV1EMPRegistry.yieldSyncV1EMP_yieldSyncV1EMPId(msg.sender) == 0"
 		);
 
 		require(utilizedERC20DepositOpen, "!utilizedERC20DepositOpen");

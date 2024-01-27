@@ -27,18 +27,8 @@ contract YieldSyncV1EMPStrategyDeployer is
 	address public immutable YieldSyncGovernance;
 
 	uint256 public fee;
-	uint256 public yieldSyncStrategyHandlerIdTracker;
 
 	IYieldSyncV1EMPRegistry public immutable iYieldSyncV1EMPRegistry;
-
-
-	mapping (
-		address yieldSyncV1EMPStrategy => uint256 yieldSyncV1EMPStrategyId
-	) public yieldSyncV1EMPStrategy_YSSId;
-
-	mapping (
-		uint256 yieldSyncV1EMPStrategyId => address yieldSyncV1EMPStrategy
-	) public yieldSyncV1EMPStrategyId_YSS;
 
 
 	modifier contractYieldSyncGovernance(bytes32 _role)
@@ -52,7 +42,6 @@ contract YieldSyncV1EMPStrategyDeployer is
 	constructor (address _iYieldSyncV1EMPRegistry, address _YieldSyncGovernance)
 	{
 		fee = 0;
-		yieldSyncStrategyHandlerIdTracker = 0;
 
 		YieldSyncGovernance = _YieldSyncGovernance;
 
@@ -67,8 +56,6 @@ contract YieldSyncV1EMPStrategyDeployer is
 	{
 		require(msg.value >= fee, "!msg.value");
 
-		yieldSyncStrategyHandlerIdTracker++;
-
 		yieldSyncV1EMPStrategy_ = address(
 			new YieldSyncV1EMPStrategy(
 				address(this),
@@ -79,8 +66,7 @@ contract YieldSyncV1EMPStrategyDeployer is
 			)
 		);
 
-		yieldSyncV1EMPStrategy_YSSId[yieldSyncV1EMPStrategy_] = yieldSyncStrategyHandlerIdTracker;
-		yieldSyncV1EMPStrategyId_YSS[yieldSyncStrategyHandlerIdTracker] = yieldSyncV1EMPStrategy_;
+		iYieldSyncV1EMPRegistry.yieldSyncV1EMPStrategyRegister(yieldSyncV1EMPStrategy_);
 	}
 
 	function feeUpdate(uint256 _fee)

@@ -55,7 +55,7 @@ contract YieldSyncV1EMPDeployer is
 			_symbol
 		);
 
-		yieldSyncV1EMPRegistry.yieldSynV1EMPDeployer_yieldSyncV1EMP_registeredUpdate(address(yieldSyncV1EMP));
+		yieldSyncV1EMPRegistry.yieldSyncV1EMPRegister(address(yieldSyncV1EMP));
 
 		return address(yieldSyncV1EMP);
 	}

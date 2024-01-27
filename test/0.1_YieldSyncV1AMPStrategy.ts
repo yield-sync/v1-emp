@@ -4,13 +4,13 @@ const { ethers } = require("hardhat");
 import { expect } from "chai";
 import { Contract, ContractFactory } from "ethers";
 
-const ERROR_AUTH_CALLER = "!iYieldSyncV1EMPRegistry.yieldSynV1EMPDeployer_yieldSyncV1EMP_registered(YieldSyncV1EMPDeployer, msg.sender)";
+const ERROR_DEPOSIT_NOT_OPEN = "!utilizedERC20DepositOpen";
+const ERROR_ETH_FEED_NOT_SET = "address(iYieldSyncV1EMPETHValueFeed) == address(0)";
 const ERR0R_INVALID_UTILIZEDERC20AMOUNT = "!utilizedERC20AmountValid";
 const ERROR_INVALID_AMOUNT_LENGTH = "_utilizedERC20.length != _utilizedERC20Amount.length";
-const ERROR_ETH_FEED_NOT_SET = "address(iYieldSyncV1EMPETHValueFeed) == address(0)";
-const ERROR_STRATEGY_NOT_SET = "address(iYieldSyncV1EMPStrategyInteractor) == address(0)";
-const ERROR_DEPOSIT_NOT_OPEN = "!utilizedERC20DepositOpen";
+const ERROR_NOT_EMP = "iYieldSyncV1EMPRegistry.yieldSyncV1EMP_yieldSyncV1EMPId(msg.sender) == 0";
 const ERROR_NOT_COMPUTED = "!computed";
+const ERROR_STRATEGY_NOT_SET = "address(iYieldSyncV1EMPStrategyInteractor) == address(0)";
 
 const D_18 = ethers.utils.parseUnits('1', 18);
 
@@ -50,7 +50,11 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy()).deployed();
 
 		await expect(
-			yieldSyncV1EMPRegistry.yieldSynV1EMPDeployer_yieldSyncV1EMP_registeredUpdate(OWNER.address)
+			yieldSyncV1EMPRegistry.yieldSyncV1EMPDeployerUpdate(OWNER.address)
+		).to.not.be.reverted;
+
+		await expect(
+			yieldSyncV1EMPRegistry.yieldSyncV1EMPRegister(OWNER.address)
 		).to.not.be.reverted;
 
 		yieldSyncV1EMPStrategy = await (
@@ -117,7 +121,7 @@ describe("[0.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 					await expect(
 						yieldSyncV1EMPStrategy.connect(ADDR_1).utilizedERC20Deposit([])
-					).to.be.rejectedWith(ERROR_AUTH_CALLER);
+					).to.be.rejectedWith(ERROR_NOT_EMP);
 				}
 			);
 
