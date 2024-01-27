@@ -33,6 +33,7 @@ contract YieldSyncV1EMPRegistry is
 		manager = msg.sender;
 	}
 
+
 	/// @inheritdoc IYieldSyncV1EMPRegistry
 	function yieldSyncV1EMPDeployerUpdate(address _yieldSyncV1EMPDeployer)
 		public

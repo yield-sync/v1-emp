@@ -57,12 +57,7 @@ contract YieldSyncV1EMPStrategyDeployer is
 		require(msg.value >= fee, "!msg.value");
 
 		yieldSyncV1EMPStrategy_ = address(
-			new YieldSyncV1EMPStrategy(
-				address(iYieldSyncV1EMPRegistry),
-				msg.sender,
-				_name,
-				_symbol
-			)
+			new YieldSyncV1EMPStrategy(address(iYieldSyncV1EMPRegistry), msg.sender, _name, _symbol)
 		);
 
 		iYieldSyncV1EMPRegistry.yieldSyncV1EMPStrategyRegister(yieldSyncV1EMPStrategy_);
