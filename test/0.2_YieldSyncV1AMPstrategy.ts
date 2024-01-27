@@ -56,8 +56,6 @@ describe("[0.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 
 		yieldSyncV1EMPStrategy = await (
 			await YieldSyncV1EMPStrategy.deploy(
-				// For now set the deployer as OWNER to bypass auth
-				OWNER.address,
 				yieldSyncV1EMPRegistry.address,
 				OWNER.address,
 				"Exampe",

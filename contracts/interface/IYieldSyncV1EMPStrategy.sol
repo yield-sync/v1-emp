@@ -36,17 +36,6 @@ interface IYieldSyncV1EMPStrategy is
 	;
 
 	/**
-	* @dev [view-address]
-	* @notice YieldSyncV1EMPDeployer
-	* @return {address}
-	*/
-	function YieldSyncV1EMPDeployer()
-		external
-		view
-		returns (address)
-	;
-
-	/**
 	* @dev [view-address[]]
 	* @notice Utilized ERC20s
 	* @return {address[]}

@@ -58,7 +58,6 @@ contract YieldSyncV1EMPStrategyDeployer is
 
 		yieldSyncV1EMPStrategy_ = address(
 			new YieldSyncV1EMPStrategy(
-				address(this),
 				address(iYieldSyncV1EMPRegistry),
 				msg.sender,
 				_name,

@@ -21,8 +21,6 @@ contract YieldSyncV1EMPStrategy is
 	IYieldSyncV1EMPStrategy,
 	ReentrancyGuard
 {
-	address public immutable override YieldSyncV1EMPDeployer;
-
 	address public override manager;
 
 	address[] internal _utilizedERC20;
@@ -53,7 +51,6 @@ contract YieldSyncV1EMPStrategy is
 
 
 	constructor (
-		address _YieldSyncV1EMPDeployer,
 		address _iYieldSyncV1EMPRegistry,
 		address _manager,
 		string memory _name,
@@ -64,7 +61,6 @@ contract YieldSyncV1EMPStrategy is
 		utilizedERC20DepositOpen = false;
 		utilizedERC20WithdrawOpen = false;
 
-		YieldSyncV1EMPDeployer = _YieldSyncV1EMPDeployer;
 		manager = _manager;
 
 		iYieldSyncV1EMPRegistry = IYieldSyncV1EMPRegistry(_iYieldSyncV1EMPRegistry);

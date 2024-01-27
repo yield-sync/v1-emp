@@ -57,8 +57,6 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 
 		yieldSyncV1EMPStrategy = await (
 			await YieldSyncV1EMPStrategy.deploy(
-				// For now set the deployer as OWNER to bypass auth
-				OWNER.address,
 				yieldSyncV1EMPRegistry.address,
 				OWNER.address,
 				"Exampe",
@@ -166,7 +164,6 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 				{
 					const _YSS = await (
 						await (await ethers.getContractFactory("YieldSyncV1EMPStrategy")).deploy(
-							OWNER.address,
 							yieldSyncV1EMPRegistry.address,
 							OWNER.address,
 							"Exampe",
@@ -207,7 +204,6 @@ describe("[0.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 				{
 					const _YSS = await (
 						await (await ethers.getContractFactory("YieldSyncV1EMPStrategy")).deploy(
-							OWNER.address,
 							yieldSyncV1EMPRegistry.address,
 							OWNER.address,
 							"Exampe",
