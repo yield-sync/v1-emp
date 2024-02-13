@@ -16,10 +16,13 @@ contract YieldSyncV1EMPRegistry is
 	uint256 public yieldSyncEMPStrategyIdTracker;
 
 	mapping (address yieldSyncV1EMP => uint256 yieldSyncV1EMPId) public override yieldSyncV1EMP_yieldSyncV1EMPId;
+
 	mapping (
 		address yieldSyncV1EMPStrategy => uint256 yieldSyncV1EMPStrategyId
 	) public override yieldSyncV1EMPStrategy_yieldSyncV1EMPStrategyId;
+
 	mapping (uint256 yieldSyncV1EMPId => address yieldSyncV1EMP) public override yieldSyncV1EMPId_yieldSyncV1EMP;
+
 	mapping (
 		uint256 yieldSyncV1EMPStrategyId => address yieldSyncV1EMPStrategy
 	) public override yieldSyncV1EMPStrategyId_yieldSyncV1EMPStrategy;
