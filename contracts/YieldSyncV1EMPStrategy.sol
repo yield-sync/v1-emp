@@ -122,16 +122,20 @@ contract YieldSyncV1EMPStrategy is
 		override
 		authManager()
 	{
+		require(_iYieldSyncV1EMPETHValueFeed != address(0), "_iYieldSyncV1EMPETHValueFeed == address(0)");
+
 		iYieldSyncV1EMPETHValueFeed = IYieldSyncV1EMPETHValueFeed(_iYieldSyncV1EMPETHValueFeed);
 	}
 
 	/// @inheritdoc IYieldSyncV1EMPStrategy
-	function iYieldSyncV1EMPStrategyInteractorUpdate(address _YSSInteractor)
+	function iYieldSyncV1EMPStrategyInteractorUpdate(address _iYieldSyncStrategyInteractor)
 		public
 		override
 		authManager()
 	{
-		iYieldSyncV1EMPStrategyInteractor = IYieldSyncV1EMPStrategyInteractor(_YSSInteractor);
+		require(_iYieldSyncStrategyInteractor != address(0), "_iYieldSyncStrategyInteractor == address(0)");
+
+		iYieldSyncV1EMPStrategyInteractor = IYieldSyncV1EMPStrategyInteractor(_iYieldSyncStrategyInteractor);
 	}
 
 	/// @inheritdoc IYieldSyncV1EMPStrategy
