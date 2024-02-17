@@ -348,6 +348,80 @@ describe("[1.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 		);
 	});
 
+	describe("function iYieldSyncV1EMPETHValueFeedUpdate() AND function utilizedERC20DepositOpenToggle()", async () =>
+	{
+		it(
+			"Should not be able to set iYieldSyncV1EMPETHValueFeed when utilizedERC20DepositOpen is true..",
+			async () =>
+			{
+				// Initialize strategy with mock ERC20
+				await expect(
+					yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
+						[mockERC20A.address],
+						[[true, true, PERCENT.HUNDRED]]
+					)
+				).to.not.be.reverted;
+
+				await expect(
+					yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+				).to.not.be.reverted;
+
+				await expect(
+					yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
+				).to.not.be.reverted;
+
+				expect(await yieldSyncV1EMPStrategy.utilizedERC20DepositOpen()).to.be.false;
+
+				await expect(
+					yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()
+				).to.be.not.reverted;
+
+				expect(await yieldSyncV1EMPStrategy.utilizedERC20DepositOpen()).to.be.true;
+
+				await expect(
+					yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(strategyInteractorDummy.address)
+				).to.be.revertedWith(ERROR.UTILIZED_ERC20_DEPOSIT_OPEN);
+			}
+		);
+	});
+
+	describe("function iYieldSyncV1EMPStrategyInteractorUpdate() AND function utilizedERC20DepositOpenToggle()", async () =>
+	{
+		it(
+			"Should not be able to set iYieldSyncV1EMPStrategyInteractor when utilizedERC20DepositOpen is true..",
+			async () =>
+			{
+				// Initialize strategy with mock ERC20
+				await expect(
+					yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
+						[mockERC20A.address],
+						[[true, true, PERCENT.HUNDRED]]
+					)
+				).to.not.be.reverted;
+
+				await expect(
+					yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+				).to.not.be.reverted;
+
+				await expect(
+					yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
+				).to.not.be.reverted;
+
+				expect(await yieldSyncV1EMPStrategy.utilizedERC20DepositOpen()).to.be.false;
+
+				await expect(
+					yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()
+				).to.be.not.reverted;
+
+				expect(await yieldSyncV1EMPStrategy.utilizedERC20DepositOpen()).to.be.true;
+
+				await expect(
+					yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
+				).to.be.revertedWith(ERROR.UTILIZED_ERC20_DEPOSIT_OPEN);
+			}
+		);
+	});
+
 	describe("function utilizedERC20WithdrawOpenToggle()", async () =>
 	{
 		it(
