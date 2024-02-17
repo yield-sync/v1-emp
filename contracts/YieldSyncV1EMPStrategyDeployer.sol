@@ -49,6 +49,7 @@ contract YieldSyncV1EMPStrategyDeployer is
 	}
 
 
+	/// @inheritdoc IYieldSyncV1EMPStrategyDeployer
 	function deployYieldSyncV1EMPStrategy(string memory _name, string memory _symbol)
 		public
 		payable
@@ -63,6 +64,7 @@ contract YieldSyncV1EMPStrategyDeployer is
 		iYieldSyncV1EMPRegistry.yieldSyncV1EMPStrategyRegister(yieldSyncV1EMPStrategy_);
 	}
 
+	/// @inheritdoc IYieldSyncV1EMPStrategyDeployer
 	function feeUpdate(uint256 _fee)
 		public
 		contractYieldSyncGovernance(bytes32(0))
