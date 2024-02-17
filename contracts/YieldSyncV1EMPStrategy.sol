@@ -1,6 +1,6 @@
 
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.18;
+pragma solidity 0.8.19;
 
 
 import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
@@ -88,6 +88,13 @@ contract YieldSyncV1EMPStrategy is
 		_;
 	}
 
+	modifier utilizedERC20TransferClosed()
+	{
+		require(!utilizedERC20DepositOpen && !utilizedERC20WithdrawOpen, "utilizedERC20DepositOpen || utilizedERC20WithdrawOpen");
+
+		_;
+	}
+
 
 	//// @notice view
 
@@ -121,9 +128,8 @@ contract YieldSyncV1EMPStrategy is
 		public
 		override
 		authManager()
+		utilizedERC20TransferClosed()
 	{
-		require(!utilizedERC20DepositOpen, "utilizedERC20DepositOpen");
-
 		iYieldSyncV1EMPETHValueFeed = IYieldSyncV1EMPETHValueFeed(_iYieldSyncV1EMPETHValueFeed);
 	}
 
@@ -132,9 +138,8 @@ contract YieldSyncV1EMPStrategy is
 		public
 		override
 		authManager()
+		utilizedERC20TransferClosed()
 	{
-		require(!utilizedERC20DepositOpen, "utilizedERC20DepositOpen");
-
 		iYieldSyncV1EMPStrategyInteractor = IYieldSyncV1EMPStrategyInteractor(_iYieldSyncStrategyInteractor);
 	}
 
