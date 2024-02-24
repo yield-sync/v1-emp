@@ -5,7 +5,7 @@ import { expect } from "chai";
 import { BigNumber, Contract, ContractFactory } from "ethers";
 
 import { ERROR, PERCENT, D_18 } from "../common";
-import { calculateValueOfERC20 } from "../scripts/TransferUtils"
+import { calculateValueOfERC20Deposits } from "../scripts/TransferUtils"
 
 
 describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
@@ -279,7 +279,7 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 							yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT_A])
 						).to.not.be.reverted;
 
-						const { totalValue } = await calculateValueOfERC20(
+						const { totalValue } = await calculateValueOfERC20Deposits(
 							eTHValueFeedDummy,
 							[DEPOSIT_AMOUNT_A],
 							[mockERC20A]
@@ -542,7 +542,7 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 						expect(await mockERC20B.balanceOf(strategyInteractorDummy.address)).to.be.equal(DEPOSIT_AMOUNT_B);
 
 						// [calculate] YSS balance ETH Value = (a * p(a) / 1e18) + (b * p(b) / 1e18)
-						const { totalValue } = await calculateValueOfERC20(
+						const { totalValue } = await calculateValueOfERC20Deposits(
 							eTHValueFeedDummy,
 							[DEPOSIT_AMOUNT_A, DEPOSIT_AMOUNT_B],
 							[mockERC20A, mockERC20B]
@@ -632,7 +632,7 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 						expect(await mockERC20B.balanceOf(strategyInteractorDummy.address)).to.be.equal(DEPOSIT_AMOUNT_B);
 
 						// [calculate] YSS balance ETH Value = (a * p(a) / 1e18) + (b * p(b) / 1e18)
-						const { totalValue } = await calculateValueOfERC20(
+						const { totalValue } = await calculateValueOfERC20Deposits(
 							eTHValueFeedDummy,
 							[DEPOSIT_AMOUNT_A, DEPOSIT_AMOUNT_B],
 							[mockERC20A, mockERC20B]
@@ -681,7 +681,7 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 						).to.not.be.reverted;
 
 						// [calculate] YSS balance ETH Value = (a * p(a) / 1e18) + (b * p(b) / 1e18)
-						const { totalValue } = await calculateValueOfERC20(
+						const { totalValue } = await calculateValueOfERC20Deposits(
 							eTHValueFeedDummy,
 							[DEPOSIT_AMOUNT_A, DEPOSIT_AMOUNT_B],
 							[mockERC20A, mockERC20B]

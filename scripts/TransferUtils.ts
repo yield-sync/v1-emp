@@ -12,7 +12,7 @@ import { D_18 } from "../common"
  * @param _ETHValueFeed {Contract} Contract that will return value of ERC20 denominated in ETH
  * @returns {[BigNumber, BigNumber[]]} Tuple containing the ETH value of each ERC20 token and Total ETH value of all ERC20 tokens
  */
-export async function calculateValueOfBalanceERC20(
+export async function calculateValueOfERC20BalanceOf(
 	_address: String,
 	_ETHValueFeed: Contract,
 	_utilizedERC20: Contract[],
@@ -43,7 +43,7 @@ export async function calculateValueOfBalanceERC20(
  * @param _utilizedERC20 {Contract[]} ERC20 contracts
  * @returns {[BigNumber, BigNumber[]]} Tuple containing the ETH value of each ERC20 token and Total ETH value of all ERC20 tokens
  */
-export async function calculateValueOfERC20(
+export async function calculateValueOfERC20Deposits(
 	_ETHValueFeed: Contract,
 	_utilizedERC20Deposits: BigNumber[],
 	_utilizedERC20: Contract[],
