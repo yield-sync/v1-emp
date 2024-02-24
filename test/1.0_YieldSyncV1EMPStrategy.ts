@@ -2,9 +2,9 @@ const { ethers } = require("hardhat");
 
 
 import { expect } from "chai";
-import { Contract, ContractFactory } from "ethers";
+import { BigNumber, Contract, ContractFactory } from "ethers";
 
-import { ERROR, PERCENT } from "./common";
+import { ERROR, PERCENT } from "../common";
 
 
 describe("[1.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>

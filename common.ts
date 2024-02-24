@@ -1,5 +1,8 @@
 const { ethers } = require("hardhat");
 
+
+export const D_18 = ethers.utils.parseUnits('1', 18);
+
 export const ERROR = {
 	DEPOSIT_NOT_OPEN: "!utilizedERC20DepositOpen",
 	ETH_FEED_NOT_SET: "address(iYieldSyncV1EMPETHValueFeed) == address(0)",

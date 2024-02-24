@@ -2,9 +2,9 @@ const { ethers } = require("hardhat");
 
 
 import { expect } from "chai";
-import { Contract, ContractFactory } from "ethers";
+import { BigNumber, Contract, ContractFactory } from "ethers";
 
-import { PERCENT } from "./common";
+import { PERCENT } from "../common";
 
 
 const ZERO = ethers.utils.parseUnits('0', 18);
@@ -94,7 +94,7 @@ describe("[1.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
 						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
 
 
-						const DEPOSIT_AMOUNT_A = ethers.utils.parseUnits("1", 18);
+						const DEPOSIT_AMOUNT_A: BigNumber = ethers.utils.parseUnits("1", 18);
 
 						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
 						await mockERC20A.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_A);
@@ -108,7 +108,7 @@ describe("[1.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
 						// [PRICE-UPDATE] Update Ether value of MockERC20A
 						await eTHValueFeedDummy.updateETHValue(ethers.utils.parseUnits("2", 18));
 
-						const DEPOSIT_AMOUNT_A2 = ethers.utils.parseUnits("1", 18);
+						const DEPOSIT_AMOUNT_A2: BigNumber = ethers.utils.parseUnits("1", 18);
 
 						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
 						await mockERC20A.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_A2);
@@ -165,7 +165,7 @@ describe("[1.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
 						const OWNER_MOCK_A_BALANCE_B4 = await mockERC20A.balanceOf(OWNER.address);
 
 
-						const DEPOSIT_AMOUNT_A = ethers.utils.parseUnits("1", 18);
+						const DEPOSIT_AMOUNT_A: BigNumber = ethers.utils.parseUnits("1", 18);
 
 						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
 						await mockERC20A.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_A);
