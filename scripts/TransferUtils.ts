@@ -39,19 +39,17 @@ export async function calculateValueOfBalanceERC20(
 /**
  * This function calculates the ETH value of each token as well as the total value of everything held by deposits param
  * @param _ETHValueFeed {Contract} Contract that will return value of ERC20 denominated in ETH
- * @param _address {String} The address of interest
  * @param _utilizedERC20Deposits {BigNumber[]} ERC20 deposits
  * @param _utilizedERC20 {Contract[]} ERC20 contracts
  * @returns {[BigNumber, BigNumber[]]} Tuple containing the ETH value of each ERC20 token and Total ETH value of all ERC20 tokens
  */
 export async function calculateValueOfERC20(
 	_ETHValueFeed: Contract,
-	_address: String,
 	_utilizedERC20Deposits: BigNumber[],
 	_utilizedERC20: Contract[],
-)
+): Promise<{totalValue: BigNumber, utilizedERC20Amount: BigNumber[]}>
 {
-	let utilizedERC20Amount: number[] = [];
+	let utilizedERC20Amount: BigNumber[] = [];
 
 	let totalValue = ethers.utils.parseUnits("0", 18);
 
@@ -61,9 +59,12 @@ export async function calculateValueOfERC20(
 		let ETHValue = await _ETHValueFeed.utilizedERC20ETHValue(_utilizedERC20[i].address);
 
 		totalValue = totalValue.add(_utilizedERC20Deposits[i].mul(ETHValue).div(D_18));
+
+		utilizedERC20Amount.push(_utilizedERC20Deposits[i].mul(ETHValue).div(D_18));
 	}
 
-	console.log([totalValue, utilizedERC20Amount])
-
-	return [totalValue, utilizedERC20Amount];
+	return {
+		totalValue,
+		utilizedERC20Amount
+	};
 }

@@ -575,7 +575,7 @@ describe("[1.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 						const OWNER_MOCK_B_BALANCE_B4 = await mockERC20B.balanceOf(OWNER.address);
 
 						const DEPOSIT_AMOUNT_A: BigNumber = ethers.utils.parseUnits(".75", 18);
-						const DEPOSIT_AMOUNT_B = ethers.utils.parseUnits(".25", 18);
+						const DEPOSIT_AMOUNT_B: BigNumber = ethers.utils.parseUnits(".25", 18);
 
 						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
 						await mockERC20A.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_A);

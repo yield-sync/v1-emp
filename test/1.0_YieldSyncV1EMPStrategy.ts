@@ -339,9 +339,7 @@ describe("[1.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 
 				expect(await yieldSyncV1EMPStrategy.utilizedERC20DepositOpen()).to.be.false;
 
-				await expect(
-					yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()
-				).to.be.not.reverted;
+				await expect(yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()).to.be.not.reverted;
 
 				expect(await yieldSyncV1EMPStrategy.utilizedERC20DepositOpen()).to.be.true;
 			}
