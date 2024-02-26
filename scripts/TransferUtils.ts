@@ -7,13 +7,13 @@ import { D_18 } from "../common"
 
 export default class TransferUtil
 {
-	_eTHValueFeed: Contract;
-	_strategy: Contract;
+	private _eTHValueFeed: Contract;
+	private _yieldSyncV1EMPStrategy: Contract;
 
 
-	constructor (_strategy: Contract, _eTHValueFeed: Contract)
+	constructor (_yieldSyncV1EMPStrategy: Contract, _eTHValueFeed: Contract)
 	{
-		this._strategy = _strategy;
+		this._yieldSyncV1EMPStrategy = _yieldSyncV1EMPStrategy;
 		this._eTHValueFeed = _eTHValueFeed;
 	}
 
@@ -24,18 +24,15 @@ export default class TransferUtil
 	 * @param _totalAmount {BigNumber}
 	 * @returns Object containing utilized ERC 20 amounts
 	 */
-	async calculateERC20RequiredByTotalAmount(
-		_utilizedERC20: Contract[],
-		_totalAmount: BigNumber
-	): Promise<BigNumber[]>
+	public async calculateERC20RequiredByTotalAmount(_utilizedERC20: Contract[], _totalAmount: BigNumber): Promise<BigNumber[]>
 	{
-		const ONE_HUNDRED_PERCENT = await this._strategy.ONE_HUNDRED_PERCENT();
+		const ONE_HUNDRED_PERCENT = await this._yieldSyncV1EMPStrategy.ONE_HUNDRED_PERCENT();
 
 		let utilizedERC20Amount: BigNumber[] = [];
 
 		for (let i = 0; i < _utilizedERC20.length; i++)
 		{
-			const PURPOSE = await this._strategy.utilizedERC20_purpose(_utilizedERC20[i].address);
+			const PURPOSE = await this._yieldSyncV1EMPStrategy.utilizedERC20_purpose(_utilizedERC20[i].address);
 
 			const ALLOCATION = PURPOSE.allocation.mul(D_18).div(ONE_HUNDRED_PERCENT);
 
@@ -53,7 +50,7 @@ export default class TransferUtil
 	 * @param _utilizedERC20 {Contract[]} ERC20 contracts
 	 * @returns Object containing the ETH value of each ERC20 token and Total ETH value of all ERC20 tokens
 	 */
-	async calculateValueOfERC20BalanceOf(
+	public async calculateValueOfERC20BalanceOf(
 		_address: String,
 		_utilizedERC20: Contract[]
 	): Promise<{totalValue: BigNumber, utilizedERC20Amount: BigNumber[]}>
@@ -85,7 +82,7 @@ export default class TransferUtil
 	 * @param _utilizedERC20 {Contract[]} ERC20 contracts
 	 * @returns Object containing the ETH value of each ERC20 token and Total ETH value of all ERC20 tokens
 	 */
-	async calculateValueOfERC20Deposits(
+	public async calculateValueOfERC20Deposits(
 		_utilizedERC20Deposits: BigNumber[],
 		_utilizedERC20: Contract[],
 	): Promise<{totalValue: BigNumber, utilizedERC20Amount: BigNumber[]}>
