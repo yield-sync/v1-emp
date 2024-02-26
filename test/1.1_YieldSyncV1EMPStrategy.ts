@@ -5,7 +5,7 @@ import { expect } from "chai";
 import { BigNumber, Contract, ContractFactory } from "ethers";
 
 import { ERROR, PERCENT, D_18 } from "../common";
-import { calculateValueOfERC20Deposits } from "../scripts/TransferUtils"
+import { calculateValueOfERC20Deposits, calculateERC20RequiredByTotalAmount } from "../scripts/TransferUtils"
 
 
 describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
@@ -169,7 +169,7 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 					// Set ETH value to ZERO
 					await eTHValueFeedDummy.updateETHValue(0);
 
-					const DEPOSIT_AMOUNT = ethers.utils.parseUnits("1", 18);
+					const DEPOSIT_AMOUNT: BigNumber = ethers.utils.parseUnits("1", 18);
 
 					await expect(yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT])).to.be.revertedWith(
 						ERROR.NOT_COMPUTED
@@ -233,8 +233,7 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
 
-
-						const DEPOSIT_AMOUNT = ethers.utils.parseUnits("1", 18);
+						const DEPOSIT_AMOUNT: BigNumber = ethers.utils.parseUnits("1", 18);
 
 						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
 						await mockERC20A.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT);
@@ -356,8 +355,7 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
 
-
-						const DEPOSIT_AMOUNT_6 = ethers.utils.parseUnits("1", 6);
+						const DEPOSIT_AMOUNT_6: BigNumber = ethers.utils.parseUnits("1", 6);
 
 						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
 						await mockERC206.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_6);
@@ -396,7 +394,7 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
 
 
-						const DEPOSIT_AMOUNT_6 = ethers.utils.parseUnits("1", 6);
+						const DEPOSIT_AMOUNT_6: BigNumber = ethers.utils.parseUnits("1", 6);
 
 						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
 						await mockERC206.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_6);
@@ -462,12 +460,12 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 					"[50/50] Should be able to deposit ERC20s into strategy interactor..",
 					async () =>
 					{
-						const [OWNER] = await ethers.getSigners();
+						const CONTRACTS_TOKENS: Contract[] = [mockERC20A, mockERC20B];
 
 						// Initialize strategy with mock ERC20
 						await expect(
 							await yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-								[mockERC20A.address, mockERC20B.address],
+								CONTRACTS_TOKENS.map(contract => contract.address),
 								[[true, true, PERCENT.FIFTY], [true, true, PERCENT.FIFTY]]
 							)
 						).to.not.be.reverted;
@@ -483,21 +481,35 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
 
 
-						const DEPOSIT_AMOUNT_A: BigNumber = ethers.utils.parseUnits("1", 18);
-						const DEPOSIT_AMOUNT_B: BigNumber = ethers.utils.parseUnits("1", 18);
+						const DEPOSIT_AMOUNTS = await calculateERC20RequiredByTotalAmount(
+							yieldSyncV1EMPStrategy,
+							CONTRACTS_TOKENS,
+							ethers.utils.parseUnits(".4", 18)
+						);
 
-						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
-						await mockERC20A.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_A);
-						await mockERC20B.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_B);
+						expect(DEPOSIT_AMOUNTS.utilizedERC20Amount.length).to.be.equal(CONTRACTS_TOKENS.length);
 
-						// Deposit ERC20 tokens into the strategy
+						for (let i = 0; i < CONTRACTS_TOKENS.length; i++)
+						{
+							// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
+							await CONTRACTS_TOKENS[i].approve(
+								strategyInteractorDummy.address,
+								DEPOSIT_AMOUNTS.utilizedERC20Amount[i]
+							);
+						}
+
+						// [main-test] Deposit ERC20 tokens into the strategy
 						await expect(
-							yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT_A, DEPOSIT_AMOUNT_B])
+							yieldSyncV1EMPStrategy.utilizedERC20Deposit(DEPOSIT_AMOUNTS.utilizedERC20Amount)
 						).to.not.be.reverted;
 
-						// [main-test]
-						expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.be.equal(DEPOSIT_AMOUNT_A);
-						expect(await mockERC20B.balanceOf(strategyInteractorDummy.address)).to.be.equal(DEPOSIT_AMOUNT_B);
+						for (let i = 0; i < CONTRACTS_TOKENS.length; i++)
+						{
+							// [main-test]
+							expect(await CONTRACTS_TOKENS[i].balanceOf(strategyInteractorDummy.address)).to.be.equal(
+								DEPOSIT_AMOUNTS.utilizedERC20Amount[i]
+							)
+						}
 					}
 				);
 
@@ -505,12 +517,14 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 					"[50/50] Should issue strategy ERC20 tokens upon utilized ERC20 deposit..",
 					async () =>
 					{
+						const CONTRACTS_TOKENS: Contract[] = [mockERC20A, mockERC20B];
+
 						const [OWNER] = await ethers.getSigners();
 
 						// Initialize strategy with mock ERC20
 						await expect(
 							yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-								[mockERC20A.address, mockERC20B.address],
+								CONTRACTS_TOKENS.map(contract => contract.address),
 								[[true, true, PERCENT.FIFTY], [true, true, PERCENT.FIFTY]]
 							)
 						).to.not.be.reverted;
@@ -525,26 +539,32 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
 
-						const DEPOSIT_AMOUNT_A: BigNumber = ethers.utils.parseUnits("1", 18);
-						const DEPOSIT_AMOUNT_B: BigNumber = ethers.utils.parseUnits("1", 18);
+						const DEPOSIT_AMOUNTS = await calculateERC20RequiredByTotalAmount(
+							yieldSyncV1EMPStrategy,
+							CONTRACTS_TOKENS,
+							ethers.utils.parseUnits("2", 18)
+						);
 
-						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
-						await mockERC20A.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_A);
-						await mockERC20B.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_B);
+						expect(DEPOSIT_AMOUNTS.utilizedERC20Amount.length).to.be.equal(CONTRACTS_TOKENS.length);
 
-						// Deposit ERC20 tokens into the strategy
+						for (let i = 0; i < CONTRACTS_TOKENS.length; i++)
+						{
+							// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
+							await CONTRACTS_TOKENS[i].approve(
+								strategyInteractorDummy.address,
+								DEPOSIT_AMOUNTS.utilizedERC20Amount[i]
+							);
+						}
+
+						// [main-test] Deposit ERC20 tokens into the strategy
 						await expect(
-							yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT_A, DEPOSIT_AMOUNT_B])
+							yieldSyncV1EMPStrategy.utilizedERC20Deposit(DEPOSIT_AMOUNTS.utilizedERC20Amount)
 						).to.not.be.reverted;
-
-						// [previous-test]
-						expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.be.equal(DEPOSIT_AMOUNT_A);
-						expect(await mockERC20B.balanceOf(strategyInteractorDummy.address)).to.be.equal(DEPOSIT_AMOUNT_B);
 
 						// [calculate] YSS balance ETH Value = (a * p(a) / 1e18) + (b * p(b) / 1e18)
 						const { totalValue } = await calculateValueOfERC20Deposits(
 							eTHValueFeedDummy,
-							[DEPOSIT_AMOUNT_A, DEPOSIT_AMOUNT_B],
+							DEPOSIT_AMOUNTS.utilizedERC20Amount,
 							[mockERC20A, mockERC20B]
 						);
 
@@ -557,10 +577,12 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 					"[75/25] Should revert if invalid utilizedERC20Amounts passed..",
 					async () =>
 					{
+						const CONTRACTS_TOKENS: Contract[] = [mockERC20A, mockERC20B];
+
 						// Initialize strategy with mock ERC20
 						await expect(
 							await yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-								[mockERC20A.address, mockERC20B.address],
+								CONTRACTS_TOKENS.map(contract => contract.address),
 								[[true, true, PERCENT.SEVENTY_FIVE], [true, true, PERCENT.TWENTY_FIVE]]
 							)
 						).to.not.be.reverted;
@@ -594,12 +616,14 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 					"[75/25] Should be able to deposit ERC20s into strategy interactor..",
 					async () =>
 					{
+						const CONTRACTS_TOKENS: Contract[] = [mockERC20A, mockERC20B];
+
 						const [OWNER] = await ethers.getSigners();
 
 						// Initialize strategy with mock ERC20
 						await expect(
 							await yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-								[mockERC20A.address, mockERC20B.address],
+								CONTRACTS_TOKENS.map(contract => contract.address),
 								[[true, true, PERCENT.SEVENTY_FIVE], [true, true, PERCENT.TWENTY_FIVE]]
 							)
 						).to.not.be.reverted;
@@ -615,31 +639,35 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
 
 
-						const DEPOSIT_AMOUNT_A: BigNumber = ethers.utils.parseUnits("1.5", 18);
-						const DEPOSIT_AMOUNT_B: BigNumber = ethers.utils.parseUnits(".5", 18);
-
-						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
-						await mockERC20A.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_A);
-						await mockERC20B.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_B);
-
-						// Deposit ERC20 tokens into the strategy
-						await expect(
-							yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT_A, DEPOSIT_AMOUNT_B])
-						).to.not.be.reverted;
-
-						// [previous-test]
-						expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.be.equal(DEPOSIT_AMOUNT_A);
-						expect(await mockERC20B.balanceOf(strategyInteractorDummy.address)).to.be.equal(DEPOSIT_AMOUNT_B);
-
-						// [calculate] YSS balance ETH Value = (a * p(a) / 1e18) + (b * p(b) / 1e18)
-						const { totalValue } = await calculateValueOfERC20Deposits(
-							eTHValueFeedDummy,
-							[DEPOSIT_AMOUNT_A, DEPOSIT_AMOUNT_B],
-							[mockERC20A, mockERC20B]
+						const DEPOSIT_AMOUNTS = await calculateERC20RequiredByTotalAmount(
+							yieldSyncV1EMPStrategy,
+							CONTRACTS_TOKENS,
+							ethers.utils.parseUnits("3", 18)
 						);
 
-						// [main-test]
-						expect(await yieldSyncV1EMPStrategy.balanceOf(OWNER.address)).to.be.equal(totalValue);
+						expect(DEPOSIT_AMOUNTS.utilizedERC20Amount.length).to.be.equal(CONTRACTS_TOKENS.length);
+
+						for (let i = 0; i < CONTRACTS_TOKENS.length; i++)
+						{
+							// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
+							await CONTRACTS_TOKENS[i].approve(
+								strategyInteractorDummy.address,
+								DEPOSIT_AMOUNTS.utilizedERC20Amount[i]
+							);
+						}
+
+						// [previous-test] Deposit ERC20 tokens into the strategy
+						await expect(
+							yieldSyncV1EMPStrategy.utilizedERC20Deposit(DEPOSIT_AMOUNTS.utilizedERC20Amount)
+						).to.not.be.reverted;
+
+						for (let i = 0; i < CONTRACTS_TOKENS.length; i++)
+						{
+							// [main-test]
+							expect(await CONTRACTS_TOKENS[i].balanceOf(strategyInteractorDummy.address)).to.be.equal(
+								DEPOSIT_AMOUNTS.utilizedERC20Amount[i]
+							)
+						}
 					}
 				);
 
