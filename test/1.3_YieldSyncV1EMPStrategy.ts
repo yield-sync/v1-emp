@@ -158,11 +158,11 @@ describe("[1.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
 
 
 						// Capture
-						const STRAT_TOTAL_SUPPLY_B4 = await yieldSyncV1EMPStrategy.totalSupply();
+						const STRAT_TOTAL_SUPPLY_B4: BigNumber = await yieldSyncV1EMPStrategy.totalSupply();
 
-						const STRAT_MOCK_A_BALANCE_B4 = await mockERC20A.balanceOf(strategyInteractorDummy.address);
+						const STRAT_MOCK_A_BALANCE_B4: BigNumber = await mockERC20A.balanceOf(strategyInteractorDummy.address);
 
-						const OWNER_MOCK_A_BALANCE_B4 = await mockERC20A.balanceOf(OWNER.address);
+						const OWNER_MOCK_A_BALANCE_B4: BigNumber = await mockERC20A.balanceOf(OWNER.address);
 
 
 						const DEPOSIT_AMOUNT_A: BigNumber = ethers.utils.parseUnits("1", 18);
@@ -227,14 +227,14 @@ describe("[1.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
 				await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
 
 				// Capture
-				const STRAT_TOTAL_SUPPLY_B4 = await yieldSyncV1EMPStrategy.totalSupply();
+				const STRAT_TOTAL_SUPPLY_B4: BigNumber = await yieldSyncV1EMPStrategy.totalSupply();
 
-				const OWNERABalanceB4 = await mockERC20A.balanceOf(OWNER.address);
-				const OWNERBBalanceB4 = await mockERC20B.balanceOf(OWNER.address);
-				const OWNERCBalanceB4 = await mockERC20C.balanceOf(OWNER.address);
-				const sIABalanceB4 = await mockERC20A.balanceOf(strategyInteractorDummy.address);
-				const sIBBalanceB4 = await mockERC20A.balanceOf(strategyInteractorDummy.address);
-				const sICBalanceB4 = await mockERC20A.balanceOf(strategyInteractorDummy.address);
+				const OWNERABalanceB4: BigNumber = await mockERC20A.balanceOf(OWNER.address);
+				const OWNERBBalanceB4: BigNumber = await mockERC20B.balanceOf(OWNER.address);
+				const OWNERCBalanceB4: BigNumber = await mockERC20C.balanceOf(OWNER.address);
+				const sIABalanceB4: BigNumber = await mockERC20A.balanceOf(strategyInteractorDummy.address);
+				const sIBBalanceB4: BigNumber = await mockERC20A.balanceOf(strategyInteractorDummy.address);
+				const sICBalanceB4: BigNumber = await mockERC20A.balanceOf(strategyInteractorDummy.address);
 
 				const erc20DepositAmount = ethers.utils.parseUnits("1", 18);
 

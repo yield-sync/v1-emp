@@ -205,7 +205,7 @@ describe("[1.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 						_YSS.utilizedERC20AndPurposeUpdate(VALID_ALLOCATION[i].addresses, VALID_ALLOCATION[i].purpose)
 					).to.be.not.reverted;
 
-					for (let ii = 0; ii < VALID_ALLOCATION[i].addresses.length; ii++)
+					for (let ii: number = 0; ii < VALID_ALLOCATION[i].addresses.length; ii++)
 					{
 						const v = VALID_ALLOCATION[i];
 						const u = (await _YSS.utilizedERC20())[ii];

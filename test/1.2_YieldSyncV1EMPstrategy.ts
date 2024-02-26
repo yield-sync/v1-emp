@@ -109,8 +109,8 @@ describe("[1.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 
 					await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
 
-					const STRAT_TOTAL_SUPPLY = await yieldSyncV1EMPStrategy.totalSupply();
-					const OWNER_MOCK_A_BALANCE_B4 = await mockERC20A.balanceOf(OWNER.address);
+					const STRAT_TOTAL_SUPPLY: BigNumber = await yieldSyncV1EMPStrategy.totalSupply();
+					const OWNER_MOCK_A_BALANCE_B4: BigNumber = await mockERC20A.balanceOf(OWNER.address);
 
 					const DEPOSIT_AMOUNT: BigNumber = ethers.utils.parseUnits("1", 18);
 
@@ -122,7 +122,7 @@ describe("[1.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 						yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT])
 					).to.not.be.reverted;
 
-					const OWNER_MOCK_A_BALANCE_AFTER = await mockERC20A.balanceOf(OWNER.address);
+					const OWNER_MOCK_A_BALANCE_AFTER: BigNumber = await mockERC20A.balanceOf(OWNER.address);
 
 					// Check that the balance remains less than original
 					expect(OWNER_MOCK_A_BALANCE_AFTER).to.be.lessThan(OWNER_MOCK_A_BALANCE_B4);
@@ -178,8 +178,8 @@ describe("[1.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
 
 
-						const STRAT_TOTAL_SUPPLY_B4 = await yieldSyncV1EMPStrategy.totalSupply();
-						const OWNER_MOCK_A_BALANCE_B4 = await mockERC20A.balanceOf(OWNER.address);
+						const STRAT_TOTAL_SUPPLY_B4: BigNumber = await yieldSyncV1EMPStrategy.totalSupply();
+						const OWNER_MOCK_A_BALANCE_B4: BigNumber = await mockERC20A.balanceOf(OWNER.address);
 
 						const DEPOSIT_AMOUNT: BigNumber = ethers.utils.parseUnits("1", 18);
 
@@ -191,7 +191,7 @@ describe("[1.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 							yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT])
 						).to.not.be.reverted;
 
-						const OWNERMockERC20ABalanceAfterDeposit = await mockERC20A.balanceOf(OWNER.address);
+						const OWNERMockERC20ABalanceAfterDeposit: BigNumber = await mockERC20A.balanceOf(OWNER.address);
 
 						// Check that the balance remains less than original
 						expect(OWNERMockERC20ABalanceAfterDeposit).to.be.lessThan(OWNER_MOCK_A_BALANCE_B4);
@@ -246,8 +246,8 @@ describe("[1.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
 
 
-						const STRAT_TOTAL_SUPPLY_B4 = await yieldSyncV1EMPStrategy.totalSupply();
-						const OWNER_MOCK_A_BALANCE_B4 = await mockERC20A.balanceOf(OWNER.address);
+						const STRAT_TOTAL_SUPPLY_B4: BigNumber = await yieldSyncV1EMPStrategy.totalSupply();
+						const OWNER_MOCK_A_BALANCE_B4: BigNumber = await mockERC20A.balanceOf(OWNER.address);
 
 						const DEPOSIT_AMOUNT: BigNumber = ethers.utils.parseUnits("1", 18);
 
@@ -331,11 +331,11 @@ describe("[1.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
 
 
-						const STRAT_TOTAL_SUPPLY_B4 = await yieldSyncV1EMPStrategy.totalSupply();
+						const STRAT_TOTAL_SUPPLY_B4: BigNumber = await yieldSyncV1EMPStrategy.totalSupply();
 
-						const STRAT_MOCK_A_BALANCE_B4 = await mockERC20A.balanceOf(strategyInteractorDummy.address);
+						const STRAT_MOCK_A_BALANCE_B4: BigNumber = await mockERC20A.balanceOf(strategyInteractorDummy.address);
 
-						const OWNER_MOCK_A_BALANCE_B4 = await mockERC20A.balanceOf(OWNER.address);
+						const OWNER_MOCK_A_BALANCE_B4: BigNumber = await mockERC20A.balanceOf(OWNER.address);
 
 						const DEPOSIT_AMOUNT: BigNumber = ethers.utils.parseUnits("1", 18);
 
@@ -405,11 +405,11 @@ describe("[1.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
 
 
-						const STRAT_TOTAL_SUPPLY_B4 = await yieldSyncV1EMPStrategy.totalSupply();
+						const STRAT_TOTAL_SUPPLY_B4: BigNumber = await yieldSyncV1EMPStrategy.totalSupply();
 
-						const STRAT_MOCK_6_BALANCE_B4 = await mockERC206.balanceOf(strategyInteractorDummy.address);
+						const STRAT_MOCK_6_BALANCE_B4: BigNumber = await mockERC206.balanceOf(strategyInteractorDummy.address);
 
-						const OWNER_MOCK_6_BALANCE_B4 = await mockERC206.balanceOf(OWNER.address);
+						const OWNER_MOCK_6_BALANCE_B4: BigNumber = await mockERC206.balanceOf(OWNER.address);
 
 						const DEPOSIT_AMOUNT_6: BigNumber = ethers.utils.parseUnits("1", 6);
 
@@ -483,13 +483,13 @@ describe("[1.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
 
 
-						const STRAT_TOTAL_SUPPLY_B4 = await yieldSyncV1EMPStrategy.totalSupply();
+						const STRAT_TOTAL_SUPPLY_B4: BigNumber = await yieldSyncV1EMPStrategy.totalSupply();
 
-						const STRAT_MOCK_A_BALANCE_B4 = await mockERC20A.balanceOf(strategyInteractorDummy.address);
-						const STRAT_MOCK_B_BALANCE_B4 = await mockERC20B.balanceOf(strategyInteractorDummy.address);
+						const STRAT_MOCK_A_BALANCE_B4: BigNumber = await mockERC20A.balanceOf(strategyInteractorDummy.address);
+						const STRAT_MOCK_B_BALANCE_B4: BigNumber = await mockERC20B.balanceOf(strategyInteractorDummy.address);
 
-						const OWNER_MOCK_A_BALANCE_B4 = await mockERC20A.balanceOf(OWNER.address);
-						const OWNER_MOCK_B_BALANCE_B4 = await mockERC20B.balanceOf(OWNER.address);
+						const OWNER_MOCK_A_BALANCE_B4: BigNumber = await mockERC20A.balanceOf(OWNER.address);
+						const OWNER_MOCK_B_BALANCE_B4: BigNumber = await mockERC20B.balanceOf(OWNER.address);
 
 						const DEPOSIT_AMOUNT: BigNumber = ethers.utils.parseUnits("1", 18);
 
@@ -566,13 +566,13 @@ describe("[1.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
 
 
-						const STRAT_TOTAL_SUPPLY_B4 = await yieldSyncV1EMPStrategy.totalSupply();
+						const STRAT_TOTAL_SUPPLY_B4: BigNumber = await yieldSyncV1EMPStrategy.totalSupply();
 
-						const STRAT_MOCK_A_BALANCE_B4 = await mockERC20A.balanceOf(strategyInteractorDummy.address);
-						const STRAT_MOCK_B_BALANCE_B4 = await mockERC20B.balanceOf(strategyInteractorDummy.address);
+						const STRAT_MOCK_A_BALANCE_B4: BigNumber = await mockERC20A.balanceOf(strategyInteractorDummy.address);
+						const STRAT_MOCK_B_BALANCE_B4: BigNumber = await mockERC20B.balanceOf(strategyInteractorDummy.address);
 
-						const OWNER_MOCK_A_BALANCE_B4 = await mockERC20A.balanceOf(OWNER.address);
-						const OWNER_MOCK_B_BALANCE_B4 = await mockERC20B.balanceOf(OWNER.address);
+						const OWNER_MOCK_A_BALANCE_B4: BigNumber = await mockERC20A.balanceOf(OWNER.address);
+						const OWNER_MOCK_B_BALANCE_B4: BigNumber = await mockERC20B.balanceOf(OWNER.address);
 
 						const DEPOSIT_AMOUNT_A: BigNumber = ethers.utils.parseUnits(".75", 18);
 						const DEPOSIT_AMOUNT_B: BigNumber = ethers.utils.parseUnits(".25", 18);
@@ -652,13 +652,13 @@ describe("[1.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
 
 
-						const STRAT_TOTAL_SUPPLY_B4 = await yieldSyncV1EMPStrategy.totalSupply();
+						const STRAT_TOTAL_SUPPLY_B4: BigNumber = await yieldSyncV1EMPStrategy.totalSupply();
 
-						const STRAT_MOCK_A_BALANCE_B4 = await mockERC20A.balanceOf(strategyInteractorDummy.address);
-						const STRAT_MOCK_6_BALANCE_B4 = await mockERC206.balanceOf(strategyInteractorDummy.address);
+						const STRAT_MOCK_A_BALANCE_B4: BigNumber = await mockERC20A.balanceOf(strategyInteractorDummy.address);
+						const STRAT_MOCK_6_BALANCE_B4: BigNumber = await mockERC206.balanceOf(strategyInteractorDummy.address);
 
-						const OWNER_MOCK_A_BALANCE_B4 = await mockERC20A.balanceOf(OWNER.address);
-						const OWNER_MOCK_6_BALANCE_B4 = await mockERC206.balanceOf(OWNER.address);
+						const OWNER_MOCK_A_BALANCE_B4: BigNumber = await mockERC20A.balanceOf(OWNER.address);
+						const OWNER_MOCK_6_BALANCE_B4: BigNumber = await mockERC206.balanceOf(OWNER.address);
 
 						const DEPOSIT_AMOUNT_A: BigNumber = ethers.utils.parseUnits("1", 18);
 						const DEPOSIT_AMOUNT_6: BigNumber = ethers.utils.parseUnits("1", 6);
@@ -741,13 +741,13 @@ describe("[1.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
 						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
 
-						const STRAT_TOTAL_SUPPLY_B4 = await yieldSyncV1EMPStrategy.totalSupply();
+						const STRAT_TOTAL_SUPPLY_B4: BigNumber = await yieldSyncV1EMPStrategy.totalSupply();
 
-						const STRAT_MOCK_A_BALANCE_B4 = await mockERC20A.balanceOf(strategyInteractorDummy.address);
-						const STRAT_MOCK_6_BALANCE_B4 = await mockERC206.balanceOf(strategyInteractorDummy.address);
+						const STRAT_MOCK_A_BALANCE_B4: BigNumber = await mockERC20A.balanceOf(strategyInteractorDummy.address);
+						const STRAT_MOCK_6_BALANCE_B4: BigNumber = await mockERC206.balanceOf(strategyInteractorDummy.address);
 
-						const OWNER_MOCK_A_BALANCE_B4 = await mockERC20A.balanceOf(OWNER.address);
-						const OWNER_MOCK_6_BALANCE_B4 = await mockERC206.balanceOf(OWNER.address);
+						const OWNER_MOCK_A_BALANCE_B4: BigNumber = await mockERC20A.balanceOf(OWNER.address);
+						const OWNER_MOCK_6_BALANCE_B4: BigNumber = await mockERC206.balanceOf(OWNER.address);
 
 						const DEPOSIT_AMOUNT_A: BigNumber = ethers.utils.parseUnits(".75", 18);
 						const DEPOSIT_AMOUNT_6: BigNumber = ethers.utils.parseUnits(".25", 6);
