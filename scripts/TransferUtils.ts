@@ -68,3 +68,36 @@ export async function calculateValueOfERC20Deposits(
 		utilizedERC20Amount
 	};
 }
+
+/**
+ * Calculate ERC20 required by a total ETH Amount
+ * @param _strategy {Contract}
+ * @param _utilizedERC20 {Contract[]}
+ * @param _totalAmount {BigNumber}
+ * @returns Object containing utilized ERC 20 amounts
+ */
+export async function calculateERC20RequiredByTotalAmount(
+	_strategy: Contract,
+	_utilizedERC20: Contract[],
+	_totalAmount: BigNumber
+): Promise<{utilizedERC20Amount: BigNumber[]}>
+{
+	const ONE_HUNDRED_PERCENT = await _strategy.ONE_HUNDRED_PERCENT();
+
+	let returnObj = {
+		utilizedERC20Amount: [] as BigNumber[]
+	};
+
+	for (let i = 0; i < _utilizedERC20.length; i++)
+	{
+		const PURPOSE = await _strategy.utilizedERC20_purpose(_utilizedERC20[i].address);
+
+		const ALLOCATION = PURPOSE.allocation.mul(D_18).div(ONE_HUNDRED_PERCENT);
+
+		const TOKEN_AMOUNT = _totalAmount.mul(ALLOCATION).div(D_18);
+
+		returnObj.utilizedERC20Amount.push(TOKEN_AMOUNT);
+	}
+
+	return returnObj;
+}
