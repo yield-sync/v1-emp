@@ -422,10 +422,12 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 					"[50/50] Should revert if invalid utilizedERC20Amounts passed..",
 					async () =>
 					{
+						const CONTRACTS_TOKENS: Contract[] = [mockERC20A, mockERC20B];
+
 						// Initialize strategy with mock ERC20
 						await expect(
 							await yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-								[mockERC20A.address, mockERC20B.address],
+								CONTRACTS_TOKENS.map(contract => contract.address),
 								[[true, true, PERCENT.FIFTY], [true, true, PERCENT.FIFTY]]
 							)
 						).to.not.be.reverted;
@@ -479,7 +481,6 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 						).to.not.be.reverted;
 
 						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
-
 
 						const DEPOSIT_AMOUNTS = await calculateERC20RequiredByTotalAmount(
 							yieldSyncV1EMPStrategy,
@@ -597,7 +598,6 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
 
-
 						const DEPOSIT_AMOUNT_A: BigNumber = ethers.utils.parseUnits(".5", 18);
 						const DEPOSIT_AMOUNT_B: BigNumber = ethers.utils.parseUnits(".25", 18);
 
@@ -617,8 +617,6 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 					async () =>
 					{
 						const CONTRACTS_TOKENS: Contract[] = [mockERC20A, mockERC20B];
-
-						const [OWNER] = await ethers.getSigners();
 
 						// Initialize strategy with mock ERC20
 						await expect(
@@ -656,7 +654,7 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 							);
 						}
 
-						// [previous-test] Deposit ERC20 tokens into the strategy
+						// [main-test] Deposit ERC20 tokens into the strategy
 						await expect(
 							yieldSyncV1EMPStrategy.utilizedERC20Deposit(DEPOSIT_AMOUNTS.utilizedERC20Amount)
 						).to.not.be.reverted;
@@ -677,10 +675,12 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 					{
 						const [OWNER] = await ethers.getSigners();
 
+						const CONTRACTS_TOKENS: Contract[] = [mockERC20A, mockERC20B];
+
 						// Initialize strategy with mock ERC20
 						await expect(
 							yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-								[mockERC20A.address, mockERC20B.address],
+								CONTRACTS_TOKENS.map(contract => contract.address),
 								[[true, true, PERCENT.SEVENTY_FIVE], [true, true, PERCENT.TWENTY_FIVE]]
 							)
 						).to.not.be.reverted;
@@ -727,10 +727,12 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 					"[75/25] Should revert if invalid utilizedERC20Amounts passed..",
 					async () =>
 					{
+						const CONTRACTS_TOKENS: Contract[] = [mockERC20A, mockERC206];
+
 						// Initialize strategy with mock ERC20
 						await expect(
-							yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-								[mockERC20A.address, mockERC206.address],
+							await yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
+								CONTRACTS_TOKENS.map(contract => contract.address),
 								[[true, true, PERCENT.SEVENTY_FIVE], [true, true, PERCENT.TWENTY_FIVE]]
 							)
 						).to.not.be.reverted;
@@ -766,10 +768,12 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 					{
 						const [OWNER] = await ethers.getSigners();
 
+						const CONTRACTS_TOKENS: Contract[] = [mockERC20A, mockERC206];
+
 						// Initialize strategy with mock ERC20
 						await expect(
-							yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-								[mockERC20A.address, mockERC206.address],
+							await yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
+								CONTRACTS_TOKENS.map(contract => contract.address),
 								[[true, true, PERCENT.SEVENTY_FIVE], [true, true, PERCENT.TWENTY_FIVE]]
 							)
 						).to.not.be.reverted;
@@ -786,7 +790,7 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 
 						const DEPOSIT_AMOUNT_A: BigNumber = ethers.utils.parseUnits(".75", 18);
-						const DEPOSIT_AMOUNT_6 = ethers.utils.parseUnits(".25", 6);
+						const DEPOSIT_AMOUNT_6: BigNumber = ethers.utils.parseUnits(".25", 6);
 
 						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
 						await mockERC20A.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_A);
