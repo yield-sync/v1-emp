@@ -69,6 +69,13 @@ export async function calculateValueOfERC20Deposits(
 	};
 }
 
+/**
+ * Calculate ERC20 required by a total ETH Amount
+ * @param _strategy {Contract}
+ * @param _utilizedERC20 {Contract[]}
+ * @param _totalAmount {BigNumber}
+ * @returns Object containing utilized ERC 20 amounts
+ */
 export async function calculateERC20RequiredByTotalAmount(
 	_strategy: Contract,
 	_utilizedERC20: Contract[],
