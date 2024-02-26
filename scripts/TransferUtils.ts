@@ -24,13 +24,16 @@ export default class TransferUtil
 	 * @param _totalAmount {BigNumber}
 	 * @returns Object containing utilized ERC 20 amounts
 	 */
-	public async calculateERC20RequiredByTotalAmount(_utilizedERC20: Contract[], _totalAmount: BigNumber): Promise<BigNumber[]>
+	public async calculateERC20RequiredByTotalAmount(
+		_utilizedERC20: Contract[],
+		_totalAmount: BigNumber
+	): Promise<BigNumber[]>
 	{
 		const ONE_HUNDRED_PERCENT = await this._yieldSyncV1EMPStrategy.ONE_HUNDRED_PERCENT();
 
 		let utilizedERC20Amount: BigNumber[] = [];
 
-		for (let i = 0; i < _utilizedERC20.length; i++)
+		for (let i: number = 0; i < _utilizedERC20.length; i++)
 		{
 			const PURPOSE = await this._yieldSyncV1EMPStrategy.utilizedERC20_purpose(_utilizedERC20[i].address);
 
@@ -57,17 +60,19 @@ export default class TransferUtil
 	{
 		let utilizedERC20Amount: BigNumber[] = [];
 
-		let totalValue = ethers.utils.parseUnits("0", 18);
+		let totalValue: BigNumber = ethers.utils.parseUnits("0", 18);
 
 		// Calculate how much of each utilized tokens are being used
-		for (let i = 0; i < _utilizedERC20.length; i++)
+		for (let i: number = 0; i < _utilizedERC20.length; i++)
 		{
 			// Get balance of each token
-			let balance: BigNumber = await _utilizedERC20[i].balanceOf(_address);
+			const BALANCE: BigNumber = await _utilizedERC20[i].balanceOf(_address);
 
-			let ETHValue: BigNumber = await this._eTHValueFeed.utilizedERC20ETHValue(_utilizedERC20[i].address);
+			// Get value of each token in ETH
+			const ETH_VALUE: BigNumber = await this._eTHValueFeed.utilizedERC20ETHValue(_utilizedERC20[i].address);
 
-			totalValue = totalValue.add(balance.mul(ETHValue).div(D_18));
+			// total value = balance * eth value
+			totalValue = totalValue.add(BALANCE.mul(ETH_VALUE).div(D_18));
 		}
 
 		return {
@@ -89,16 +94,16 @@ export default class TransferUtil
 	{
 		let utilizedERC20Amount: BigNumber[] = [];
 
-		let totalValue = ethers.utils.parseUnits("0", 18);
+		let totalValue: BigNumber = ethers.utils.parseUnits("0", 18);
 
 		// Calculate how much of each utilized tokens are being used
-		for (let i = 0; i < _utilizedERC20.length; i++)
+		for (let i: number = 0; i < _utilizedERC20.length; i++)
 		{
-			let ETHValue = await this._eTHValueFeed.utilizedERC20ETHValue(_utilizedERC20[i].address);
+			const ETH_VALUE: BigNumber = await this._eTHValueFeed.utilizedERC20ETHValue(_utilizedERC20[i].address);
 
-			totalValue = totalValue.add(_utilizedERC20Deposits[i].mul(ETHValue).div(D_18));
+			totalValue = totalValue.add(_utilizedERC20Deposits[i].mul(ETH_VALUE).div(D_18));
 
-			utilizedERC20Amount.push(_utilizedERC20Deposits[i].mul(ETHValue).div(D_18));
+			utilizedERC20Amount.push(_utilizedERC20Deposits[i].mul(ETH_VALUE).div(D_18));
 		}
 
 		return {

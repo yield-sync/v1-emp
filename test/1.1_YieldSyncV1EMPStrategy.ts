@@ -491,7 +491,7 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 						expect(DEPOSIT_AMOUNTS.length).to.be.equal(CONTRACTS_TOKENS.length);
 
-						for (let i = 0; i < CONTRACTS_TOKENS.length; i++)
+						for (let i: number = 0; i < CONTRACTS_TOKENS.length; i++)
 						{
 							// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
 							await CONTRACTS_TOKENS[i].approve(
@@ -505,7 +505,7 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 							yieldSyncV1EMPStrategy.utilizedERC20Deposit(DEPOSIT_AMOUNTS)
 						).to.not.be.reverted;
 
-						for (let i = 0; i < CONTRACTS_TOKENS.length; i++)
+						for (let i: number = 0; i < CONTRACTS_TOKENS.length; i++)
 						{
 							// [main-test]
 							expect(await CONTRACTS_TOKENS[i].balanceOf(strategyInteractorDummy.address)).to.be.equal(
@@ -548,7 +548,7 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 						expect(DEPOSIT_AMOUNTS.length).to.be.equal(CONTRACTS_TOKENS.length);
 
-						for (let i = 0; i < CONTRACTS_TOKENS.length; i++)
+						for (let i: number = 0; i < CONTRACTS_TOKENS.length; i++)
 						{
 							// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
 							await CONTRACTS_TOKENS[i].approve(
@@ -643,7 +643,7 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 						expect(DEPOSIT_AMOUNTS.length).to.be.equal(CONTRACTS_TOKENS.length);
 
-						for (let i = 0; i < CONTRACTS_TOKENS.length; i++)
+						for (let i: number = 0; i < CONTRACTS_TOKENS.length; i++)
 						{
 							// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
 							await CONTRACTS_TOKENS[i].approve(
@@ -657,7 +657,7 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 							yieldSyncV1EMPStrategy.utilizedERC20Deposit(DEPOSIT_AMOUNTS)
 						).to.not.be.reverted;
 
-						for (let i = 0; i < CONTRACTS_TOKENS.length; i++)
+						for (let i: number = 0; i < CONTRACTS_TOKENS.length; i++)
 						{
 							// [main-test]
 							expect(await CONTRACTS_TOKENS[i].balanceOf(strategyInteractorDummy.address)).to.be.equal(
@@ -700,7 +700,7 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 						expect(DEPOSIT_AMOUNTS.length).to.be.equal(CONTRACTS_TOKENS.length);
 
-						for (let i = 0; i < CONTRACTS_TOKENS.length; i++)
+						for (let i: number = 0; i < CONTRACTS_TOKENS.length; i++)
 						{
 							// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
 							await CONTRACTS_TOKENS[i].approve(

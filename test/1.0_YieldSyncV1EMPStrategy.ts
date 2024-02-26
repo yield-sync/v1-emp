@@ -150,7 +150,7 @@ describe("[1.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 					}
 				];
 
-				for (let i = 0; i < INVALID_ALLOCATIONS.length; i++)
+				for (let i: number = 0; i < INVALID_ALLOCATIONS.length; i++)
 				{
 					const _YSS = await (
 						await (await ethers.getContractFactory("YieldSyncV1EMPStrategy")).deploy(
@@ -190,7 +190,7 @@ describe("[1.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 					},
 				];
 
-				for (let i = 0; i < VALID_ALLOCATION.length; i++)
+				for (let i: number = 0; i < VALID_ALLOCATION.length; i++)
 				{
 					const _YSS = await (
 						await (await ethers.getContractFactory("YieldSyncV1EMPStrategy")).deploy(
