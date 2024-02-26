@@ -411,7 +411,7 @@ describe("[1.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 
 						const OWNER_MOCK_6_BALANCE_B4 = await mockERC206.balanceOf(OWNER.address);
 
-						const DEPOSIT_AMOUNT_6 = ethers.utils.parseUnits("1", 6);
+						const DEPOSIT_AMOUNT_6: BigNumber = ethers.utils.parseUnits("1", 6);
 
 						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
 						await mockERC206.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_6);
@@ -661,7 +661,7 @@ describe("[1.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 						const OWNER_MOCK_6_BALANCE_B4 = await mockERC206.balanceOf(OWNER.address);
 
 						const DEPOSIT_AMOUNT_A: BigNumber = ethers.utils.parseUnits("1", 18);
-						const DEPOSIT_AMOUNT_6 = ethers.utils.parseUnits("1", 6);
+						const DEPOSIT_AMOUNT_6: BigNumber = ethers.utils.parseUnits("1", 6);
 
 						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
 						await mockERC20A.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_A);
@@ -750,7 +750,7 @@ describe("[1.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 						const OWNER_MOCK_6_BALANCE_B4 = await mockERC206.balanceOf(OWNER.address);
 
 						const DEPOSIT_AMOUNT_A: BigNumber = ethers.utils.parseUnits(".75", 18);
-						const DEPOSIT_AMOUNT_6 = ethers.utils.parseUnits(".25", 6);
+						const DEPOSIT_AMOUNT_6: BigNumber = ethers.utils.parseUnits(".25", 6);
 
 						// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
 						await mockERC20A.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_A);
