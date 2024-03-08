@@ -18,6 +18,7 @@ contract YieldSyncV1EMP is
 	IYieldSyncV1EMP
 {
 	address public override manager;
+
 	address[] internal _activeStrategy;
 
 	bool public override onlyPrioritizedStrategy;

@@ -87,9 +87,9 @@ contract YieldSyncV1EMPRegistry is
 	{
 		require(yieldSyncV1EMPStrategyDeployer == msg.sender, "yieldSyncV1EMPStrategyDeployer != msg.sender");
 
-		yieldSyncEMPStrategyIdTracker++;
-
 		yieldSyncV1EMPStrategy_yieldSyncV1EMPStrategyId[_yieldSyncV1EMPStrategy] = yieldSyncEMPStrategyIdTracker;
 		yieldSyncV1EMPStrategyId_yieldSyncV1EMPStrategy[yieldSyncEMPStrategyIdTracker] = _yieldSyncV1EMPStrategy;
+
+		yieldSyncEMPStrategyIdTracker++;
 	}
 }

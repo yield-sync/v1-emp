@@ -20,6 +20,7 @@ describe("[1.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
 	let strategyInteractorDummy: Contract;
 	let yieldSyncV1EMPRegistry: Contract;
 	let yieldSyncV1EMPStrategy: Contract;
+	let yieldSyncV1EMPStrategyDeployer: Contract;
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () =>
@@ -32,6 +33,7 @@ describe("[1.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
 		const StrategyInteractorDummy: ContractFactory = await ethers.getContractFactory("StrategyInteractorDummy");
 		const YieldSyncV1EMPRegistry: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPRegistry");
 		const YieldSyncV1EMPStrategy: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPStrategy");
+		const YieldSyncV1EMPStrategyDeployer: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPStrategyDeployer");
 
 		mockERC20A = await (await MockERC20.deploy()).deployed();
 		mockERC20B = await (await MockERC20.deploy()).deployed();
@@ -40,25 +42,37 @@ describe("[1.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
 		eTHValueFeedDummy = await (await ETHValueFeedDummy.deploy()).deployed();
 		strategyInteractorDummy = await (await StrategyInteractorDummy.deploy()).deployed();
 		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy()).deployed();
+		yieldSyncV1EMPStrategyDeployer = await (
+			await YieldSyncV1EMPStrategyDeployer.deploy(yieldSyncV1EMPRegistry.address, OWNER.address)
+		).deployed();
 
 		// Mock owner being an EMP Deployer
 		await expect(
 			yieldSyncV1EMPRegistry.yieldSyncV1EMPDeployerUpdate(OWNER.address)
 		).to.not.be.reverted;
 
-		// Mock owner being an EMP
+		// Mock owner registering a deployed EMP
 		await expect(
 			yieldSyncV1EMPRegistry.yieldSyncV1EMPRegister(OWNER.address)
 		).to.not.be.reverted;
 
-		yieldSyncV1EMPStrategy = await (
-			await YieldSyncV1EMPStrategy.deploy(
-				yieldSyncV1EMPRegistry.address,
-				OWNER.address,
-				"Exampe",
-				"EX"
-			)
-		).deployed();
+		// Set EMP Strategy Deployer on registry
+		await expect(
+			yieldSyncV1EMPRegistry.yieldSyncV1EMPStrategyDeployerUpdate(yieldSyncV1EMPStrategyDeployer.address)
+		).to.not.be.reverted;
+
+		await expect(
+			yieldSyncV1EMPStrategyDeployer.deployYieldSyncV1EMPStrategy("Strategy", "S")
+		).to.be.not.reverted;
+
+		expect(await yieldSyncV1EMPRegistry.yieldSyncV1EMPStrategyId_yieldSyncV1EMPStrategy(0)).to.be.not.equal(
+			ethers.constants.AddressZero
+		);
+
+		// Attach the deployed YieldSyncV1EMPStrategy address
+		yieldSyncV1EMPStrategy = await YieldSyncV1EMPStrategy.attach(
+			String(await yieldSyncV1EMPRegistry.yieldSyncV1EMPStrategyId_yieldSyncV1EMPStrategy(0))
+		);
 	});
 
 
