@@ -90,9 +90,8 @@ describe("[1.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
 
 						// Initialize strategy with mock ERC20
 						await expect(
-							yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-								[mockERC20A.address],
-								[[true, true, PERCENT.HUNDRED],],
+							yieldSyncV1EMPStrategy.utilizedERC20Update(
+								[[mockERC20A.address, true, true, PERCENT.HUNDRED],],
 							)
 						).to.not.be.reverted;
 
@@ -153,9 +152,8 @@ describe("[1.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
 
 						// Initialize strategy with mock ERC20
 						await expect(
-							yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-								[mockERC20A.address],
-								[[true, true, PERCENT.HUNDRED],],
+							yieldSyncV1EMPStrategy.utilizedERC20Update(
+								[[mockERC20A.address, true, true, PERCENT.HUNDRED],],
 							)
 						).to.not.be.reverted;
 
@@ -219,9 +217,12 @@ describe("[1.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
 
 				// Initialize strategy with mock ERC20
 				await expect(
-					yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-						[mockERC20A.address, mockERC20B.address, mockERC20C.address],
-						[[true, false, PERCENT.FIFTY], [true, false, PERCENT.FIFTY], [false, true, PERCENT.ZERO],],
+					yieldSyncV1EMPStrategy.utilizedERC20Update(
+						[
+							[mockERC20A.address, true, false, PERCENT.FIFTY],
+							[mockERC20B.address, true, false, PERCENT.FIFTY],
+							[mockERC20C.address, false, true, PERCENT.ZERO],
+						],
 					)
 				).to.not.be.reverted;
 

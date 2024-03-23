@@ -107,10 +107,7 @@ describe("[1.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 
 					// Initialize strategy with mock ERC20
 					await expect(
-						yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-							[mockERC20A.address],
-							[[true, false, PERCENT.HUNDRED]],
-						)
+						yieldSyncV1EMPStrategy.utilizedERC20Update([[mockERC20A.address, true, false, PERCENT.HUNDRED]])
 					).to.not.be.reverted;
 
 					await expect(
@@ -174,10 +171,7 @@ describe("[1.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 
 						// Initialize strategy with mock ERC20
 						await expect(
-							yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-								[mockERC20A.address],
-								[[true, false, PERCENT.HUNDRED]],
-							)
+							yieldSyncV1EMPStrategy.utilizedERC20Update([[mockERC20A.address, true, false, PERCENT.HUNDRED]])
 						).to.not.be.reverted;
 
 						await expect(
@@ -242,10 +236,7 @@ describe("[1.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 
 						// Initialize strategy with mock ERC20
 						await expect(
-							yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-								[mockERC20A.address],
-								[[true, false, PERCENT.HUNDRED]],
-							)
+							yieldSyncV1EMPStrategy.utilizedERC20Update([[mockERC20A.address, true, false, PERCENT.HUNDRED]])
 						).to.not.be.reverted;
 
 						await expect(
@@ -327,10 +318,7 @@ describe("[1.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 
 						// Initialize strategy with mock ERC20
 						await expect(
-							yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-								[mockERC20A.address],
-								[[true, true, PERCENT.HUNDRED]],
-							)
+							yieldSyncV1EMPStrategy.utilizedERC20Update([[mockERC20A.address, true, true, PERCENT.HUNDRED]])
 						).to.not.be.reverted;
 
 						await expect(
@@ -401,10 +389,7 @@ describe("[1.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 
 						// Initialize strategy with mock ERC20
 						await expect(
-							yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-								[mockERC206.address],
-								[[true, true, PERCENT.HUNDRED]],
-							)
+							yieldSyncV1EMPStrategy.utilizedERC20Update([[mockERC206.address, true, true, PERCENT.HUNDRED]])
 						).to.not.be.reverted;
 
 						await expect(
@@ -478,9 +463,11 @@ describe("[1.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 
 						// Initialize strategy with mock ERC20
 						await expect(
-							yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-								[mockERC20A.address, mockERC20B.address],
-								[[true, true, PERCENT.FIFTY], [true, true, PERCENT.FIFTY],],
+							yieldSyncV1EMPStrategy.utilizedERC20Update(
+								[
+									[mockERC20A.address, true, true, PERCENT.FIFTY],
+									[mockERC20B.address, true, true, PERCENT.FIFTY]
+								],
 
 							)
 						).to.not.be.reverted;
@@ -562,9 +549,11 @@ describe("[1.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 
 						// Initialize strategy with mock ERC20
 						await expect(
-							yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-								[mockERC20A.address, mockERC20B.address],
-								[[true, true, PERCENT.SEVENTY_FIVE], [true, true, PERCENT.TWENTY_FIVE]],
+							yieldSyncV1EMPStrategy.utilizedERC20Update(
+								[
+									[mockERC20A.address, true, true, PERCENT.SEVENTY_FIVE],
+									[mockERC20B.address, true, true, PERCENT.TWENTY_FIVE]
+								],
 							)
 						).to.not.be.reverted;
 
@@ -648,9 +637,11 @@ describe("[1.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 
 						// Initialize strategy with mock ERC20
 						await expect(
-							yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-								[mockERC20A.address, mockERC206.address],
-								[[true, true, PERCENT.FIFTY], [true, true, PERCENT.FIFTY]],
+							yieldSyncV1EMPStrategy.utilizedERC20Update(
+								[
+									[mockERC20A.address, true, true, PERCENT.FIFTY],
+									[mockERC206.address, true, true, PERCENT.FIFTY]
+								],
 							)
 						).to.not.be.reverted;
 
@@ -738,9 +729,11 @@ describe("[1.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 
 						// Initialize strategy with mock ERC20
 						await expect(
-							yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-								[mockERC20A.address, mockERC206.address],
-								[[true, true, PERCENT.SEVENTY_FIVE], [true, true, PERCENT.TWENTY_FIVE]],
+							yieldSyncV1EMPStrategy.utilizedERC20Update(
+								[
+									[mockERC20A.address, true, true, PERCENT.SEVENTY_FIVE],
+									[mockERC206.address, true, true, PERCENT.TWENTY_FIVE]
+								],
 							)
 						).to.not.be.reverted;
 

@@ -26,40 +26,28 @@ contract StrategyInteractorDummy is
 	* For example an LP tokens could be utilized or an internal mapping integar.
 	*/
 	/// @inheritdoc IYieldSyncV1EMPStrategyInteractor
-	function utilizedERC20TotalAmount(address[] memory _utilizedERC20)
+	function utilizedERC20TotalAmount(address _utilizedERC20)
 		public
 		view
 		override
-		returns (uint256[] memory utilizedERC20TotalAmount_)
+		returns (uint256 utilizedERC20TotalAmount_)
 	{
-		utilizedERC20TotalAmount_ = new uint256[](_utilizedERC20.length);
-
-		for (uint256 i = 0; i < _utilizedERC20.length; i++)
-		{
-			utilizedERC20TotalAmount_[i] += IERC20(_utilizedERC20[i]).balanceOf(address(this));
-		}
-	}
-
-
-	/// @inheritdoc IYieldSyncV1EMPStrategyInteractor
-	function utilizedERC20Deposit(address _from, address[] memory _utilizedERC20, uint256[] memory _utilizedERC20Amount)
-		public
-		override
-	{
-		for (uint256 i = 0; i < _utilizedERC20.length; i++)
-		{
-			IERC20(_utilizedERC20[i]).safeTransferFrom(_from, address(this), _utilizedERC20Amount[i]);
-		}
+		utilizedERC20TotalAmount_ = IERC20(_utilizedERC20).balanceOf(address(this));
 	}
 
 	/// @inheritdoc IYieldSyncV1EMPStrategyInteractor
-	function utilizedERC20Withdraw(address _to, address[] memory _utilizedERC20, uint256[] memory _utilizedERC20Amount)
+	function utilizedERC20Deposit(address _from, address _utilizedERC20, uint256 _utilizedERC20Amount)
 		public
 		override
 	{
-		for (uint256 i = 0; i < _utilizedERC20.length; i++)
-		{
-			IERC20(_utilizedERC20[i]).safeTransfer(_to, _utilizedERC20Amount[i]);
-		}
+		IERC20(_utilizedERC20).safeTransferFrom(_from, address(this), _utilizedERC20Amount);
+	}
+
+	/// @inheritdoc IYieldSyncV1EMPStrategyInteractor
+	function utilizedERC20Withdraw(address _to, address _utilizedERC20, uint256 _utilizedERC20Amount)
+		public
+		override
+	{
+		IERC20(_utilizedERC20).safeTransfer(_to, _utilizedERC20Amount);
 	}
 }

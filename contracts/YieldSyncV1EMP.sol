@@ -45,10 +45,42 @@ contract YieldSyncV1EMP is
 	}
 
 
+/**
+	function getUniqueERC20()
+		external
+		view
+		returns (address[] memory)
+	{
+		// Temporary mapping to check for uniqueness
+		mapping(address => bool) storage seen;
+
+		// Dynamic array to store unique addresses
+		address[] memory uniqueERC20 = new address[](0);
+
+		for (uint i = 0; i < _activeStrategy.length; i++)
+		{
+			address[] memory addresses = IYieldSyncV1EMPStrategy(_activeStrategy[i]).utilizedERC20();
+
+			for (uint ii = 0; ii < addresses.length; ii++)
+			{
+				// If the address has not been seen before, add it to the array
+				if (!seen[addresses[ii]])
+				{
+					seen[addresses[ii]] = true;
+					uniqueERC20.push(addresses[ii]);
+				}
+			}
+		}
+
+		return uniqueERC20;
+	}
+	 */
+
 	/// @inheritdoc IYieldSyncV1EMP
 	function activeStrategy()
 		external
 		view
+		override
 		returns (address[] memory)
 	{
 		return _activeStrategy;

@@ -33,11 +33,11 @@ export default class TransferUtil
 
 		let utilizedERC20Amount: BigNumber[] = [];
 
-		for (let i: number = 0; i < _utilizedERC20.length; i++)
-		{
-			const PURPOSE = await this._yieldSyncV1EMPStrategy.utilizedERC20_purpose(_utilizedERC20[i].address);
+		const utilizedERC20 = await this._yieldSyncV1EMPStrategy.utilizedERC20()
 
-			const ALLOCATION = PURPOSE.allocation.mul(D_18).div(ONE_HUNDRED_PERCENT);
+		for (let i: number = 0; i < utilizedERC20.length; i++)
+		{
+			const ALLOCATION = utilizedERC20[i].allocation.mul(D_18).div(ONE_HUNDRED_PERCENT);
 
 			const TOKEN_AMOUNT = _totalAmount.mul(ALLOCATION).div(D_18);
 

@@ -12,7 +12,7 @@ import {
 	IYieldSyncV1EMPRegistry,
 	IYieldSyncV1EMPStrategyInteractor,
 	IYieldSyncV1EMPStrategy,
-	Purpose
+	UtilizedERC20
 } from "./interface/IYieldSyncV1EMPStrategy.sol";
 
 
@@ -23,14 +23,12 @@ contract YieldSyncV1EMPStrategy is
 {
 	address public override manager;
 
-	address[] internal _utilizedERC20;
-
 	bool public override utilizedERC20DepositOpen;
 	bool public override utilizedERC20WithdrawOpen;
 
 	uint256 constant public override ONE_HUNDRED_PERCENT = 1e18;
 
-	mapping (address utilizedERC20 => Purpose purpose) internal _utilizedERC20_purpose;
+	UtilizedERC20[] internal _utilizedERC20;
 
 	IYieldSyncV1EMPRegistry public override immutable iYieldSyncV1EMPRegistry;
 
@@ -66,6 +64,7 @@ contract YieldSyncV1EMPStrategy is
 		iYieldSyncV1EMPRegistry = IYieldSyncV1EMPRegistry(_iYieldSyncV1EMPRegistry);
 	}
 
+
 	modifier authManager()
 	{
 		require(manager == msg.sender, "manager != msg.sender");
@@ -96,27 +95,16 @@ contract YieldSyncV1EMPStrategy is
 	}
 
 
-	//// @notice view
+	/// @notice view
 
 
 	/// @inheritdoc IYieldSyncV1EMPStrategy
 	function utilizedERC20()
 		public
 		view
-		override
-		returns (address[] memory)
+		returns (UtilizedERC20[] memory)
 	{
 		return _utilizedERC20;
-	}
-
-	/// @inheritdoc IYieldSyncV1EMPStrategy
-	function utilizedERC20_purpose(address __utilizedERC20)
-		public
-		view
-		override
-		returns (Purpose memory purpopse_)
-	{
-		return _utilizedERC20_purpose[__utilizedERC20];
 	}
 
 
@@ -153,32 +141,28 @@ contract YieldSyncV1EMPStrategy is
 	}
 
 	/// @inheritdoc IYieldSyncV1EMPStrategy
-	function utilizedERC20AndPurposeUpdate(address[] memory __utilizedERC20, Purpose[] memory _purpose)
+	function utilizedERC20Update(UtilizedERC20[] memory __utilizedERC20)
 		public
 		override
 		authManager()
 	{
-		require(__utilizedERC20.length == _purpose.length, "__utilizedERC20.length != _purpose.length");
-
-		_utilizedERC20 = __utilizedERC20;
-
 		uint256 _utilizedERC20AllocationTotal;
 
-		for (uint256 i = 0; i < _utilizedERC20.length; i++)
+		for (uint256 i = 0; i < __utilizedERC20.length; i++)
 		{
-			_utilizedERC20_purpose[_utilizedERC20[i]] = _purpose[i];
-
-			if (_utilizedERC20_purpose[_utilizedERC20[i]].deposit)
+			if (__utilizedERC20[i].deposit)
 			{
-				_utilizedERC20AllocationTotal += _utilizedERC20_purpose[_utilizedERC20[i]].allocation;
+				_utilizedERC20AllocationTotal += __utilizedERC20[i].allocation;
 			}
 		}
 
 		require(_utilizedERC20AllocationTotal == ONE_HUNDRED_PERCENT, "_utilizedERC20AllocationTotal != ONE_HUNDRED_PERCENT");
 
-		for (uint256 i = 0; i < _utilizedERC20.length; i++)
+		delete _utilizedERC20;
+
+		for (uint256 i = 0; i < __utilizedERC20.length; i++)
 		{
-			_utilizedERC20_purpose[_utilizedERC20[i]] = _purpose[i];
+			_utilizedERC20.push(__utilizedERC20[i]);
 		}
 	}
 
@@ -204,12 +188,12 @@ contract YieldSyncV1EMPStrategy is
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
-			if (_utilizedERC20_purpose[_utilizedERC20[i]].deposit)
+			if (_utilizedERC20[i].deposit)
 			{
 				utilizedERC20AmountTotalETHValue += SafeMath.div(
 					SafeMath.mul(
-						SafeMath.mul(_utilizedERC20Amount[i], 10 ** (18 - ERC20(_utilizedERC20[i]).decimals())),
-						iYieldSyncV1EMPETHValueFeed.utilizedERC20ETHValue(_utilizedERC20[i])
+						SafeMath.mul(_utilizedERC20Amount[i], 10 ** (18 - ERC20(_utilizedERC20[i].utilizedERC20).decimals())),
+						iYieldSyncV1EMPETHValueFeed.utilizedERC20ETHValue(_utilizedERC20[i].utilizedERC20)
 					),
 					1e18
 				);
@@ -218,13 +202,16 @@ contract YieldSyncV1EMPStrategy is
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
-			if (_utilizedERC20_purpose[_utilizedERC20[i]].deposit)
+			if (_utilizedERC20[i].deposit)
 			{
 				(bool computed, uint256 amountAllocationActual) = SafeMath.tryDiv(
 					SafeMath.mul(
 						SafeMath.div(
-							SafeMath.mul(_utilizedERC20Amount[i], iYieldSyncV1EMPETHValueFeed.utilizedERC20ETHValue(_utilizedERC20[i])),
-							10 ** ERC20(_utilizedERC20[i]).decimals()
+							SafeMath.mul(
+								_utilizedERC20Amount[i],
+								iYieldSyncV1EMPETHValueFeed.utilizedERC20ETHValue(_utilizedERC20[i].utilizedERC20)
+							),
+							10 ** ERC20(_utilizedERC20[i].utilizedERC20).decimals()
 						),
 						1e18
 					),
@@ -233,7 +220,7 @@ contract YieldSyncV1EMPStrategy is
 
 				require(computed, "!computed");
 
-				if (_utilizedERC20_purpose[_utilizedERC20[i]].allocation != amountAllocationActual)
+				if (_utilizedERC20[i].allocation != amountAllocationActual)
 				{
 					utilizedERC20AmountValid = false;
 
@@ -253,7 +240,14 @@ contract YieldSyncV1EMPStrategy is
 
 		require(utilizedERC20AmountValid, "!utilizedERC20AmountValid");
 
-		iYieldSyncV1EMPStrategyInteractor.utilizedERC20Deposit(msg.sender, _utilizedERC20, _utilizedERC20Amount);
+		for (uint256 i = 0; i < _utilizedERC20.length; i++)
+		{
+			iYieldSyncV1EMPStrategyInteractor.utilizedERC20Deposit(
+				msg.sender,
+				_utilizedERC20[i].utilizedERC20,
+				_utilizedERC20Amount[i]
+			);
+		}
 
 		_mint(msg.sender, utilizedERC20AmountTotalETHValue);
 	}
@@ -279,28 +273,24 @@ contract YieldSyncV1EMPStrategy is
 
 		require(balanceOf(msg.sender) >= _tokenAmount, "balanceOf(msg.sender) < _tokenAmount");
 
-		uint256[] memory utilizedERC20AmountPerBurn = iYieldSyncV1EMPStrategyInteractor.utilizedERC20TotalAmount(_utilizedERC20);
-
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
-			if (_utilizedERC20_purpose[_utilizedERC20[i]].withdraw)
+			if (_utilizedERC20[i].withdraw)
 			{
-				(, uint256 utilizedERC20Amount) = SafeMath.tryDiv(SafeMath.mul(utilizedERC20AmountPerBurn[i], 1e18), totalSupply());
+				(bool computed, uint256 utilizedERC20AmountPerToken) = SafeMath.tryDiv(
+					SafeMath.mul(iYieldSyncV1EMPStrategyInteractor.utilizedERC20TotalAmount(_utilizedERC20[i].utilizedERC20), 1e18),
+					totalSupply()
+				);
 
-				utilizedERC20AmountPerBurn[i] = utilizedERC20Amount;
-			}
-			else
-			{
-				utilizedERC20AmountPerBurn[i] = 0;
+				require(computed, "!computed");
+
+				iYieldSyncV1EMPStrategyInteractor.utilizedERC20Withdraw(
+					msg.sender,
+					_utilizedERC20[i].utilizedERC20,
+					SafeMath.div(SafeMath.mul(utilizedERC20AmountPerToken, _tokenAmount), 1e18)
+				);
 			}
 		}
-
-		for (uint256 i = 0; i < _utilizedERC20.length; i++)
-		{
-			utilizedERC20AmountPerBurn[i] = SafeMath.div(utilizedERC20AmountPerBurn[i] * _tokenAmount, 1e18);
-		}
-
-		iYieldSyncV1EMPStrategyInteractor.utilizedERC20Withdraw(msg.sender, _utilizedERC20, utilizedERC20AmountPerBurn);
 
 		_burn(msg.sender, _tokenAmount);
 	}

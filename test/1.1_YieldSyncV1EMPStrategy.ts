@@ -5,7 +5,7 @@ import { expect } from "chai";
 import { BigNumber, Contract, ContractFactory } from "ethers";
 
 import { ERROR, PERCENT, D_18 } from "../common";
-import TransferUtil from "../scripts/TransferUtils"
+import TransferUtil from "../scripts/TransferUtil"
 
 
 describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
@@ -110,9 +110,8 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 					const [, ADDR_1] = await ethers.getSigners();
 
 					await expect(
-						await yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-							[mockERC20A.address],
-							[[true, true, PERCENT.HUNDRED]]
+						await yieldSyncV1EMPStrategy.utilizedERC20Update(
+							[[mockERC20A.address, true, true, PERCENT.HUNDRED]]
 						)
 					).to.not.be.reverted;
 
@@ -135,9 +134,8 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 				async () =>
 				{
 					await expect(
-						await yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-							[mockERC20A.address],
-							[[true, true, PERCENT.HUNDRED]]
+						await yieldSyncV1EMPStrategy.utilizedERC20Update(
+							[[mockERC20A.address, true, true, PERCENT.HUNDRED]]
 						)
 					).to.not.be.reverted;
 
@@ -167,10 +165,7 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 				{
 					// Initialize strategy with mock ERC20
 					await expect(
-						yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-							[mockERC20A.address],
-							[[true, true, PERCENT.HUNDRED]]
-						)
+						yieldSyncV1EMPStrategy.utilizedERC20Update([[mockERC20A.address, true, true, PERCENT.HUNDRED]])
 					).to.not.be.reverted;
 
 					await expect(
@@ -200,9 +195,11 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 				{
 					// Initialize strategy with mock ERC20
 					await expect(
-						yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-							[mockERC20A.address, mockERC20B.address],
-							[[true, true, PERCENT.FIFTY], [true, true, PERCENT.FIFTY]]
+						yieldSyncV1EMPStrategy.utilizedERC20Update(
+							[
+								[mockERC20A.address, true, true, PERCENT.FIFTY],
+								[mockERC20B.address, true, true, PERCENT.FIFTY]
+							]
 						)
 					).to.not.be.reverted;
 
@@ -234,9 +231,8 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 					async () =>
 					{
 						await expect(
-							await yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-								[mockERC20A.address],
-								[[true, true, PERCENT.HUNDRED]]
+							await yieldSyncV1EMPStrategy.utilizedERC20Update(
+								[[mockERC20A.address, true, true, PERCENT.HUNDRED]]
 							)
 						).to.not.be.reverted;
 
@@ -268,10 +264,7 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 					{
 						// Initialize strategy with mock ERC20
 						await expect(
-							yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-								[mockERC20A.address],
-								[[true, true, PERCENT.HUNDRED]]
-							)
+							yieldSyncV1EMPStrategy.utilizedERC20Update([[mockERC20A.address, true, true, PERCENT.HUNDRED]])
 						).to.not.be.reverted;
 
 						await expect(
@@ -312,10 +305,7 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 						// Initialize strategy with mock ERC20
 						await expect(
-							yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-								[mockERC20A.address],
-								[[true, true, PERCENT.HUNDRED]]
-							)
+							yieldSyncV1EMPStrategy.utilizedERC20Update([[mockERC20A.address, true, true, PERCENT.HUNDRED]])
 						).to.not.be.reverted;
 
 						await expect(
@@ -355,10 +345,7 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 					{
 						// Initialize strategy with mock ERC20
 						await expect(
-							yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-								[mockERC206.address],
-								[[true, true, PERCENT.HUNDRED]]
-							)
+							yieldSyncV1EMPStrategy.utilizedERC20Update([[mockERC206.address, true, true, PERCENT.HUNDRED]])
 						).to.not.be.reverted;
 
 						await expect(
@@ -393,10 +380,7 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 						// Initialize strategy with mock ERC20
 						await expect(
-							yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-								[mockERC206.address],
-								[[true, true, PERCENT.HUNDRED]]
-							)
+							yieldSyncV1EMPStrategy.utilizedERC20Update([[mockERC206.address, true, true, PERCENT.HUNDRED]])
 						).to.not.be.reverted;
 
 						await expect(
@@ -438,13 +422,13 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 					"[50/50] Should revert if invalid utilizedERC20Amounts passed..",
 					async () =>
 					{
-						const CONTRACTS_TOKENS: Contract[] = [mockERC20A, mockERC20B];
-
 						// Initialize strategy with mock ERC20
 						await expect(
-							await yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-								CONTRACTS_TOKENS.map(contract => contract.address),
-								[[true, true, PERCENT.FIFTY], [true, true, PERCENT.FIFTY]]
+							await yieldSyncV1EMPStrategy.utilizedERC20Update(
+								[
+									[mockERC20A.address, true, true, PERCENT.FIFTY],
+									[mockERC20B.address, true, true, PERCENT.FIFTY]
+								]
 							)
 						).to.not.be.reverted;
 
@@ -482,9 +466,11 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 						// Initialize strategy with mock ERC20
 						await expect(
-							await yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-								CONTRACTS_TOKENS.map(contract => contract.address),
-								[[true, true, PERCENT.FIFTY], [true, true, PERCENT.FIFTY]]
+							await yieldSyncV1EMPStrategy.utilizedERC20Update(
+								[
+									[mockERC20A.address, true, true, PERCENT.FIFTY],
+									[mockERC20B.address, true, true, PERCENT.FIFTY]
+								]
 							)
 						).to.not.be.reverted;
 
@@ -508,10 +494,7 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 						for (let i: number = 0; i < CONTRACTS_TOKENS.length; i++)
 						{
 							// Approve the StrategyInteractorDummy contract to spend tokens on behalf of OWNER
-							await CONTRACTS_TOKENS[i].approve(
-								strategyInteractorDummy.address,
-								DEPOSIT_AMOUNTS[i]
-							);
+							await CONTRACTS_TOKENS[i].approve(strategyInteractorDummy.address, DEPOSIT_AMOUNTS[i]);
 						}
 
 						// [main-test] Deposit ERC20 tokens into the strategy
@@ -539,9 +522,11 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 						// Initialize strategy with mock ERC20
 						await expect(
-							yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-								CONTRACTS_TOKENS.map(contract => contract.address),
-								[[true, true, PERCENT.FIFTY], [true, true, PERCENT.FIFTY]]
+							yieldSyncV1EMPStrategy.utilizedERC20Update(
+								[
+									[mockERC20A.address, true, true, PERCENT.FIFTY],
+									[mockERC20B.address, true, true, PERCENT.FIFTY]
+								]
 							)
 						).to.not.be.reverted;
 
@@ -595,9 +580,11 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 						// Initialize strategy with mock ERC20
 						await expect(
-							await yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-								CONTRACTS_TOKENS.map(contract => contract.address),
-								[[true, true, PERCENT.SEVENTY_FIVE], [true, true, PERCENT.TWENTY_FIVE]]
+							await yieldSyncV1EMPStrategy.utilizedERC20Update(
+								[
+									[mockERC20A.address, true, true, PERCENT.SEVENTY_FIVE],
+									[mockERC20B.address, true, true, PERCENT.TWENTY_FIVE]
+								]
 							)
 						).to.not.be.reverted;
 
@@ -633,9 +620,11 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 						// Initialize strategy with mock ERC20
 						await expect(
-							await yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-								CONTRACTS_TOKENS.map(contract => contract.address),
-								[[true, true, PERCENT.SEVENTY_FIVE], [true, true, PERCENT.TWENTY_FIVE]]
+							await yieldSyncV1EMPStrategy.utilizedERC20Update(
+								[
+									[mockERC20A.address, true, true, PERCENT.SEVENTY_FIVE],
+									[mockERC20B.address, true, true, PERCENT.TWENTY_FIVE]
+								]
 							)
 						).to.not.be.reverted;
 
@@ -691,9 +680,11 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 						// Initialize strategy with mock ERC20
 						await expect(
-							yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-								CONTRACTS_TOKENS.map(contract => contract.address),
-								[[true, true, PERCENT.SEVENTY_FIVE], [true, true, PERCENT.TWENTY_FIVE]]
+							yieldSyncV1EMPStrategy.utilizedERC20Update(
+								[
+									[mockERC20A.address, true, true, PERCENT.SEVENTY_FIVE],
+									[mockERC20B.address, true, true, PERCENT.TWENTY_FIVE]
+								]
 							)
 						).to.not.be.reverted;
 
@@ -750,9 +741,11 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 						// Initialize strategy with mock ERC20
 						await expect(
-							await yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-								CONTRACTS_TOKENS.map(contract => contract.address),
-								[[true, true, PERCENT.SEVENTY_FIVE], [true, true, PERCENT.TWENTY_FIVE]]
+							await yieldSyncV1EMPStrategy.utilizedERC20Update(
+								[
+									[mockERC20A.address, true, true, PERCENT.SEVENTY_FIVE],
+									[mockERC206.address, true, true, PERCENT.TWENTY_FIVE]
+								]
 							)
 						).to.not.be.reverted;
 
@@ -791,9 +784,11 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 						// Initialize strategy with mock ERC20
 						await expect(
-							await yieldSyncV1EMPStrategy.utilizedERC20AndPurposeUpdate(
-								CONTRACTS_TOKENS.map(contract => contract.address),
-								[[true, true, PERCENT.SEVENTY_FIVE], [true, true, PERCENT.TWENTY_FIVE]]
+							await yieldSyncV1EMPStrategy.utilizedERC20Update(
+								[
+									[mockERC20A.address, true, true, PERCENT.SEVENTY_FIVE],
+									[mockERC206.address, true, true, PERCENT.TWENTY_FIVE]
+								]
 							)
 						).to.not.be.reverted;
 
