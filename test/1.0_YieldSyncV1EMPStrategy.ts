@@ -198,7 +198,7 @@ describe("[1.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 						const allocation = VALID_ALLOCATION[i][ii];
 						const utilizedERC20 = (await _YSS.utilizedERC20())[ii];
 
-						expect(utilizedERC20.utilizedERC20).to.be.equal(allocation[0]);
+						expect(utilizedERC20.eRC20).to.be.equal(allocation[0]);
 						expect(utilizedERC20.deposit).to.be.equal(allocation[1]);
 						expect(utilizedERC20.withdraw).to.be.equal(allocation[2]);
 						expect(utilizedERC20.allocation.eq(allocation[3])).to.be.true;
