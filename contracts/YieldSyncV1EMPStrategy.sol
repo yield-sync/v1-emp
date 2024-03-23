@@ -192,8 +192,8 @@ contract YieldSyncV1EMPStrategy is
 			{
 				utilizedERC20AmountTotalETHValue += SafeMath.div(
 					SafeMath.mul(
-						SafeMath.mul(_utilizedERC20Amount[i], 10 ** (18 - ERC20(_utilizedERC20[i].utilizedERC20).decimals())),
-						iYieldSyncV1EMPETHValueFeed.utilizedERC20ETHValue(_utilizedERC20[i].utilizedERC20)
+						SafeMath.mul(_utilizedERC20Amount[i], 10 ** (18 - ERC20(_utilizedERC20[i].eRC20).decimals())),
+						iYieldSyncV1EMPETHValueFeed.utilizedERC20ETHValue(_utilizedERC20[i].eRC20)
 					),
 					1e18
 				);
@@ -209,9 +209,9 @@ contract YieldSyncV1EMPStrategy is
 						SafeMath.div(
 							SafeMath.mul(
 								_utilizedERC20Amount[i],
-								iYieldSyncV1EMPETHValueFeed.utilizedERC20ETHValue(_utilizedERC20[i].utilizedERC20)
+								iYieldSyncV1EMPETHValueFeed.utilizedERC20ETHValue(_utilizedERC20[i].eRC20)
 							),
-							10 ** ERC20(_utilizedERC20[i].utilizedERC20).decimals()
+							10 ** ERC20(_utilizedERC20[i].eRC20).decimals()
 						),
 						1e18
 					),
@@ -244,7 +244,7 @@ contract YieldSyncV1EMPStrategy is
 		{
 			iYieldSyncV1EMPStrategyInteractor.utilizedERC20Deposit(
 				msg.sender,
-				_utilizedERC20[i].utilizedERC20,
+				_utilizedERC20[i].eRC20,
 				_utilizedERC20Amount[i]
 			);
 		}
@@ -278,7 +278,7 @@ contract YieldSyncV1EMPStrategy is
 			if (_utilizedERC20[i].withdraw)
 			{
 				(bool computed, uint256 utilizedERC20AmountPerToken) = SafeMath.tryDiv(
-					SafeMath.mul(iYieldSyncV1EMPStrategyInteractor.utilizedERC20TotalAmount(_utilizedERC20[i].utilizedERC20), 1e18),
+					SafeMath.mul(iYieldSyncV1EMPStrategyInteractor.utilizedERC20TotalAmount(_utilizedERC20[i].eRC20), 1e18),
 					totalSupply()
 				);
 
@@ -286,7 +286,7 @@ contract YieldSyncV1EMPStrategy is
 
 				iYieldSyncV1EMPStrategyInteractor.utilizedERC20Withdraw(
 					msg.sender,
-					_utilizedERC20[i].utilizedERC20,
+					_utilizedERC20[i].eRC20,
 					SafeMath.div(SafeMath.mul(utilizedERC20AmountPerToken, _tokenAmount), 1e18)
 				);
 			}

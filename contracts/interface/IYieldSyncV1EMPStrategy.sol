@@ -15,7 +15,7 @@ using SafeERC20 for IERC20;
 
 struct UtilizedERC20
 {
-	address utilizedERC20;
+	address eRC20;
 	bool deposit;
 	bool withdraw;
 	uint256 allocation;
