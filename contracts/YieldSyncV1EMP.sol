@@ -51,10 +51,12 @@ contract YieldSyncV1EMP is
 
 
 	/// @inheritdoc IYieldSyncV1EMP
-	function depositTokens()
+	function depositTokens(uint256[] memory _utilizedERC20Amount)
 		public
 	{
+		// Get status of if valid
 
+		// Check that percents are correct
 	}
 
 	/// @inheritdoc IYieldSyncV1EMP

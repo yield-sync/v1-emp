@@ -13,7 +13,7 @@ export const ERROR = {
 	INVALID_AMOUNT_LENGTH: "_utilizedERC20.length != _utilizedERC20Amount.length",
 	INVALID_BALANCE: "balanceOf(msg.sender) < _tokenAmount",
 	INVALID_PURPOSE_LENGTH: "__utilizedERC20.length != _purpose.length",
-	INVALID_UTILIZEDERC20AMOUNT: "!utilizedERC20AmountValid",
+	INVALID_UTILIZEDERC20AMOUNT: "!utilizedERC20AmountValid(_utilizedERC20Amount)",
 	STRATEGY_NOT_SET: "address(iYieldSyncV1EMPStrategyInteractor) == address(0)",
 	UTILIZED_ERC20_DEPOSIT_OPEN: "utilizedERC20DepositOpen || utilizedERC20WithdrawOpen",
 	WITHDRAW_NOT_OPEN: "!utilizedERC20WithdrawOpen",

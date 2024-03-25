@@ -56,7 +56,7 @@ interface IYieldSyncV1EMP is
 	/**
 	* @notice
 	*/
-	function depositTokens()
+	function depositTokens(uint256[] memory _utilizedERC20Amount)
 		external
 	;
 
