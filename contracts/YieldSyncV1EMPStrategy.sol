@@ -65,6 +65,16 @@ contract YieldSyncV1EMPStrategy is
 	}
 
 
+	modifier authEMP()
+	{
+		require(
+			iYieldSyncV1EMPRegistry.yieldSyncV1EMP_yieldSyncV1EMPId(msg.sender) > 0,
+			"iYieldSyncV1EMPRegistry.yieldSyncV1EMP_yieldSyncV1EMPId(msg.sender) == 0"
+		);
+
+		_;
+	}
+
 	modifier authManager()
 	{
 		require(manager == msg.sender, "manager != msg.sender");
@@ -170,14 +180,10 @@ contract YieldSyncV1EMPStrategy is
 	function utilizedERC20Deposit(uint256[] memory _utilizedERC20Amount)
 		public
 		override
+		authEMP()
 		nonReentrant()
 		initialized()
 	{
-		require(
-			iYieldSyncV1EMPRegistry.yieldSyncV1EMP_yieldSyncV1EMPId(msg.sender) > 0,
-			"iYieldSyncV1EMPRegistry.yieldSyncV1EMP_yieldSyncV1EMPId(msg.sender) == 0"
-		);
-
 		require(utilizedERC20DepositOpen, "!utilizedERC20DepositOpen");
 
 		require(_utilizedERC20.length == _utilizedERC20Amount.length, "_utilizedERC20.length != _utilizedERC20Amount.length");
@@ -266,6 +272,7 @@ contract YieldSyncV1EMPStrategy is
 	function utilizedERC20Withdraw(uint256 _tokenAmount)
 		public
 		override
+		authEMP()
 		nonReentrant()
 		initialized()
 	{

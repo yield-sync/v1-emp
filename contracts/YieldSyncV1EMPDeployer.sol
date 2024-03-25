@@ -41,7 +41,7 @@ contract YieldSyncV1EMPDeployer is
 	}
 
 
-	function deployYieldSyncV1EMP(string memory _name, bool _onlyPrioritizedStrategy, string memory _symbol)
+	function deployYieldSyncV1EMP(string memory _name, string memory _symbol)
 		public
 		payable
 		returns (address yieldSyncV1EMP_)
@@ -50,7 +50,6 @@ contract YieldSyncV1EMPDeployer is
 
 		YieldSyncV1EMP yieldSyncV1EMP = new YieldSyncV1EMP(
 			msg.sender,
-			_onlyPrioritizedStrategy,
 			_name,
 			_symbol
 		);
