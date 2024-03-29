@@ -121,20 +121,10 @@ interface IYieldSyncV1EMPStrategy is
 	* @notice Utilized ERC20 Amount Total ETH Value
 	* @param _utilizedERC20Amount {uint256[]}
 	*/
-	function utilizedERC20AmountTotalETHValue(uint256[] memory _utilizedERC20Amount)
+	function utilizedERC20AmountETHValue(uint256[] memory _utilizedERC20Amount)
 		external
 		view
 		returns (uint256 utilizedERC20AmountTotalETHValue_)
-	;
-
-	/**
-	* @notice Utilized ERC20 Amount Valid
-	* @param _utilizedERC20Amount {uint256[]}
-	*/
-	function utilizedERC20AmountValid(uint256[] memory _utilizedERC20Amount)
-		external
-		view
-		returns (bool utilizedERC20AmountValid_)
 	;
 
 
