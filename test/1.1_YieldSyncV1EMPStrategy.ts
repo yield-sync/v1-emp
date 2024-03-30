@@ -216,7 +216,41 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 					const DEPOSIT_AMOUNT: BigNumber = ethers.utils.parseUnits("1", 18);
 
 					await expect(yieldSyncV1EMPStrategy.utilizedERC20Deposit([0, DEPOSIT_AMOUNT])).to.be.revertedWith(
-						ERROR.INVALID_UTILIZEDERC20AMOUNT
+						ERROR.INVALID_UTILIZED_ERC20_AMOUNT
+					);
+				}
+			)
+
+			it(
+				"Should return false if INVALID ERC20 amounts with deposits set to false but non-zero deposit amount passed..",
+				async () =>
+				{
+					// Initialize strategy with mock ERC20
+					await expect(
+						yieldSyncV1EMPStrategy.utilizedERC20Update(
+							[
+								[mockERC20A.address, true, true, PERCENT.HUNDRED],
+								[mockERC20B.address, false, true, PERCENT.HUNDRED]
+							]
+						)
+					).to.not.be.reverted;
+
+					await expect(
+						yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+					).to.not.be.reverted;
+
+					await expect(
+						yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
+					).to.not.be.reverted;
+
+					await expect(yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()).to.not.be.reverted;
+
+					const DEPOSIT_AMOUNT: BigNumber = ethers.utils.parseUnits("1", 18);
+
+					await expect(
+						yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT, DEPOSIT_AMOUNT])
+					).to.be.revertedWith(
+						ERROR.INVALID_UTILIZED_ERC20_AMOUNT_DEPOSIT_FALSE_AND_NON_ZERO_DEPOSIT
 					);
 				}
 			)
@@ -454,7 +488,7 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 						// Deposit ERC20 tokens into the strategy
 						await expect(
 							yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT_A, DEPOSIT_AMOUNT_B])
-						).to.be.revertedWith(ERROR.INVALID_UTILIZEDERC20AMOUNT);
+						).to.be.revertedWith(ERROR.INVALID_UTILIZED_ERC20_AMOUNT);
 					}
 				);
 
@@ -608,7 +642,7 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 						// [main-test] Deposit ERC20 tokens into the strategy
 						await expect(
 							yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT_A, DEPOSIT_AMOUNT_B])
-						).to.be.revertedWith(ERROR.INVALID_UTILIZEDERC20AMOUNT);
+						).to.be.revertedWith(ERROR.INVALID_UTILIZED_ERC20_AMOUNT);
 					}
 				);
 
@@ -770,7 +804,7 @@ describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 						// [main-test] Deposit ERC20 tokens into the strategy
 						await expect(
 							yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT_A, DEPOSIT_AMOUNT_6])
-						).to.be.revertedWith(ERROR.INVALID_UTILIZEDERC20AMOUNT);
+						).to.be.revertedWith(ERROR.INVALID_UTILIZED_ERC20_AMOUNT);
 					}
 				);
 

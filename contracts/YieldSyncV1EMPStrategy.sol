@@ -212,13 +212,11 @@ contract YieldSyncV1EMPStrategy is
 
 		uint256 _utilizedERC20AmountETHValue = utilizedERC20AmountETHValue(_utilizedERC20Amount);
 
-		bool _utilizedERC20AmountValid = true;
-
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
 			if (_utilizedERC20[i].deposit)
 			{
-				(bool computed, uint256 amountAllocationActual) = SafeMath.tryDiv(
+				(bool computed, uint256 utilizedERC20AmountAllocationActual) = SafeMath.tryDiv(
 					SafeMath.mul(
 						SafeMath.div(
 							SafeMath.mul(
@@ -234,25 +232,16 @@ contract YieldSyncV1EMPStrategy is
 
 				require(computed, "!computed");
 
-				if (_utilizedERC20[i].allocation != amountAllocationActual)
-				{
-					_utilizedERC20AmountValid = false;
-
-					break;
-				}
+				require(
+					_utilizedERC20[i].allocation == utilizedERC20AmountAllocationActual,
+					"_utilizedERC20[i].allocation != utilizedERC20AmountAllocationActual"
+				);
 			}
 			else
 			{
-				if (_utilizedERC20Amount[i] > 0)
-				{
-					_utilizedERC20AmountValid = false;
-
-					break;
-				}
+				require(_utilizedERC20Amount[i] == 0, "_utilizedERC20Amount[i] != 0");
 			}
 		}
-
-		require(_utilizedERC20AmountValid, "!_utilizedERC20AmountValid");
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{

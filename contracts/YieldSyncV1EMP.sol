@@ -53,10 +53,12 @@ contract YieldSyncV1EMP is
 	function depositTokens(uint256[][] memory _utilizedERC20Amount)
 		public
 	{
-		uint256[] memory _utilizedERC20ETHValue = new uint256[](_utilizedStrategy.length);
+		bool _utilizedERC20AmountValid = true;
+
 		uint256 _utilizedERC20ETHValueTotal = 0;
 
-		// For each utilziedERC20 get the ETH value and sum it all up
+		uint256[] memory _utilizedERC20ETHValue = new uint256[](_utilizedStrategy.length);
+
 		for (uint256 i = 0; i < _utilizedStrategy.length; i++)
 		{
 			uint256 _utilizedERC20AmountETHValue = IYieldSyncV1EMPStrategy(
@@ -70,8 +72,32 @@ contract YieldSyncV1EMP is
 			_utilizedERC20ETHValueTotal += _utilizedERC20AmountETHValue;
 		}
 
+		for (uint256 i = 0; i < _utilizedStrategy.length; i++)
+		{
+			(bool computed, uint256 utilizedERC20AmountAllocationActual) = SafeMath.tryDiv(
+				_utilizedERC20ETHValue[i],
+				_utilizedERC20ETHValueTotal
+			);
 
-		// Check that the percentages are correct
+			require(computed, "!computed");
+
+			if (_utilizedStrategy[i].allocation != utilizedERC20AmountAllocationActual)
+			{
+				_utilizedERC20AmountValid = false;
+
+				break;
+			}
+
+		}
+
+		require(_utilizedERC20AmountValid, "!_utilizedERC20AmountValid");
+
+		for (uint256 i = 0; i < _utilizedStrategy.length; i++)
+		{
+			IYieldSyncV1EMPStrategy(_utilizedStrategy[i].yieldSyncV1EMPStrategy).utilizedERC20Deposit(
+				_utilizedERC20Amount[i]
+			);
+		}
 	}
 
 	function strategyAllocationUpdate()
