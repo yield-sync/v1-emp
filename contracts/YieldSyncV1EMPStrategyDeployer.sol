@@ -24,28 +24,28 @@ contract YieldSyncV1EMPStrategyDeployer is
 	{}
 
 
-	address public immutable YieldSyncGovernance;
+	address public immutable YIELD_SYNC_GOVERNANCE;
 
 	uint256 public fee;
 
-	IYieldSyncV1EMPRegistry public immutable iYieldSyncV1EMPRegistry;
+	IYieldSyncV1EMPRegistry public immutable I_YIELD_SYNC_V1_EMP_REGISTRY;
 
 
-	modifier contractYieldSyncGovernance(bytes32 _role)
+	modifier contractYIELD_SYNC_GOVERNANCE(bytes32 _role)
 	{
-		require(IAccessControlEnumerable(YieldSyncGovernance).hasRole(_role, msg.sender), "!auth");
+		require(IAccessControlEnumerable(YIELD_SYNC_GOVERNANCE).hasRole(_role, msg.sender), "!auth");
 
 		_;
 	}
 
 
-	constructor (address _iYieldSyncV1EMPRegistry, address _YieldSyncGovernance)
+	constructor (address _I_YIELD_SYNC_V1_EMP_REGISTRY, address _YIELD_SYNC_GOVERNANCE)
 	{
 		fee = 0;
 
-		YieldSyncGovernance = _YieldSyncGovernance;
+		YIELD_SYNC_GOVERNANCE = _YIELD_SYNC_GOVERNANCE;
 
-		iYieldSyncV1EMPRegistry = IYieldSyncV1EMPRegistry(_iYieldSyncV1EMPRegistry);
+		I_YIELD_SYNC_V1_EMP_REGISTRY = IYieldSyncV1EMPRegistry(_I_YIELD_SYNC_V1_EMP_REGISTRY);
 	}
 
 
@@ -58,16 +58,16 @@ contract YieldSyncV1EMPStrategyDeployer is
 		require(msg.value >= fee, "!msg.value");
 
 		yieldSyncV1EMPStrategy_ = address(
-			new YieldSyncV1EMPStrategy(address(iYieldSyncV1EMPRegistry), msg.sender, _name, _symbol)
+			new YieldSyncV1EMPStrategy(address(I_YIELD_SYNC_V1_EMP_REGISTRY), msg.sender, _name, _symbol)
 		);
 
-		iYieldSyncV1EMPRegistry.yieldSyncV1EMPStrategyRegister(yieldSyncV1EMPStrategy_);
+		I_YIELD_SYNC_V1_EMP_REGISTRY.yieldSyncV1EMPStrategyRegister(yieldSyncV1EMPStrategy_);
 	}
 
 	/// @inheritdoc IYieldSyncV1EMPStrategyDeployer
 	function feeUpdate(uint256 _fee)
 		public
-		contractYieldSyncGovernance(bytes32(0))
+		contractYIELD_SYNC_GOVERNANCE(bytes32(0))
 	{
 		fee = _fee;
 	}

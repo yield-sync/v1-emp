@@ -6,7 +6,7 @@ import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-import { IYieldSyncV1EMP, IYieldSyncV1EMPStrategy, UtilizedStrategy, UtilizedERC20 } from "./interface/IYieldSyncV1EMP.sol";
+import { IYieldSyncV1EMP, IYieldSyncV1EMPStrategy, UtilizedStrategy } from "./interface/IYieldSyncV1EMP.sol";
 
 
 using SafeERC20 for ERC20;
@@ -33,7 +33,7 @@ contract YieldSyncV1EMP is
 
 	modifier accessManager()
 	{
-		require(msg.sender == manager, "!manager");
+		require(msg.sender == manager, "!(msg.sender == manager)");
 
 		_;
 	}
@@ -53,8 +53,6 @@ contract YieldSyncV1EMP is
 	function depositTokens(uint256[][] memory _utilizedERC20Amount)
 		public
 	{
-		bool _utilizedERC20AmountValid = true;
-
 		uint256 _utilizedERC20ETHValueTotal = 0;
 
 		uint256[] memory _utilizedERC20ETHValue = new uint256[](_utilizedStrategy.length);
@@ -81,16 +79,11 @@ contract YieldSyncV1EMP is
 
 			require(computed, "!computed");
 
-			if (_utilizedStrategy[i].allocation != utilizedERC20AmountAllocationActual)
-			{
-				_utilizedERC20AmountValid = false;
-
-				break;
-			}
-
+			require(
+				_utilizedStrategy[i].allocation == utilizedERC20AmountAllocationActual,
+				"!(_utilizedStrategy[i].allocation == utilizedERC20AmountAllocationActual)"
+			);
 		}
-
-		require(_utilizedERC20AmountValid, "!_utilizedERC20AmountValid");
 
 		for (uint256 i = 0; i < _utilizedStrategy.length; i++)
 		{

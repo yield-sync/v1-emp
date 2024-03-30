@@ -23,7 +23,7 @@ contract ETHValueFeedOracle is
 
 	modifier authManager()
 	{
-		require(manager == msg.sender, "manager != msg.sender");
+		require(manager == msg.sender, "!(manager == msg.sender)");
 
 		_;
 	}

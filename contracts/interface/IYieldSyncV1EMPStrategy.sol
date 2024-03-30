@@ -85,7 +85,7 @@ interface IYieldSyncV1EMPStrategy is
 	* @notice Implemented IYieldSyncV1EMPRegistry
 	* @return {IYieldSyncV1EMPRegistry}
 	*/
-	function iYieldSyncV1EMPRegistry()
+	function I_YIELD_SYNC_V1_EMP_REGISTRY()
 		external
 		view
 		returns (IYieldSyncV1EMPRegistry)

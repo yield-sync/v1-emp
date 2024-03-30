@@ -30,7 +30,7 @@ contract YieldSyncV1EMPStrategy is
 
 	UtilizedERC20[] internal _utilizedERC20;
 
-	IYieldSyncV1EMPRegistry public override immutable iYieldSyncV1EMPRegistry;
+	IYieldSyncV1EMPRegistry public override immutable I_YIELD_SYNC_V1_EMP_REGISTRY;
 
 	IYieldSyncV1EMPETHValueFeed public override iYieldSyncV1EMPETHValueFeed;
 	IYieldSyncV1EMPStrategyInteractor public override iYieldSyncV1EMPStrategyInteractor;
@@ -61,15 +61,15 @@ contract YieldSyncV1EMPStrategy is
 
 		manager = _manager;
 
-		iYieldSyncV1EMPRegistry = IYieldSyncV1EMPRegistry(_iYieldSyncV1EMPRegistry);
+		I_YIELD_SYNC_V1_EMP_REGISTRY = IYieldSyncV1EMPRegistry(_iYieldSyncV1EMPRegistry);
 	}
 
 
 	modifier authEMP()
 	{
 		require(
-			iYieldSyncV1EMPRegistry.yieldSyncV1EMP_yieldSyncV1EMPId(msg.sender) > 0,
-			"iYieldSyncV1EMPRegistry.yieldSyncV1EMP_yieldSyncV1EMPId(msg.sender) == 0"
+			I_YIELD_SYNC_V1_EMP_REGISTRY.yieldSyncV1EMP_yieldSyncV1EMPId(msg.sender) > 0,
+			"!(I_YIELD_SYNC_V1_EMP_REGISTRY.yieldSyncV1EMP_yieldSyncV1EMPId(msg.sender) > 0)"
 		);
 
 		_;
@@ -77,7 +77,7 @@ contract YieldSyncV1EMPStrategy is
 
 	modifier authManager()
 	{
-		require(manager == msg.sender, "manager != msg.sender");
+		require(manager == msg.sender, "!(manager == msg.sender)");
 
 		_;
 	}
@@ -86,12 +86,12 @@ contract YieldSyncV1EMPStrategy is
 	{
 		require(
 			address(iYieldSyncV1EMPETHValueFeed) != address(0),
-			"address(iYieldSyncV1EMPETHValueFeed) == address(0)"
+			"!(address(iYieldSyncV1EMPETHValueFeed) != address(0))"
 		);
 
 		require(
 			address(iYieldSyncV1EMPStrategyInteractor) != address(0),
-			"address(iYieldSyncV1EMPStrategyInteractor) == address(0)"
+			"!(address(iYieldSyncV1EMPStrategyInteractor) != address(0))"
 		);
 
 		_;
@@ -99,7 +99,10 @@ contract YieldSyncV1EMPStrategy is
 
 	modifier utilizedERC20TransferClosed()
 	{
-		require(!utilizedERC20DepositOpen && !utilizedERC20WithdrawOpen, "utilizedERC20DepositOpen || utilizedERC20WithdrawOpen");
+		require(
+			!utilizedERC20DepositOpen && !utilizedERC20WithdrawOpen,
+			"!(utilizedERC20DepositOpen && !utilizedERC20WithdrawOpen)"
+		);
 
 		_;
 	}
@@ -188,7 +191,7 @@ contract YieldSyncV1EMPStrategy is
 			}
 		}
 
-		require(utilizedERC20AllocationTotal == ONE_HUNDRED_PERCENT, "utilizedERC20AllocationTotal != ONE_HUNDRED_PERCENT");
+		require(utilizedERC20AllocationTotal == ONE_HUNDRED_PERCENT, "!(utilizedERC20AllocationTotal == ONE_HUNDRED_PERCENT)");
 
 		delete _utilizedERC20;
 
@@ -208,7 +211,7 @@ contract YieldSyncV1EMPStrategy is
 	{
 		require(utilizedERC20DepositOpen, "!utilizedERC20DepositOpen");
 
-		require(_utilizedERC20.length == _utilizedERC20Amount.length, "_utilizedERC20.length != _utilizedERC20Amount.length");
+		require(_utilizedERC20.length == _utilizedERC20Amount.length, "!(_utilizedERC20.length == _utilizedERC20Amount.length)");
 
 		uint256 _utilizedERC20AmountETHValue = utilizedERC20AmountETHValue(_utilizedERC20Amount);
 
@@ -216,7 +219,7 @@ contract YieldSyncV1EMPStrategy is
 		{
 			if (!_utilizedERC20[i].deposit)
 			{
-				require(_utilizedERC20Amount[i] == 0, "_utilizedERC20Amount[i] != 0");
+				require(_utilizedERC20Amount[i] == 0, "!(_utilizedERC20Amount[i] == 0)");
 			}
 
 			(bool computed, uint256 utilizedERC20AmountAllocationActual) = SafeMath.tryDiv(
@@ -237,7 +240,7 @@ contract YieldSyncV1EMPStrategy is
 
 			require(
 				_utilizedERC20[i].allocation == utilizedERC20AmountAllocationActual,
-				"_utilizedERC20[i].allocation != utilizedERC20AmountAllocationActual"
+				"!(_utilizedERC20[i].allocation == utilizedERC20AmountAllocationActual)"
 			);
 		}
 
@@ -273,7 +276,7 @@ contract YieldSyncV1EMPStrategy is
 	{
 		require(utilizedERC20WithdrawOpen, "!utilizedERC20WithdrawOpen");
 
-		require(balanceOf(msg.sender) >= _tokenAmount, "balanceOf(msg.sender) < _tokenAmount");
+		require(balanceOf(msg.sender) >= _tokenAmount, "!(balanceOf(msg.sender) >= _tokenAmount)");
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{

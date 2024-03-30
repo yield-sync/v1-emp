@@ -5,18 +5,18 @@ export const D_18 = ethers.utils.parseUnits('1', 18);
 
 export const ERROR = {
 	DEPOSIT_NOT_OPEN: "!utilizedERC20DepositOpen",
-	ETH_FEED_NOT_SET: "address(iYieldSyncV1EMPETHValueFeed) == address(0)",
+	ETH_FEED_NOT_SET: "!(address(iYieldSyncV1EMPETHValueFeed) != address(0))",
 	NOT_COMPUTED: "!computed",
-	NOT_EMP: "iYieldSyncV1EMPRegistry.yieldSyncV1EMP_yieldSyncV1EMPId(msg.sender) == 0",
-	NOT_MANAGER: "manager != msg.sender",
-	INVALID_ALLOCATION: "utilizedERC20AllocationTotal != ONE_HUNDRED_PERCENT",
-	INVALID_AMOUNT_LENGTH: "_utilizedERC20.length != _utilizedERC20Amount.length",
-	INVALID_BALANCE: "balanceOf(msg.sender) < _tokenAmount",
+	NOT_EMP: "!(I_YIELD_SYNC_V1_EMP_REGISTRY.yieldSyncV1EMP_yieldSyncV1EMPId(msg.sender) > 0)",
+	NOT_MANAGER: "!(manager == msg.sender)",
+	INVALID_ALLOCATION: "!(utilizedERC20AllocationTotal == ONE_HUNDRED_PERCENT)",
+	INVALID_AMOUNT_LENGTH: "!(_utilizedERC20.length == _utilizedERC20Amount.length)",
+	INVALID_BALANCE: "!(balanceOf(msg.sender) >= _tokenAmount)",
 	INVALID_PURPOSE_LENGTH: "__utilizedERC20.length != _purpose.length",
-	INVALID_UTILIZED_ERC20_AMOUNT: "_utilizedERC20[i].allocation != utilizedERC20AmountAllocationActual",
-	INVALID_UTILIZED_ERC20_AMOUNT_DEPOSIT_FALSE_AND_NON_ZERO_DEPOSIT: "_utilizedERC20Amount[i] != 0",
-	STRATEGY_NOT_SET: "address(iYieldSyncV1EMPStrategyInteractor) == address(0)",
-	UTILIZED_ERC20_DEPOSIT_OPEN: "utilizedERC20DepositOpen || utilizedERC20WithdrawOpen",
+	INVALID_UTILIZED_ERC20_AMOUNT: "!(_utilizedERC20[i].allocation == utilizedERC20AmountAllocationActual)",
+	INVALID_UTILIZED_ERC20_AMOUNT_DEPOSIT_FALSE_AND_NON_ZERO_DEPOSIT: "!(_utilizedERC20Amount[i] == 0)",
+	STRATEGY_NOT_SET: "!(address(iYieldSyncV1EMPStrategyInteractor) != address(0))",
+	UTILIZED_ERC20_DEPOSIT_OPEN: "!(utilizedERC20DepositOpen && !utilizedERC20WithdrawOpen)",
 	WITHDRAW_NOT_OPEN: "!utilizedERC20WithdrawOpen",
 }
 
