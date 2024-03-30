@@ -214,33 +214,31 @@ contract YieldSyncV1EMPStrategy is
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
-			if (_utilizedERC20[i].deposit)
-			{
-				(bool computed, uint256 utilizedERC20AmountAllocationActual) = SafeMath.tryDiv(
-					SafeMath.mul(
-						SafeMath.div(
-							SafeMath.mul(
-								_utilizedERC20Amount[i],
-								iYieldSyncV1EMPETHValueFeed.utilizedERC20ETHValue(_utilizedERC20[i].eRC20)
-							),
-							10 ** ERC20(_utilizedERC20[i].eRC20).decimals()
-						),
-						1e18
-					),
-					_utilizedERC20AmountETHValue
-				);
-
-				require(computed, "!computed");
-
-				require(
-					_utilizedERC20[i].allocation == utilizedERC20AmountAllocationActual,
-					"_utilizedERC20[i].allocation != utilizedERC20AmountAllocationActual"
-				);
-			}
-			else
+			if (!_utilizedERC20[i].deposit)
 			{
 				require(_utilizedERC20Amount[i] == 0, "_utilizedERC20Amount[i] != 0");
 			}
+
+			(bool computed, uint256 utilizedERC20AmountAllocationActual) = SafeMath.tryDiv(
+				SafeMath.mul(
+					SafeMath.div(
+						SafeMath.mul(
+							_utilizedERC20Amount[i],
+							iYieldSyncV1EMPETHValueFeed.utilizedERC20ETHValue(_utilizedERC20[i].eRC20)
+						),
+						10 ** ERC20(_utilizedERC20[i].eRC20).decimals()
+					),
+					1e18
+				),
+				_utilizedERC20AmountETHValue
+			);
+
+			require(computed, "!computed");
+
+			require(
+				_utilizedERC20[i].allocation == utilizedERC20AmountAllocationActual,
+				"_utilizedERC20[i].allocation != utilizedERC20AmountAllocationActual"
+			);
 		}
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
