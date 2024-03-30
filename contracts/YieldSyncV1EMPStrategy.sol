@@ -26,7 +26,7 @@ contract YieldSyncV1EMPStrategy is
 	bool public override utilizedERC20DepositOpen;
 	bool public override utilizedERC20WithdrawOpen;
 
-	uint256 constant public override ONE_HUNDRED_PERCENT = 1e18;
+	uint256 public constant override ONE_HUNDRED_PERCENT = 1e18;
 
 	UtilizedERC20[] internal _utilizedERC20;
 

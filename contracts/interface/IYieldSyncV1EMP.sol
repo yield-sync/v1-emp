@@ -3,8 +3,9 @@ pragma solidity ^0.8.18;
 
 
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
+import { IYieldSyncV1EMPStrategy, UtilizedERC20 } from "./IYieldSyncV1EMPStrategy.sol";
 
 
 using SafeERC20 for IERC20;
@@ -13,8 +14,7 @@ using SafeERC20 for IERC20;
 struct UtilizedStrategy
 {
 	address yieldSyncV1EMPStrategy;
-	uint8 denominator;
-	uint8 numerator;
+	uint256 allocation;
 }
 
 
@@ -52,18 +52,14 @@ interface IYieldSyncV1EMP is
 		returns (uint256)
 	;
 
-
 	/**
 	* @notice
+	* @dev [view-uint256]
+	* @return {uint256}
 	*/
-	function depositTokens(uint256[] memory _utilizedERC20Amount)
+	function ONE_HUNDRED_PERCENT()
 		external
-	;
-
-	/**
-	* @notice Update a strategy allocation
-	*/
-	function strategyAllocationUpdate()
-		external
+		view
+		returns (uint256)
 	;
 }
