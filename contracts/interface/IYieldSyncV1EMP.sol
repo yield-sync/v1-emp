@@ -11,7 +11,7 @@ import { IYieldSyncV1EMPStrategy, UtilizedERC20 } from "./IYieldSyncV1EMPStrateg
 using SafeERC20 for IERC20;
 
 
-struct UtilizedStrategy
+struct UtilizedYieldSyncV1EMPStrategy
 {
 	address yieldSyncV1EMPStrategy;
 	uint256 allocation;
@@ -35,10 +35,10 @@ interface IYieldSyncV1EMP is
 	* @notice
 	* @return {address[]}
 	*/
-	function utilizedStrategy()
+	function utilizedYieldSyncV1EMPStrategy()
 		external
 		view
-		returns (UtilizedStrategy[] memory utilizedStrategy_)
+		returns (UtilizedYieldSyncV1EMPStrategy[] memory)
 	;
 
 	/**

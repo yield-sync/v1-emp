@@ -6,7 +6,7 @@ import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-import { IYieldSyncV1EMP, IYieldSyncV1EMPStrategy, UtilizedStrategy } from "./interface/IYieldSyncV1EMP.sol";
+import { IYieldSyncV1EMP, IYieldSyncV1EMPStrategy, UtilizedYieldSyncV1EMPStrategy } from "./interface/IYieldSyncV1EMP.sol";
 
 
 using SafeERC20 for ERC20;
@@ -21,7 +21,7 @@ contract YieldSyncV1EMP is
 	uint256 public constant override INITIAL_MINT_RATE = 100;
 	uint256 public constant override ONE_HUNDRED_PERCENT = 1e18;
 
-	UtilizedStrategy[] internal _utilizedStrategy;
+	UtilizedYieldSyncV1EMPStrategy[] internal _utilizedYieldSyncV1EMPStrategy;
 
 
 	constructor (address _manager, string memory _name, string memory _symbol)
@@ -40,13 +40,12 @@ contract YieldSyncV1EMP is
 
 
 	/// @inheritdoc IYieldSyncV1EMP
-	function utilizedStrategy()
+	function utilizedYieldSyncV1EMPStrategy()
 		external
 		view
-		override
-		returns (UtilizedStrategy[] memory utilizedStrategy_)
+		returns (UtilizedYieldSyncV1EMPStrategy[] memory)
 	{
-		return _utilizedStrategy;
+		return _utilizedYieldSyncV1EMPStrategy;
 	}
 
 
@@ -55,12 +54,12 @@ contract YieldSyncV1EMP is
 	{
 		uint256 _utilizedERC20ETHValueTotal = 0;
 
-		uint256[] memory _utilizedERC20ETHValue = new uint256[](_utilizedStrategy.length);
+		uint256[] memory _utilizedERC20ETHValue = new uint256[](_utilizedYieldSyncV1EMPStrategy.length);
 
-		for (uint256 i = 0; i < _utilizedStrategy.length; i++)
+		for (uint256 i = 0; i < _utilizedYieldSyncV1EMPStrategy.length; i++)
 		{
 			uint256 _utilizedERC20AmountETHValue = IYieldSyncV1EMPStrategy(
-				_utilizedStrategy[i].yieldSyncV1EMPStrategy
+				_utilizedYieldSyncV1EMPStrategy[i].yieldSyncV1EMPStrategy
 			).utilizedERC20AmountETHValue(
 				_utilizedERC20Amount[i]
 			);
@@ -70,7 +69,7 @@ contract YieldSyncV1EMP is
 			_utilizedERC20ETHValueTotal += _utilizedERC20AmountETHValue;
 		}
 
-		for (uint256 i = 0; i < _utilizedStrategy.length; i++)
+		for (uint256 i = 0; i < _utilizedYieldSyncV1EMPStrategy.length; i++)
 		{
 			(bool computed, uint256 utilizedERC20AmountAllocationActual) = SafeMath.tryDiv(
 				_utilizedERC20ETHValue[i],
@@ -80,23 +79,40 @@ contract YieldSyncV1EMP is
 			require(computed, "!computed");
 
 			require(
-				_utilizedStrategy[i].allocation == utilizedERC20AmountAllocationActual,
-				"!(_utilizedStrategy[i].allocation == utilizedERC20AmountAllocationActual)"
+				_utilizedYieldSyncV1EMPStrategy[i].allocation == utilizedERC20AmountAllocationActual,
+				"!(_utilizedYieldSyncV1EMPStrategy[i].allocation == utilizedERC20AmountAllocationActual)"
 			);
 		}
 
-		for (uint256 i = 0; i < _utilizedStrategy.length; i++)
+		for (uint256 i = 0; i < _utilizedYieldSyncV1EMPStrategy.length; i++)
 		{
-			IYieldSyncV1EMPStrategy(_utilizedStrategy[i].yieldSyncV1EMPStrategy).utilizedERC20Deposit(
+			IYieldSyncV1EMPStrategy(_utilizedYieldSyncV1EMPStrategy[i].yieldSyncV1EMPStrategy).utilizedERC20Deposit(
 				_utilizedERC20Amount[i]
 			);
 		}
 	}
 
-	function strategyAllocationUpdate()
+	function utilizedYieldSyncV1EMPStrategyUpdate(UtilizedYieldSyncV1EMPStrategy[] memory __utilizedYieldSyncV1EMPStrategy)
 		public
 		accessManager()
 	{
+		uint256 utilizedYieldSyncV1EMPStrategyAllocationTotal;
 
+		for (uint256 i = 0; i < __utilizedYieldSyncV1EMPStrategy.length; i++)
+		{
+			utilizedYieldSyncV1EMPStrategyAllocationTotal += __utilizedYieldSyncV1EMPStrategy[i].allocation;
+		}
+
+		require(
+			utilizedYieldSyncV1EMPStrategyAllocationTotal == ONE_HUNDRED_PERCENT,
+			"!(utilizedYieldSyncV1EMPStrategyAllocationTotal == ONE_HUNDRED_PERCENT)"
+		);
+
+		delete _utilizedYieldSyncV1EMPStrategy;
+
+		for (uint256 i = 0; i < __utilizedYieldSyncV1EMPStrategy.length; i++)
+		{
+			_utilizedYieldSyncV1EMPStrategy.push(__utilizedYieldSyncV1EMPStrategy[i]);
+		}
 	}
 }
