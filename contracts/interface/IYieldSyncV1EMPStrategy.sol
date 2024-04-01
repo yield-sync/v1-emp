@@ -27,7 +27,7 @@ interface IYieldSyncV1EMPStrategy is
 {
 	/**
 	* @dev [view-address]
-	* @notice manager
+	* @notice Manager
 	* @return {address}
 	*/
 	function manager()
@@ -37,18 +37,9 @@ interface IYieldSyncV1EMPStrategy is
 	;
 
 	/**
-	* @dev [view-address[]]
-	* @notice Utilized ERC20s
-	* @return {UtilizedERC20[]}
-	*/
-	function utilizedERC20()
-		external
-		view
-		returns (UtilizedERC20[] memory)
-	;
-
-	/**
+	* @dev [view-bool]
 	* @notice Utilized ERC20 Deposit Open
+	* @return {bool}
 	*/
 	function utilizedERC20DepositOpen()
 		external
@@ -57,7 +48,9 @@ interface IYieldSyncV1EMPStrategy is
 	;
 
 	/**
+	* @dev [view-bool]
 	* @notice Utilized ERC20 Withdraw Open
+	* @return {bool}
 	*/
 	function utilizedERC20WithdrawOpen()
 		external
@@ -92,7 +85,7 @@ interface IYieldSyncV1EMPStrategy is
 	* @notice Implemented IYieldSyncV1EMPRegistry
 	* @return {IYieldSyncV1EMPRegistry}
 	*/
-	function iYieldSyncV1EMPRegistry()
+	function I_YIELD_SYNC_V1_EMP_REGISTRY()
 		external
 		view
 		returns (IYieldSyncV1EMPRegistry)
@@ -108,6 +101,34 @@ interface IYieldSyncV1EMPStrategy is
 		view
 		returns (IYieldSyncV1EMPStrategyInteractor)
 	;
+
+
+	/// @notice view
+
+
+	/**
+	* @dev [view-address[]]
+	* @notice Utilized ERC20s
+	* @return utilizedERC20_ {UtilizedERC20[]}
+	*/
+	function utilizedERC20()
+		external
+		view
+		returns (UtilizedERC20[] memory utilizedERC20_)
+	;
+
+	/**
+	* @notice Utilized ERC20 Amount Total ETH Value
+	* @param _utilizedERC20Amount {uint256[]}
+	*/
+	function utilizedERC20AmountETHValue(uint256[] memory _utilizedERC20Amount)
+		external
+		view
+		returns (uint256 utilizedERC20AmountTotalETHValue_)
+	;
+
+
+	/// @notice mutative
 
 
 	/**
