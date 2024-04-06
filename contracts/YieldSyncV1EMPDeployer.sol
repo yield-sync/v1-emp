@@ -48,14 +48,10 @@ contract YieldSyncV1EMPDeployer is
 	{
 		require(msg.value >= fee, "!msg.value");
 
-		YieldSyncV1EMP yieldSyncV1EMP = new YieldSyncV1EMP(
-			msg.sender,
-			_name,
-			_symbol
-		);
+		address yieldSyncV1EMP = address(new YieldSyncV1EMP(msg.sender, _name, _symbol));
 
-		yieldSyncV1EMPRegistry.yieldSyncV1EMPRegister(address(yieldSyncV1EMP));
+		yieldSyncV1EMPRegistry.yieldSyncV1EMPRegister(yieldSyncV1EMP);
 
-		return address(yieldSyncV1EMP);
+		return yieldSyncV1EMP;
 	}
 }
