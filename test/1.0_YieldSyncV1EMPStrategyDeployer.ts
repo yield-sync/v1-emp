@@ -9,26 +9,25 @@ import { ERROR } from "../common";
 
 describe("[0.1] YieldSyncV1EMPStrategyDeployer.sol - Setup", async () =>
 {
-	let eTHValueFeedDummy: Contract;
-	let strategyInteractorDummy: Contract;
 	let yieldSyncV1EMPRegistry: Contract;
 	let yieldSyncV1EMPStrategyDeployer: Contract;
 
 	beforeEach("[beforeEach] Set up contracts..", async () =>
 	{
+		/**
+		* This beforeEach process does the following:
+		* 1) Deploy a registry
+		* 2) deploys an EMP Strategy Deployer and registers it on the registry
+		*/
 		const [OWNER] = await ethers.getSigners();
 
-		const ETHValueFeedDummy: ContractFactory = await ethers.getContractFactory("ETHValueFeedDummy");
-		const StrategyInteractorDummy: ContractFactory = await ethers.getContractFactory("StrategyInteractorDummy");
 		const YieldSyncV1EMPRegistry: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPRegistry");
 		const YieldSyncV1EMPStrategyDeployer: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPStrategyDeployer");
 
-		eTHValueFeedDummy = await (await ETHValueFeedDummy.deploy()).deployed();
-		strategyInteractorDummy = await (await StrategyInteractorDummy.deploy()).deployed();
 		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy()).deployed();
 
 		yieldSyncV1EMPStrategyDeployer = await (
-			await YieldSyncV1EMPStrategyDeployer.deploy(yieldSyncV1EMPRegistry.address, OWNER.address)
+			await YieldSyncV1EMPStrategyDeployer.deploy(OWNER.address, yieldSyncV1EMPRegistry.address)
 		).deployed();
 
 		await expect(
@@ -46,7 +45,7 @@ describe("[0.1] YieldSyncV1EMPStrategyDeployer.sol - Setup", async () =>
 					yieldSyncV1EMPStrategyDeployer.deployYieldSyncV1EMPStrategy("Strategy Name", "S")
 				).to.be.not.reverted;
 
-				expect(await yieldSyncV1EMPRegistry.yieldSyncV1EMPStrategyId_yieldSyncV1EMPStrategy(0)).to.be.not.equal(
+				expect(await yieldSyncV1EMPRegistry.yieldSyncV1EMPStrategyId_yieldSyncV1EMPStrategy(1)).to.be.not.equal(
 					ethers.constants.AddressZero
 				);
 			}

@@ -43,7 +43,7 @@ describe("[1.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
 		strategyInteractorDummy = await (await StrategyInteractorDummy.deploy()).deployed();
 		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy()).deployed();
 		yieldSyncV1EMPStrategyDeployer = await (
-			await YieldSyncV1EMPStrategyDeployer.deploy(yieldSyncV1EMPRegistry.address, OWNER.address)
+			await YieldSyncV1EMPStrategyDeployer.deploy(OWNER.address, yieldSyncV1EMPRegistry.address)
 		).deployed();
 
 		// Mock owner being an EMP Deployer
@@ -51,7 +51,7 @@ describe("[1.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
 			yieldSyncV1EMPRegistry.yieldSyncV1EMPDeployerUpdate(OWNER.address)
 		).to.not.be.reverted;
 
-		// Mock owner registering a deployed EMP
+		// Mock owner being an EMP for authorization
 		await expect(
 			yieldSyncV1EMPRegistry.yieldSyncV1EMPRegister(OWNER.address)
 		).to.not.be.reverted;
@@ -65,13 +65,13 @@ describe("[1.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
 			yieldSyncV1EMPStrategyDeployer.deployYieldSyncV1EMPStrategy("Strategy", "S")
 		).to.be.not.reverted;
 
-		expect(await yieldSyncV1EMPRegistry.yieldSyncV1EMPStrategyId_yieldSyncV1EMPStrategy(0)).to.be.not.equal(
+		expect(await yieldSyncV1EMPRegistry.yieldSyncV1EMPStrategyId_yieldSyncV1EMPStrategy(1)).to.be.not.equal(
 			ethers.constants.AddressZero
 		);
 
 		// Attach the deployed YieldSyncV1EMPStrategy address
 		yieldSyncV1EMPStrategy = await YieldSyncV1EMPStrategy.attach(
-			String(await yieldSyncV1EMPRegistry.yieldSyncV1EMPStrategyId_yieldSyncV1EMPStrategy(0))
+			String(await yieldSyncV1EMPRegistry.yieldSyncV1EMPStrategyId_yieldSyncV1EMPStrategy(1))
 		);
 	});
 

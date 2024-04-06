@@ -39,13 +39,13 @@ contract YieldSyncV1EMPStrategyDeployer is
 	}
 
 
-	constructor (address _I_YIELD_SYNC_V1_EMP_REGISTRY, address _YIELD_SYNC_GOVERNANCE)
+	constructor (address _YIELD_SYNC_GOVERNANCE, address _yieldSyncV1EMPRegistry)
 	{
 		fee = 0;
 
 		YIELD_SYNC_GOVERNANCE = _YIELD_SYNC_GOVERNANCE;
 
-		I_YIELD_SYNC_V1_EMP_REGISTRY = IYieldSyncV1EMPRegistry(_I_YIELD_SYNC_V1_EMP_REGISTRY);
+		I_YIELD_SYNC_V1_EMP_REGISTRY = IYieldSyncV1EMPRegistry(_yieldSyncV1EMPRegistry);
 	}
 
 

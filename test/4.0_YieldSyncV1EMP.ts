@@ -7,7 +7,7 @@ import { Contract, ContractFactory } from "ethers";
 import { ERROR } from "../common";
 
 
-describe("[2.0] YieldSyncV1EMP.sol - Setup", async () =>
+describe("[4.0] YieldSyncV1EMP.sol - Setup", async () =>
 {
 	let eTHValueFeedDummy: Contract;
 	let yieldSyncV1EMP: Contract;
@@ -27,7 +27,7 @@ describe("[2.0] YieldSyncV1EMP.sol - Setup", async () =>
 		eTHValueFeedDummy = await (await ETHValueFeedDummy.deploy()).deployed();
 		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy()).deployed();
 		yieldSyncV1EMPStrategyDeployer = await (
-			await YieldSyncV1EMPStrategyDeployer.deploy(yieldSyncV1EMPRegistry.address, OWNER.address)
+			await YieldSyncV1EMPStrategyDeployer.deploy(OWNER.address, yieldSyncV1EMPRegistry.address)
 		).deployed();
 
 		// Mock owner being an EMP Deployer
@@ -35,22 +35,25 @@ describe("[2.0] YieldSyncV1EMP.sol - Setup", async () =>
 			yieldSyncV1EMPRegistry.yieldSyncV1EMPDeployerUpdate(OWNER.address)
 		).to.not.be.reverted;
 
-		// Mock owner being an EMP
-		await expect(
-			yieldSyncV1EMPRegistry.yieldSyncV1EMPRegister(OWNER.address)
-		).to.not.be.reverted;
-
-		// Set EMP Strategy Deployer on registry
+		// Set the EMP Strategy Deployer on registry
 		await expect(
 			yieldSyncV1EMPRegistry.yieldSyncV1EMPStrategyDeployerUpdate(yieldSyncV1EMPStrategyDeployer.address)
 		).to.not.be.reverted;
 
+		// Deploy an EMP Strategy
 		await expect(
 			yieldSyncV1EMPStrategyDeployer.deployYieldSyncV1EMPStrategy("Strategy", "S")
 		).to.be.not.reverted;
 
-		expect(await yieldSyncV1EMPRegistry.yieldSyncV1EMPStrategyId_yieldSyncV1EMPStrategy(0)).to.be.not.equal(
+		// Verify that a EMP Strategy has been registered
+		expect(await yieldSyncV1EMPRegistry.yieldSyncV1EMPStrategyId_yieldSyncV1EMPStrategy(1)).to.be.not.equal(
 			ethers.constants.AddressZero
 		);
+	});
+
+	describe("Setup process", async () => {
+		it("Should initialize the contract correctly", async () => {
+
+		})
 	});
 });

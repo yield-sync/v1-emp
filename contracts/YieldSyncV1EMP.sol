@@ -90,6 +90,9 @@ contract YieldSyncV1EMP is
 				_utilizedERC20Amount[i]
 			);
 		}
+
+		_mint(msg.sender, _utilizedERC20ETHValueTotal);
+
 	}
 
 	function utilizedYieldSyncV1EMPStrategyUpdate(UtilizedYieldSyncV1EMPStrategy[] memory __utilizedYieldSyncV1EMPStrategy)
@@ -114,5 +117,18 @@ contract YieldSyncV1EMP is
 		{
 			_utilizedYieldSyncV1EMPStrategy.push(__utilizedYieldSyncV1EMPStrategy[i]);
 		}
+	}
+
+	function withdrawTokens(uint256 [] memory _ERC20Amount)
+		public
+	{
+		for (uint256 i = 0; i < _utilizedYieldSyncV1EMPStrategy.length; i++)
+		{
+			IYieldSyncV1EMPStrategy(_utilizedYieldSyncV1EMPStrategy[i].yieldSyncV1EMPStrategy).utilizedERC20Withdraw(
+				_ERC20Amount[i]
+			);
+		}
+
+		// Withdraw the tokens to the user
 	}
 }
