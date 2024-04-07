@@ -55,11 +55,11 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () =>
 		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
 			const [, ADDR_1] = await ethers.getSigners();
 
-				const UtilizedYieldSyncV1EMPStrategy: [string, string][] = []
+			const UtilizedYieldSyncV1EMPStrategy: [string, string][] = [];
 
-				await expect(
-					yieldSyncV1EMP.connect(ADDR_1).utilizedYieldSyncV1EMPStrategyUpdate(UtilizedYieldSyncV1EMPStrategy)
-				).to.be.rejectedWith(ERROR.NOT_MANAGER);
-		})
+			await expect(
+				yieldSyncV1EMP.connect(ADDR_1).utilizedYieldSyncV1EMPStrategyUpdate(UtilizedYieldSyncV1EMPStrategy)
+			).to.be.rejectedWith(ERROR.NOT_MANAGER);
+		});
 	});
 });
