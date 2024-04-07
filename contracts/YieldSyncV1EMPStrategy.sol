@@ -49,8 +49,8 @@ contract YieldSyncV1EMPStrategy is
 
 
 	constructor (
-		address _iYieldSyncV1EMPRegistry,
 		address _manager,
+		address _yieldSyncV1EMPRegistry,
 		string memory _name,
 		string memory _symbol
 	)
@@ -61,7 +61,7 @@ contract YieldSyncV1EMPStrategy is
 
 		manager = _manager;
 
-		I_YIELD_SYNC_V1_EMP_REGISTRY = IYieldSyncV1EMPRegistry(_iYieldSyncV1EMPRegistry);
+		I_YIELD_SYNC_V1_EMP_REGISTRY = IYieldSyncV1EMPRegistry(_yieldSyncV1EMPRegistry);
 	}
 
 

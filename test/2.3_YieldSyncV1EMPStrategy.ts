@@ -10,7 +10,7 @@ import { PERCENT } from "../common";
 const ZERO = ethers.utils.parseUnits('0', 18);
 
 
-describe("[1.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
+describe("[2.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
 {
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;

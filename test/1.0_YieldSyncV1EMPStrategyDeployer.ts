@@ -7,7 +7,7 @@ import { Contract, ContractFactory } from "ethers";
 import { ERROR } from "../common";
 
 
-describe("[0.1] YieldSyncV1EMPStrategyDeployer.sol - Setup", async () =>
+describe("[1.0] YieldSyncV1EMPStrategyDeployer.sol - Setup", async () =>
 {
 	let yieldSyncV1EMPRegistry: Contract;
 	let yieldSyncV1EMPStrategyDeployer: Contract;

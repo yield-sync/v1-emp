@@ -7,7 +7,7 @@ import { BigNumber, Contract, ContractFactory } from "ethers";
 import { ERROR, PERCENT } from "../common";
 
 
-describe("[1.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
+describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 {
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;
@@ -142,8 +142,8 @@ describe("[1.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 				{
 					const _YSS = await (
 						await (await ethers.getContractFactory("YieldSyncV1EMPStrategy")).deploy(
-							yieldSyncV1EMPRegistry.address,
 							OWNER.address,
+							yieldSyncV1EMPRegistry.address,
 							"Exampe",
 							"EX"
 						)
@@ -184,8 +184,8 @@ describe("[1.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 				{
 					const _YSS = await (
 						await (await ethers.getContractFactory("YieldSyncV1EMPStrategy")).deploy(
-							yieldSyncV1EMPRegistry.address,
 							OWNER.address,
+							yieldSyncV1EMPRegistry.address,
 							"Exampe",
 							"EX"
 						)
