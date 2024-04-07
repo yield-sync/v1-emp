@@ -39,11 +39,11 @@ contract YieldSyncV1EMPStrategyDeployer is
 	}
 
 
-	constructor (address _YIELD_SYNC_GOVERNANCE, address _yieldSyncV1EMPRegistry)
+	constructor (address yieldSyncGovernance, address _yieldSyncV1EMPRegistry)
 	{
 		fee = 0;
 
-		YIELD_SYNC_GOVERNANCE = _YIELD_SYNC_GOVERNANCE;
+		YIELD_SYNC_GOVERNANCE = yieldSyncGovernance;
 
 		I_YIELD_SYNC_V1_EMP_REGISTRY = IYieldSyncV1EMPRegistry(_yieldSyncV1EMPRegistry);
 	}
@@ -58,7 +58,7 @@ contract YieldSyncV1EMPStrategyDeployer is
 		require(msg.value >= fee, "!msg.value");
 
 		yieldSyncV1EMPStrategy_ = address(
-			new YieldSyncV1EMPStrategy(address(I_YIELD_SYNC_V1_EMP_REGISTRY), msg.sender, _name, _symbol)
+			new YieldSyncV1EMPStrategy(msg.sender, address(I_YIELD_SYNC_V1_EMP_REGISTRY), _name, _symbol)
 		);
 
 		I_YIELD_SYNC_V1_EMP_REGISTRY.yieldSyncV1EMPStrategyRegister(yieldSyncV1EMPStrategy_);

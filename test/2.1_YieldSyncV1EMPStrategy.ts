@@ -8,7 +8,7 @@ import { ERROR, PERCENT, D_18 } from "../common";
 import TransferUtil from "../scripts/TransferUtil"
 
 
-describe("[1.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
+describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 {
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;

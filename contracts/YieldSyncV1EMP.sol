@@ -33,7 +33,7 @@ contract YieldSyncV1EMP is
 
 	modifier accessManager()
 	{
-		require(msg.sender == manager, "!(msg.sender == manager)");
+		require(msg.sender == manager, "!(manager == msg.sender)");
 
 		_;
 	}
