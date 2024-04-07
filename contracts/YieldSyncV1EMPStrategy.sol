@@ -48,12 +48,7 @@ contract YieldSyncV1EMPStrategy is
 	{}
 
 
-	constructor (
-		address _manager,
-		address _yieldSyncV1EMPRegistry,
-		string memory _name,
-		string memory _symbol
-	)
+	constructor (address _manager, address _yieldSyncV1EMPRegistry, string memory _name, string memory _symbol)
 		ERC20(_name, _symbol)
 	{
 		utilizedERC20DepositOpen = false;

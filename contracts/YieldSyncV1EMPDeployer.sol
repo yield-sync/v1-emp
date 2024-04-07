@@ -22,22 +22,22 @@ contract YieldSyncV1EMPDeployer is
 	{}
 
 
-	address public immutable YieldSyncGovernance;
+	address public immutable YIELD_SYNC_GOVERNANCE;
 
 	uint256 public fee;
 	uint256 public yieldSyncAssetAllocatorIdTracker;
 
-	IYieldSyncV1EMPRegistry public immutable yieldSyncV1EMPRegistry;
+	IYieldSyncV1EMPRegistry public immutable I_YIELD_SYNC_V1_EMP_REGISTRY;
 
 
-	constructor (address _YieldSyncGovernance, address _yieldSyncV1EMPRegistry)
+	constructor (address _yieldSyncGovernance, address _yieldSyncV1EMPRegistry)
 	{
 		fee = 0;
 		yieldSyncAssetAllocatorIdTracker = 0;
 
-		YieldSyncGovernance = _YieldSyncGovernance;
+		YIELD_SYNC_GOVERNANCE = _yieldSyncGovernance;
 
-		yieldSyncV1EMPRegistry = IYieldSyncV1EMPRegistry(_yieldSyncV1EMPRegistry);
+		I_YIELD_SYNC_V1_EMP_REGISTRY = IYieldSyncV1EMPRegistry(_yieldSyncV1EMPRegistry);
 	}
 
 
@@ -50,7 +50,7 @@ contract YieldSyncV1EMPDeployer is
 
 		address yieldSyncV1EMP = address(new YieldSyncV1EMP(msg.sender, _name, _symbol));
 
-		yieldSyncV1EMPRegistry.yieldSyncV1EMPRegister(yieldSyncV1EMP);
+		I_YIELD_SYNC_V1_EMP_REGISTRY.yieldSyncV1EMPRegister(yieldSyncV1EMP);
 
 		return yieldSyncV1EMP;
 	}
