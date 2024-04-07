@@ -10,6 +10,7 @@ export const ERROR = {
 	NOT_EMP: "!(I_YIELD_SYNC_V1_EMP_REGISTRY.yieldSyncV1EMP_yieldSyncV1EMPId(msg.sender) > 0)",
 	NOT_MANAGER: "!(manager == msg.sender)",
 	INVALID_ALLOCATION: "!(utilizedERC20AllocationTotal == ONE_HUNDRED_PERCENT)",
+	INVALID_ALLOCATION_STRATEGY: "!(utilizedYieldSyncV1EMPStrategyAllocationTotal == ONE_HUNDRED_PERCENT)",
 	INVALID_AMOUNT_LENGTH: "!(_utilizedERC20.length == _utilizedERC20Amount.length)",
 	INVALID_BALANCE: "!(balanceOf(msg.sender) >= _tokenAmount)",
 	INVALID_PURPOSE_LENGTH: "__utilizedERC20.length != _purpose.length",

@@ -31,7 +31,7 @@ contract YieldSyncV1EMP is
 	}
 
 
-	modifier accessManager()
+	modifier authManager()
 	{
 		require(msg.sender == manager, "!(manager == msg.sender)");
 
@@ -97,7 +97,7 @@ contract YieldSyncV1EMP is
 
 	function utilizedYieldSyncV1EMPStrategyUpdate(UtilizedYieldSyncV1EMPStrategy[] memory __utilizedYieldSyncV1EMPStrategy)
 		public
-		accessManager()
+		authManager()
 	{
 		uint256 utilizedYieldSyncV1EMPStrategyAllocationTotal;
 
