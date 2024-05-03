@@ -79,7 +79,6 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () =>
 		);
 
 		/**
-		*
 		* EMP Strategies
 		*/
 		// Deploy an EMP Strategy
@@ -208,34 +207,32 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () =>
 		});
 	});
 
-	describe("function managerUpdate()", async () =>
-		{
-			it(
-				"[auth] Should revert when unauthorized msg.sender calls..",
-				async () =>
-				{
-					const [, ADDR_1] = await ethers.getSigners();
+	describe("function managerUpdate()", async () => {
+		it(
+			"[auth] Should revert when unauthorized msg.sender calls..",
+			async () =>
+			{
+				const [, ADDR_1] = await ethers.getSigners();
+				await expect(
+					yieldSyncV1EMP.connect(ADDR_1).managerUpdate(ADDR_1.address)
+				).to.be.rejectedWith(ERROR.NOT_MANAGER);
+			}
+		);
 
-					await expect(
-						yieldSyncV1EMP.connect(ADDR_1).managerUpdate(ADDR_1.address)
-					).to.be.rejectedWith(ERROR.NOT_MANAGER);
-				}
-			);
+		it(
+			"Should allow manager to be changed..",
+			async () =>
+			{
+				const [, ADDR_1] = await ethers.getSigners();
 
-			it(
-				"Should allow manager to be changed..",
-				async () =>
-				{
-					const [, ADDR_1] = await ethers.getSigners();
+				await expect(
+					yieldSyncV1EMP.managerUpdate(ADDR_1.address)
+				).to.be.not.reverted;
 
-					await expect(
-						yieldSyncV1EMP.managerUpdate(ADDR_1.address)
-					).to.be.not.reverted;
-
-					expect(await yieldSyncV1EMP.manager()).to.be.equal(ADDR_1.address);
-				}
-			);
-		});
+				expect(await yieldSyncV1EMP.manager()).to.be.equal(ADDR_1.address);
+			}
+		);
+	});
 
 	describe("function utilizedYieldSyncV1EMPStrategyDeposit()", async () =>
 	{
