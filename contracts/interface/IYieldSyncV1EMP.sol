@@ -33,6 +33,26 @@ interface IYieldSyncV1EMP is
 
 	/**
 	* @notice
+	* @return {bool}
+	*/
+	function utilizedYieldSyncV1EMPStrategyDepositOpen()
+		external
+		view
+		returns (bool)
+	;
+
+	/**
+	* @notice
+	* @return {bool}
+	*/
+	function utilizedYieldSyncV1EMPStrategyWithdrawOpen()
+		external
+		view
+		returns (bool)
+	;
+
+	/**
+	* @notice
 	* @return {address[]}
 	*/
 	function utilizedYieldSyncV1EMPStrategy()
@@ -61,5 +81,43 @@ interface IYieldSyncV1EMP is
 		external
 		view
 		returns (uint256)
+	;
+
+	/**
+	* @notice Update manager
+	* @param _manager {address}
+	*/
+	function managerUpdate(address _manager)
+		external
+	;
+
+	/**
+	* @notice Deposit utilized ERC20s
+	* @param _utilizedERC20Amount {uint256[][]}
+	*/
+	function utilizedYieldSyncV1EMPStrategyDeposit(uint256[][] memory _utilizedERC20Amount)
+		external
+	;
+
+	/**
+	* @dev [view-bool]
+	* @notice Utilized Yield Sync V1 EMP Strategy Deposit Open
+	*/
+	function utilizedYieldSyncV1EMPStrategyDepositOpenToggle()
+		external
+	;
+
+	/**
+	*/
+	function utilizedYieldSyncV1EMPStrategyUpdate(UtilizedYieldSyncV1EMPStrategy[] memory __utilizedYieldSyncV1EMPStrategy)
+		external
+	;
+
+	/**
+	* @dev [view-bool]
+	* @notice Utilized Yield Sync V1 EMP Strategy Withdraw Open
+	*/
+	function utilizedYieldSyncV1EMPStrategyWithdrawOpenToggle()
+		external
 	;
 }

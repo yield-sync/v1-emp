@@ -2,7 +2,7 @@ const { ethers } = require("hardhat");
 
 import { BigNumber, Contract } from "ethers";
 
-import { D_18 } from "../common"
+import { D_18 } from "../const"
 
 
 export default class TransferUtil
