@@ -141,6 +141,7 @@ contract YieldSyncV1EMP is
 		utilizedYieldSyncV1EMPStrategyDepositOpen = !utilizedYieldSyncV1EMPStrategyDepositOpen;
 	}
 
+	/// @inheritdoc IYieldSyncV1EMP
 	function utilizedYieldSyncV1EMPStrategyUpdate(UtilizedYieldSyncV1EMPStrategy[] memory __utilizedYieldSyncV1EMPStrategy)
 		public
 		override
@@ -176,15 +177,12 @@ contract YieldSyncV1EMP is
 		utilizedYieldSyncV1EMPStrategyWithdrawOpen = !utilizedYieldSyncV1EMPStrategyWithdrawOpen;
 	}
 
-	function withdrawTokens(uint256 [] memory _ERC20Amount)
+	/// @inheritdoc IYieldSyncV1EMP
+	function utilizedYieldSyncV1EMPStrategyWithdraw(uint256 _ERC20Amount)
 		public
+		override
 	{
-		for (uint256 i = 0; i < _utilizedYieldSyncV1EMPStrategy.length; i++)
-		{
-			IYieldSyncV1EMPStrategy(_utilizedYieldSyncV1EMPStrategy[i].yieldSyncV1EMPStrategy).utilizedERC20Withdraw(
-				_ERC20Amount[i]
-			);
-		}
+		require(utilizedYieldSyncV1EMPStrategyWithdrawOpen, "!utilizedYieldSyncV1EMPStrategyWithdrawOpen");
 
 		// Withdraw the tokens to the user
 	}

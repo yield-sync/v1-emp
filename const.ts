@@ -20,7 +20,8 @@ export const ERROR = {
 	STRATEGY_NOT_SET: "!(address(iYieldSyncV1EMPStrategyInteractor) != address(0))",
 	UTILIZED_ERC20_DEPOSIT_OPEN: "!(utilizedERC20DepositOpen && !utilizedERC20WithdrawOpen)",
 	WITHDRAW_NOT_OPEN: "!utilizedERC20WithdrawOpen",
-	UTILIZED_YIELD_SYNC_V1_EMP_STRATEGY_NOT_OPEN: "!utilizedYieldSyncV1EMPStrategyDepositOpen"
+	UTILIZED_YIELD_SYNC_V1_EMP_STRATEGY_DEPOSIT_NOT_OPEN: "!utilizedYieldSyncV1EMPStrategyDepositOpen",
+	UTILIZED_YIELD_SYNC_V1_EMP_STRATEGY_WITHDRAW_NOT_OPEN: "!utilizedYieldSyncV1EMPStrategyWithdrawOpen"
 }
 
 export const PERCENT = {

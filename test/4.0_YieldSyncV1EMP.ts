@@ -255,7 +255,7 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () =>
 
 			// Even if utilizedERC20Amounts, the function should revert with reason that deposits are NOT open
 			await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyDeposit([[], []])).to.be.rejectedWith(
-				ERROR.UTILIZED_YIELD_SYNC_V1_EMP_STRATEGY_NOT_OPEN
+				ERROR.UTILIZED_YIELD_SYNC_V1_EMP_STRATEGY_DEPOSIT_NOT_OPEN
 			);
 		});
 
@@ -293,5 +293,28 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () =>
 		it("Should receive correct amount of ERC20 tokens upon depositing..");
 
 		it("Protocol should receive correct amount of ERC20 if cut is greater than 0..");
+	});
+
+	describe("function utilizedYieldSyncV1EMPStrategyWithdraw()", async () =>
+	{
+		it("Should NOT allow withdrawing if not open..", async () => {
+			/**
+			* @notice This test is to check that depositing must be toggled on in order to call the function properly.
+			*/
+			const UtilizedYieldSyncV1EMPStrategy: UtilizedERC20Amount = [
+				[yieldSyncV1EMPStrategy.address, PERCENT.FIFTY],
+				[yieldSyncV1EMPStrategy2.address, PERCENT.FIFTY],
+			];
+
+			// Set the utilzation to 2 different strategies
+			await expect(
+				yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyUpdate(UtilizedYieldSyncV1EMPStrategy)
+			).to.be.not.rejected;
+
+			// Even if utilizedERC20Amounts, the function should revert with reason that deposits are NOT open
+			await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyWithdraw(0)).to.be.rejectedWith(
+				ERROR.UTILIZED_YIELD_SYNC_V1_EMP_STRATEGY_WITHDRAW_NOT_OPEN
+			);
+		});
 	});
 });
