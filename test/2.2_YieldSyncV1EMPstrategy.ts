@@ -4,7 +4,7 @@ const { ethers } = require("hardhat");
 import { expect } from "chai";
 import { BigNumber, Contract, ContractFactory } from "ethers";
 
-import { ERROR, PERCENT } from "../common";
+import { ERROR, PERCENT } from "../const";
 
 
 describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
@@ -118,7 +118,7 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 						yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 					).to.not.be.reverted;
 
-					await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
+					await expect(yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()).to.not.be.reverted;
 
 					const STRAT_TOTAL_SUPPLY: BigNumber = await yieldSyncV1EMPStrategy.totalSupply();
 					const OWNER_MOCK_A_BALANCE_B4: BigNumber = await mockERC20A.balanceOf(OWNER.address);
@@ -164,7 +164,7 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 			describe("[DECIMALS = 18]", async () =>
 			{
 				it(
-					"[100] Should fail to proccess withdraw request if token balance is not enough..",
+					"[100] Should fail to process withdraw request if token balance is not enough..",
 					async () =>
 					{
 						const [OWNER] = await ethers.getSigners();
@@ -182,8 +182,8 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 							yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 						).to.not.be.reverted;
 
-						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
-						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
+						await expect(yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()).to.not.be.reverted;
+						await expect(yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle()).to.not.be.reverted;
 
 
 						const STRAT_TOTAL_SUPPLY_B4: BigNumber = await yieldSyncV1EMPStrategy.totalSupply();
@@ -247,8 +247,8 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 							yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 						).to.not.be.reverted;
 
-						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
-						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
+						await expect(yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()).to.not.be.reverted;
+						await expect(yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle()).to.not.be.reverted;
 
 
 						const STRAT_TOTAL_SUPPLY_B4: BigNumber = await yieldSyncV1EMPStrategy.totalSupply();
@@ -329,8 +329,8 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 							yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 						).to.not.be.reverted;
 
-						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
-						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
+						await expect(yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()).to.not.be.reverted;
+						await expect(yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle()).to.not.be.reverted;
 
 
 						const STRAT_TOTAL_SUPPLY_B4: BigNumber = await yieldSyncV1EMPStrategy.totalSupply();
@@ -400,8 +400,8 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 							yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 						).to.not.be.reverted;
 
-						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
-						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
+						await expect(yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()).to.not.be.reverted;
+						await expect(yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle()).to.not.be.reverted;
 
 
 						const STRAT_TOTAL_SUPPLY_B4: BigNumber = await yieldSyncV1EMPStrategy.totalSupply();
@@ -480,8 +480,8 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 							yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 						).to.not.be.reverted;
 
-						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
-						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
+						await expect(yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()).to.not.be.reverted;
+						await expect(yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle()).to.not.be.reverted;
 
 
 						const STRAT_TOTAL_SUPPLY_B4: BigNumber = await yieldSyncV1EMPStrategy.totalSupply();
@@ -565,8 +565,8 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 							yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 						).to.not.be.reverted;
 
-						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
-						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
+						await expect(yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()).to.not.be.reverted;
+						await expect(yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle()).to.not.be.reverted;
 
 
 						const STRAT_TOTAL_SUPPLY_B4: BigNumber = await yieldSyncV1EMPStrategy.totalSupply();
@@ -653,8 +653,8 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 							yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 						).to.not.be.reverted;
 
-						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
-						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
+						await expect(yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()).to.not.be.reverted;
+						await expect(yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle()).to.not.be.reverted;
 
 
 						const STRAT_TOTAL_SUPPLY_B4: BigNumber = await yieldSyncV1EMPStrategy.totalSupply();
@@ -745,8 +745,8 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 							yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 						).to.not.be.reverted;
 
-						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
-						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
+						await expect(yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()).to.not.be.reverted;
+						await expect(yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle()).to.not.be.reverted;
 
 						const STRAT_TOTAL_SUPPLY_B4: BigNumber = await yieldSyncV1EMPStrategy.totalSupply();
 

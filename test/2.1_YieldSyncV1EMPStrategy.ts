@@ -4,7 +4,7 @@ const { ethers } = require("hardhat");
 import { expect } from "chai";
 import { BigNumber, Contract, ContractFactory } from "ethers";
 
-import { ERROR, PERCENT, D_18 } from "../common";
+import { ERROR, PERCENT, D_18 } from "../const";
 import TransferUtil from "../scripts/TransferUtil"
 
 
@@ -278,7 +278,7 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 							yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 						).to.not.be.reverted;
 
-						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
+						await expect(yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()).to.not.be.reverted;
 
 						const DEPOSIT_AMOUNT: BigNumber = ethers.utils.parseUnits("1", 18);
 
@@ -309,7 +309,7 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 							yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 						).to.not.be.reverted;
 
-						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
+						await expect(yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()).to.not.be.reverted;
 
 
 						const DEPOSIT_AMOUNT_A: BigNumber = ethers.utils.parseUnits("1", 18);
@@ -350,7 +350,7 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 							yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 						).to.not.be.reverted;
 
-						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
+						await expect(yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()).to.not.be.reverted;
 
 
 						const DEPOSIT_AMOUNT_A: BigNumber = ethers.utils.parseUnits("2", 18);
@@ -390,7 +390,7 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 							yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 						).to.not.be.reverted;
 
-						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
+						await expect(yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()).to.not.be.reverted;
 
 						const DEPOSIT_AMOUNT_6: BigNumber = ethers.utils.parseUnits("1", 6);
 
@@ -425,7 +425,7 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 							yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 						).to.not.be.reverted;
 
-						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
+						await expect(yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()).to.not.be.reverted;
 
 
 						const DEPOSIT_AMOUNT_6: BigNumber = ethers.utils.parseUnits("1", 6);
@@ -475,7 +475,7 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 							yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 						).to.not.be.reverted;
 
-						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
+						await expect(yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()).to.not.be.reverted;
 
 
 						const DEPOSIT_AMOUNT_A: BigNumber = ethers.utils.parseUnits("1", 18);
@@ -516,7 +516,7 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 							yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 						).to.not.be.reverted;
 
-						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
+						await expect(yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()).to.not.be.reverted;
 
 						const DEPOSIT_AMOUNTS: BigNumber[] = await transferUtil.calculateERC20RequiredByTotalAmount(
 							CONTRACTS_TOKENS,
@@ -572,7 +572,7 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 							yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 						).to.not.be.reverted;
 
-						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
+						await expect(yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()).to.not.be.reverted;
 
 						const DEPOSIT_AMOUNTS: BigNumber[] = await transferUtil.calculateERC20RequiredByTotalAmount(
 							CONTRACTS_TOKENS,
@@ -630,7 +630,7 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 							yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 						).to.not.be.reverted;
 
-						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
+						await expect(yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()).to.not.be.reverted;
 
 						const DEPOSIT_AMOUNT_A: BigNumber = ethers.utils.parseUnits(".5", 18);
 						const DEPOSIT_AMOUNT_B: BigNumber = ethers.utils.parseUnits(".25", 18);
@@ -670,8 +670,7 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 							yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 						).to.not.be.reverted;
 
-						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
-
+						await expect(yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()).to.not.be.reverted;
 
 						const DEPOSIT_AMOUNTS: BigNumber[] = await transferUtil.calculateERC20RequiredByTotalAmount(
 							CONTRACTS_TOKENS,
@@ -730,7 +729,7 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 							yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 						).to.not.be.reverted;
 
-						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
+						await expect(yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()).to.not.be.reverted;
 
 						const DEPOSIT_AMOUNTS: BigNumber[] = await transferUtil.calculateERC20RequiredByTotalAmount(
 							CONTRACTS_TOKENS,
@@ -791,7 +790,7 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 							yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 						).to.not.be.reverted;
 
-						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
+						await expect(yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()).to.not.be.reverted;
 
 
 						const DEPOSIT_AMOUNT_A: BigNumber = ethers.utils.parseUnits(".5", 18);
@@ -834,7 +833,7 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 							yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 						).to.not.be.reverted;
 
-						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
+						await expect(yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()).to.not.be.reverted;
 
 
 						const DEPOSIT_AMOUNT_A: BigNumber = ethers.utils.parseUnits(".75", 18);

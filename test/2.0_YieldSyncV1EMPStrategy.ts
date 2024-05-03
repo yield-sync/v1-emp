@@ -4,7 +4,7 @@ const { ethers } = require("hardhat");
 import { expect } from "chai";
 import { BigNumber, Contract, ContractFactory } from "ethers";
 
-import { ERROR, PERCENT } from "../common";
+import { ERROR, PERCENT } from "../const";
 
 
 describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
@@ -89,7 +89,7 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 		);
 
 		it(
-			"Should alow manager to be changed..",
+			"Should allow manager to be changed..",
 			async () =>
 			{
 				const [, ADDR_1] = await ethers.getSigners();
@@ -309,7 +309,7 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 		);
 
 		it(
-			"Should toogle utilizedERC20DepositOpen..",
+			"Should toggle utilizedERC20DepositOpen..",
 			async () =>
 			{
 				// Initialize strategy with mock ERC20
@@ -503,7 +503,7 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 		);
 
 		it(
-			"Should toogle utilizedERC20WithdrawOpen..",
+			"Should toggle utilizedERC20WithdrawOpen..",
 			async () =>
 			{
 				// Initialize strategy with mock ERC20

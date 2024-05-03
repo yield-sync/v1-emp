@@ -4,7 +4,7 @@ const { ethers } = require("hardhat");
 import { expect } from "chai";
 import { Contract, ContractFactory } from "ethers";
 
-import { ERROR } from "../common";
+import { ERROR } from "../const";
 
 
 describe("[1.0] YieldSyncV1EMPStrategyDeployer.sol - Setup", async () =>

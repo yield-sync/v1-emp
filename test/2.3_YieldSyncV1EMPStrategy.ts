@@ -4,7 +4,7 @@ const { ethers } = require("hardhat");
 import { expect } from "chai";
 import { BigNumber, Contract, ContractFactory } from "ethers";
 
-import { PERCENT } from "../common";
+import { PERCENT } from "../const";
 
 
 const ZERO = ethers.utils.parseUnits('0', 18);
@@ -15,7 +15,6 @@ describe("[2.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;
 	let mockERC20C: Contract;
-	let mockERC206: Contract;
 	let eTHValueFeedDummy: Contract;
 	let strategyInteractorDummy: Contract;
 	let yieldSyncV1EMPRegistry: Contract;
@@ -28,7 +27,6 @@ describe("[2.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
 		const [OWNER] = await ethers.getSigners();
 
 		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
-		const MockERC206: ContractFactory = await ethers.getContractFactory("MockERC206");
 		const ETHValueFeedDummy: ContractFactory = await ethers.getContractFactory("ETHValueFeedDummy");
 		const StrategyInteractorDummy: ContractFactory = await ethers.getContractFactory("StrategyInteractorDummy");
 		const YieldSyncV1EMPRegistry: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPRegistry");
@@ -38,7 +36,6 @@ describe("[2.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
 		mockERC20A = await (await MockERC20.deploy()).deployed();
 		mockERC20B = await (await MockERC20.deploy()).deployed();
 		mockERC20C = await (await MockERC20.deploy()).deployed();
-		mockERC206 = await (await MockERC206.deploy()).deployed();
 		eTHValueFeedDummy = await (await ETHValueFeedDummy.deploy()).deployed();
 		strategyInteractorDummy = await (await StrategyInteractorDummy.deploy()).deployed();
 		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy()).deployed();
@@ -73,6 +70,19 @@ describe("[2.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
 		yieldSyncV1EMPStrategy = await YieldSyncV1EMPStrategy.attach(
 			String(await yieldSyncV1EMPRegistry.yieldSyncV1EMPStrategyId_yieldSyncV1EMPStrategy(1))
 		);
+
+		// Set the ETH Value Feed
+		await expect(
+			yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
+		).to.not.be.reverted;
+
+		// Set the Strategy Interactor
+		await expect(
+			yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
+		).to.not.be.reverted;
+
+		await expect(yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()).to.not.be.reverted;
+		await expect(yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle()).to.not.be.reverted;
 	});
 
 
@@ -83,7 +93,7 @@ describe("[2.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
 			describe("[DECIMALS = 18]", async () =>
 			{
 				it(
-					"[100] Should recieve strategy tokens based on what market value is (denominated in ETH)..",
+					"[100] Should receive strategy tokens based on what market value is (denominated in ETH)..",
 					async () =>
 					{
 						const [OWNER] = await ethers.getSigners();
@@ -94,18 +104,6 @@ describe("[2.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
 								[[mockERC20A.address, true, true, PERCENT.HUNDRED],],
 							)
 						).to.not.be.reverted;
-
-						await expect(
-							yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
-						).to.not.be.reverted;
-
-						await expect(
-							yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
-						).to.not.be.reverted;
-
-						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
-						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
-
 
 						const DEPOSIT_AMOUNT_A: BigNumber = ethers.utils.parseUnits("1", 18);
 
@@ -157,25 +155,12 @@ describe("[2.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
 							)
 						).to.not.be.reverted;
 
-						await expect(
-							yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
-						).to.not.be.reverted;
-
-						await expect(
-							yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
-						).to.not.be.reverted;
-
-						await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
-						await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
-
-
 						// Capture
 						const STRAT_TOTAL_SUPPLY_B4: BigNumber = await yieldSyncV1EMPStrategy.totalSupply();
 
 						const STRAT_MOCK_A_BALANCE_B4: BigNumber = await mockERC20A.balanceOf(strategyInteractorDummy.address);
 
 						const OWNER_MOCK_A_BALANCE_B4: BigNumber = await mockERC20A.balanceOf(OWNER.address);
-
 
 						const DEPOSIT_AMOUNT_A: BigNumber = ethers.utils.parseUnits("1", 18);
 
@@ -225,21 +210,6 @@ describe("[2.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
 						],
 					)
 				).to.not.be.reverted;
-
-				await expect(
-					yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
-				).to.not.be.reverted;
-
-				await expect(
-					yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
-				).to.not.be.reverted;
-
-				expect(await yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractor()).to.be.equal(
-					strategyInteractorDummy.address
-				);
-
-				await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
-				await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
 
 				// Capture
 				const STRAT_TOTAL_SUPPLY_B4: BigNumber = await yieldSyncV1EMPStrategy.totalSupply();
