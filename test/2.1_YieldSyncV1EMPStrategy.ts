@@ -8,8 +8,7 @@ import { ERROR, PERCENT, D_18 } from "../const";
 import StrategyTransferUtil from "../scripts/StrategyTransferUtil";
 
 
-describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
-{
+describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () => {
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;
 	let mockERC206: Contract;
@@ -21,8 +20,7 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 	let strategyTransferUtil: StrategyTransferUtil;
 
 
-	beforeEach("[beforeEach] Set up contracts..", async () =>
-	{
+	beforeEach("[beforeEach] Set up contracts..", async () => {
 		const [OWNER] = await ethers.getSigners();
 
 		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
@@ -75,14 +73,11 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 	});
 
 
-	describe("function utilizedERC20Deposit()", async () =>
-	{
-		describe("Prereqs", async () =>
-		{
+	describe("function utilizedERC20Deposit()", async () => {
+		describe("Prereqs", async () => {
 			it(
 				"[modifier] Should revert if ETH FEED is not set..",
-				async () =>
-				{
+				async () => {
 					const [OWNER] = await ethers.getSigners();
 
 					await expect(
@@ -93,8 +88,7 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 			it(
 				"[modifier] Should revert if strategy is not set..",
-				async () =>
-				{
+				async () => {
 					const [OWNER] = await ethers.getSigners();
 
 					await expect(
@@ -109,8 +103,7 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 			it(
 				"[modifier] Should only authorize authorized caller..",
-				async () =>
-				{
+				async () => {
 					const [, ADDR_1] = await ethers.getSigners();
 
 					await expect(
@@ -135,8 +128,7 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 			it(
 				"Should revert if deposits not open..",
-				async () =>
-				{
+				async () => {
 					const [OWNER] = await ethers.getSigners();
 
 					const utilizedERC20: UtilizedERC20 = [[mockERC20A.address, true, true, PERCENT.HUNDRED]];
@@ -165,8 +157,7 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 			it(
 				"Should revert if denominator is 0..",
-				async () =>
-				{
+				async () => {
 					const [OWNER] = await ethers.getSigners();
 
 					// Initialize strategy with mock ERC20
@@ -197,8 +188,7 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 			it(
 				"Should return false if INVALID ERC20 amounts passed..",
-				async () =>
-				{
+				async () => {
 					const [OWNER] = await ethers.getSigners();
 
 					const utilizedERC20: UtilizedERC20 = [
@@ -229,8 +219,7 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 			it(
 				"Should return false if INVALID ERC20 amounts with deposits set to false but non-zero deposit amount passed..",
-				async () =>
-				{
+				async () => {
 					const [OWNER] = await ethers.getSigners();
 
 					const utilizedERC20: UtilizedERC20 = [
@@ -262,14 +251,11 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 			)
 		});
 
-		describe("[SINGLE ERC20]", async () =>
-		{
-			describe("[DECIMALS = 18]", async () =>
-			{
+		describe("[SINGLE ERC20]", async () => {
+			describe("[DECIMALS = 18]", async () => {
 				it(
 					"Should revert if invalid _utilizedERC20Amount.length passed..",
-					async () =>
-					{
+					async () => {
 					const [OWNER] = await ethers.getSigners();
 
 					const utilizedERC20: UtilizedERC20 = [[mockERC20A.address, true, true, PERCENT.HUNDRED]];
@@ -300,8 +286,7 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 				it(
 					"[100] Should be able to deposit ERC20 into strategy interactor..",
-					async () =>
-					{
+					async () => {
 					const [OWNER] = await ethers.getSigners();
 
 					// Initialize strategy with mock ERC20
@@ -341,8 +326,7 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 				it(
 					"[100] Should issue strategy ERC20 tokens upon utilized ERC20 deposit..",
-					async () =>
-					{
+					async () => {
 						const [OWNER] = await ethers.getSigners();
 
 						// Initialize strategy with mock ERC20
@@ -379,12 +363,10 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 				);
 			});
 
-			describe("[DECIMALS = 6]", async () =>
-			{
+			describe("[DECIMALS = 6]", async () => {
 				it(
 					"[100] Should be able to deposit ERC20 into strategy interactor..",
-					async () =>
-					{
+					async () => {
 						const [OWNER] = await ethers.getSigners();
 
 						// Initialize strategy with mock ERC20
@@ -418,8 +400,7 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 				it(
 					"[100] Should issue strategy ERC20 tokens upon utilzied ERC20 deposit..",
-					async () =>
-					{
+					async () => {
 						const [OWNER] = await ethers.getSigners();
 
 						// Initialize strategy with mock ERC20
@@ -458,14 +439,11 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 			});
 		});
 
-		describe("[MULTIPLE ERC20]", async () =>
-		{
-			describe("[DECIMALS = 18]", async () =>
-			{
+		describe("[MULTIPLE ERC20]", async () => {
+			describe("[DECIMALS = 18]", async () => {
 				it(
 					"[50/50] Should revert if invalid utilizedERC20Amounts passed..",
-					async () =>
-					{
+					async () => {
 						const [OWNER] = await ethers.getSigners();
 
 						// Initialize strategy with mock ERC20
@@ -506,8 +484,7 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 				it(
 					"[50/50] Should be able to deposit ERC20s into strategy interactor..",
-					async () =>
-					{
+					async () => {
 						const [OWNER] = await ethers.getSigners();
 
 						const CONTRACTS_TOKENS: Contract[] = [mockERC20A, mockERC20B];
@@ -561,8 +538,7 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 				it(
 					"[50/50] Should issue strategy ERC20 tokens upon utilized ERC20 deposit..",
-					async () =>
-					{
+					async () => {
 						const [OWNER] = await ethers.getSigners();
 
 						const CONTRACTS_TOKENS: Contract[] = [mockERC20A, mockERC20B];
@@ -620,8 +596,7 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 				it(
 					"[75/25] Should revert if invalid utilizedERC20Amounts passed..",
-					async () =>
-					{
+					async () => {
 						const [OWNER] = await ethers.getSigners();
 
 						const CONTRACTS_TOKENS: Contract[] = [mockERC20A, mockERC20B];
@@ -662,8 +637,7 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 				it(
 					"[75/25] Should be able to deposit ERC20s into strategy interactor..",
-					async () =>
-					{
+					async () => {
 						const [OWNER] = await ethers.getSigners();
 
 						const CONTRACTS_TOKENS: Contract[] = [mockERC20A, mockERC20B];
@@ -720,8 +694,7 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 				it(
 					"[75/25] Should issue strategy ERC20 tokens upon utilized ERC20 deposit..",
-					async () =>
-					{
+					async () => {
 						const [OWNER] = await ethers.getSigners();
 
 						const CONTRACTS_TOKENS: Contract[] = [mockERC20A, mockERC20B];
@@ -778,12 +751,10 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 				);
 			});
 
-			describe("[DECIMALS = 6]", async () =>
-			{
+			describe("[DECIMALS = 6]", async () => {
 				it(
 					"[75/25] Should revert if invalid utilizedERC20Amounts passed..",
-					async () =>
-					{
+					async () => {
 						const [OWNER] = await ethers.getSigners();
 
 						const CONTRACTS_TOKENS: Contract[] = [mockERC20A, mockERC206];
@@ -825,8 +796,7 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () =>
 
 				it(
 					"[75/25] Should be able to deposit ERC20s into strategy interactor..",
-					async () =>
-					{
+					async () => {
 						const [OWNER] = await ethers.getSigners();
 
 						const CONTRACTS_TOKENS: Contract[] = [mockERC20A, mockERC206];

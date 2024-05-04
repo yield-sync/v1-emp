@@ -7,8 +7,7 @@ import { BigNumber, Contract, ContractFactory } from "ethers";
 import { ERROR, PERCENT } from "../const";
 
 
-describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
-{
+describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () => {
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;
 	let mockERC206: Contract;
@@ -19,8 +18,7 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 	let yieldSyncV1EMPStrategyDeployer: Contract;
 
 
-	beforeEach("[beforeEach] Set up contracts..", async () =>
-	{
+	beforeEach("[beforeEach] Set up contracts..", async () => {
 		const [OWNER] = await ethers.getSigners();
 
 		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
@@ -71,14 +69,11 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 	});
 
 
-	describe("function utilizedERC20Withdraw()", async () =>
-	{
-		describe("Prereqs", async () =>
-		{
+	describe("function utilizedERC20Withdraw()", async () => {
+		describe("Prereqs", async () => {
 			it(
 				"[modifier] Should revert if ETH FEED is not set..",
-				async () =>
-				{
+				async () => {
 					await expect(yieldSyncV1EMPStrategy.utilizedERC20Withdraw(0)).to.be.rejectedWith(
 						ERROR.ETH_FEED_NOT_SET
 					);
@@ -87,8 +82,7 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 
 			it(
 				"[modifier] Should revert if strategy is not set..",
-				async () =>
-				{
+				async () => {
 					await expect(
 						yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
 					).to.not.be.reverted;
@@ -101,8 +95,7 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 
 			it(
 				"Should revert if withdrawals is not open..",
-				async () =>
-				{
+				async () => {
 					const [OWNER] = await ethers.getSigners();
 
 					// Initialize strategy with mock ERC20
@@ -159,14 +152,11 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 			);
 		});
 
-		describe("[SINGLE ERC20]", async () =>
-		{
-			describe("[DECIMALS = 18]", async () =>
-			{
+		describe("[SINGLE ERC20]", async () => {
+			describe("[DECIMALS = 18]", async () => {
 				it(
 					"[100] Should fail to process withdraw request if token balance is not enough..",
-					async () =>
-					{
+					async () => {
 						const [OWNER] = await ethers.getSigners();
 
 						// Initialize strategy with mock ERC20
@@ -230,8 +220,7 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 
 				it(
 					"[100] Should fail to return ERC20 if purpose.withdraw != true..",
-					async () =>
-					{
+					async () => {
 						const [OWNER] = await ethers.getSigners();
 
 						// Initialize strategy with mock ERC20
@@ -312,8 +301,7 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 
 				it(
 					"[100] Should allow caller to burn ERC20 and cash out..",
-					async () =>
-					{
+					async () => {
 						const [OWNER] = await ethers.getSigners();
 
 						// Initialize strategy with mock ERC20
@@ -379,12 +367,10 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 				);
 			});
 
-			describe("[DECIMALS = 6]", async () =>
-			{
+			describe("[DECIMALS = 6]", async () => {
 				it(
 					"[100] Should allow caller to burn ERC20 and cash out..",
-					async () =>
-					{
+					async () => {
 						const [OWNER] = await ethers.getSigners();
 
 						// Initialize strategy with mock ERC20
@@ -451,14 +437,11 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 			});
 		});
 
-		describe("[MULTIPLE ERC20]", async () =>
-		{
-			describe("[DECIMALS = 18]", async () =>
-			{
+		describe("[MULTIPLE ERC20]", async () => {
+			describe("[DECIMALS = 18]", async () => {
 				it(
 					"[50/50] Should allow caller to burn ERC20 and cash out..",
-					async () =>
-					{
+					async () => {
 						const [OWNER] = await ethers.getSigners();
 
 						// Initialize strategy with mock ERC20
@@ -543,8 +526,7 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 
 				it(
 					"[75/25] Should allow caller to burn ERC20 and cash out..",
-					async () =>
-					{
+					async () => {
 						const [OWNER] = await ethers.getSigners();
 
 						// Initialize strategy with mock ERC20
@@ -627,12 +609,10 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 				);
 			});
 
-			describe("[DECIMALS = 6]", async () =>
-			{
+			describe("[DECIMALS = 6]", async () => {
 				it(
 					"[50/50] Should allow caller to burn ERC20 and cash out..",
-					async () =>
-					{
+					async () => {
 						const [OWNER] = await ethers.getSigners();
 
 						// Initialize strategy with mock ERC20
@@ -723,8 +703,7 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 
 				it(
 					"[75/25] Should allow caller to burn ERC20 and cash out..",
-					async () =>
-					{
+					async () => {
 						const [OWNER] = await ethers.getSigners();
 
 						// Initialize strategy with mock ERC20

@@ -7,13 +7,11 @@ import { Contract, ContractFactory } from "ethers";
 import { ERROR } from "../const";
 
 
-describe("[1.0] YieldSyncV1EMPStrategyDeployer.sol - Setup", async () =>
-{
+describe("[1.0] YieldSyncV1EMPStrategyDeployer.sol - Setup", async () => {
 	let yieldSyncV1EMPRegistry: Contract;
 	let yieldSyncV1EMPStrategyDeployer: Contract;
 
-	beforeEach("[beforeEach] Set up contracts..", async () =>
-	{
+	beforeEach("[beforeEach] Set up contracts..", async () => {
 		/**
 		* This beforeEach process does the following:
 		* 1) Deploy a registry
@@ -35,12 +33,10 @@ describe("[1.0] YieldSyncV1EMPStrategyDeployer.sol - Setup", async () =>
 		).to.be.not.reverted;
 	});
 
-	describe("function yieldSyncV1EMPDeployerUpdate()", async () =>
-	{
+	describe("function yieldSyncV1EMPDeployerUpdate()", async () => {
 		it(
 			"[auth] Should be able to deploy a strategy..",
-			async () =>
-			{
+			async () => {
 				await expect(
 					yieldSyncV1EMPStrategyDeployer.deployYieldSyncV1EMPStrategy("Strategy Name", "S")
 				).to.be.not.reverted;

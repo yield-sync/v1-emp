@@ -236,8 +236,7 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () => {
 	describe("function managerUpdate()", async () => {
 		it(
 			"[auth] Should revert when unauthorized msg.sender calls..",
-			async () =>
-			{
+			async () => {
 				const [, ADDR_1] = await ethers.getSigners();
 				await expect(
 					yieldSyncV1EMP.connect(ADDR_1).managerUpdate(ADDR_1.address)
@@ -247,8 +246,7 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () => {
 
 		it(
 			"Should allow manager to be changed..",
-			async () =>
-			{
+			async () => {
 				const [, ADDR_1] = await ethers.getSigners();
 
 				await expect(

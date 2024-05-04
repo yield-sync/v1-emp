@@ -5,14 +5,12 @@ import { expect } from "chai";
 import { Contract, ContractFactory } from "ethers";
 
 
-describe("[3.0] YieldSyncV1EMPDeployer.sol - Setup", async () =>
-{
+describe("[3.0] YieldSyncV1EMPDeployer.sol - Setup", async () => {
 	let yieldSyncV1EMPRegistry: Contract;
 	let yieldSyncV1EMPDeployer: Contract;
 
 
-	beforeEach("[beforeEach] Set up contracts..", async () =>
-	{
+	beforeEach("[beforeEach] Set up contracts..", async () => {
 		/**
 		* This beforeEach process does the following:
 		* 1) Deploy a registry

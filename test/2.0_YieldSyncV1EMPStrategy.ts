@@ -7,8 +7,7 @@ import { BigNumber, Contract, ContractFactory } from "ethers";
 import { ERROR, PERCENT } from "../const";
 
 
-describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
-{
+describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () => {
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;
 	let mockERC20C: Contract;
@@ -19,8 +18,7 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 	let yieldSyncV1EMPStrategyDeployer: Contract;
 
 
-	beforeEach("[beforeEach] Set up contracts..", async () =>
-	{
+	beforeEach("[beforeEach] Set up contracts..", async () => {
 		/**
 		* This process mocks the OWNER address to be an EMP to give authorization to access the functions of a strategy.
 		*
@@ -74,12 +72,10 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 	});
 
 
-	describe("function managerUpdate()", async () =>
-	{
+	describe("function managerUpdate()", async () => {
 		it(
 			"[auth] Should revert when unauthorized msg.sender calls..",
-			async () =>
-			{
+			async () => {
 				const [, ADDR_1] = await ethers.getSigners();
 
 				await expect(
@@ -90,8 +86,7 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 
 		it(
 			"Should allow manager to be changed..",
-			async () =>
-			{
+			async () => {
 				const [, ADDR_1] = await ethers.getSigners();
 
 				await expect(
@@ -103,12 +98,10 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 		);
 	});
 
-	describe("function utilizedERC20Update()", async () =>
-	{
+	describe("function utilizedERC20Update()", async () => {
 		it(
 			"[auth] Should revert when unauthorized msg.sender calls..",
-			async () =>
-			{
+			async () => {
 				const [, ADDR_1] = await ethers.getSigners();
 
 				await expect(
@@ -121,8 +114,7 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 
 		it(
 			"Should revert when INVALID allocation passed..",
-			async () =>
-			{
+			async () => {
 				const [OWNER] = await ethers.getSigners();
 
 				const INVALID_ALLOCATIONS: UtilizedERC20[] = [
@@ -158,8 +150,7 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 
 		it(
 			"Should not revert when VALID allocation passed..",
-			async () =>
-			{
+			async () => {
 				const [OWNER] = await ethers.getSigners();
 
 				const VALID_ALLOCATION: UtilizedERC20[] = [
@@ -212,12 +203,10 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 		);
 	});
 
-	describe("function iYieldSyncV1EMPETHValueFeedUpdate()", async () =>
-	{
+	describe("function iYieldSyncV1EMPETHValueFeedUpdate()", async () => {
 		it(
 			"[auth] Should revert when unauthorized msg.sender calls..",
-			async () =>
-			{
+			async () => {
 				const [, ADDR_1] = await ethers.getSigners();
 
 				await expect(
@@ -228,8 +217,7 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 
 		it(
 			"Should be able to set yieldSyncV1EMPETHValueFeed..",
-			async () =>
-			{
+			async () => {
 				await expect(
 					yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
 				).to.not.be.reverted;
@@ -239,12 +227,10 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 		);
 	});
 
-	describe("function iYieldSyncV1EMPStrategyInteractorUpdate()", async () =>
-	{
+	describe("function iYieldSyncV1EMPStrategyInteractorUpdate()", async () => {
 		it(
 			"[auth] Should revert when unauthorized msg.sender calls..",
-			async () =>
-			{
+			async () => {
 				const [, ADDR_1] = await ethers.getSigners();
 
 				await expect(
@@ -257,8 +243,7 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 
 		it(
 			"Should be able to set iYieldSyncV1EMPStrategyInteractor..",
-			async () =>
-			{
+			async () => {
 				await expect(
 					yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 				).to.not.be.reverted;
@@ -270,12 +255,10 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 		);
 	});
 
-	describe("function utilizedERC20DepositOpenToggle()", async () =>
-	{
+	describe("function utilizedERC20DepositOpenToggle()", async () => {
 		it(
 			"[auth] Should revert when unauthorized msg.sender calls..",
-			async () =>
-			{
+			async () => {
 				const [, ADDR_1] = await ethers.getSigners();
 
 				await expect(
@@ -286,8 +269,7 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 
 		it(
 			"[modifier] Should revert if ETH FEED is not set..",
-			async () =>
-			{
+			async () => {
 				await expect(
 					yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()
 				).to.be.rejectedWith(ERROR.ETH_FEED_NOT_SET);
@@ -296,8 +278,7 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 
 		it(
 			"[modifier] Should revert if strategy is not set..",
-			async () =>
-			{
+			async () => {
 				await expect(
 					yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
 				).to.not.be.reverted;
@@ -310,8 +291,7 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 
 		it(
 			"Should toggle utilizedERC20DepositOpen..",
-			async () =>
-			{
+			async () => {
 				// Initialize strategy with mock ERC20
 				await expect(
 					yieldSyncV1EMPStrategy.utilizedERC20Update([[mockERC20A.address, true, true, PERCENT.HUNDRED]])
@@ -334,12 +314,10 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 		);
 	});
 
-	describe("function iYieldSyncV1EMPETHValueFeedUpdate() AND function utilizedERC20DepositOpenToggle()", async () =>
-	{
+	describe("function iYieldSyncV1EMPETHValueFeedUpdate() AND function utilizedERC20DepositOpenToggle()", async () => {
 		it(
 			"Should not be able to set iYieldSyncV1EMPETHValueFeed when utilizedERC20DepositOpen is true..",
-			async () =>
-			{
+			async () => {
 				// Initialize strategy with mock ERC20
 				await expect(
 					yieldSyncV1EMPStrategy.utilizedERC20Update([[mockERC20A.address, true, true, PERCENT.HUNDRED]])
@@ -369,8 +347,7 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 
 		it(
 			"Should not be able to set iYieldSyncV1EMPETHValueFeed when utilizedERC20DepositOpen is true..",
-			async () =>
-			{
+			async () => {
 				// Initialize strategy with mock ERC20
 				await expect(
 					yieldSyncV1EMPStrategy.utilizedERC20Update([[mockERC20A.address, true, true, PERCENT.HUNDRED]])
@@ -399,12 +376,10 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 		);
 	});
 
-	describe("function iYieldSyncV1EMPStrategyInteractorUpdate() AND function utilizedERC20DepositOpenToggle()", async () =>
-	{
+	describe("function iYieldSyncV1EMPStrategyInteractorUpdate() AND function utilizedERC20DepositOpenToggle()", async () => {
 		it(
 			"Should not be able to set iYieldSyncV1EMPStrategyInteractor when utilizedERC20DepositOpen is true..",
-			async () =>
-			{
+			async () => {
 				// Initialize strategy with mock ERC20
 				await expect(
 					yieldSyncV1EMPStrategy.utilizedERC20Update([[mockERC20A.address, true, true, PERCENT.HUNDRED]])
@@ -434,8 +409,7 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 
 		it(
 			"Should not be able to set iYieldSyncV1EMPStrategyInteractor when utilizedERC20WithdrawOpen is true..",
-			async () =>
-			{
+			async () => {
 				// Initialize strategy with mock ERC20
 				await expect(
 					yieldSyncV1EMPStrategy.utilizedERC20Update([[mockERC20A.address, true, true, PERCENT.HUNDRED]])
@@ -464,12 +438,10 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 		);
 	});
 
-	describe("function utilizedERC20WithdrawOpenToggle()", async () =>
-	{
+	describe("function utilizedERC20WithdrawOpenToggle()", async () => {
 		it(
 			"[auth] Should revert when unauthorized msg.sender calls..",
-			async () =>
-			{
+			async () => {
 				const [, ADDR_1] = await ethers.getSigners();
 
 				await expect(
@@ -480,8 +452,7 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 
 		it(
 			"[modifier] Should revert if ETH FEED is not set..",
-			async () =>
-			{
+			async () => {
 				await expect(
 					yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle()
 				).to.be.rejectedWith(ERROR.ETH_FEED_NOT_SET);
@@ -490,8 +461,7 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 
 		it(
 			"[modifier] Should revert if strategy is not set..",
-			async () =>
-			{
+			async () => {
 				await expect(
 					yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
 				).to.not.be.reverted;
@@ -504,8 +474,7 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () =>
 
 		it(
 			"Should toggle utilizedERC20WithdrawOpen..",
-			async () =>
-			{
+			async () => {
 				// Initialize strategy with mock ERC20
 				await expect(
 					yieldSyncV1EMPStrategy.utilizedERC20Update([[mockERC20A.address, true, true, PERCENT.HUNDRED]])
