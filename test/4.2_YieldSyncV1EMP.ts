@@ -22,8 +22,8 @@ describe("[4.2] YieldSyncV1EMP.sol - Withdrawing Tokens", async () => {
 	let yieldSyncV1EMPStrategyDeployer: Contract;
 	let strategyTransferUtil: StrategyTransferUtil;
 	let strategyTransferUtil2: StrategyTransferUtil;
-	let stratUtilizedTokens: StrategyUtilizedERC20;
-	let strat2UtilizedTokens: StrategyUtilizedERC20;
+	let strategyUtilizedERC20: StrategyUtilizedERC20;
+	let strategy2UtilizedERC20: StrategyUtilizedERC20;
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
@@ -75,12 +75,12 @@ describe("[4.2] YieldSyncV1EMP.sol - Withdrawing Tokens", async () => {
 			yieldSyncV1EMPRegistry.yieldSyncV1EMPStrategyDeployerUpdate(yieldSyncV1EMPStrategyDeployer.address)
 		).to.not.be.reverted;
 
-		stratUtilizedTokens = [
+		strategyUtilizedERC20 = [
 			[mockERC20A.address, true, true, PERCENT.FIFTY],
 			[mockERC20B.address, true, true, PERCENT.FIFTY],
 		];
 
-		strat2UtilizedTokens = [[mockERC20C.address, true, true, PERCENT.HUNDRED]];
+		strategy2UtilizedERC20 = [[mockERC20C.address, true, true, PERCENT.HUNDRED]];
 
 		/**
 		* EMP
@@ -126,7 +126,7 @@ describe("[4.2] YieldSyncV1EMP.sol - Withdrawing Tokens", async () => {
 			yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 		).to.not.be.reverted;
 
-		await expect(yieldSyncV1EMPStrategy.utilizedERC20Update(stratUtilizedTokens)).to.be.not.reverted;
+		await expect(yieldSyncV1EMPStrategy.utilizedERC20Update(strategyUtilizedERC20)).to.be.not.reverted;
 
 		// Enable Deposits and Withdraws
 		await expect(yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()).to.not.be.reverted;
@@ -163,7 +163,7 @@ describe("[4.2] YieldSyncV1EMP.sol - Withdrawing Tokens", async () => {
 			yieldSyncV1EMPStrategy2.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 		).to.not.be.reverted;
 
-		await expect(yieldSyncV1EMPStrategy2.utilizedERC20Update(strat2UtilizedTokens)).to.be.not.reverted;
+		await expect(yieldSyncV1EMPStrategy2.utilizedERC20Update(strategy2UtilizedERC20)).to.be.not.reverted;
 
 		// Enable Deposits and Withdraws
 		await expect(yieldSyncV1EMPStrategy2.utilizedERC20DepositOpenToggle()).to.not.be.reverted;

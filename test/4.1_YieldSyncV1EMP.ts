@@ -22,8 +22,8 @@ describe("[4.1] YieldSyncV1EMP.sol - Depositing Tokens", async () => {
 	let yieldSyncV1EMPStrategyDeployer: Contract;
 	let strategyTransferUtil: StrategyTransferUtil;
 	let strategyTransferUtil2: StrategyTransferUtil;
-	let stratUtilizedTokens: StrategyUtilizedERC20;
-	let strat2UtilizedTokens: StrategyUtilizedERC20;
+	let strategyUtilizedERC20: StrategyUtilizedERC20;
+	let strategy2UtilizedERC20: StrategyUtilizedERC20;
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
@@ -75,12 +75,12 @@ describe("[4.1] YieldSyncV1EMP.sol - Depositing Tokens", async () => {
 			yieldSyncV1EMPRegistry.yieldSyncV1EMPStrategyDeployerUpdate(yieldSyncV1EMPStrategyDeployer.address)
 		).to.not.be.reverted;
 
-		stratUtilizedTokens = [
+		strategyUtilizedERC20 = [
 			[mockERC20A.address, true, true, PERCENT.FIFTY],
 			[mockERC20B.address, true, true, PERCENT.FIFTY],
 		];
 
-		strat2UtilizedTokens = [[mockERC20C.address, true, true, PERCENT.HUNDRED]];
+		strategy2UtilizedERC20 = [[mockERC20C.address, true, true, PERCENT.HUNDRED]];
 
 		/**
 		* EMP
@@ -126,7 +126,7 @@ describe("[4.1] YieldSyncV1EMP.sol - Depositing Tokens", async () => {
 			yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 		).to.not.be.reverted;
 
-		await expect(yieldSyncV1EMPStrategy.utilizedERC20Update(stratUtilizedTokens)).to.be.not.reverted;
+		await expect(yieldSyncV1EMPStrategy.utilizedERC20Update(strategyUtilizedERC20)).to.be.not.reverted;
 
 		// Enable Deposits and Withdraws
 		await expect(yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()).to.not.be.reverted;
@@ -163,7 +163,7 @@ describe("[4.1] YieldSyncV1EMP.sol - Depositing Tokens", async () => {
 			yieldSyncV1EMPStrategy2.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 		).to.not.be.reverted;
 
-		await expect(yieldSyncV1EMPStrategy2.utilizedERC20Update(strat2UtilizedTokens)).to.be.not.reverted;
+		await expect(yieldSyncV1EMPStrategy2.utilizedERC20Update(strategy2UtilizedERC20)).to.be.not.reverted;
 
 		// Enable Deposits and Withdraws
 		await expect(yieldSyncV1EMPStrategy2.utilizedERC20DepositOpenToggle()).to.not.be.reverted;
@@ -243,24 +243,24 @@ describe("[4.1] YieldSyncV1EMP.sol - Depositing Tokens", async () => {
 			* each.
 			*/
 
-			const STRAT_DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil.calculateERC20RequiredByTotalAmount(
+			const STRATEGY_DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil.calculateERC20RequiredByTotalAmount(
 				ethers.utils.parseUnits("2", 18)
 			);
 
-			const STRAT_2_DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil2.calculateERC20RequiredByTotalAmount(
+			const STRATEGY2_DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil2.calculateERC20RequiredByTotalAmount(
 				ethers.utils.parseUnits("2", 18)
 			);
 
 			// Pass in value for 2 strategies
 			const INVALID: UtilizedEMPStrategyERC20Amount = [
-				[STRAT_DEPOSIT_AMOUNTS[0], STRAT_DEPOSIT_AMOUNTS[1]],
-				[STRAT_2_DEPOSIT_AMOUNTS[0], ethers.utils.parseUnits("1", 18)]
+				[STRATEGY_DEPOSIT_AMOUNTS[0], STRATEGY_DEPOSIT_AMOUNTS[1]],
+				[STRATEGY2_DEPOSIT_AMOUNTS[0], ethers.utils.parseUnits("1", 18)]
 			];
 
 			// Approve tokens
-			await mockERC20A.approve(strategyInteractorDummy.address, STRAT_DEPOSIT_AMOUNTS[0]);
-			await mockERC20B.approve(strategyInteractorDummy.address, STRAT_DEPOSIT_AMOUNTS[1]);
-			await mockERC20C.approve(strategyInteractorDummy.address, STRAT_2_DEPOSIT_AMOUNTS[0]);
+			await mockERC20A.approve(strategyInteractorDummy.address, STRATEGY_DEPOSIT_AMOUNTS[0]);
+			await mockERC20B.approve(strategyInteractorDummy.address, STRATEGY_DEPOSIT_AMOUNTS[1]);
+			await mockERC20C.approve(strategyInteractorDummy.address, STRATEGY2_DEPOSIT_AMOUNTS[0]);
 
 			await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyDeposit(INVALID)).to.be.rejectedWith(
 				ERROR.INVALID_AMOUNT_LENGTH
@@ -289,32 +289,32 @@ describe("[4.1] YieldSyncV1EMP.sol - Depositing Tokens", async () => {
 			* each.
 			*/
 
-			const STRAT_DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil.calculateERC20RequiredByTotalAmount(
+			const STRATEGY_DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil.calculateERC20RequiredByTotalAmount(
 				ethers.utils.parseUnits("2", 18)
 			);
 
-			const STRAT_2_DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil2.calculateERC20RequiredByTotalAmount(
+			const STRATEGY2_DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil2.calculateERC20RequiredByTotalAmount(
 				ethers.utils.parseUnits("2", 18)
 			);
 
 			// Pass in value for 2 strategies
 			const VALID: UtilizedEMPStrategyERC20Amount = [
-				[STRAT_DEPOSIT_AMOUNTS[0], STRAT_DEPOSIT_AMOUNTS[1]],
-				[STRAT_2_DEPOSIT_AMOUNTS[0]]
+				[STRATEGY_DEPOSIT_AMOUNTS[0], STRATEGY_DEPOSIT_AMOUNTS[1]],
+				[STRATEGY2_DEPOSIT_AMOUNTS[0]]
 			];
 
 			// Approve tokens
-			await mockERC20A.approve(strategyInteractorDummy.address, STRAT_DEPOSIT_AMOUNTS[0]);
-			await mockERC20B.approve(strategyInteractorDummy.address, STRAT_DEPOSIT_AMOUNTS[1]);
-			await mockERC20C.approve(strategyInteractorDummy.address, STRAT_2_DEPOSIT_AMOUNTS[0]);
+			await mockERC20A.approve(strategyInteractorDummy.address, STRATEGY_DEPOSIT_AMOUNTS[0]);
+			await mockERC20B.approve(strategyInteractorDummy.address, STRATEGY_DEPOSIT_AMOUNTS[1]);
+			await mockERC20C.approve(strategyInteractorDummy.address, STRATEGY2_DEPOSIT_AMOUNTS[0]);
 
 			// [main-test]
 			await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyDeposit(VALID)).to.not.be.reverted;
 
 			// Validate balances
-			expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.be.equal(STRAT_DEPOSIT_AMOUNTS[0]);
-			expect(await mockERC20B.balanceOf(strategyInteractorDummy.address)).to.be.equal(STRAT_DEPOSIT_AMOUNTS[1]);
-			expect(await mockERC20C.balanceOf(strategyInteractorDummy.address)).to.be.equal(STRAT_2_DEPOSIT_AMOUNTS[0]);
+			expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.be.equal(STRATEGY_DEPOSIT_AMOUNTS[0]);
+			expect(await mockERC20B.balanceOf(strategyInteractorDummy.address)).to.be.equal(STRATEGY_DEPOSIT_AMOUNTS[1]);
+			expect(await mockERC20C.balanceOf(strategyInteractorDummy.address)).to.be.equal(STRATEGY2_DEPOSIT_AMOUNTS[0]);
 		});
 
 		it("Should receive correct amount of ERC20 tokens upon depositing..", async () => {
@@ -342,52 +342,52 @@ describe("[4.1] YieldSyncV1EMP.sol - Depositing Tokens", async () => {
 			* each.
 			*/
 
-			const STRAT_DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil.calculateERC20RequiredByTotalAmount(
+			const STRATEGY_DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil.calculateERC20RequiredByTotalAmount(
 				ethers.utils.parseUnits("2", 18)
 			);
 
-			const STRAT_2_DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil2.calculateERC20RequiredByTotalAmount(
+			const STRATEGY2_DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil2.calculateERC20RequiredByTotalAmount(
 				ethers.utils.parseUnits("2", 18)
 			);
 
 			// Pass in value for 2 strategies
 			const VALID: UtilizedEMPStrategyERC20Amount = [
-				[STRAT_DEPOSIT_AMOUNTS[0], STRAT_DEPOSIT_AMOUNTS[1]],
-				[STRAT_2_DEPOSIT_AMOUNTS[0]]
+				[STRATEGY_DEPOSIT_AMOUNTS[0], STRATEGY_DEPOSIT_AMOUNTS[1]],
+				[STRATEGY2_DEPOSIT_AMOUNTS[0]]
 			];
 
 			// Approve tokens
-			await mockERC20A.approve(strategyInteractorDummy.address, STRAT_DEPOSIT_AMOUNTS[0]);
-			await mockERC20B.approve(strategyInteractorDummy.address, STRAT_DEPOSIT_AMOUNTS[1]);
-			await mockERC20C.approve(strategyInteractorDummy.address, STRAT_2_DEPOSIT_AMOUNTS[0]);
+			await mockERC20A.approve(strategyInteractorDummy.address, STRATEGY_DEPOSIT_AMOUNTS[0]);
+			await mockERC20B.approve(strategyInteractorDummy.address, STRATEGY_DEPOSIT_AMOUNTS[1]);
+			await mockERC20C.approve(strategyInteractorDummy.address, STRATEGY2_DEPOSIT_AMOUNTS[0]);
 
 			// [main-test]
 			await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyDeposit(VALID)).to.not.be.reverted;
 
 			// Validate balances
-			expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.be.equal(STRAT_DEPOSIT_AMOUNTS[0]);
-			expect(await mockERC20B.balanceOf(strategyInteractorDummy.address)).to.be.equal(STRAT_DEPOSIT_AMOUNTS[1]);
-			expect(await mockERC20C.balanceOf(strategyInteractorDummy.address)).to.be.equal(STRAT_2_DEPOSIT_AMOUNTS[0]);
+			expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.be.equal(STRATEGY_DEPOSIT_AMOUNTS[0]);
+			expect(await mockERC20B.balanceOf(strategyInteractorDummy.address)).to.be.equal(STRATEGY_DEPOSIT_AMOUNTS[1]);
+			expect(await mockERC20C.balanceOf(strategyInteractorDummy.address)).to.be.equal(STRATEGY2_DEPOSIT_AMOUNTS[0]);
 
 			// Check that the OWNER address received something
 			expect(await yieldSyncV1EMP.balanceOf(OWNER.address)).to.be.greaterThan(0);
 
-			const { totalValue: stratDepositEthValue } = await strategyTransferUtil.calculateValueOfERC20Deposits(
-				[STRAT_DEPOSIT_AMOUNTS[0], STRAT_DEPOSIT_AMOUNTS[1]],
+			const { totalValue: strategyDepositEthValue } = await strategyTransferUtil.calculateValueOfERC20Deposits(
+				[STRATEGY_DEPOSIT_AMOUNTS[0], STRATEGY_DEPOSIT_AMOUNTS[1]],
 				[mockERC20A, mockERC20B]
 			);
 
 			// Check that the OWNER address received something greater than what was put into the 1st strategy
-			expect(await yieldSyncV1EMP.balanceOf(OWNER.address)).to.be.greaterThan(stratDepositEthValue);
+			expect(await yieldSyncV1EMP.balanceOf(OWNER.address)).to.be.greaterThan(strategyDepositEthValue);
 
-			const { totalValue: strat2DepositETHValue } = await strategyTransferUtil.calculateValueOfERC20Deposits(
-				[STRAT_2_DEPOSIT_AMOUNTS[0]],
+			const { totalValue: strategy2DepositETHValue } = await strategyTransferUtil.calculateValueOfERC20Deposits(
+				[STRATEGY2_DEPOSIT_AMOUNTS[0]],
 				[mockERC20C]
 			)
 
 			// Check that the OWNER address received something equal to what was deposited into all strategies via EMP
 			expect(await yieldSyncV1EMP.balanceOf(OWNER.address)).to.be.equal(
-				stratDepositEthValue.add(strat2DepositETHValue)
+				strategyDepositEthValue.add(strategy2DepositETHValue)
 			);
 		});
 
