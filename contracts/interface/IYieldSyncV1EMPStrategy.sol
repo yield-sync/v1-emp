@@ -165,9 +165,10 @@ interface IYieldSyncV1EMPStrategy is
 
 	/**
 	* @notice Deposit utilized ERC20s
+	* @param _from {address}
 	* @param _utilizedERC20Amount {uint256[]}
 	*/
-	function utilizedERC20Deposit(uint256[] memory _utilizedERC20Amount)
+	function utilizedERC20Deposit(address _from, uint256[] memory _utilizedERC20Amount)
 		external
 	;
 

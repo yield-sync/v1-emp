@@ -110,7 +110,7 @@ contract YieldSyncV1EMP is
 		for (uint256 i = 0; i < _utilizedYieldSyncV1EMPStrategy.length; i++)
 		{
 			(bool computed, uint256 utilizedERC20AmountAllocationActual) = SafeMath.tryDiv(
-				_utilizedERC20ETHValue[i],
+				SafeMath.mul(_utilizedERC20ETHValue[i], 1e18),
 				_utilizedERC20ETHValueTotal
 			);
 
@@ -125,6 +125,7 @@ contract YieldSyncV1EMP is
 		for (uint256 i = 0; i < _utilizedYieldSyncV1EMPStrategy.length; i++)
 		{
 			IYieldSyncV1EMPStrategy(_utilizedYieldSyncV1EMPStrategy[i].yieldSyncV1EMPStrategy).utilizedERC20Deposit(
+				msg.sender,
 				_utilizedERC20Amount[i]
 			);
 		}
@@ -183,6 +184,8 @@ contract YieldSyncV1EMP is
 		override
 	{
 		require(utilizedYieldSyncV1EMPStrategyWithdrawOpen, "!utilizedYieldSyncV1EMPStrategyWithdrawOpen");
+
+		// First determin how much a token is equivalent too in the strategy tokens
 
 		// Withdraw the tokens to the user
 	}

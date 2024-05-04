@@ -5,7 +5,7 @@ import { BigNumber, Contract } from "ethers";
 import { D_18 } from "../const"
 
 
-export default class TransferUtil
+export default class StrategyTransferUtil
 {
 	private _eTHValueFeed: Contract;
 	private _yieldSyncV1EMPStrategy: Contract;
@@ -20,14 +20,10 @@ export default class TransferUtil
 
 	/**
 	 * Calculate ERC20 required by a total ETH Amount
-	 * @param _utilizedERC20 {Contract[]}
 	 * @param _totalAmount {BigNumber}
 	 * @returns Object containing utilized ERC 20 amounts
 	 */
-	public async calculateERC20RequiredByTotalAmount(
-		_utilizedERC20: Contract[],
-		_totalAmount: BigNumber
-	): Promise<BigNumber[]>
+	public async calculateERC20RequiredByTotalAmount(_totalAmount: BigNumber): Promise<BigNumber[]>
 	{
 		const ONE_HUNDRED_PERCENT = await this._yieldSyncV1EMPStrategy.ONE_HUNDRED_PERCENT();
 
