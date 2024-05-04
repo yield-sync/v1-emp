@@ -363,7 +363,55 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () =>
 			);
 		});
 
-		it("Should allow user to deposit tokens into the EMP..");
+		it("Should allow user to deposit tokens into the EMP..", async () => {
+			/**
+			* @notice This test should test that depositing correct amounts should work.
+			*/
+			const UTILIZED_STRATEGIES: UtilizedYieldSyncV1EMPStrategyUpdate = [
+				[yieldSyncV1EMPStrategy.address, PERCENT.FIFTY],
+				[yieldSyncV1EMPStrategy2.address, PERCENT.FIFTY],
+			];
+
+			// Set the utilzation to 2 different strategies
+			await expect(
+				yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyUpdate(UTILIZED_STRATEGIES)
+			).to.be.not.rejected;
+
+			// Set the utilzation to 2 different strategies
+			await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyDepositOpenToggle()).to.be.not.rejected;
+
+			/**
+			* @notice Because UTILIZED_STRATEGIES has 2 stratgies with a split of 50/50, the same amount (2) is set for
+			* each.
+			*/
+
+			const STRAT_DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil.calculateERC20RequiredByTotalAmount(
+				ethers.utils.parseUnits("2", 18)
+			);
+
+			const STRAT_2_DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil2.calculateERC20RequiredByTotalAmount(
+				ethers.utils.parseUnits("2", 18)
+			);
+
+			// Pass in value for 2 strategies
+			const VALID: UtilizedERC20Amount = [
+				[STRAT_DEPOSIT_AMOUNTS[0], STRAT_DEPOSIT_AMOUNTS[1]],
+				[STRAT_2_DEPOSIT_AMOUNTS[0]]
+			];
+
+			// Approve tokens
+			await mockERC20A.approve(strategyInteractorDummy.address, STRAT_DEPOSIT_AMOUNTS[0]);
+			await mockERC20B.approve(strategyInteractorDummy.address, STRAT_DEPOSIT_AMOUNTS[1]);
+			await mockERC20C.approve(strategyInteractorDummy.address, STRAT_2_DEPOSIT_AMOUNTS[0]);
+
+			// [main-test]
+			await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyDeposit(VALID)).to.not.be.reverted;
+
+			// Validate balances
+			expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.be.equal(STRAT_DEPOSIT_AMOUNTS[0]);
+			expect(await mockERC20B.balanceOf(strategyInteractorDummy.address)).to.be.equal(STRAT_DEPOSIT_AMOUNTS[1]);
+			expect(await mockERC20C.balanceOf(strategyInteractorDummy.address)).to.be.equal(STRAT_2_DEPOSIT_AMOUNTS[0]);
+		});
 
 		it("Should receive correct amount of ERC20 tokens upon depositing..");
 
