@@ -130,7 +130,7 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 
 					// Deposit mockERC20A tokens into the strategy
 					await expect(
-						yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT])
+						yieldSyncV1EMPStrategy.utilizedERC20Deposit(OWNER.address, [DEPOSIT_AMOUNT])
 					).to.not.be.reverted;
 
 					const OWNER_MOCK_A_BALANCE_AFTER: BigNumber = await mockERC20A.balanceOf(OWNER.address);
@@ -196,7 +196,7 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 
 						// Deposit mockERC20A tokens into the strategy
 						await expect(
-							yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT])
+							yieldSyncV1EMPStrategy.utilizedERC20Deposit(OWNER.address, [DEPOSIT_AMOUNT])
 						).to.not.be.reverted;
 
 						const OWNERMockERC20ABalanceAfterDeposit: BigNumber = await mockERC20A.balanceOf(OWNER.address);
@@ -261,7 +261,7 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 
 						// Deposit mockERC20A tokens into the strategy
 						await expect(
-							yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT])
+							yieldSyncV1EMPStrategy.utilizedERC20Deposit(OWNER.address, [DEPOSIT_AMOUNT])
 						).to.not.be.reverted;
 
 						const OWNERMockERC20ABalanceAfterDeposit = await mockERC20A.balanceOf(OWNER.address);
@@ -345,7 +345,7 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 						await mockERC20A.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT);
 
 						// Deposit mockERC20A tokens into the strategy
-						yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT])
+						yieldSyncV1EMPStrategy.utilizedERC20Deposit(OWNER.address, [DEPOSIT_AMOUNT])
 
 						// mockERC20A BalanceOf strategy interactor should equal to deposit amount
 						expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.be.equal(
@@ -416,7 +416,7 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 						await mockERC206.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_6);
 
 						// Deposit mockERC206 tokens into the strategy
-						yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT_6])
+						yieldSyncV1EMPStrategy.utilizedERC20Deposit(OWNER.address, [DEPOSIT_AMOUNT_6])
 
 						// mockERC206 BalanceOf strategy interactor should equal to deposit amount
 						expect(await mockERC206.balanceOf(strategyInteractorDummy.address)).to.be.equal(
@@ -499,7 +499,7 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 						await mockERC20B.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT);
 
 						// Deposit mockERC20A tokens into the strategy
-						yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT, DEPOSIT_AMOUNT])
+						yieldSyncV1EMPStrategy.utilizedERC20Deposit(OWNER.address, [DEPOSIT_AMOUNT, DEPOSIT_AMOUNT])
 
 						// mockERC20A BalanceOf strategy interactor should equal to deposit amount
 						expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.be.equal(
@@ -585,7 +585,7 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 						await mockERC20B.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_B);
 
 						// Deposit mockERC20A tokens into the strategy
-						yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT_A, DEPOSIT_AMOUNT_B])
+						yieldSyncV1EMPStrategy.utilizedERC20Deposit(OWNER.address, [DEPOSIT_AMOUNT_A, DEPOSIT_AMOUNT_B])
 
 						// mockERC20A BalanceOf strategy interactor should equal to deposit amount
 						expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.be.equal(
@@ -673,7 +673,7 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 						await mockERC206.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_6);
 
 						// Deposit mockERC20A tokens into the strategy
-						yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT_A, DEPOSIT_AMOUNT_6])
+						yieldSyncV1EMPStrategy.utilizedERC20Deposit(OWNER.address, [DEPOSIT_AMOUNT_A, DEPOSIT_AMOUNT_6])
 
 						// mockERC20A BalanceOf strategy interactor should equal to deposit amount
 						expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.be.equal(
@@ -764,7 +764,7 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () =>
 						await mockERC206.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_6);
 
 						// Deposit mockERC20A tokens into the strategy
-						yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT_A, DEPOSIT_AMOUNT_6])
+						yieldSyncV1EMPStrategy.utilizedERC20Deposit(OWNER.address, [DEPOSIT_AMOUNT_A, DEPOSIT_AMOUNT_6])
 
 						// mockERC20A BalanceOf strategy interactor should equal to deposit amount
 						expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.be.equal(

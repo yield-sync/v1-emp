@@ -111,7 +111,7 @@ describe("[2.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
 						await mockERC20A.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_A);
 
 						// Deposit ERC20 tokens into the strategy
-						await yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT_A])
+						await yieldSyncV1EMPStrategy.utilizedERC20Deposit(OWNER.address, [DEPOSIT_AMOUNT_A])
 
 						// Supply put back to original
 						expect(await yieldSyncV1EMPStrategy.balanceOf(OWNER.address)).to.be.equal(DEPOSIT_AMOUNT_A);
@@ -125,7 +125,7 @@ describe("[2.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
 						await mockERC20A.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_A2);
 
 						// Deposit ERC20 tokens into the strategy
-						await yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT_A2])
+						await yieldSyncV1EMPStrategy.utilizedERC20Deposit(OWNER.address, [DEPOSIT_AMOUNT_A2])
 
 						expect(await yieldSyncV1EMPStrategy.balanceOf(OWNER.address)).to.be.equal(
 							ethers.utils.parseUnits("3", 18)
@@ -168,7 +168,7 @@ describe("[2.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
 						await mockERC20A.approve(strategyInteractorDummy.address, DEPOSIT_AMOUNT_A);
 
 						// Deposit ERC20 tokens into the strategy
-						await yieldSyncV1EMPStrategy.utilizedERC20Deposit([DEPOSIT_AMOUNT_A])
+						await yieldSyncV1EMPStrategy.utilizedERC20Deposit(OWNER.address, [DEPOSIT_AMOUNT_A])
 
 						// [main-test] Withdraw ERC20 tokens into the strategy
 						await yieldSyncV1EMPStrategy.utilizedERC20Withdraw(
@@ -230,7 +230,7 @@ describe("[2.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
 				await mockERC20B.approve(strategyInteractorDummy.address, erc20DepositAmount);
 
 				// Deposit ERC20 A and ERC20 B tokens into the strategy
-				await yieldSyncV1EMPStrategy.utilizedERC20Deposit([erc20DepositAmount, erc20DepositAmount, ZERO]);
+				await yieldSyncV1EMPStrategy.utilizedERC20Deposit(OWNER.address, [erc20DepositAmount, erc20DepositAmount, ZERO]);
 
 				// Mock ERC20 C to strategy interactor accrual by transferring
 				await mockERC20C.transfer(strategyInteractorDummy.address, erc20DepositAmount);

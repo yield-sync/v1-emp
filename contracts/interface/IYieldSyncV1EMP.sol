@@ -100,24 +100,30 @@ interface IYieldSyncV1EMP is
 	;
 
 	/**
-	* @dev [view-bool]
-	* @notice Utilized Yield Sync V1 EMP Strategy Deposit Open
+	* @notice Utilized Yield Sync V1 EMP Strategy Deposit Open Toggle
 	*/
 	function utilizedYieldSyncV1EMPStrategyDepositOpenToggle()
 		external
 	;
 
 	/**
+	* @notice
 	*/
 	function utilizedYieldSyncV1EMPStrategyUpdate(UtilizedYieldSyncV1EMPStrategy[] memory __utilizedYieldSyncV1EMPStrategy)
 		external
 	;
 
 	/**
-	* @dev [view-bool]
-	* @notice Utilized Yield Sync V1 EMP Strategy Withdraw Open
+	* @notice Utilized Yield Sync V1 EMP Strategy Withdraw Open Toggle
 	*/
 	function utilizedYieldSyncV1EMPStrategyWithdrawOpenToggle()
+		external
+	;
+
+	/**
+	* @notice
+	*/
+	function utilizedYieldSyncV1EMPStrategyWithdraw(uint256 _ERC20Amount)
 		external
 	;
 }

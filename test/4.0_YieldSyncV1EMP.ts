@@ -5,10 +5,14 @@ import { expect } from "chai";
 import { BigNumber, Contract, ContractFactory } from "ethers";
 
 import { ERROR, PERCENT } from "../const";
+import StrategyTransferUtil from "../scripts/StrategyTransferUtil";
 
 
 describe("[4.0] YieldSyncV1EMP.sol - Setup", async () =>
 {
+	let mockERC20A: Contract;
+	let mockERC20B: Contract;
+	let mockERC20C: Contract;
 	let eTHValueFeedDummy: Contract;
 	let strategyInteractorDummy: Contract;
 	let yieldSyncV1EMP: Contract;
@@ -17,6 +21,8 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () =>
 	let yieldSyncV1EMPStrategy: Contract;
 	let yieldSyncV1EMPStrategy2: Contract;
 	let yieldSyncV1EMPStrategyDeployer: Contract;
+	let strategyTransferUtil: StrategyTransferUtil;
+	let strategyTransferUtil2: StrategyTransferUtil;
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () =>
@@ -30,10 +36,13 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () =>
 		* 	a) Attach the deployed EMP Strategy to a local variable
 		* 	b) Set the ETH Value feed
 		* 	c) Set the strategy interactor
-		* 	b) Toggle on the withdrawals and depositing of tokens
+		* 	d) Set the tokens for the strategy
+		* 	e) Toggle on the withdrawals and depositing of tokens
+		* 	f) Set the strategyTransferUtil for strategy
 		*/
 		const [OWNER] = await ethers.getSigners();
 
+		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
 		const ETHValueFeedDummy: ContractFactory = await ethers.getContractFactory("ETHValueFeedDummy");
 		const StrategyInteractorDummy: ContractFactory = await ethers.getContractFactory("StrategyInteractorDummy");
 		const YieldSyncV1EMP: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMP");
@@ -44,6 +53,9 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () =>
 			"YieldSyncV1EMPStrategyDeployer"
 		);
 
+		mockERC20A = await (await MockERC20.deploy()).deployed();
+		mockERC20B = await (await MockERC20.deploy()).deployed();
+		mockERC20C = await (await MockERC20.deploy()).deployed();
 		eTHValueFeedDummy = await (await ETHValueFeedDummy.deploy()).deployed();
 		strategyInteractorDummy = await (await StrategyInteractorDummy.deploy()).deployed();
 		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy()).deployed();
@@ -79,10 +91,9 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () =>
 		);
 
 		/**
-		*
-		* EMP Strategies
+		* EMP Strategies 1
 		*/
-		// Deploy an EMP Strategy
+		// Deploy EMP Strategy
 		await expect(
 			yieldSyncV1EMPStrategyDeployer.deployYieldSyncV1EMPStrategy("EMP Strategy Name", "EMPS")
 		).to.be.not.reverted;
@@ -107,12 +118,26 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () =>
 			yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 		).to.not.be.reverted;
 
+		await expect(
+			yieldSyncV1EMPStrategy.utilizedERC20Update(
+				[
+					[mockERC20A.address, true, true, PERCENT.FIFTY],
+					[mockERC20B.address, true, true, PERCENT.FIFTY],
+				]
+			)
+		).to.be.not.reverted;
+
 		// Enable Deposits and Withdraws
 		await expect(yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()).to.not.be.reverted;
 		await expect(yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle()).to.not.be.reverted;
 
+		// Set strategyTransferUtil
+		strategyTransferUtil = new StrategyTransferUtil(yieldSyncV1EMPStrategy, eTHValueFeedDummy)
 
-		// Deploy a 2nd EMP Strategy
+		/**
+		* EMP Strategies 2
+		*/
+		// Deploy EMP Strategy
 		await expect(
 			yieldSyncV1EMPStrategyDeployer.deployYieldSyncV1EMPStrategy("EMP Strategy 2 Name", "EMPS2")
 		).to.be.not.reverted;
@@ -137,9 +162,16 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () =>
 			yieldSyncV1EMPStrategy2.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 		).to.not.be.reverted;
 
+		await expect(
+			yieldSyncV1EMPStrategy2.utilizedERC20Update([[mockERC20C.address, true, true, PERCENT.HUNDRED],])
+		).to.be.not.reverted;
+
 		// Enable Deposits and Withdraws
 		await expect(yieldSyncV1EMPStrategy2.utilizedERC20DepositOpenToggle()).to.not.be.reverted;
 		await expect(yieldSyncV1EMPStrategy2.utilizedERC20WithdrawOpenToggle()).to.not.be.reverted;
+
+		// Set strategyTransferUtil
+		strategyTransferUtil2 = new StrategyTransferUtil(yieldSyncV1EMPStrategy2, eTHValueFeedDummy)
 	});
 
 	describe("function utilizedYieldSyncV1EMPStrategyUpdate()", async () =>
@@ -148,7 +180,7 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () =>
 		{
 			const [, ADDR_1] = await ethers.getSigners();
 
-			const UtilizedYieldSyncV1EMPStrategy: UtilizedERC20Amount = [];
+			const UtilizedYieldSyncV1EMPStrategy: UtilizedYieldSyncV1EMPStrategyUpdate = [];
 
 			await expect(
 				yieldSyncV1EMP.connect(ADDR_1).utilizedYieldSyncV1EMPStrategyUpdate(UtilizedYieldSyncV1EMPStrategy)
@@ -157,7 +189,7 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () =>
 
 		it("Should NOT allow strategies that add up to more than 100% to EMP..", async () =>
 		{
-			const UtilizedYieldSyncV1EMPStrategy: UtilizedERC20Amount = [
+			const UtilizedYieldSyncV1EMPStrategy: UtilizedYieldSyncV1EMPStrategyUpdate = [
 				[yieldSyncV1EMPStrategy.address, PERCENT.HUNDRED],
 				[yieldSyncV1EMPStrategy2.address, PERCENT.FIFTY],
 			];
@@ -208,34 +240,32 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () =>
 		});
 	});
 
-	describe("function managerUpdate()", async () =>
-		{
-			it(
-				"[auth] Should revert when unauthorized msg.sender calls..",
-				async () =>
-				{
-					const [, ADDR_1] = await ethers.getSigners();
+	describe("function managerUpdate()", async () => {
+		it(
+			"[auth] Should revert when unauthorized msg.sender calls..",
+			async () =>
+			{
+				const [, ADDR_1] = await ethers.getSigners();
+				await expect(
+					yieldSyncV1EMP.connect(ADDR_1).managerUpdate(ADDR_1.address)
+				).to.be.rejectedWith(ERROR.NOT_MANAGER);
+			}
+		);
 
-					await expect(
-						yieldSyncV1EMP.connect(ADDR_1).managerUpdate(ADDR_1.address)
-					).to.be.rejectedWith(ERROR.NOT_MANAGER);
-				}
-			);
+		it(
+			"Should allow manager to be changed..",
+			async () =>
+			{
+				const [, ADDR_1] = await ethers.getSigners();
 
-			it(
-				"Should allow manager to be changed..",
-				async () =>
-				{
-					const [, ADDR_1] = await ethers.getSigners();
+				await expect(
+					yieldSyncV1EMP.managerUpdate(ADDR_1.address)
+				).to.be.not.reverted;
 
-					await expect(
-						yieldSyncV1EMP.managerUpdate(ADDR_1.address)
-					).to.be.not.reverted;
-
-					expect(await yieldSyncV1EMP.manager()).to.be.equal(ADDR_1.address);
-				}
-			);
-		});
+				expect(await yieldSyncV1EMP.manager()).to.be.equal(ADDR_1.address);
+			}
+		);
+	});
 
 	describe("function utilizedYieldSyncV1EMPStrategyDeposit()", async () =>
 	{
@@ -243,7 +273,7 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () =>
 			/**
 			* @notice This test is to check that depositing must be toggled on in order to call the function properly.
 			*/
-			const UtilizedYieldSyncV1EMPStrategy: UtilizedERC20Amount = [
+			const UtilizedYieldSyncV1EMPStrategy: UtilizedYieldSyncV1EMPStrategyUpdate = [
 				[yieldSyncV1EMPStrategy.address, PERCENT.FIFTY],
 				[yieldSyncV1EMPStrategy2.address, PERCENT.FIFTY],
 			];
@@ -255,17 +285,17 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () =>
 
 			// Even if utilizedERC20Amounts, the function should revert with reason that deposits are NOT open
 			await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyDeposit([[], []])).to.be.rejectedWith(
-				ERROR.UTILIZED_YIELD_SYNC_V1_EMP_STRATEGY_NOT_OPEN
+				ERROR.UTILIZED_YIELD_SYNC_V1_EMP_STRATEGY_DEPOSIT_NOT_OPEN
 			);
 		});
 
-		it("Should NOT allow invalid lengthed _utilizedERC20Amount..", async () =>
+		it("Should NOT allow invalid lengthed _utilizedERC20Amount (1D)..", async () =>
 		{
 			/**
 			* @notice This test is to check that if the total amount of strategies is correctly set, then passing in a param
 			* with incorrect first dimension of the 2d param will be rejected.
 			*/
-			const UtilizedYieldSyncV1EMPStrategy: UtilizedERC20Amount = [
+			const UtilizedYieldSyncV1EMPStrategy: UtilizedYieldSyncV1EMPStrategyUpdate = [
 				[yieldSyncV1EMPStrategy.address, PERCENT.FIFTY],
 				[yieldSyncV1EMPStrategy2.address, PERCENT.FIFTY],
 			];
@@ -286,12 +316,80 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () =>
 			);
 		});
 
-		it("Should NOT allow invalid AMOUNTS to be passed..");
+		it("Should NOT allow invalid AMOUNTS to be passed (2D)..", async () => {
+			/**
+			* @notice This test should test that depositing the incorrect amounts (within the 2nd dimension of
+			* _utilizedERC20Amount) the function should revert.
+			*/
+			const UTILIZED_STRATEGIES: UtilizedYieldSyncV1EMPStrategyUpdate = [
+				[yieldSyncV1EMPStrategy.address, PERCENT.FIFTY],
+				[yieldSyncV1EMPStrategy2.address, PERCENT.FIFTY],
+			];
+
+			// Set the utilzation to 2 different strategies
+			await expect(
+				yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyUpdate(UTILIZED_STRATEGIES)
+			).to.be.not.rejected;
+
+			// Set the utilzation to 2 different strategies
+			await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyDepositOpenToggle()).to.be.not.rejected;
+
+			/**
+			* @notice Because UTILIZED_STRATEGIES has 2 stratgies with a split of 50/50, the same amount (2) is set for
+			* each.
+			*/
+
+			const STRAT_DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil.calculateERC20RequiredByTotalAmount(
+				ethers.utils.parseUnits("2", 18)
+			);
+
+			const STRAT_2_DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil2.calculateERC20RequiredByTotalAmount(
+				ethers.utils.parseUnits("2", 18)
+			);
+
+			// Pass in value for 2 strategies
+			const INVALID: UtilizedERC20Amount = [
+				[STRAT_DEPOSIT_AMOUNTS[0], STRAT_DEPOSIT_AMOUNTS[1]],
+				[STRAT_2_DEPOSIT_AMOUNTS[0], ethers.utils.parseUnits("1", 18)]
+			];
+
+			// Approve tokens
+			await mockERC20A.approve(strategyInteractorDummy.address, STRAT_DEPOSIT_AMOUNTS[0]);
+			await mockERC20B.approve(strategyInteractorDummy.address, STRAT_DEPOSIT_AMOUNTS[1]);
+			await mockERC20C.approve(strategyInteractorDummy.address, STRAT_2_DEPOSIT_AMOUNTS[0]);
+
+			await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyDeposit(INVALID)).to.be.rejectedWith(
+				ERROR.INVALID_AMOUNT_LENGTH
+			);
+		});
 
 		it("Should allow user to deposit tokens into the EMP..");
 
 		it("Should receive correct amount of ERC20 tokens upon depositing..");
 
 		it("Protocol should receive correct amount of ERC20 if cut is greater than 0..");
+	});
+
+	describe("function utilizedYieldSyncV1EMPStrategyWithdraw()", async () =>
+	{
+		it("Should NOT allow withdrawing if not open..", async () => {
+			/**
+			* @notice This test is to check that depositing must be toggled on in order to call the function properly.
+			*/
+			const UtilizedYieldSyncV1EMPStrategy: UtilizedERC20Amount = [
+				[yieldSyncV1EMPStrategy.address, PERCENT.FIFTY],
+				[yieldSyncV1EMPStrategy2.address, PERCENT.FIFTY],
+			];
+
+			// Set the utilzation to 2 different strategies
+			await expect(
+				yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyUpdate(UtilizedYieldSyncV1EMPStrategy)
+			).to.be.not.rejected;
+
+			// Even if utilizedERC20Amounts, the function should revert with reason that deposits are NOT open
+			await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyWithdraw(0)).to.be.rejectedWith(
+				ERROR.UTILIZED_YIELD_SYNC_V1_EMP_STRATEGY_WITHDRAW_NOT_OPEN
+			);
+		});
 	});
 });

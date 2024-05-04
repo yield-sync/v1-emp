@@ -197,7 +197,7 @@ contract YieldSyncV1EMPStrategy is
 	}
 
 	/// @inheritdoc IYieldSyncV1EMPStrategy
-	function utilizedERC20Deposit(uint256[] memory _utilizedERC20Amount)
+	function utilizedERC20Deposit(address _from, uint256[] memory _utilizedERC20Amount)
 		public
 		override
 		authEMP()
@@ -242,13 +242,13 @@ contract YieldSyncV1EMPStrategy is
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
 			iYieldSyncV1EMPStrategyInteractor.utilizedERC20Deposit(
-				msg.sender,
+				_from,
 				_utilizedERC20[i].eRC20,
 				_utilizedERC20Amount[i]
 			);
 		}
 
-		_mint(msg.sender, _utilizedERC20AmountETHValue);
+		_mint(_from, _utilizedERC20AmountETHValue);
 	}
 
 	/// @inheritdoc IYieldSyncV1EMPStrategy
