@@ -8,8 +8,7 @@ import { ERROR, PERCENT } from "../const";
 import StrategyTransferUtil from "../scripts/StrategyTransferUtil";
 
 
-describe("[4.0] YieldSyncV1EMP.sol - Setup", async () =>
-{
+describe("[4.0] YieldSyncV1EMP.sol - Setup", async () => {
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;
 	let mockERC20C: Contract;
@@ -25,8 +24,7 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () =>
 	let strategyTransferUtil2: StrategyTransferUtil;
 
 
-	beforeEach("[beforeEach] Set up contracts..", async () =>
-	{
+	beforeEach("[beforeEach] Set up contracts..", async () => {
 		/**
 		* This beforeEach process does the following:
 		* 1) Deploy a registry
@@ -174,10 +172,8 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () =>
 		strategyTransferUtil2 = new StrategyTransferUtil(yieldSyncV1EMPStrategy2, eTHValueFeedDummy)
 	});
 
-	describe("function utilizedYieldSyncV1EMPStrategyUpdate()", async () =>
-	{
-		it("[auth] Should revert when unauthorized msg.sender calls..", async () =>
-		{
+	describe("function utilizedYieldSyncV1EMPStrategyUpdate()", async () => {
+		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
 			const [, ADDR_1] = await ethers.getSigners();
 
 			const UtilizedYieldSyncV1EMPStrategy: UtilizedYieldSyncV1EMPStrategyUpdate = [];
@@ -187,8 +183,7 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () =>
 			).to.be.rejectedWith(ERROR.NOT_MANAGER);
 		});
 
-		it("Should NOT allow strategies that add up to more than 100% to EMP..", async () =>
-		{
+		it("Should NOT allow strategies that add up to more than 100% to EMP..", async () => {
 			const UtilizedYieldSyncV1EMPStrategy: UtilizedYieldSyncV1EMPStrategyUpdate = [
 				[yieldSyncV1EMPStrategy.address, PERCENT.HUNDRED],
 				[yieldSyncV1EMPStrategy2.address, PERCENT.FIFTY],
@@ -199,8 +194,7 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () =>
 			).to.be.rejectedWith(ERROR.INVALID_ALLOCATION_STRATEGY);
 		});
 
-		it("Should allow attaching Strategy to EMP..", async () =>
-		{
+		it("Should allow attaching Strategy to EMP..", async () => {
 			const UtilizedYieldSyncV1EMPStrategy: [string, string][] = [
 				[yieldSyncV1EMPStrategy.address, PERCENT.HUNDRED]
 			];
@@ -217,8 +211,7 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () =>
 			expect(strategies[0].allocation).to.be.equal(PERCENT.HUNDRED);
 		});
 
-		it("Should allow attaching multiple Strategies to EMP..", async () =>
-		{
+		it("Should allow attaching multiple Strategies to EMP..", async () => {
 			const UtilizedYieldSyncV1EMPStrategy: [string, string][] = [
 				[yieldSyncV1EMPStrategy.address, PERCENT.FIFTY],
 				[yieldSyncV1EMPStrategy2.address, PERCENT.FIFTY],
@@ -267,8 +260,7 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () =>
 		);
 	});
 
-	describe("function utilizedYieldSyncV1EMPStrategyDeposit()", async () =>
-	{
+	describe("function utilizedYieldSyncV1EMPStrategyDeposit()", async () => {
 		it("Should NOT allow depositing if not open..", async () => {
 			/**
 			* @notice This test is to check that depositing must be toggled on in order to call the function properly.
@@ -289,8 +281,7 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () =>
 			);
 		});
 
-		it("Should NOT allow invalid lengthed _utilizedERC20Amount (1D)..", async () =>
-		{
+		it("Should NOT allow invalid lengthed _utilizedERC20Amount (1D)..", async () => {
 			/**
 			* @notice This test is to check that if the total amount of strategies is correctly set, then passing in a param
 			* with incorrect first dimension of the 2d param will be rejected.
@@ -418,8 +409,7 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () =>
 		it("Protocol should receive correct amount of ERC20 if cut is greater than 0..");
 	});
 
-	describe("function utilizedYieldSyncV1EMPStrategyWithdraw()", async () =>
-	{
+	describe("function utilizedYieldSyncV1EMPStrategyWithdraw()", async () => {
 		it("Should NOT allow withdrawing if not open..", async () => {
 			/**
 			* @notice This test is to check that depositing must be toggled on in order to call the function properly.
