@@ -131,7 +131,7 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () => {
 				async () => {
 					const [OWNER] = await ethers.getSigners();
 
-					const utilizedERC20: UtilizedERC20 = [[mockERC20A.address, true, true, PERCENT.HUNDRED]];
+					const utilizedERC20: StrategyUtilizedERC20 = [[mockERC20A.address, true, true, PERCENT.HUNDRED]];
 
 					await expect(await yieldSyncV1EMPStrategy.utilizedERC20Update(utilizedERC20)).to.not.be.reverted;
 
@@ -191,7 +191,7 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () => {
 				async () => {
 					const [OWNER] = await ethers.getSigners();
 
-					const utilizedERC20: UtilizedERC20 = [
+					const utilizedERC20: StrategyUtilizedERC20 = [
 						[mockERC20A.address, true, true, PERCENT.FIFTY],
 						[mockERC20B.address, true, true, PERCENT.FIFTY]
 					];
@@ -222,7 +222,7 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () => {
 				async () => {
 					const [OWNER] = await ethers.getSigners();
 
-					const utilizedERC20: UtilizedERC20 = [
+					const utilizedERC20: StrategyUtilizedERC20 = [
 						[mockERC20A.address, true, true, PERCENT.HUNDRED],
 						[mockERC20B.address, false, true, PERCENT.HUNDRED]
 					];
@@ -258,7 +258,7 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () => {
 					async () => {
 					const [OWNER] = await ethers.getSigners();
 
-					const utilizedERC20: UtilizedERC20 = [[mockERC20A.address, true, true, PERCENT.HUNDRED]];
+					const utilizedERC20: StrategyUtilizedERC20 = [[mockERC20A.address, true, true, PERCENT.HUNDRED]];
 
 						await expect(yieldSyncV1EMPStrategy.utilizedERC20Update(utilizedERC20)).to.not.be.reverted;
 
@@ -756,8 +756,6 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Deposit", async () => {
 					"[75/25] Should revert if invalid utilizedERC20Amounts passed..",
 					async () => {
 						const [OWNER] = await ethers.getSigners();
-
-						const CONTRACTS_TOKENS: Contract[] = [mockERC20A, mockERC206];
 
 						// Initialize strategy with mock ERC20
 						await expect(

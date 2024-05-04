@@ -93,9 +93,9 @@ interface IYieldSyncV1EMP is
 
 	/**
 	* @notice Deposit utilized ERC20s
-	* @param _utilizedERC20Amount {uint256[][]}
+	* @param utilizedYieldSyncV1EMPStrategyDeposit {uint256[][]}
 	*/
-	function utilizedYieldSyncV1EMPStrategyDeposit(uint256[][] memory _utilizedERC20Amount)
+	function utilizedYieldSyncV1EMPStrategyDeposit(uint256[][] memory utilizedYieldSyncV1EMPStrategyDeposit)
 		external
 	;
 

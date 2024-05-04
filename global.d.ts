@@ -1,16 +1,15 @@
 /**
 * EMP Strategy
 */
-type UtilizedERC20 = [string, boolean, boolean, BigNumber][]
+type StrategyUtilizedERC20 = [string, boolean, boolean, BigNumber][]
 
 /**
 * EMP
 */
-type UtilizedYieldSyncV1EMPStrategy = {
+type UtilizedEMPStrategy = {
 	yieldSyncV1EMPStrategy: string,
 	allocation: BigNumber
 };
-type UtilizedYieldSyncV1EMPStrategyUpdate = [BigNumber, BigNumber][];
+type UtilizedEMPStrategyUpdate = [string, BigNumber][];
 
-type UtilizedERC20Amount = BigNumber[][];
-
+type UtilizedEMPStrategyERC20Amount = BigNumber[][];

@@ -117,7 +117,7 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () => {
 			async () => {
 				const [OWNER] = await ethers.getSigners();
 
-				const INVALID_ALLOCATIONS: UtilizedERC20[] = [
+				const INVALID_ALLOCATIONS: StrategyUtilizedERC20[] = [
 					[[mockERC20A.address, true, true, PERCENT.FIFTY]],
 					[[mockERC20A.address, true, false, PERCENT.FIFTY]],
 					[[mockERC20A.address, false, false, PERCENT.FIFTY]],
@@ -153,7 +153,7 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () => {
 			async () => {
 				const [OWNER] = await ethers.getSigners();
 
-				const VALID_ALLOCATION: UtilizedERC20[] = [
+				const VALID_ALLOCATION: StrategyUtilizedERC20[] = [
 					[
 						[mockERC20A.address, true, true, PERCENT.FIFTY],
 						[mockERC20B.address, true, true, PERCENT.FIFTY],
