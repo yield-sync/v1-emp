@@ -8,7 +8,7 @@ import { ERROR, PERCENT } from "../const";
 import StrategyTransferUtil from "../scripts/StrategyTransferUtil";
 
 
-describe("[4.0] YieldSyncV1EMP.sol - Withdrawing Tokens", async () => {
+describe("[4.2] YieldSyncV1EMP.sol - Withdrawing Tokens", async () => {
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;
 	let mockERC20C: Contract;

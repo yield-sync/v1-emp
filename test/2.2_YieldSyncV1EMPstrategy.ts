@@ -7,7 +7,7 @@ import { BigNumber, Contract, ContractFactory } from "ethers";
 import { ERROR, PERCENT } from "../const";
 
 
-describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdraw", async () => {
+describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;
 	let mockERC206: Contract;
