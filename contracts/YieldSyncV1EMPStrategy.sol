@@ -248,7 +248,7 @@ contract YieldSyncV1EMPStrategy is
 			);
 		}
 
-		_mint(_from, _utilizedERC20AmountETHValue);
+		_mint(msg.sender, _utilizedERC20AmountETHValue);
 	}
 
 	/// @inheritdoc IYieldSyncV1EMPStrategy
