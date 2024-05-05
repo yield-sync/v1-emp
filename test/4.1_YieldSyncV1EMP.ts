@@ -377,6 +377,9 @@ describe("[4.1] YieldSyncV1EMP.sol - Depositing Tokens", async () => {
 				[mockERC20A, mockERC20B]
 			);
 
+			// Check that the EMP address received correct amount of Strategy tokens
+			expect(await yieldSyncV1EMPStrategy.balanceOf(yieldSyncV1EMP.address)).to.be.equal(strategyDepositEthValue);
+
 			// Check that the OWNER address received something greater than what was put into the 1st strategy
 			expect(await yieldSyncV1EMP.balanceOf(OWNER.address)).to.be.greaterThan(strategyDepositEthValue);
 
@@ -385,10 +388,14 @@ describe("[4.1] YieldSyncV1EMP.sol - Depositing Tokens", async () => {
 				[mockERC20C]
 			)
 
+			// Check that the EMP address received correct amount of Strategy tokens
+			expect(await yieldSyncV1EMPStrategy2.balanceOf(yieldSyncV1EMP.address)).to.be.equal(strategy2DepositETHValue);
+
+			// Add up deposit amounts
+			const TOTAL_DEPOSIT_VALUE = strategyDepositEthValue.add(strategy2DepositETHValue);
+
 			// Check that the OWNER address received something equal to what was deposited into all strategies via EMP
-			expect(await yieldSyncV1EMP.balanceOf(OWNER.address)).to.be.equal(
-				strategyDepositEthValue.add(strategy2DepositETHValue)
-			);
+			expect(await yieldSyncV1EMP.balanceOf(OWNER.address)).to.be.equal(TOTAL_DEPOSIT_VALUE);
 		});
 
 		it("Protocol should receive correct amount of ERC20 if cut is greater than 0..");

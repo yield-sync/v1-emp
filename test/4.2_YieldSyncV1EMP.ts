@@ -293,8 +293,6 @@ describe("[4.2] YieldSyncV1EMP.sol - Withdrawing Tokens", async () => {
 
 			await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyDeposit(VALID)).to.not.be.reverted;
 
-			console.log(await yieldSyncV1EMPStrategy.balanceOf(yieldSyncV1EMP.address));
-
 			// Check that the OWNER address received something
 			expect(await yieldSyncV1EMP.balanceOf(OWNER.address)).to.be.greaterThan(0);
 
