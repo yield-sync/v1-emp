@@ -250,7 +250,61 @@ describe("[4.2] YieldSyncV1EMP.sol - Withdrawing Tokens", async () => {
 			);
 		});
 
-		it("Should allow withdrawing tokens from strategy..");
+		it("Should allow withdrawing tokens from strategy..", async () => {
+			/**
+			* @notice This test should test that msg.sender cannot withdraw more than what they have.
+			*/
+			const [OWNER] = await ethers.getSigners();
+
+			const UTILIZED_STRATEGIES: UtilizedEMPStrategyUpdate = [
+				[yieldSyncV1EMPStrategy.address, PERCENT.FIFTY],
+				[yieldSyncV1EMPStrategy2.address, PERCENT.FIFTY],
+			];
+
+			// Set the utilzation to 2 different strategies
+			await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyUpdate(UTILIZED_STRATEGIES)).to.be.not.rejected;
+
+			// Set deposits to open
+			await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyDepositOpenToggle()).to.be.not.rejected;
+
+			/**
+			* @notice Because UTILIZED_STRATEGIES has 2 stratgies with a split of 50/50, the same amount (2) is set for
+			* each.
+			*/
+
+			const STRATEGY_DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil.calculateERC20RequiredByTotalAmount(
+				ethers.utils.parseUnits("2", 18)
+			);
+
+			const STRATEGY2_DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil2.calculateERC20RequiredByTotalAmount(
+				ethers.utils.parseUnits("2", 18)
+			);
+
+			// Pass in value for 2 strategies
+			const VALID: UtilizedEMPStrategyERC20Amount = [
+				[STRATEGY_DEPOSIT_AMOUNTS[0], STRATEGY_DEPOSIT_AMOUNTS[1]],
+				[STRATEGY2_DEPOSIT_AMOUNTS[0]]
+			];
+
+			// Approve tokens
+			await mockERC20A.approve(strategyInteractorDummy.address, STRATEGY_DEPOSIT_AMOUNTS[0]);
+			await mockERC20B.approve(strategyInteractorDummy.address, STRATEGY_DEPOSIT_AMOUNTS[1]);
+			await mockERC20C.approve(strategyInteractorDummy.address, STRATEGY2_DEPOSIT_AMOUNTS[0]);
+
+			await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyDeposit(VALID)).to.not.be.reverted;
+
+			console.log(await yieldSyncV1EMPStrategy.balanceOf(yieldSyncV1EMP.address));
+
+			// Check that the OWNER address received something
+			expect(await yieldSyncV1EMP.balanceOf(OWNER.address)).to.be.greaterThan(0);
+
+			// Set withdraw to open
+			await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyWithdrawOpenToggle()).to.be.not.rejected;
+
+			const VALID_BALANCE = await yieldSyncV1EMP.balanceOf(OWNER.address);
+
+			await yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyWithdraw(VALID_BALANCE);
+		});
 
 		it("Should burn EMP tokens afterward..");
 	});

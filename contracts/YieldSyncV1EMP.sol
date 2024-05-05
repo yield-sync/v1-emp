@@ -200,8 +200,8 @@ contract YieldSyncV1EMP is
 				msg.sender,
 				SafeMath.div(SafeMath.mul(utilizedyieldSyncV1EMPStrategyPerToken, _ERC20Amount), 1e18)
 			);
-
-			_burn(msg.sender, _ERC20Amount);
 		}
+
+		_burn(msg.sender, _ERC20Amount);
 	}
 }
