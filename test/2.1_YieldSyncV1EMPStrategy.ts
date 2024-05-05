@@ -36,7 +36,7 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Depositing Tokens", async () => {
 		mockERC206 = await (await MockERC206.deploy()).deployed();
 		eTHValueFeedDummy = await (await ETHValueFeedDummy.deploy()).deployed();
 		strategyInteractorDummy = await (await StrategyInteractorDummy.deploy()).deployed();
-		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy()).deployed();
+		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy(OWNER.address)).deployed();
 		yieldSyncV1EMPStrategyDeployer = await (
 			await YieldSyncV1EMPStrategyDeployer.deploy(yieldSyncV1EMPRegistry.address)
 		).deployed();

@@ -12,9 +12,11 @@ describe("[0.0] YieldSyncV1EMPRegistry.sol - Setup", async () => {
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
+		const [OWNER] = await ethers.getSigners();
+
 		const YieldSyncV1EMPRegistry: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPRegistry");
 
-		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy()).deployed();
+		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy(OWNER.address)).deployed();
 	});
 
 	describe("function yieldSyncV1EMPDeployerUpdate()", async () => {

@@ -8,6 +8,8 @@ import { IYieldSyncV1EMPRegistry } from "./interface/IYieldSyncV1EMPRegistry.sol
 contract YieldSyncV1EMPRegistry is
 	IYieldSyncV1EMPRegistry
 {
+	address public immutable YIELD_SYNC_GOVERNANCE;
+
 	address public manager;
 	address public yieldSyncV1EMPDeployer;
 	address public yieldSyncV1EMPStrategyDeployer;
@@ -28,8 +30,10 @@ contract YieldSyncV1EMPRegistry is
 	) public override yieldSyncV1EMPStrategyId_yieldSyncV1EMPStrategy;
 
 
-	constructor ()
+	constructor (address yieldSyncGovernance)
 	{
+		YIELD_SYNC_GOVERNANCE = yieldSyncGovernance;
+
 		yieldSyncEMPIdTracker = 0;
 		yieldSyncEMPStrategyIdTracker = 0;
 

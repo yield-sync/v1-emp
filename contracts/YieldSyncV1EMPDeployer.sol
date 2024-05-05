@@ -22,20 +22,16 @@ contract YieldSyncV1EMPDeployer is
 	{}
 
 
-	address public immutable YIELD_SYNC_GOVERNANCE;
-
 	uint256 public fee;
 	uint256 public yieldSyncAssetAllocatorIdTracker;
 
 	IYieldSyncV1EMPRegistry public immutable I_YIELD_SYNC_V1_EMP_REGISTRY;
 
 
-	constructor (address _yieldSyncGovernance, address _yieldSyncV1EMPRegistry)
+	constructor (address _yieldSyncV1EMPRegistry)
 	{
 		fee = 0;
 		yieldSyncAssetAllocatorIdTracker = 0;
-
-		YIELD_SYNC_GOVERNANCE = _yieldSyncGovernance;
 
 		I_YIELD_SYNC_V1_EMP_REGISTRY = IYieldSyncV1EMPRegistry(_yieldSyncV1EMPRegistry);
 	}
