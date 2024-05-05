@@ -304,6 +304,10 @@ describe("[4.2] YieldSyncV1EMP.sol - Withdrawing Tokens", async () => {
 			await yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyWithdraw(VALID_BALANCE);
 
 			expect(await yieldSyncV1EMP.balanceOf(OWNER.address)).to.be.equal(0);
+
+			// Check that the strategy tokens are burnt after withdrawing
+			expect(await yieldSyncV1EMPStrategy.balanceOf(yieldSyncV1EMP.address)).to.be.equal(0);
+			expect(await yieldSyncV1EMPStrategy2.balanceOf(yieldSyncV1EMP.address)).to.be.equal(0);
 		});
 	});
 });
