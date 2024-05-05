@@ -194,14 +194,14 @@ describe("[4.1] YieldSyncV1EMP.sol - Depositing Tokens", async () => {
 			);
 		});
 
-		it("Should NOT allow invalid lengthed _utilizedERC20Amount (1D)..", async () => {
+		it("Should NOT allow invalid lengthed _utilizedYieldSyncV1EMPStrategyERC20Amount (1D)..", async () => {
 			/**
 			* @notice This test is to check that if the total amount of strategies is correctly set, then passing in a param
 			* with incorrect first dimension of the 2d param will be rejected.
 			*/
 			const UtilizedEMPStrategy: UtilizedEMPStrategyUpdate = [[yieldSyncV1EMPStrategy.address, PERCENT.HUNDRED]];
 
-			// Set the utilzation to a single strategies
+			// Set the utilization to a single strategies
 			await expect(
 				yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyUpdate(UtilizedEMPStrategy)
 			).to.be.not.rejected;
@@ -224,7 +224,7 @@ describe("[4.1] YieldSyncV1EMP.sol - Depositing Tokens", async () => {
 				[yieldSyncV1EMPStrategy2.address, PERCENT.FIFTY],
 			];
 
-			// Set the utilzation to a single strategies
+			// Set the utilization to 2 strategies
 			await expect(
 				yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyUpdate(UtilizedEMPStrategy2)
 			).to.be.not.rejected;
@@ -237,7 +237,7 @@ describe("[4.1] YieldSyncV1EMP.sol - Depositing Tokens", async () => {
 				[ethers.utils.parseUnits("2", 18), ethers.utils.parseUnits("2", 18)]
 			];
 
-			await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyDeposit(INVALID)).to.be.rejectedWith(
+			await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyDeposit(INVALID2)).to.be.rejectedWith(
 				ERROR.INVALID_UTILIZED_ERC20_AMOUNT_EMP
 			);
 		});
