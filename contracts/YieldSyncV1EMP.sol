@@ -2,6 +2,7 @@
 pragma solidity ^0.8.18;
 
 
+import { IAccessControlEnumerable } from "@openzeppelin/contracts/access/IAccessControlEnumerable.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
@@ -43,6 +44,16 @@ contract YieldSyncV1EMP is
 		I_YIELD_SYNC_V1_EMP_REGISTRY = IYieldSyncV1EMPRegistry(_yieldSyncV1EMPRegistry);
 	}
 
+
+	modifier authContractYieldSyncGovernance(bytes32 _role)
+	{
+		require(
+			IAccessControlEnumerable(I_YIELD_SYNC_V1_EMP_REGISTRY.YIELD_SYNC_GOVERNANCE()).hasRole(_role, msg.sender),
+			"!auth"
+		);
+
+		_;
+	}
 
 	modifier authManager()
 	{

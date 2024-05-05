@@ -2,15 +2,16 @@
 pragma solidity ^0.8.18;
 
 
+import { IAccessControlEnumerable } from "@openzeppelin/contracts/access/IAccessControlEnumerable.sol";
+
 import { IYieldSyncV1EMPRegistry } from "./interface/IYieldSyncV1EMPRegistry.sol";
 
 
 contract YieldSyncV1EMPRegistry is
 	IYieldSyncV1EMPRegistry
 {
-	address public immutable YIELD_SYNC_GOVERNANCE;
+	address public override immutable YIELD_SYNC_GOVERNANCE;
 
-	address public manager;
 	address public yieldSyncV1EMPDeployer;
 	address public yieldSyncV1EMPStrategyDeployer;
 
@@ -36,14 +37,12 @@ contract YieldSyncV1EMPRegistry is
 
 		yieldSyncEMPIdTracker = 0;
 		yieldSyncEMPStrategyIdTracker = 0;
-
-		manager = msg.sender;
 	}
 
 
-	modifier authManager()
+	modifier authContractYieldSyncGovernance(bytes32 _role)
 	{
-		require(manager == msg.sender, "!(manager == msg.sender)");
+		require(IAccessControlEnumerable(YIELD_SYNC_GOVERNANCE).hasRole(_role, msg.sender), "!authorized");
 
 		_;
 	}
@@ -53,9 +52,9 @@ contract YieldSyncV1EMPRegistry is
 	function yieldSyncV1EMPDeployerUpdate(address _yieldSyncV1EMPDeployer)
 		public
 		override
-		authManager()
+		authContractYieldSyncGovernance(bytes32(0))
 	{
-		require(yieldSyncV1EMPDeployer == address(0), "yieldSyncV1EMPDeployer != address(0)");
+		require(yieldSyncV1EMPDeployer == address(0), "!(yieldSyncV1EMPDeployer == address(0))");
 
 		yieldSyncV1EMPDeployer = _yieldSyncV1EMPDeployer;
 	}
@@ -65,7 +64,7 @@ contract YieldSyncV1EMPRegistry is
 		public
 		override
 	{
-		require(yieldSyncV1EMPDeployer == msg.sender, "yieldSyncV1EMPDeployer != msg.sender");
+		require(yieldSyncV1EMPDeployer == msg.sender, "!(yieldSyncV1EMPDeployer == msg.sender)");
 
 		yieldSyncEMPIdTracker++;
 
@@ -77,9 +76,9 @@ contract YieldSyncV1EMPRegistry is
 	function yieldSyncV1EMPStrategyDeployerUpdate(address _yieldSyncV1EMPStrategyDeployer)
 		public
 		override
-		authManager()
+		authContractYieldSyncGovernance(bytes32(0))
 	{
-		require(yieldSyncV1EMPStrategyDeployer == address(0), "yieldSyncV1EMPStrategyDeployer != address(0)");
+		require(yieldSyncV1EMPStrategyDeployer == address(0), "!(yieldSyncV1EMPStrategyDeployer == address(0))");
 
 		yieldSyncV1EMPStrategyDeployer = _yieldSyncV1EMPStrategyDeployer;
 	}
@@ -89,7 +88,7 @@ contract YieldSyncV1EMPRegistry is
 		public
 		override
 	{
-		require(yieldSyncV1EMPStrategyDeployer == msg.sender, "yieldSyncV1EMPStrategyDeployer != msg.sender");
+		require(yieldSyncV1EMPStrategyDeployer == msg.sender, "!(yieldSyncV1EMPStrategyDeployer == msg.sender)");
 
 		yieldSyncEMPStrategyIdTracker++;
 

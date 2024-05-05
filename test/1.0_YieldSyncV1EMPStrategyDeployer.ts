@@ -6,8 +6,10 @@ import { Contract, ContractFactory } from "ethers";
 
 
 describe("[1.0] YieldSyncV1EMPStrategyDeployer.sol - Setup", async () => {
+	let mockYieldSyncGovernance: Contract;
 	let yieldSyncV1EMPRegistry: Contract;
 	let yieldSyncV1EMPStrategyDeployer: Contract;
+
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
 		/**
@@ -15,12 +17,12 @@ describe("[1.0] YieldSyncV1EMPStrategyDeployer.sol - Setup", async () => {
 		* 1) Deploy a registry
 		* 2) deploys an EMP Strategy Deployer and registers it on the registry
 		*/
-		const [OWNER] = await ethers.getSigners();
-
+		const MockYieldSyncGovernance: ContractFactory = await ethers.getContractFactory("MockYieldSyncGovernance");
 		const YieldSyncV1EMPRegistry: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPRegistry");
 		const YieldSyncV1EMPStrategyDeployer: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPStrategyDeployer");
 
-		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy(OWNER.address)).deployed();
+		mockYieldSyncGovernance = await (await MockYieldSyncGovernance.deploy()).deployed();
+		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy(mockYieldSyncGovernance.address)).deployed();
 
 		yieldSyncV1EMPStrategyDeployer = await (
 			await YieldSyncV1EMPStrategyDeployer.deploy(yieldSyncV1EMPRegistry.address)

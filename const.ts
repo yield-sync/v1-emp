@@ -8,6 +8,7 @@ export const ERROR = {
 	ETH_FEED_NOT_SET: "!(address(iYieldSyncV1EMPETHValueFeed) != address(0))",
 	NOT_COMPUTED: "!computed",
 	NOT_EMP: "!(I_YIELD_SYNC_V1_EMP_REGISTRY.yieldSyncV1EMP_yieldSyncV1EMPId(msg.sender) > 0)",
+	NOT_AUTHORIZED: "!authorized",
 	NOT_MANAGER: "!(manager == msg.sender)",
 	INVALID_ALLOCATION: "!(utilizedERC20AllocationTotal == ONE_HUNDRED_PERCENT)",
 	INVALID_ALLOCATION_STRATEGY: "!(utilizedYieldSyncV1EMPStrategyAllocationTotal == ONE_HUNDRED_PERCENT)",

@@ -5,6 +5,15 @@ pragma solidity ^0.8.18;
 interface IYieldSyncV1EMPRegistry
 {
 	/**
+	* @dev [view-address]
+	* @return {address}
+	*/
+	function YIELD_SYNC_GOVERNANCE()
+		external
+		returns (address)
+	;
+
+	/**
 	* @param _yieldSyncV1EMP {address}
 	* @return yieldSyncV1EMPId_ {uint256}
 	*/
