@@ -196,7 +196,6 @@ contract YieldSyncV1EMP is
 
 			require(computed, "!computed");
 
-			// Withdraw the tokens to the user
 			IYieldSyncV1EMPStrategy(_utilizedYieldSyncV1EMPStrategy[i].yieldSyncV1EMPStrategy).utilizedERC20Withdraw(
 				msg.sender,
 				SafeMath.div(SafeMath.mul(utilizedyieldSyncV1EMPStrategyPerToken, _ERC20Amount), 1e18)
