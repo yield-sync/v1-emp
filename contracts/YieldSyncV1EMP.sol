@@ -7,7 +7,8 @@ import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-import { IYieldSyncV1EMP, IYieldSyncV1EMPStrategy, UtilizedYieldSyncV1EMPStrategy } from "./interface/IYieldSyncV1EMP.sol";
+import { IYieldSyncV1EMP, IYieldSyncV1EMPRegistry, UtilizedYieldSyncV1EMPStrategy } from "./interface/IYieldSyncV1EMP.sol";
+import { IYieldSyncV1EMPStrategy } from "./interface/IYieldSyncV1EMPStrategy.sol";
 
 
 using SafeERC20 for ERC20;
@@ -26,16 +27,20 @@ contract YieldSyncV1EMP is
 	uint256 public constant override INITIAL_MINT_RATE = 100;
 	uint256 public constant override ONE_HUNDRED_PERCENT = 1e18;
 
+	IYieldSyncV1EMPRegistry public override immutable I_YIELD_SYNC_V1_EMP_REGISTRY;
+
 	UtilizedYieldSyncV1EMPStrategy[] internal _utilizedYieldSyncV1EMPStrategy;
 
 
-	constructor (address _manager, string memory _name, string memory _symbol)
+	constructor (address _manager, address _yieldSyncV1EMPRegistry, string memory _name, string memory _symbol)
 		ERC20(_name, _symbol)
 	{
 		utilizedYieldSyncV1EMPStrategyDepositOpen = false;
 		utilizedYieldSyncV1EMPStrategyWithdrawOpen = false;
 
 		manager = _manager;
+
+		I_YIELD_SYNC_V1_EMP_REGISTRY = IYieldSyncV1EMPRegistry(_yieldSyncV1EMPRegistry);
 	}
 
 

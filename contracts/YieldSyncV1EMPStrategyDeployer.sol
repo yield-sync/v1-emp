@@ -2,8 +2,6 @@
 pragma solidity ^0.8.18;
 
 
-import { IAccessControlEnumerable } from "@openzeppelin/contracts/access/IAccessControlEnumerable.sol";
-
 import { IYieldSyncV1EMPStrategyDeployer } from "./interface/IYieldSyncV1EMPStrategyDeployer.sol";
 import { YieldSyncV1EMPStrategy } from "./YieldSyncV1EMPStrategy.sol";
 import { IYieldSyncV1EMPRegistry } from "./interface/IYieldSyncV1EMPRegistry.sol";
@@ -24,15 +22,11 @@ contract YieldSyncV1EMPStrategyDeployer is
 	{}
 
 
-	uint256 public fee;
-
 	IYieldSyncV1EMPRegistry public immutable I_YIELD_SYNC_V1_EMP_REGISTRY;
 
 
 	constructor (address _yieldSyncV1EMPRegistry)
 	{
-		fee = 0;
-
 		I_YIELD_SYNC_V1_EMP_REGISTRY = IYieldSyncV1EMPRegistry(_yieldSyncV1EMPRegistry);
 	}
 

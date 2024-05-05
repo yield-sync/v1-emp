@@ -22,32 +22,22 @@ contract YieldSyncV1EMPDeployer is
 	{}
 
 
-	uint256 public fee;
-	uint256 public yieldSyncAssetAllocatorIdTracker;
-
 	IYieldSyncV1EMPRegistry public immutable I_YIELD_SYNC_V1_EMP_REGISTRY;
 
 
 	constructor (address _yieldSyncV1EMPRegistry)
 	{
-		fee = 0;
-		yieldSyncAssetAllocatorIdTracker = 0;
-
 		I_YIELD_SYNC_V1_EMP_REGISTRY = IYieldSyncV1EMPRegistry(_yieldSyncV1EMPRegistry);
 	}
 
 
+	/// @inheritdoc IYieldSyncV1EMPDeployer
 	function deployYieldSyncV1EMP(string memory _name, string memory _symbol)
 		public
-		payable
 		returns (address yieldSyncV1EMP_)
 	{
-		require(msg.value >= fee, "!msg.value");
+		yieldSyncV1EMP_ = address(new YieldSyncV1EMP(msg.sender, address(I_YIELD_SYNC_V1_EMP_REGISTRY), _name, _symbol));
 
-		address yieldSyncV1EMP = address(new YieldSyncV1EMP(msg.sender, _name, _symbol));
-
-		I_YIELD_SYNC_V1_EMP_REGISTRY.yieldSyncV1EMPRegister(yieldSyncV1EMP);
-
-		return yieldSyncV1EMP;
+		I_YIELD_SYNC_V1_EMP_REGISTRY.yieldSyncV1EMPRegister(yieldSyncV1EMP_);
 	}
 }

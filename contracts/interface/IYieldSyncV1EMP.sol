@@ -5,7 +5,7 @@ pragma solidity ^0.8.18;
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-import { IYieldSyncV1EMPStrategy, UtilizedERC20 } from "./IYieldSyncV1EMPStrategy.sol";
+import { IYieldSyncV1EMPRegistry } from "./IYieldSyncV1EMPRegistry.sol";
 
 
 using SafeERC20 for IERC20;
@@ -49,6 +49,17 @@ interface IYieldSyncV1EMP is
 		external
 		view
 		returns (bool)
+	;
+
+	/**
+	* @dev [view-IYieldSyncV1EMPRegistry]
+	* @notice Implemented IYieldSyncV1EMPRegistry
+	* @return {IYieldSyncV1EMPRegistry}
+	*/
+	function I_YIELD_SYNC_V1_EMP_REGISTRY()
+		external
+		view
+		returns (IYieldSyncV1EMPRegistry)
 	;
 
 	/**

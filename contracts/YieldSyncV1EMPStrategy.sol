@@ -17,9 +17,9 @@ import {
 
 
 contract YieldSyncV1EMPStrategy is
+	ReentrancyGuard,
 	ERC20,
-	IYieldSyncV1EMPStrategy,
-	ReentrancyGuard
+	IYieldSyncV1EMPStrategy
 {
 	address public override manager;
 
