@@ -21,7 +21,8 @@ export const ERROR = {
 	UTILIZED_ERC20_DEPOSIT_OPEN: "!(utilizedERC20DepositOpen && !utilizedERC20WithdrawOpen)",
 	WITHDRAW_NOT_OPEN: "!utilizedERC20WithdrawOpen",
 	UTILIZED_YIELD_SYNC_V1_EMP_STRATEGY_DEPOSIT_NOT_OPEN: "!utilizedYieldSyncV1EMPStrategyDepositOpen",
-	UTILIZED_YIELD_SYNC_V1_EMP_STRATEGY_WITHDRAW_NOT_OPEN: "!utilizedYieldSyncV1EMPStrategyWithdrawOpen"
+	UTILIZED_YIELD_SYNC_V1_EMP_STRATEGY_WITHDRAW_NOT_OPEN: "!utilizedYieldSyncV1EMPStrategyWithdrawOpen",
+	UTILIZED_YIELD_SYNC_V1_EMP_STRATEGY_INVAID_DEPOSIT_AMOUNT: "!(_utilizedYieldSyncV1EMPStrategy[i].allocation == utilizedERC20AmountAllocationActual)"
 }
 
 export const PERCENT = {
