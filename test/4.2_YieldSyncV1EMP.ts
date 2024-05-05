@@ -8,7 +8,7 @@ import { ERROR, PERCENT } from "../const";
 import StrategyTransferUtil from "../scripts/StrategyTransferUtil";
 
 
-describe("[4.0] YieldSyncV1EMP.sol - Setup", async () => {
+describe("[4.2] YieldSyncV1EMP.sol - Withdrawing Tokens", async () => {
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;
 	let mockERC20C: Contract;
@@ -173,89 +173,25 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () => {
 		strategyTransferUtil2 = new StrategyTransferUtil(yieldSyncV1EMPStrategy2, eTHValueFeedDummy)
 	});
 
-	describe("function utilizedYieldSyncV1EMPStrategyUpdate()", async () => {
-		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
-			const [, ADDR_1] = await ethers.getSigners();
-
-			const UtilizedEMPStrategy: UtilizedEMPStrategyUpdate = [];
-
-			await expect(
-				yieldSyncV1EMP.connect(ADDR_1).utilizedYieldSyncV1EMPStrategyUpdate(UtilizedEMPStrategy)
-			).to.be.rejectedWith(ERROR.NOT_MANAGER);
-		});
-
-		it("Should NOT allow strategies that add up to more than 100% to EMP..", async () => {
+	describe("function utilizedYieldSyncV1EMPStrategyWithdraw()", async () => {
+		it("Should NOT allow withdrawing if not open..", async () => {
+			/**
+			* @notice This test is to check that depositing must be toggled on in order to call the function properly.
+			*/
 			const UtilizedEMPStrategy: UtilizedEMPStrategyUpdate = [
-				[yieldSyncV1EMPStrategy.address, PERCENT.HUNDRED],
-				[yieldSyncV1EMPStrategy2.address, PERCENT.FIFTY],
-			];
-
-			await expect(
-				yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyUpdate(UtilizedEMPStrategy)
-			).to.be.rejectedWith(ERROR.INVALID_ALLOCATION_STRATEGY);
-		});
-
-		it("Should allow attaching Strategy to EMP..", async () => {
-			const UtilizedEMPStrategy: [string, string][] = [
-				[yieldSyncV1EMPStrategy.address, PERCENT.HUNDRED]
-			];
-
-			await expect(
-				yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyUpdate(UtilizedEMPStrategy)
-			).to.be.not.rejected;
-
-			const strategies: UtilizedEMPStrategy[] = await yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategy();
-
-			expect(strategies.length).to.be.equal(UtilizedEMPStrategy.length);
-
-			expect(strategies[0].yieldSyncV1EMPStrategy).to.be.equal(yieldSyncV1EMPStrategy.address);
-			expect(strategies[0].allocation).to.be.equal(PERCENT.HUNDRED);
-		});
-
-		it("Should allow attaching multiple Strategies to EMP..", async () => {
-			const UtilizedEMPStrategy: [string, string][] = [
 				[yieldSyncV1EMPStrategy.address, PERCENT.FIFTY],
 				[yieldSyncV1EMPStrategy2.address, PERCENT.FIFTY],
 			];
 
+			// Set the utilzation to 2 different strategies
 			await expect(
 				yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyUpdate(UtilizedEMPStrategy)
 			).to.be.not.rejected;
 
-			const strategies: UtilizedEMPStrategy[] = await yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategy();
-
-			expect(strategies.length).to.be.equal(UtilizedEMPStrategy.length);
-
-			for (let i = 0; i < strategies.length; i++)
-			{
-				expect(strategies[i].yieldSyncV1EMPStrategy).to.be.equal(UtilizedEMPStrategy[i][0]);
-				expect(strategies[i].allocation).to.be.equal(UtilizedEMPStrategy[i][1]);
-			}
+			// Even if utilizedERC20Amounts, the function should revert with reason that deposits are NOT open
+			await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyWithdraw(0)).to.be.rejectedWith(
+				ERROR.UTILIZED_YIELD_SYNC_V1_EMP_STRATEGY_WITHDRAW_NOT_OPEN
+			);
 		});
-	});
-
-	describe("function managerUpdate()", async () => {
-		it(
-			"[auth] Should revert when unauthorized msg.sender calls..",
-			async () => {
-				const [, ADDR_1] = await ethers.getSigners();
-				await expect(
-					yieldSyncV1EMP.connect(ADDR_1).managerUpdate(ADDR_1.address)
-				).to.be.rejectedWith(ERROR.NOT_MANAGER);
-			}
-		);
-
-		it(
-			"Should allow manager to be changed..",
-			async () => {
-				const [, ADDR_1] = await ethers.getSigners();
-
-				await expect(
-					yieldSyncV1EMP.managerUpdate(ADDR_1.address)
-				).to.be.not.reverted;
-
-				expect(await yieldSyncV1EMP.manager()).to.be.equal(ADDR_1.address);
-			}
-		);
 	});
 });

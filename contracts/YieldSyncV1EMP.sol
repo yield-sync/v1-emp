@@ -78,7 +78,7 @@ contract YieldSyncV1EMP is
 	}
 
 	/// @inheritdoc IYieldSyncV1EMP
-	function utilizedYieldSyncV1EMPStrategyDeposit(uint256[][] memory _utilizedERC20Amount)
+	function utilizedYieldSyncV1EMPStrategyDeposit(uint256[][] memory _utilizedYieldSyncV1EMPStrategyERC20Amount)
 		public
 		override
 		nonReentrant()
@@ -86,8 +86,8 @@ contract YieldSyncV1EMP is
 		require(utilizedYieldSyncV1EMPStrategyDepositOpen, "!utilizedYieldSyncV1EMPStrategyDepositOpen");
 
 		require(
-			_utilizedYieldSyncV1EMPStrategy.length == _utilizedERC20Amount.length,
-			"!(_utilizedYieldSyncV1EMPStrategy.length == _utilizedERC20Amount.length)"
+			_utilizedYieldSyncV1EMPStrategy.length == _utilizedYieldSyncV1EMPStrategyERC20Amount.length,
+			"!(_utilizedYieldSyncV1EMPStrategy.length == _utilizedYieldSyncV1EMPStrategyERC20Amount.length)"
 		);
 
 		uint256 _utilizedERC20ETHValueTotal = 0;
@@ -99,7 +99,7 @@ contract YieldSyncV1EMP is
 			uint256 _utilizedERC20AmountETHValue = IYieldSyncV1EMPStrategy(
 				_utilizedYieldSyncV1EMPStrategy[i].yieldSyncV1EMPStrategy
 			).utilizedERC20AmountETHValue(
-				_utilizedERC20Amount[i]
+				_utilizedYieldSyncV1EMPStrategyERC20Amount[i]
 			);
 
 			_utilizedERC20ETHValue[i] = _utilizedERC20AmountETHValue;
@@ -126,7 +126,7 @@ contract YieldSyncV1EMP is
 		{
 			IYieldSyncV1EMPStrategy(_utilizedYieldSyncV1EMPStrategy[i].yieldSyncV1EMPStrategy).utilizedERC20Deposit(
 				msg.sender,
-				_utilizedERC20Amount[i]
+				_utilizedYieldSyncV1EMPStrategyERC20Amount[i]
 			);
 		}
 

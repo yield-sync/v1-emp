@@ -10,8 +10,7 @@ import { PERCENT } from "../const";
 const ZERO = ethers.utils.parseUnits('0', 18);
 
 
-describe("[2.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
-{
+describe("[2.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () => {
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;
 	let mockERC20C: Contract;
@@ -22,8 +21,7 @@ describe("[2.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
 	let yieldSyncV1EMPStrategyDeployer: Contract;
 
 
-	beforeEach("[beforeEach] Set up contracts..", async () =>
-	{
+	beforeEach("[beforeEach] Set up contracts..", async () => {
 		const [OWNER] = await ethers.getSigners();
 
 		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
@@ -86,16 +84,12 @@ describe("[2.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
 	});
 
 
-	describe("function utilizedERC20Deposit() - Utilized ERC20 price change", async () =>
-	{
-		describe("[SINGLE ERC20]", async () =>
-		{
-			describe("[DECIMALS = 18]", async () =>
-			{
+	describe("function utilizedERC20Deposit() - Utilized ERC20 price change", async () => {
+		describe("[SINGLE ERC20]", async () => {
+			describe("[DECIMALS = 18]", async () => {
 				it(
 					"[100] Should receive strategy tokens based on what market value is (denominated in ETH)..",
-					async () =>
-					{
+					async () => {
 						const [OWNER] = await ethers.getSigners();
 
 						// Initialize strategy with mock ERC20
@@ -136,16 +130,12 @@ describe("[2.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () =>
 		});
 	});
 
-	describe("function utilizedERC20Withdraw() - Utilized ERC20 price change", async () =>
-	{
-		describe("[SINGLE ERC20]", async () =>
-		{
-			describe("[DECIMALS = 18]", async () =>
-			{
+	describe("function utilizedERC20Withdraw() - Utilized ERC20 price change", async () => {
+		describe("[SINGLE ERC20]", async () => {
+			describe("[DECIMALS = 18]", async () => {
 				it(
 					"[100] Should return same amount of ERC20 even if value of ERC20 changes..",
-					async () =>
-					{
+					async () => {
 						const [OWNER] = await ethers.getSigners();
 
 						// Initialize strategy with mock ERC20
