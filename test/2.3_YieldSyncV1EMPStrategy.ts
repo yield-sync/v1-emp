@@ -162,6 +162,7 @@ describe("[2.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () => {
 
 						// [main-test] Withdraw ERC20 tokens into the strategy
 						await yieldSyncV1EMPStrategy.utilizedERC20Withdraw(
+							OWNER.address,
 							await yieldSyncV1EMPStrategy.balanceOf(OWNER.address)
 						);
 
@@ -242,7 +243,7 @@ describe("[2.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () => {
 				);
 
 				// [main-test] Withdraw ERC20 tokens into the strategy
-				await yieldSyncV1EMPStrategy.utilizedERC20Withdraw(await yieldSyncV1EMPStrategy.balanceOf(OWNER.address));
+				await yieldSyncV1EMPStrategy.utilizedERC20Withdraw(OWNER.address, await yieldSyncV1EMPStrategy.balanceOf(OWNER.address));
 
 				// Supply put back to original
 				expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.equal(STRAT_TOTAL_SUPPLY_B4);

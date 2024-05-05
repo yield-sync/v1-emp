@@ -193,5 +193,11 @@ describe("[4.2] YieldSyncV1EMP.sol - Withdrawing Tokens", async () => {
 				ERROR.UTILIZED_YIELD_SYNC_V1_EMP_STRATEGY_WITHDRAW_NOT_OPEN
 			);
 		});
+
+		it("Should not allow withdrawing with EMP ERC20 amount that msg.sender does NOT have..");
+
+		it("Should allow withdrawing tokens from strategy..");
+
+		it("Should burn EMP tokens afterward..");
 	});
 });

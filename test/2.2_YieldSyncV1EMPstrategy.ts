@@ -74,7 +74,9 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
 			it(
 				"[modifier] Should revert if ETH FEED is not set..",
 				async () => {
-					await expect(yieldSyncV1EMPStrategy.utilizedERC20Withdraw(0)).to.be.rejectedWith(
+					const [OWNER] = await ethers.getSigners();
+
+					await expect(yieldSyncV1EMPStrategy.utilizedERC20Withdraw(OWNER.address, 0)).to.be.rejectedWith(
 						ERROR.ETH_FEED_NOT_SET
 					);
 				}
@@ -83,11 +85,13 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
 			it(
 				"[modifier] Should revert if strategy is not set..",
 				async () => {
+					const [OWNER] = await ethers.getSigners();
+
 					await expect(
 						yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
 					).to.not.be.reverted;
 
-					await expect(yieldSyncV1EMPStrategy.utilizedERC20Withdraw(0)).to.be.rejectedWith(
+					await expect(yieldSyncV1EMPStrategy.utilizedERC20Withdraw(OWNER.address, 0)).to.be.rejectedWith(
 						ERROR.STRATEGY_NOT_SET
 					);
 				}
@@ -145,7 +149,7 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
 					);
 
 					// [main-test] Withdraw ERC20 tokens into the strategy
-					await expect(yieldSyncV1EMPStrategy.utilizedERC20Withdraw(0)).to.be.rejectedWith(
+					await expect(yieldSyncV1EMPStrategy.utilizedERC20Withdraw(OWNER.address, 0)).to.be.rejectedWith(
 						ERROR.WITHDRAW_NOT_OPEN
 					);
 				}
@@ -210,6 +214,7 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
 						// [main-test] Withdraw ERC20 tokens into the strategy
 						await expect(
 							yieldSyncV1EMPStrategy.utilizedERC20Withdraw(
+								OWNER.address,
 								(await yieldSyncV1EMPStrategy.balanceOf(OWNER.address)).add(
 									await yieldSyncV1EMPStrategy.balanceOf(OWNER.address)
 								)
@@ -274,6 +279,7 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
 						// [main-test] Withdraw ERC20 tokens into the strategy
 						await expect(
 							yieldSyncV1EMPStrategy.utilizedERC20Withdraw(
+								OWNER.address,
 								await yieldSyncV1EMPStrategy.balanceOf(OWNER.address)
 							)
 						).to.be.not.reverted;
@@ -350,7 +356,7 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
 
 						// [main-test] Withdraw ERC20 tokens into the strategy
 						await expect(
-							yieldSyncV1EMPStrategy.utilizedERC20Withdraw(await yieldSyncV1EMPStrategy.balanceOf(OWNER.address))
+							yieldSyncV1EMPStrategy.utilizedERC20Withdraw(OWNER.address, await yieldSyncV1EMPStrategy.balanceOf(OWNER.address))
 						).to.be.not.reverted;
 
 						// Strategy token burned
@@ -419,7 +425,7 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
 
 						// [main-test] Withdraw ERC20 tokens into the strategy
 						await expect(
-							yieldSyncV1EMPStrategy.utilizedERC20Withdraw(await yieldSyncV1EMPStrategy.balanceOf(OWNER.address))
+							yieldSyncV1EMPStrategy.utilizedERC20Withdraw(OWNER.address, await yieldSyncV1EMPStrategy.balanceOf(OWNER.address))
 						).to.be.not.reverted;
 
 						// Strategy token burned
@@ -504,7 +510,7 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
 
 						// [main-test] Withdraw ERC20 tokens into the strategy
 						await expect(
-							yieldSyncV1EMPStrategy.utilizedERC20Withdraw(await yieldSyncV1EMPStrategy.balanceOf(OWNER.address))
+							yieldSyncV1EMPStrategy.utilizedERC20Withdraw(OWNER.address, await yieldSyncV1EMPStrategy.balanceOf(OWNER.address))
 						).to.be.not.reverted;
 
 
@@ -590,6 +596,7 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
 						// [main-test] Withdraw ERC20 tokens into the strategy
 						await expect(
 							yieldSyncV1EMPStrategy.utilizedERC20Withdraw(
+								OWNER.address,
 								await yieldSyncV1EMPStrategy.balanceOf(OWNER.address)
 							)
 						).to.be.not.reverted;
@@ -676,6 +683,7 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
 						// [main-test] Withdraw ERC20 tokens into the strategy
 						await expect(
 							yieldSyncV1EMPStrategy.utilizedERC20Withdraw(
+								OWNER.address,
 								await yieldSyncV1EMPStrategy.balanceOf(OWNER.address)
 							)
 						).to.be.not.reverted;
@@ -766,6 +774,7 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
 						// [main-test] Withdraw ERC20 tokens into the strategy
 						await expect(
 							yieldSyncV1EMPStrategy.utilizedERC20Withdraw(
+								OWNER.address,
 								await yieldSyncV1EMPStrategy.balanceOf(OWNER.address)
 							)
 						).to.be.not.reverted;
