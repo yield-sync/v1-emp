@@ -12,7 +12,7 @@ export const ERROR = {
 	INVALID_ALLOCATION: "!(utilizedERC20AllocationTotal == ONE_HUNDRED_PERCENT)",
 	INVALID_ALLOCATION_STRATEGY: "!(utilizedYieldSyncV1EMPStrategyAllocationTotal == ONE_HUNDRED_PERCENT)",
 	INVALID_AMOUNT_LENGTH: "!(_utilizedERC20.length == _utilizedERC20Amount.length)",
-	INVALID_BALANCE: "!(balanceOf(msg.sender) >= _tokenAmount)",
+	INVALID_BALANCE: "!(balanceOf(msg.sender) >= _ERC20Amount)",
 	INVALID_PURPOSE_LENGTH: "__utilizedERC20.length != _purpose.length",
 	INVALID_UTILIZED_ERC20_AMOUNT: "!(_utilizedERC20[i].allocation == utilizedERC20AmountAllocationActual)",
 	INVALID_UTILIZED_ERC20_AMOUNT_EMP: "!(_utilizedYieldSyncV1EMPStrategy.length == _utilizedYieldSyncV1EMPStrategyERC20Amount.length)",

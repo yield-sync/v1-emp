@@ -181,9 +181,10 @@ interface IYieldSyncV1EMPStrategy is
 
 	/**
 	* @notice Withdraw utilized ERC20s
+	* @param _to {address}
 	* @param _ERC20Amount {uint256}
 	*/
-	function utilizedERC20Withdraw(uint256 _ERC20Amount)
+	function utilizedERC20Withdraw(address _to, uint256 _ERC20Amount)
 		external
 	;
 

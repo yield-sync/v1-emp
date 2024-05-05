@@ -797,8 +797,6 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Depositing Tokens", async () => {
 					async () => {
 						const [OWNER] = await ethers.getSigners();
 
-						const CONTRACTS_TOKENS: Contract[] = [mockERC20A, mockERC206];
-
 						// Initialize strategy with mock ERC20
 						await expect(
 							await yieldSyncV1EMPStrategy.utilizedERC20Update(

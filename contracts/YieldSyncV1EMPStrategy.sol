@@ -262,7 +262,7 @@ contract YieldSyncV1EMPStrategy is
 	}
 
 	/// @inheritdoc IYieldSyncV1EMPStrategy
-	function utilizedERC20Withdraw(uint256 _tokenAmount)
+	function utilizedERC20Withdraw(address _to, uint256 _ERC20Amount)
 		public
 		override
 		authEMP()
@@ -271,7 +271,7 @@ contract YieldSyncV1EMPStrategy is
 	{
 		require(utilizedERC20WithdrawOpen, "!utilizedERC20WithdrawOpen");
 
-		require(balanceOf(msg.sender) >= _tokenAmount, "!(balanceOf(msg.sender) >= _tokenAmount)");
+		require(balanceOf(msg.sender) >= _ERC20Amount, "!(balanceOf(msg.sender) >= _ERC20Amount)");
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
@@ -285,14 +285,14 @@ contract YieldSyncV1EMPStrategy is
 				require(computed, "!computed");
 
 				iYieldSyncV1EMPStrategyInteractor.utilizedERC20Withdraw(
-					msg.sender,
+					_to,
 					_utilizedERC20[i].eRC20,
-					SafeMath.div(SafeMath.mul(utilizedERC20AmountPerToken, _tokenAmount), 1e18)
+					SafeMath.div(SafeMath.mul(utilizedERC20AmountPerToken, _ERC20Amount), 1e18)
 				);
 			}
 		}
 
-		_burn(msg.sender, _tokenAmount);
+		_burn(msg.sender, _ERC20Amount);
 	}
 
 	/// @inheritdoc IYieldSyncV1EMPStrategy
