@@ -199,21 +199,43 @@ describe("[4.1] YieldSyncV1EMP.sol - Depositing Tokens", async () => {
 			* @notice This test is to check that if the total amount of strategies is correctly set, then passing in a param
 			* with incorrect first dimension of the 2d param will be rejected.
 			*/
-			const UtilizedEMPStrategy: UtilizedEMPStrategyUpdate = [
-				[yieldSyncV1EMPStrategy.address, PERCENT.FIFTY],
-				[yieldSyncV1EMPStrategy2.address, PERCENT.FIFTY],
-			];
+			const UtilizedEMPStrategy: UtilizedEMPStrategyUpdate = [[yieldSyncV1EMPStrategy.address, PERCENT.HUNDRED]];
 
-			// Set the utilzation to 2 different strategies
+			// Set the utilzation to a single strategies
 			await expect(
 				yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyUpdate(UtilizedEMPStrategy)
 			).to.be.not.rejected;
 
-			// Set the utilzation to 2 different strategies
+			// Open deposits
 			await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyDepositOpenToggle()).to.be.not.rejected;
 
 			// Pass in value for 0 strategies
 			const INVALID: UtilizedEMPStrategyERC20Amount = [];
+
+			await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyDeposit(INVALID)).to.be.rejectedWith(
+				ERROR.INVALID_UTILIZED_ERC20_AMOUNT_EMP
+			);
+
+			// Close deposits
+			await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyDepositOpenToggle()).to.be.not.rejected;
+
+			const UtilizedEMPStrategy2: UtilizedEMPStrategyUpdate = [
+				[yieldSyncV1EMPStrategy.address, PERCENT.FIFTY],
+				[yieldSyncV1EMPStrategy2.address, PERCENT.FIFTY],
+			];
+
+			// Set the utilzation to a single strategies
+			await expect(
+				yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyUpdate(UtilizedEMPStrategy2)
+			).to.be.not.rejected;
+
+			// Open deposits
+			await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyDepositOpenToggle()).to.be.not.rejected;
+
+			// Pass in value for 1 strategies (should require 2)
+			const INVALID2: UtilizedEMPStrategyERC20Amount = [
+				[ethers.utils.parseUnits("2", 18), ethers.utils.parseUnits("2", 18)]
+			];
 
 			await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyDeposit(INVALID)).to.be.rejectedWith(
 				ERROR.INVALID_UTILIZED_ERC20_AMOUNT_EMP
