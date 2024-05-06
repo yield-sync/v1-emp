@@ -2,7 +2,6 @@
 pragma solidity ^0.8.18;
 
 
-import { IAccessControlEnumerable } from "@openzeppelin/contracts/access/IAccessControlEnumerable.sol";
 import { IYieldSyncGovernance } from "@yield-sync/v1-sdk/contracts/interface/IYieldSyncGovernance.sol";
 
 import { IYieldSyncV1EMPRegistry } from "./interface/IYieldSyncV1EMPRegistry.sol";
@@ -55,7 +54,7 @@ contract YieldSyncV1EMPRegistry is
 
 	modifier authYieldSyncGovernance()
 	{
-		require(IAccessControlEnumerable(YIELD_SYNC_GOVERNANCE).hasRole(bytes32(0), msg.sender), "!authorized");
+		require(IYieldSyncGovernance(YIELD_SYNC_GOVERNANCE).hasRole(bytes32(0), msg.sender), "!authorized");
 
 		_;
 	}
