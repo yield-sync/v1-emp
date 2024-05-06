@@ -93,7 +93,7 @@ contract YieldSyncV1EMPStrategy is
 	{
 		require(
 			!utilizedERC20DepositOpen && !utilizedERC20WithdrawOpen,
-			"!(utilizedERC20DepositOpen && !utilizedERC20WithdrawOpen)"
+			"!(!utilizedERC20DepositOpen && !utilizedERC20WithdrawOpen)"
 		);
 
 		_;
