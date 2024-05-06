@@ -14,16 +14,6 @@ interface IYieldSyncV1EMPRegistry
 	;
 
 	/**
-	* @dev [view-address]
-	* @return {address}
-	*/
-	function yieldSyncGovernancePayTo()
-		external
-		view
-		returns (address)
-	;
-
-	/**
 	* @param _yieldSyncV1EMP {address}
 	* @return yieldSyncV1EMPId_ {uint256}
 	*/
@@ -62,6 +52,23 @@ interface IYieldSyncV1EMPRegistry
 		view
 		returns (address yieldSyncV1EMPStrategy_)
 	;
+
+
+	/// @notice view
+
+
+	/**
+	* @dev [view-address]
+	* @return {address}
+	*/
+	function yieldSyncGovernancePayTo()
+		external
+		view
+		returns (address)
+	;
+
+
+	/// @notice mutative
 
 
 	/**
