@@ -117,6 +117,22 @@ interface IYieldSyncV1EMP is
 	;
 
 	/**
+	* @notice Udpate Fee Rate for Manager
+	* @param _feeRateManager {uint256}
+	*/
+	function feeRateManagerUpdate(uint256 _feeRateManager)
+		external
+	;
+
+	/**
+	* @notice Udpate Fee Rate for Yield Sync Governance
+	* @param _feeRateYieldSyncGovernance {uint256}
+	*/
+	function feeRateYieldSyncGovernanceUpdate(uint256 _feeRateYieldSyncGovernance)
+		external
+	;
+
+	/**
 	* @notice Update manager
 	* @param _manager {address}
 	*/

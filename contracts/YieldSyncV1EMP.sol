@@ -67,7 +67,7 @@ contract YieldSyncV1EMP is
 	{
 		require(
 			IAccessControlEnumerable(I_YIELD_SYNC_V1_EMP_REGISTRY.YIELD_SYNC_GOVERNANCE()).hasRole(bytes32(0), msg.sender),
-			"!auth"
+			"!authorized"
 		);
 
 		_;
@@ -113,6 +113,22 @@ contract YieldSyncV1EMP is
 
 	/// @notice mutative
 
+
+	/// @inheritdoc IYieldSyncV1EMP
+	function feeRateManagerUpdate(uint256 _feeRateManager)
+		public
+		authYieldSyncGovernanceOrManager()
+	{
+		feeRateManager = _feeRateManager;
+	}
+
+	/// @inheritdoc IYieldSyncV1EMP
+	function feeRateYieldSyncGovernanceUpdate(uint256 _feeRateYieldSyncGovernance)
+		public
+		authYieldSyncGovernance()
+	{
+		feeRateYieldSyncGovernance = _feeRateYieldSyncGovernance;
+	}
 
 	/// @inheritdoc IYieldSyncV1EMP
 	function managerUpdate(address _manager)

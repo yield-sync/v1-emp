@@ -172,6 +172,53 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () => {
 		strategyTransferUtil2 = new StrategyTransferUtil(yieldSyncV1EMPStrategy2, eTHValueFeedDummy)
 	});
 
+
+	describe("function feeRateManagerUpdate()", async () => {
+		it(
+			"[auth] Should revert when unauthorized msg.sender calls..",
+			async () => {
+				const [, ADDR_1] = await ethers.getSigners();
+
+				await expect(yieldSyncV1EMP.connect(ADDR_1).feeRateManagerUpdate(ADDR_1.address)).to.be.rejectedWith(
+					ERROR.NOT_AUTHORIZED
+				);
+			}
+		);
+
+		it(
+			"Should allow feeRateManager to be changed..",
+			async () => {
+				await expect(yieldSyncV1EMP.feeRateManagerUpdate(1)).to.be.not.reverted;
+
+				expect(await yieldSyncV1EMP.feeRateManager()).to.be.equal(1);
+			}
+		);
+	});
+
+	describe("function feeRateYieldSyncGovernanceUpdate()", async () => {
+		it(
+			"[auth] Should revert when unauthorized msg.sender calls..",
+			async () => {
+				const [, ADDR_1] = await ethers.getSigners();
+
+				await expect(
+					yieldSyncV1EMP.connect(ADDR_1).feeRateYieldSyncGovernanceUpdate(ADDR_1.address)
+				).to.be.rejectedWith(
+					ERROR.NOT_AUTHORIZED
+				);
+			}
+		);
+
+		it(
+			"Should allow feeRateManager to be changed..",
+			async () => {
+				await expect(yieldSyncV1EMP.feeRateYieldSyncGovernanceUpdate(1)).to.be.not.reverted;
+
+				expect(await yieldSyncV1EMP.feeRateYieldSyncGovernance()).to.be.equal(1);
+			}
+		);
+	});
+
 	describe("function utilizedYieldSyncV1EMPStrategyUpdate()", async () => {
 		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
 			const [, ADDR_1] = await ethers.getSigners();
