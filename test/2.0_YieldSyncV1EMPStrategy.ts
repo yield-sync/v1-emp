@@ -40,13 +40,13 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () => {
 		eTHValueFeedDummy = await (await ETHValueFeedDummy.deploy()).deployed();
 		strategyInteractorDummy = await (await StrategyInteractorDummy.deploy()).deployed();
 		mockYieldSyncGovernance = await (await MockYieldSyncGovernance.deploy()).deployed();
-
-		// Set Treasury
-		await mockYieldSyncGovernance.payToUpdate(TREASURY.address);
 		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy(mockYieldSyncGovernance.address)).deployed();
 		yieldSyncV1EMPStrategyDeployer = await (
 			await YieldSyncV1EMPStrategyDeployer.deploy(yieldSyncV1EMPRegistry.address)
 		).deployed();
+
+		// Set Treasury
+		await expect(mockYieldSyncGovernance.payToUpdate(TREASURY.address)).to.not.be.reverted;
 
 		// Mock owner being an EMP Deployer
 		await expect(

@@ -24,14 +24,14 @@ describe("[1.0] YieldSyncV1EMPStrategyDeployer.sol - Setup", async () => {
 
 		mockYieldSyncGovernance = await (await MockYieldSyncGovernance.deploy()).deployed();
 
-		// Set Treasury
-		await mockYieldSyncGovernance.payToUpdate(TREASURY.address);
-
 		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy(mockYieldSyncGovernance.address)).deployed();
 
 		yieldSyncV1EMPStrategyDeployer = await (
 			await YieldSyncV1EMPStrategyDeployer.deploy(yieldSyncV1EMPRegistry.address)
 		).deployed();
+
+		// Set Treasury
+		await expect(mockYieldSyncGovernance.payToUpdate(TREASURY.address)).to.not.be.reverted;
 
 		await expect(
 			yieldSyncV1EMPRegistry.yieldSyncV1EMPStrategyDeployerUpdate(yieldSyncV1EMPStrategyDeployer.address)
