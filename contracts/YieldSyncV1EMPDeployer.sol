@@ -10,6 +10,9 @@ import { IYieldSyncV1EMPRegistry } from "./interface/IYieldSyncV1EMPRegistry.sol
 contract YieldSyncV1EMPDeployer is
 	IYieldSyncV1EMPDeployer
 {
+	IYieldSyncV1EMPRegistry public immutable I_YIELD_SYNC_V1_EMP_REGISTRY;
+
+
 	receive ()
 		external
 		payable
@@ -20,9 +23,6 @@ contract YieldSyncV1EMPDeployer is
 		external
 		payable
 	{}
-
-
-	IYieldSyncV1EMPRegistry public immutable I_YIELD_SYNC_V1_EMP_REGISTRY;
 
 
 	constructor (address _yieldSyncV1EMPRegistry)

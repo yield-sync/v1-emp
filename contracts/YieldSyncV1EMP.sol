@@ -33,6 +33,18 @@ contract YieldSyncV1EMP is
 	UtilizedYieldSyncV1EMPStrategy[] internal _utilizedYieldSyncV1EMPStrategy;
 
 
+	receive ()
+		external
+		payable
+	{}
+
+
+	fallback ()
+		external
+		payable
+	{}
+
+
 	constructor (address _manager, address _yieldSyncV1EMPRegistry, string memory _name, string memory _symbol)
 		ERC20(_name, _symbol)
 	{
@@ -79,6 +91,9 @@ contract YieldSyncV1EMP is
 	}
 
 
+	/// @notice view
+
+
 	/// @inheritdoc IYieldSyncV1EMP
 	function utilizedYieldSyncV1EMPStrategy()
 		external
@@ -88,6 +103,9 @@ contract YieldSyncV1EMP is
 	{
 		return _utilizedYieldSyncV1EMPStrategy;
 	}
+
+
+	/// @notice mutative
 
 
 	/// @inheritdoc IYieldSyncV1EMP

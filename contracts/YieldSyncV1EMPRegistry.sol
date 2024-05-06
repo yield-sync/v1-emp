@@ -31,6 +31,18 @@ contract YieldSyncV1EMPRegistry is
 	) public override yieldSyncV1EMPStrategyId_yieldSyncV1EMPStrategy;
 
 
+	receive ()
+		external
+		payable
+	{}
+
+
+	fallback ()
+		external
+		payable
+	{}
+
+
 	constructor (address yieldSyncGovernance)
 	{
 		YIELD_SYNC_GOVERNANCE = yieldSyncGovernance;
