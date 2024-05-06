@@ -17,14 +17,14 @@ describe("[3.0] YieldSyncV1EMPDeployer.sol - Setup", async () => {
 		* 1) Deploy a registry
 		* 2) deploys an EMP Deployer and registers it on the registry
 		*/
-		const [OWNER] = await ethers.getSigners();
+		const [OWNER, ADDR_1] = await ethers.getSigners();
 
 		const MockYieldSyncGovernance: ContractFactory = await ethers.getContractFactory("MockYieldSyncGovernance");
 		const YieldSyncV1EMPRegistry: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPRegistry");
 		const YieldSyncV1EMPDeployer: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPDeployer");
 
 		mockYieldSyncGovernance = await (await MockYieldSyncGovernance.deploy()).deployed();
-		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy(mockYieldSyncGovernance.address, OWNER.address)).deployed();
+		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy(mockYieldSyncGovernance.address, ADDR_1.address)).deployed();
 		yieldSyncV1EMPDeployer = await (await YieldSyncV1EMPDeployer.deploy(yieldSyncV1EMPRegistry.address)).deployed();
 
 		// Set the EMP Deployer on registry
