@@ -20,7 +20,7 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
-		const [OWNER, , TREASURY] = await ethers.getSigners();
+		const [OWNER, MANAGER, TREASURY] = await ethers.getSigners();
 
 		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
 		const MockERC206: ContractFactory = await ethers.getContractFactory("MockERC206");

@@ -42,7 +42,7 @@ describe("[4.2] YieldSyncV1EMP.sol - Withdrawing Tokens", async () => {
 		* 	e) Toggle on the withdrawals and depositing of tokens
 		* 	f) Set the strategyTransferUtil for strategy
 		*/
-		const [OWNER, , TREASURY] = await ethers.getSigners();
+		const [OWNER, MANAGER, TREASURY] = await ethers.getSigners();
 
 		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
 		const ETHValueFeedDummy: ContractFactory = await ethers.getContractFactory("ETHValueFeedDummy");

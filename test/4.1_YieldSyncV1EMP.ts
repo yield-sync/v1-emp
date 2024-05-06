@@ -42,7 +42,7 @@ describe("[4.1] YieldSyncV1EMP.sol - Depositing Tokens", async () => {
 		* 	e) Toggle on the withdrawals and depositing of tokens
 		* 	f) Set the strategyTransferUtil for strategy
 		*/
-		const [OWNER, , TREASURY] = await ethers.getSigners();
+		const [OWNER, MANAGER, TREASURY] = await ethers.getSigners();
 
 		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
 		const ETHValueFeedDummy: ContractFactory = await ethers.getContractFactory("ETHValueFeedDummy");
@@ -696,10 +696,10 @@ describe("[4.1] YieldSyncV1EMP.sol - Depositing Tokens", async () => {
 			// Set manager fee to 2%
 			await expect(yieldSyncV1EMP.feeRateManagerUpdate(ethers.utils.parseUnits(".02", 18))).to.be.not.reverted;
 
-			expect(await yieldSyncV1EMP.feeRateManager()).to.be.equal(ethers.utils.parseUnits(".02", 18));
-
 			// Set YS Gov fee to 2%
 			await expect(yieldSyncV1EMP.feeRateYieldSyncGovernanceUpdate(ethers.utils.parseUnits(".02", 18))).to.be.not.reverted;
+
+			expect(await yieldSyncV1EMP.feeRateManager()).to.be.equal(ethers.utils.parseUnits(".02", 18));
 
 			expect(await yieldSyncV1EMP.feeRateYieldSyncGovernance()).to.be.equal(ethers.utils.parseUnits(".02", 18));
 

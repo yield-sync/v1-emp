@@ -24,7 +24,7 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () => {
 		* This process mocks the OWNER address to be an EMP to give authorization to access the functions of a strategy.
 		*
 		*/
-		const [OWNER, , TREASURY] = await ethers.getSigners();
+		const [OWNER, MANAGER, TREASURY] = await ethers.getSigners();
 
 		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
 		const ETHValueFeedDummy: ContractFactory = await ethers.getContractFactory("ETHValueFeedDummy");

@@ -23,7 +23,7 @@ describe("[2.3] YieldSyncV1EMPStrategy.sol - Scenarios", async () => {
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
-		const [OWNER, , TREASURY] = await ethers.getSigners();
+		const [OWNER, MANAGER, TREASURY] = await ethers.getSigners();
 
 		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
 		const ETHValueFeedDummy: ContractFactory = await ethers.getContractFactory("ETHValueFeedDummy");

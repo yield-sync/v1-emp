@@ -17,7 +17,7 @@ describe("[1.0] YieldSyncV1EMPStrategyDeployer.sol - Setup", async () => {
 		* 1) Deploy a registry
 		* 2) deploys an EMP Strategy Deployer and registers it on the registry
 		*/
-		const [OWNER, , TREASURY] = await ethers.getSigners();
+		const [OWNER, MANAGER, TREASURY] = await ethers.getSigners();
 		const MockYieldSyncGovernance: ContractFactory = await ethers.getContractFactory("MockYieldSyncGovernance");
 		const YieldSyncV1EMPRegistry: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPRegistry");
 		const YieldSyncV1EMPStrategyDeployer: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPStrategyDeployer");
