@@ -119,6 +119,8 @@ contract YieldSyncV1EMP is
 		public
 		authYieldSyncGovernanceOrManager()
 	{
+		require(_feeRateManager <= ONE_HUNDRED_PERCENT, "!(_feeRateManager <= ONE_HUNDRED_PERCENT)");
+
 		feeRateManager = _feeRateManager;
 	}
 
@@ -127,6 +129,8 @@ contract YieldSyncV1EMP is
 		public
 		authYieldSyncGovernance()
 	{
+		require(_feeRateYieldSyncGovernance <= ONE_HUNDRED_PERCENT, "!(_feeRateYieldSyncGovernance <= ONE_HUNDRED_PERCENT)");
+
 		feeRateYieldSyncGovernance = _feeRateYieldSyncGovernance;
 	}
 
