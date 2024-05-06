@@ -55,13 +55,13 @@ contract YieldSyncV1EMP is
 		_;
 	}
 
-	modifier authManager()
+	modifier authContractYieldSyncGovernanceOrManager()
 	{
 		require(
-			msg.sender == manager || IAccessControlEnumerable(I_YIELD_SYNC_V1_EMP_REGISTRY.YIELD_SYNC_GOVERNANCE()).hasRole(
+			IAccessControlEnumerable(I_YIELD_SYNC_V1_EMP_REGISTRY.YIELD_SYNC_GOVERNANCE()).hasRole(
 				bytes32(0),
 				msg.sender
-			),
+			) || msg.sender == manager,
 			"!authorized"
 		);
 
@@ -94,7 +94,7 @@ contract YieldSyncV1EMP is
 	function managerUpdate(address _manager)
 		public
 		override
-		authManager()
+		authContractYieldSyncGovernanceOrManager()
 	{
 		manager = _manager;
 	}
@@ -159,7 +159,7 @@ contract YieldSyncV1EMP is
 	function utilizedYieldSyncV1EMPStrategyDepositOpenToggle()
 		public
 		override
-		authManager()
+		authContractYieldSyncGovernanceOrManager()
 	{
 		utilizedYieldSyncV1EMPStrategyDepositOpen = !utilizedYieldSyncV1EMPStrategyDepositOpen;
 	}
@@ -168,7 +168,7 @@ contract YieldSyncV1EMP is
 	function utilizedYieldSyncV1EMPStrategyUpdate(UtilizedYieldSyncV1EMPStrategy[] memory __utilizedYieldSyncV1EMPStrategy)
 		public
 		override
-		authManager()
+		authContractYieldSyncGovernanceOrManager()
 		utilizedYieldSyncV1EMPStrategyTransferClosed()
 	{
 		uint256 utilizedYieldSyncV1EMPStrategyAllocationTotal;
@@ -195,7 +195,7 @@ contract YieldSyncV1EMP is
 	function utilizedYieldSyncV1EMPStrategyWithdrawOpenToggle()
 		public
 		override
-		authManager()
+		authContractYieldSyncGovernanceOrManager()
 	{
 		utilizedYieldSyncV1EMPStrategyWithdrawOpen = !utilizedYieldSyncV1EMPStrategyWithdrawOpen;
 	}
