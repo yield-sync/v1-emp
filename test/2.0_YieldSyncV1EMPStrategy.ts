@@ -83,7 +83,7 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () => {
 
 				await expect(
 					yieldSyncV1EMPStrategy.connect(ADDR_1).managerUpdate(ADDR_1.address)
-				).to.be.rejectedWith(ERROR.NOT_MANAGER);
+				).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
 			}
 		);
 
@@ -111,7 +111,7 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () => {
 					yieldSyncV1EMPStrategy.connect(ADDR_1).utilizedERC20Update(
 						[[mockERC20A.address, true, true, PERCENT.HUNDRED]]
 					)
-				).to.be.rejectedWith(ERROR.NOT_MANAGER);
+				).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
 			}
 		);
 
@@ -214,7 +214,7 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () => {
 
 				await expect(
 					yieldSyncV1EMPStrategy.connect(ADDR_1).iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
-				).to.be.rejectedWith(ERROR.NOT_MANAGER);
+				).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
 			}
 		);
 
@@ -240,7 +240,7 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () => {
 					yieldSyncV1EMPStrategy.connect(ADDR_1).iYieldSyncV1EMPStrategyInteractorUpdate(
 						strategyInteractorDummy.address
 					)
-				).to.be.rejectedWith(ERROR.NOT_MANAGER);
+				).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
 			}
 		);
 
@@ -266,7 +266,7 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () => {
 
 				await expect(
 					yieldSyncV1EMPStrategy.connect(ADDR_1).utilizedERC20DepositOpenToggle()
-				).to.be.rejectedWith(ERROR.NOT_MANAGER);
+				).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
 			}
 		);
 
@@ -449,7 +449,7 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () => {
 
 				await expect(
 					yieldSyncV1EMPStrategy.connect(ADDR_1).utilizedERC20WithdrawOpenToggle()
-				).to.be.rejectedWith(ERROR.NOT_MANAGER);
+				).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
 			}
 		);
 

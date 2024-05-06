@@ -45,10 +45,10 @@ contract YieldSyncV1EMP is
 	}
 
 
-	modifier authContractYieldSyncGovernance(bytes32 _role)
+	modifier authContractYieldSyncGovernance()
 	{
 		require(
-			IAccessControlEnumerable(I_YIELD_SYNC_V1_EMP_REGISTRY.YIELD_SYNC_GOVERNANCE()).hasRole(_role, msg.sender),
+			IAccessControlEnumerable(I_YIELD_SYNC_V1_EMP_REGISTRY.YIELD_SYNC_GOVERNANCE()).hasRole(bytes32(0), msg.sender),
 			"!auth"
 		);
 
@@ -57,7 +57,13 @@ contract YieldSyncV1EMP is
 
 	modifier authManager()
 	{
-		require(msg.sender == manager, "!(manager == msg.sender)");
+		require(
+			msg.sender == manager || IAccessControlEnumerable(I_YIELD_SYNC_V1_EMP_REGISTRY.YIELD_SYNC_GOVERNANCE()).hasRole(
+				bytes32(0),
+				msg.sender
+			),
+			"!authorized"
+		);
 
 		_;
 	}

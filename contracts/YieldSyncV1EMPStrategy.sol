@@ -62,17 +62,14 @@ contract YieldSyncV1EMPStrategy is
 
 	modifier authEMP()
 	{
-		require(
-			I_YIELD_SYNC_V1_EMP_REGISTRY.yieldSyncV1EMP_yieldSyncV1EMPId(msg.sender) > 0,
-			"!(I_YIELD_SYNC_V1_EMP_REGISTRY.yieldSyncV1EMP_yieldSyncV1EMPId(msg.sender) > 0)"
-		);
+		require(I_YIELD_SYNC_V1_EMP_REGISTRY.yieldSyncV1EMP_yieldSyncV1EMPId(msg.sender) > 0, "!authorized");
 
 		_;
 	}
 
 	modifier authManager()
 	{
-		require(manager == msg.sender, "!(manager == msg.sender)");
+		require(manager == msg.sender, "!authorized");
 
 		_;
 	}

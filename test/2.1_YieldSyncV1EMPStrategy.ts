@@ -125,7 +125,7 @@ describe("[2.1] YieldSyncV1EMPStrategy.sol - Depositing Tokens", async () => {
 
 					await expect(
 						yieldSyncV1EMPStrategy.connect(ADDR_1).utilizedERC20Deposit(ADDR_1.address, [])
-					).to.be.rejectedWith(ERROR.NOT_EMP);
+					).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
 				}
 			);
 

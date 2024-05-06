@@ -180,7 +180,7 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () => {
 
 			await expect(
 				yieldSyncV1EMP.connect(ADDR_1).utilizedYieldSyncV1EMPStrategyUpdate(UtilizedEMPStrategy)
-			).to.be.rejectedWith(ERROR.NOT_MANAGER);
+			).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
 		});
 
 		it("Should NOT allow strategies that add up to more than 100% to EMP..", async () => {
@@ -240,7 +240,7 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () => {
 				const [, ADDR_1] = await ethers.getSigners();
 				await expect(
 					yieldSyncV1EMP.connect(ADDR_1).managerUpdate(ADDR_1.address)
-				).to.be.rejectedWith(ERROR.NOT_MANAGER);
+				).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
 			}
 		);
 
