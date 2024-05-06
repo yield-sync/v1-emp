@@ -17,8 +17,9 @@ interface IYieldSyncV1EMPRegistry
 	* @dev [view-address]
 	* @return {address}
 	*/
-	function YIELD_SYNC_GOVERNANCE_TREASURY()
+	function yieldSyncGovernancePayTo()
 		external
+		view
 		returns (address)
 	;
 

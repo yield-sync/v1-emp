@@ -24,7 +24,10 @@ describe("[3.0] YieldSyncV1EMPDeployer.sol - Setup", async () => {
 		const YieldSyncV1EMPDeployer: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPDeployer");
 
 		mockYieldSyncGovernance = await (await MockYieldSyncGovernance.deploy()).deployed();
-		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy(mockYieldSyncGovernance.address, TREASURY.address)).deployed();
+
+		// Set Treasury
+		await mockYieldSyncGovernance.payToUpdate(TREASURY.address);
+		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy(mockYieldSyncGovernance.address)).deployed();
 		yieldSyncV1EMPDeployer = await (await YieldSyncV1EMPDeployer.deploy(yieldSyncV1EMPRegistry.address)).deployed();
 
 		// Set the EMP Deployer on registry

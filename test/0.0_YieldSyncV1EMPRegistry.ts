@@ -19,7 +19,10 @@ describe("[0.0] YieldSyncV1EMPRegistry.sol - Setup", async () => {
 		const YieldSyncV1EMPRegistry: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPRegistry");
 
 		mockYieldSyncGovernance = await (await MockYieldSyncGovernance.deploy()).deployed();
-		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy(mockYieldSyncGovernance.address, TREASURY.address)).deployed();
+
+		// Set Treasury
+		await mockYieldSyncGovernance.payToUpdate(TREASURY.address);
+		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy(mockYieldSyncGovernance.address)).deployed();
 	});
 
 	describe("function yieldSyncV1EMPDeployerUpdate()", async () => {

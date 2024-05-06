@@ -3,6 +3,7 @@ pragma solidity ^0.8.18;
 
 
 import { IAccessControlEnumerable } from "@openzeppelin/contracts/access/IAccessControlEnumerable.sol";
+import { IYieldSyncGovernance } from "@yield-sync/v1-sdk/contracts/interface/IYieldSyncGovernance.sol";
 
 import { IYieldSyncV1EMPRegistry } from "./interface/IYieldSyncV1EMPRegistry.sol";
 
@@ -11,7 +12,6 @@ contract YieldSyncV1EMPRegistry is
 	IYieldSyncV1EMPRegistry
 {
 	address public override immutable YIELD_SYNC_GOVERNANCE;
-	address public override immutable YIELD_SYNC_GOVERNANCE_TREASURY;
 
 	address public yieldSyncV1EMPDeployer;
 	address public yieldSyncV1EMPStrategyDeployer;
@@ -44,10 +44,9 @@ contract YieldSyncV1EMPRegistry is
 	{}
 
 
-	constructor (address yieldSyncGovernance, address yieldSyncGovernanceTresury)
+	constructor (address yieldSyncGovernance)
 	{
 		YIELD_SYNC_GOVERNANCE = yieldSyncGovernance;
-		YIELD_SYNC_GOVERNANCE_TREASURY = yieldSyncGovernanceTresury;
 
 		yieldSyncEMPIdTracker = 0;
 		yieldSyncEMPStrategyIdTracker = 0;
@@ -60,6 +59,22 @@ contract YieldSyncV1EMPRegistry is
 
 		_;
 	}
+
+
+	/// @notice view
+
+
+	/// @inheritdoc IYieldSyncV1EMPRegistry
+	function yieldSyncGovernancePayTo()
+		public
+		view
+		returns (address)
+	{
+		return IYieldSyncGovernance(YIELD_SYNC_GOVERNANCE).payTo();
+	}
+
+
+	/// @notice mutative
 
 
 	/// @inheritdoc IYieldSyncV1EMPRegistry
