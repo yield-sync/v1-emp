@@ -196,7 +196,12 @@ contract YieldSyncV1EMP is
 			);
 		}
 
-		_mint(msg.sender, _utilizedERC20ETHValueTotal);
+		uint256 mintAmountManager = _utilizedERC20ETHValueTotal * feeRateManager / ONE_HUNDRED_PERCENT;
+		uint256 mintAmountYieldSyncGovernance = _utilizedERC20ETHValueTotal * feeRateYieldSyncGovernance / ONE_HUNDRED_PERCENT;
+
+		_mint(manager, mintAmountManager);
+		_mint(I_YIELD_SYNC_V1_EMP_REGISTRY.YIELD_SYNC_GOVERNANCE_TREASURY(), mintAmountYieldSyncGovernance);
+		_mint(msg.sender, _utilizedERC20ETHValueTotal - mintAmountManager - mintAmountYieldSyncGovernance);
 	}
 
 	/// @inheritdoc IYieldSyncV1EMP

@@ -42,6 +42,8 @@ describe("[4.2] YieldSyncV1EMP.sol - Withdrawing Tokens", async () => {
 		* 	e) Toggle on the withdrawals and depositing of tokens
 		* 	f) Set the strategyTransferUtil for strategy
 		*/
+		const [OWNER] = await ethers.getSigners();
+
 		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
 		const ETHValueFeedDummy: ContractFactory = await ethers.getContractFactory("ETHValueFeedDummy");
 		const StrategyInteractorDummy: ContractFactory = await ethers.getContractFactory("StrategyInteractorDummy");
@@ -60,7 +62,7 @@ describe("[4.2] YieldSyncV1EMP.sol - Withdrawing Tokens", async () => {
 		eTHValueFeedDummy = await (await ETHValueFeedDummy.deploy()).deployed();
 		strategyInteractorDummy = await (await StrategyInteractorDummy.deploy()).deployed();
 		mockYieldSyncGovernance = await (await MockYieldSyncGovernance.deploy()).deployed();
-		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy(mockYieldSyncGovernance.address)).deployed();
+		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy(mockYieldSyncGovernance.address, OWNER.address)).deployed();
 		yieldSyncV1EMPDeployer = await (await YieldSyncV1EMPDeployer.deploy(yieldSyncV1EMPRegistry.address)).deployed();
 		yieldSyncV1EMPStrategyDeployer = await (
 			await YieldSyncV1EMPStrategyDeployer.deploy(yieldSyncV1EMPRegistry.address)

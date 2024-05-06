@@ -13,11 +13,13 @@ describe("[0.0] YieldSyncV1EMPRegistry.sol - Setup", async () => {
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
+		const [OWNER] = await ethers.getSigners();
+
 		const MockYieldSyncGovernance: ContractFactory = await ethers.getContractFactory("MockYieldSyncGovernance");
 		const YieldSyncV1EMPRegistry: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPRegistry");
 
 		mockYieldSyncGovernance = await (await MockYieldSyncGovernance.deploy()).deployed();
-		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy(mockYieldSyncGovernance.address)).deployed();
+		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy(mockYieldSyncGovernance.address, OWNER.address)).deployed();
 	});
 
 	describe("function yieldSyncV1EMPDeployerUpdate()", async () => {
