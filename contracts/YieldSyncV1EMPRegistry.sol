@@ -52,7 +52,7 @@ contract YieldSyncV1EMPRegistry is
 	}
 
 
-	modifier authContractYieldSyncGovernance()
+	modifier authYieldSyncGovernance()
 	{
 		require(IAccessControlEnumerable(YIELD_SYNC_GOVERNANCE).hasRole(bytes32(0), msg.sender), "!authorized");
 
@@ -64,7 +64,7 @@ contract YieldSyncV1EMPRegistry is
 	function yieldSyncV1EMPDeployerUpdate(address _yieldSyncV1EMPDeployer)
 		public
 		override
-		authContractYieldSyncGovernance()
+		authYieldSyncGovernance()
 	{
 		require(yieldSyncV1EMPDeployer == address(0), "!(yieldSyncV1EMPDeployer == address(0))");
 
@@ -88,7 +88,7 @@ contract YieldSyncV1EMPRegistry is
 	function yieldSyncV1EMPStrategyDeployerUpdate(address _yieldSyncV1EMPStrategyDeployer)
 		public
 		override
-		authContractYieldSyncGovernance()
+		authYieldSyncGovernance()
 	{
 		require(yieldSyncV1EMPStrategyDeployer == address(0), "!(yieldSyncV1EMPStrategyDeployer == address(0))");
 

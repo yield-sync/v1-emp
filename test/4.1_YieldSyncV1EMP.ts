@@ -467,6 +467,10 @@ describe("[4.1] YieldSyncV1EMP.sol - Depositing Tokens", async () => {
 			expect(await yieldSyncV1EMP.balanceOf(OWNER.address)).to.be.equal(TOTAL_DEPOSIT_VALUE);
 		});
 
-		it("Protocol should receive correct amount of ERC20 if cut is greater than 0..");
+		it("Manager should receive correct amount of ERC20 if fee is set is greater than 0..");
+
+		it("Yield Sync Governance should receive correct amount of ERC20 if fee is set is greater than 0..");
+
+		it("Manager & Yield Sync Governance should receive correct amounts of ERC20 if fees are set to greater than 0..");
 	});
 });

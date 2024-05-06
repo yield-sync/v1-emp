@@ -73,7 +73,7 @@ interface IYieldSyncV1EMP is
 	;
 
 	/**
-	* @notice
+	* @notice Initial Mint Rate
 	* @dev [view-uint256]
 	* @return {uint256}
 	*/
@@ -89,6 +89,28 @@ interface IYieldSyncV1EMP is
 	* @return {uint256}
 	*/
 	function ONE_HUNDRED_PERCENT()
+		external
+		view
+		returns (uint256)
+	;
+
+	/**
+	* @notice Fee Rate for Manager
+	* @dev [view-uint256]
+	* @return {uint256}
+	*/
+	function feeRateManager()
+		external
+		view
+		returns (uint256)
+	;
+
+	/**
+	* @notice Fee Rate for Yield Sync Governance
+	* @dev [view-uint256]
+	* @return {uint256}
+	*/
+	function feeRateYieldSyncGovernance()
 		external
 		view
 		returns (uint256)

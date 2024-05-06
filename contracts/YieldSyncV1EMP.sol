@@ -28,6 +28,9 @@ contract YieldSyncV1EMP is
 	uint256 public constant override INITIAL_MINT_RATE = 100;
 	uint256 public constant override ONE_HUNDRED_PERCENT = 1e18;
 
+	uint256 public override feeRateManager;
+	uint256 public override feeRateYieldSyncGovernance;
+
 	IYieldSyncV1EMPRegistry public override immutable I_YIELD_SYNC_V1_EMP_REGISTRY;
 
 	UtilizedYieldSyncV1EMPStrategy[] internal _utilizedYieldSyncV1EMPStrategy;
@@ -53,11 +56,14 @@ contract YieldSyncV1EMP is
 
 		manager = _manager;
 
+		feeRateManager = 0;
+		feeRateYieldSyncGovernance = 0;
+
 		I_YIELD_SYNC_V1_EMP_REGISTRY = IYieldSyncV1EMPRegistry(_yieldSyncV1EMPRegistry);
 	}
 
 
-	modifier authContractYieldSyncGovernance()
+	modifier authYieldSyncGovernance()
 	{
 		require(
 			IAccessControlEnumerable(I_YIELD_SYNC_V1_EMP_REGISTRY.YIELD_SYNC_GOVERNANCE()).hasRole(bytes32(0), msg.sender),
@@ -67,7 +73,7 @@ contract YieldSyncV1EMP is
 		_;
 	}
 
-	modifier authContractYieldSyncGovernanceOrManager()
+	modifier authYieldSyncGovernanceOrManager()
 	{
 		require(
 			IAccessControlEnumerable(I_YIELD_SYNC_V1_EMP_REGISTRY.YIELD_SYNC_GOVERNANCE()).hasRole(
@@ -112,7 +118,7 @@ contract YieldSyncV1EMP is
 	function managerUpdate(address _manager)
 		public
 		override
-		authContractYieldSyncGovernanceOrManager()
+		authYieldSyncGovernanceOrManager()
 	{
 		manager = _manager;
 	}
@@ -177,7 +183,7 @@ contract YieldSyncV1EMP is
 	function utilizedYieldSyncV1EMPStrategyDepositOpenToggle()
 		public
 		override
-		authContractYieldSyncGovernanceOrManager()
+		authYieldSyncGovernanceOrManager()
 	{
 		utilizedYieldSyncV1EMPStrategyDepositOpen = !utilizedYieldSyncV1EMPStrategyDepositOpen;
 	}
@@ -186,7 +192,7 @@ contract YieldSyncV1EMP is
 	function utilizedYieldSyncV1EMPStrategyUpdate(UtilizedYieldSyncV1EMPStrategy[] memory __utilizedYieldSyncV1EMPStrategy)
 		public
 		override
-		authContractYieldSyncGovernanceOrManager()
+		authYieldSyncGovernanceOrManager()
 		utilizedYieldSyncV1EMPStrategyTransferClosed()
 	{
 		uint256 utilizedYieldSyncV1EMPStrategyAllocationTotal;
@@ -213,7 +219,7 @@ contract YieldSyncV1EMP is
 	function utilizedYieldSyncV1EMPStrategyWithdrawOpenToggle()
 		public
 		override
-		authContractYieldSyncGovernanceOrManager()
+		authYieldSyncGovernanceOrManager()
 	{
 		utilizedYieldSyncV1EMPStrategyWithdrawOpen = !utilizedYieldSyncV1EMPStrategyWithdrawOpen;
 	}
