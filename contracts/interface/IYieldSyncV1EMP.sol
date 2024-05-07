@@ -22,7 +22,8 @@ interface IYieldSyncV1EMP is
 	IERC20
 {
 	/**
-	* @notice
+	* @dev [view-address]
+	* @notice Manager
 	* @return {address}
 	*/
 	function manager()
@@ -32,7 +33,8 @@ interface IYieldSyncV1EMP is
 	;
 
 	/**
-	* @notice
+	* @dev [view-boolean]
+	* @notice Utilized Yield Sync V1 EMP Strategy Deposit Open
 	* @return {bool}
 	*/
 	function utilizedYieldSyncV1EMPStrategyDepositOpen()
@@ -42,7 +44,8 @@ interface IYieldSyncV1EMP is
 	;
 
 	/**
-	* @notice
+	* @dev [view-boolean]
+	* @notice Utilized Yield Sync V1 EMP Strategy Withdraw Open
 	* @return {bool}
 	*/
 	function utilizedYieldSyncV1EMPStrategyWithdrawOpen()
@@ -60,16 +63,6 @@ interface IYieldSyncV1EMP is
 		external
 		view
 		returns (IYieldSyncV1EMPRegistry)
-	;
-
-	/**
-	* @notice
-	* @return {address[]}
-	*/
-	function utilizedYieldSyncV1EMPStrategy()
-		external
-		view
-		returns (UtilizedYieldSyncV1EMPStrategy[] memory)
 	;
 
 	/**
@@ -115,6 +108,24 @@ interface IYieldSyncV1EMP is
 		view
 		returns (uint256)
 	;
+
+
+	/// @notice view
+
+
+	/**
+	* @notice
+	* @return {address[]}
+	*/
+	function utilizedYieldSyncV1EMPStrategy()
+		external
+		view
+		returns (UtilizedYieldSyncV1EMPStrategy[] memory)
+	;
+
+
+	/// @notice mutative
+
 
 	/**
 	* @notice Udpate Fee Rate for Manager
