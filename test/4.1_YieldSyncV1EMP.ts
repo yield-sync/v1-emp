@@ -472,320 +472,323 @@ describe("[4.1] YieldSyncV1EMP.sol - Depositing Tokens", async () => {
 			expect(await yieldSyncV1EMP.balanceOf(OWNER.address)).to.be.equal(TOTAL_DEPOSIT_VALUE);
 		});
 
-		it("Manager should receive correct amount of ERC20 if fee is set is greater than 0..", async () => {
-			const [OWNER, MANAGER] = await ethers.getSigners();
+		describe("feeRate", async () => {
+			it("Manager should receive correct amount of ERC20 if fee is set is greater than 0..", async () => {
+				const [OWNER, MANAGER] = await ethers.getSigners();
 
-			const UTILIZED_STRATEGIES: UtilizedEMPStrategyUpdate = [
-				[yieldSyncV1EMPStrategy.address, PERCENT.FIFTY],
-				[yieldSyncV1EMPStrategy2.address, PERCENT.FIFTY],
-			];
+				const UTILIZED_STRATEGIES: UtilizedEMPStrategyUpdate = [
+					[yieldSyncV1EMPStrategy.address, PERCENT.FIFTY],
+					[yieldSyncV1EMPStrategy2.address, PERCENT.FIFTY],
+				];
 
-			// Set the utilzation to 2 different strategies
-			await expect(
-				yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyUpdate(UTILIZED_STRATEGIES)
-			).to.be.not.rejected;
+				// Set the utilzation to 2 different strategies
+				await expect(
+					yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyUpdate(UTILIZED_STRATEGIES)
+				).to.be.not.rejected;
 
-			// Set the utilzation to 2 different strategies
-			await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyDepositOpenToggle()).to.be.not.rejected;
+				// Set the utilzation to 2 different strategies
+				await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyDepositOpenToggle()).to.be.not.rejected;
 
-			// Set the fee rate for manager
-			await expect(yieldSyncV1EMP.feeRateManagerUpdate(ethers.utils.parseUnits(".02", 18))).to.be.not.reverted;
+				/**
+				* @notice Because UTILIZED_STRATEGIES has 2 stratgies with a split of 50/50, the same amount (2) is set for
+				* each.
+				*/
 
-			// Set manager fee to 2%
-			expect(await yieldSyncV1EMP.feeRateManager()).to.be.equal(ethers.utils.parseUnits(".02", 18));
+				const STRATEGY_DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil.calculateERC20RequiredByTotalAmount(
+					ethers.utils.parseUnits("2", 18)
+				);
+
+				const STRATEGY2_DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil2.calculateERC20RequiredByTotalAmount(
+					ethers.utils.parseUnits("2", 18)
+				);
+
+				// Pass in value for 2 strategies
+				const VALID: UtilizedEMPStrategyERC20Amount = [
+					[STRATEGY_DEPOSIT_AMOUNTS[0], STRATEGY_DEPOSIT_AMOUNTS[1]],
+					[STRATEGY2_DEPOSIT_AMOUNTS[0]]
+				];
 
-			// Set manager to ADDR_1
-			await yieldSyncV1EMP.managerUpdate(MANAGER.address);
+				// Approve tokens
+				await mockERC20A.approve(strategyInteractorDummy.address, STRATEGY_DEPOSIT_AMOUNTS[0]);
+				await mockERC20B.approve(strategyInteractorDummy.address, STRATEGY_DEPOSIT_AMOUNTS[1]);
+				await mockERC20C.approve(strategyInteractorDummy.address, STRATEGY2_DEPOSIT_AMOUNTS[0]);
 
-			expect(await yieldSyncV1EMP.manager()).to.be.equal(MANAGER.address);
+				// Set the fee rate for manager
+				await expect(yieldSyncV1EMP.feeRateManagerUpdate(ethers.utils.parseUnits(".02", 18))).to.be.not.reverted;
+
+				// Set manager fee to 2%
+				expect(await yieldSyncV1EMP.feeRateManager()).to.be.equal(ethers.utils.parseUnits(".02", 18));
+
+				// Set manager to ADDR_1
+				await yieldSyncV1EMP.managerUpdate(MANAGER.address);
+
+				expect(await yieldSyncV1EMP.manager()).to.be.equal(MANAGER.address);
 
-			/**
-			* @notice Because UTILIZED_STRATEGIES has 2 stratgies with a split of 50/50, the same amount (2) is set for
-			* each.
-			*/
+				// [main-test]
+				await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyDeposit(VALID)).to.not.be.reverted;
 
-			const STRATEGY_DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil.calculateERC20RequiredByTotalAmount(
-				ethers.utils.parseUnits("2", 18)
-			);
+				// Validate balances
+				expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.be.equal(STRATEGY_DEPOSIT_AMOUNTS[0]);
+				expect(await mockERC20B.balanceOf(strategyInteractorDummy.address)).to.be.equal(STRATEGY_DEPOSIT_AMOUNTS[1]);
+				expect(await mockERC20C.balanceOf(strategyInteractorDummy.address)).to.be.equal(STRATEGY2_DEPOSIT_AMOUNTS[0]);
 
-			const STRATEGY2_DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil2.calculateERC20RequiredByTotalAmount(
-				ethers.utils.parseUnits("2", 18)
-			);
+				// Check that the OWNER address received something
+				expect(await yieldSyncV1EMP.balanceOf(OWNER.address)).to.be.greaterThan(0);
 
-			// Pass in value for 2 strategies
-			const VALID: UtilizedEMPStrategyERC20Amount = [
-				[STRATEGY_DEPOSIT_AMOUNTS[0], STRATEGY_DEPOSIT_AMOUNTS[1]],
-				[STRATEGY2_DEPOSIT_AMOUNTS[0]]
-			];
+				const { totalValue: strategyDepositEthValue } = await strategyTransferUtil.calculateValueOfERC20Deposits(
+					[STRATEGY_DEPOSIT_AMOUNTS[0], STRATEGY_DEPOSIT_AMOUNTS[1]],
+					[mockERC20A, mockERC20B]
+				);
 
-			// Approve tokens
-			await mockERC20A.approve(strategyInteractorDummy.address, STRATEGY_DEPOSIT_AMOUNTS[0]);
-			await mockERC20B.approve(strategyInteractorDummy.address, STRATEGY_DEPOSIT_AMOUNTS[1]);
-			await mockERC20C.approve(strategyInteractorDummy.address, STRATEGY2_DEPOSIT_AMOUNTS[0]);
+				// Check that the EMP address received correct amount of Strategy tokens
+				expect(await yieldSyncV1EMPStrategy.balanceOf(yieldSyncV1EMP.address)).to.be.equal(strategyDepositEthValue);
 
-			// [main-test]
-			await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyDeposit(VALID)).to.not.be.reverted;
+				// Check that the OWNER address received something greater than what was put into the 1st strategy
+				expect(await yieldSyncV1EMP.balanceOf(OWNER.address)).to.be.greaterThan(strategyDepositEthValue);
 
-			// Validate balances
-			expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.be.equal(STRATEGY_DEPOSIT_AMOUNTS[0]);
-			expect(await mockERC20B.balanceOf(strategyInteractorDummy.address)).to.be.equal(STRATEGY_DEPOSIT_AMOUNTS[1]);
-			expect(await mockERC20C.balanceOf(strategyInteractorDummy.address)).to.be.equal(STRATEGY2_DEPOSIT_AMOUNTS[0]);
+				const { totalValue: strategy2DepositETHValue } = await strategyTransferUtil.calculateValueOfERC20Deposits(
+					[STRATEGY2_DEPOSIT_AMOUNTS[0]],
+					[mockERC20C]
+				)
 
-			// Check that the OWNER address received something
-			expect(await yieldSyncV1EMP.balanceOf(OWNER.address)).to.be.greaterThan(0);
+				// Check that the EMP address received correct amount of Strategy tokens
+				expect(await yieldSyncV1EMPStrategy2.balanceOf(yieldSyncV1EMP.address)).to.be.equal(strategy2DepositETHValue);
 
-			const { totalValue: strategyDepositEthValue } = await strategyTransferUtil.calculateValueOfERC20Deposits(
-				[STRATEGY_DEPOSIT_AMOUNTS[0], STRATEGY_DEPOSIT_AMOUNTS[1]],
-				[mockERC20A, mockERC20B]
-			);
+				// Add up deposit amounts
+				const TOTAL_DEPOSIT_VALUE = strategyDepositEthValue.add(strategy2DepositETHValue);
 
-			// Check that the EMP address received correct amount of Strategy tokens
-			expect(await yieldSyncV1EMPStrategy.balanceOf(yieldSyncV1EMP.address)).to.be.equal(strategyDepositEthValue);
+				// Check that the OWNER address received something equal to what was deposited into all strategies via EMP
+				expect(await yieldSyncV1EMP.balanceOf(OWNER.address)).to.be.lessThan(TOTAL_DEPOSIT_VALUE);
 
-			// Check that the OWNER address received something greater than what was put into the 1st strategy
-			expect(await yieldSyncV1EMP.balanceOf(OWNER.address)).to.be.greaterThan(strategyDepositEthValue);
+				// 98% of deposit value
+				const VALUE_CUT = TOTAL_DEPOSIT_VALUE.mul(ethers.utils.parseUnits(".02", 18)).div(
+					ethers.utils.parseUnits("1", 18)
+				);
 
-			const { totalValue: strategy2DepositETHValue } = await strategyTransferUtil.calculateValueOfERC20Deposits(
-				[STRATEGY2_DEPOSIT_AMOUNTS[0]],
-				[mockERC20C]
-			)
+				// Check that the MANAGER address received 98% of the EMP tokens
+				expect(await yieldSyncV1EMP.balanceOf(MANAGER.address)).to.be.equal(VALUE_CUT);
 
-			// Check that the EMP address received correct amount of Strategy tokens
-			expect(await yieldSyncV1EMPStrategy2.balanceOf(yieldSyncV1EMP.address)).to.be.equal(strategy2DepositETHValue);
+				// 98% of deposit value
+				const VALUE_AFTER_CUT = TOTAL_DEPOSIT_VALUE.mul(ethers.utils.parseUnits(".98", 18)).div(
+					ethers.utils.parseUnits("1", 18)
+				);
 
-			// Add up deposit amounts
-			const TOTAL_DEPOSIT_VALUE = strategyDepositEthValue.add(strategy2DepositETHValue);
+				// Check that the OWNER address received 98% of the EMP tokens
+				expect(await yieldSyncV1EMP.balanceOf(OWNER.address)).to.be.equal(VALUE_AFTER_CUT);
+			});
 
-			// Check that the OWNER address received something equal to what was deposited into all strategies via EMP
-			expect(await yieldSyncV1EMP.balanceOf(OWNER.address)).to.be.lessThan(TOTAL_DEPOSIT_VALUE);
+			it("Yield Sync Governance should receive correct amount of ERC20 if fee is set is greater than 0..", async () => {
+				const [OWNER, MANAGER, TREASURY] = await ethers.getSigners();
 
-			// 98% of deposit value
-			const VALUE_CUT = TOTAL_DEPOSIT_VALUE.mul(ethers.utils.parseUnits(".02", 18)).div(
-				ethers.utils.parseUnits("1", 18)
-			);
+				const UTILIZED_STRATEGIES: UtilizedEMPStrategyUpdate = [
+					[yieldSyncV1EMPStrategy.address, PERCENT.FIFTY],
+					[yieldSyncV1EMPStrategy2.address, PERCENT.FIFTY],
+				];
 
-			// Check that the MANAGER address received 98% of the EMP tokens
-			expect(await yieldSyncV1EMP.balanceOf(MANAGER.address)).to.be.equal(VALUE_CUT);
+				// Set the utilzation to 2 different strategies
+				await expect(
+					yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyUpdate(UTILIZED_STRATEGIES)
+				).to.be.not.rejected;
 
-			// 98% of deposit value
-			const VALUE_AFTER_CUT = TOTAL_DEPOSIT_VALUE.mul(ethers.utils.parseUnits(".98", 18)).div(
-				ethers.utils.parseUnits("1", 18)
-			);
+				// Set the utilzation to 2 different strategies
+				await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyDepositOpenToggle()).to.be.not.rejected;
 
-			// Check that the OWNER address received 98% of the EMP tokens
-			expect(await yieldSyncV1EMP.balanceOf(OWNER.address)).to.be.equal(VALUE_AFTER_CUT);
-		});
+				/**
+				* @notice Because UTILIZED_STRATEGIES has 2 stratgies with a split of 50/50, the same amount (2) is set for
+				* each.
+				*/
 
-		it("Yield Sync Governance should receive correct amount of ERC20 if fee is set is greater than 0..", async () => {
-			const [OWNER, MANAGER, TREASURY] = await ethers.getSigners();
+				const STRATEGY_DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil.calculateERC20RequiredByTotalAmount(
+					ethers.utils.parseUnits("2", 18)
+				);
 
-			const UTILIZED_STRATEGIES: UtilizedEMPStrategyUpdate = [
-				[yieldSyncV1EMPStrategy.address, PERCENT.FIFTY],
-				[yieldSyncV1EMPStrategy2.address, PERCENT.FIFTY],
-			];
+				const STRATEGY2_DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil2.calculateERC20RequiredByTotalAmount(
+					ethers.utils.parseUnits("2", 18)
+				);
 
-			// Set the utilzation to 2 different strategies
-			await expect(
-				yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyUpdate(UTILIZED_STRATEGIES)
-			).to.be.not.rejected;
+				// Pass in value for 2 strategies
+				const VALID: UtilizedEMPStrategyERC20Amount = [
+					[STRATEGY_DEPOSIT_AMOUNTS[0], STRATEGY_DEPOSIT_AMOUNTS[1]],
+					[STRATEGY2_DEPOSIT_AMOUNTS[0]]
+				];
 
-			// Set the utilzation to 2 different strategies
-			await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyDepositOpenToggle()).to.be.not.rejected;
+				// Approve tokens
+				await mockERC20A.approve(strategyInteractorDummy.address, STRATEGY_DEPOSIT_AMOUNTS[0]);
+				await mockERC20B.approve(strategyInteractorDummy.address, STRATEGY_DEPOSIT_AMOUNTS[1]);
+				await mockERC20C.approve(strategyInteractorDummy.address, STRATEGY2_DEPOSIT_AMOUNTS[0]);
 
-			// Set YS Gov fee to 2%
-			await yieldSyncV1EMP.feeRateYieldSyncGovernanceUpdate(ethers.utils.parseUnits(".02", 18));
+				// Set YS Gov fee to 2%
+				await yieldSyncV1EMP.feeRateYieldSyncGovernanceUpdate(ethers.utils.parseUnits(".02", 18));
 
-			expect(await yieldSyncV1EMP.feeRateYieldSyncGovernance()).to.be.equal(ethers.utils.parseUnits(".02", 18));
+				expect(await yieldSyncV1EMP.feeRateYieldSyncGovernance()).to.be.equal(ethers.utils.parseUnits(".02", 18));
 
-			/**
-			* @notice Because UTILIZED_STRATEGIES has 2 stratgies with a split of 50/50, the same amount (2) is set for
-			* each.
-			*/
 
-			const STRATEGY_DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil.calculateERC20RequiredByTotalAmount(
-				ethers.utils.parseUnits("2", 18)
-			);
+				// [main-test]
+				await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyDeposit(VALID)).to.not.be.reverted;
 
-			const STRATEGY2_DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil2.calculateERC20RequiredByTotalAmount(
-				ethers.utils.parseUnits("2", 18)
-			);
+				// Validate balances
+				expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.be.equal(STRATEGY_DEPOSIT_AMOUNTS[0]);
+				expect(await mockERC20B.balanceOf(strategyInteractorDummy.address)).to.be.equal(STRATEGY_DEPOSIT_AMOUNTS[1]);
+				expect(await mockERC20C.balanceOf(strategyInteractorDummy.address)).to.be.equal(STRATEGY2_DEPOSIT_AMOUNTS[0]);
 
-			// Pass in value for 2 strategies
-			const VALID: UtilizedEMPStrategyERC20Amount = [
-				[STRATEGY_DEPOSIT_AMOUNTS[0], STRATEGY_DEPOSIT_AMOUNTS[1]],
-				[STRATEGY2_DEPOSIT_AMOUNTS[0]]
-			];
+				// Check that the OWNER address received something
+				expect(await yieldSyncV1EMP.balanceOf(OWNER.address)).to.be.greaterThan(0);
 
-			// Approve tokens
-			await mockERC20A.approve(strategyInteractorDummy.address, STRATEGY_DEPOSIT_AMOUNTS[0]);
-			await mockERC20B.approve(strategyInteractorDummy.address, STRATEGY_DEPOSIT_AMOUNTS[1]);
-			await mockERC20C.approve(strategyInteractorDummy.address, STRATEGY2_DEPOSIT_AMOUNTS[0]);
+				const { totalValue: strategyDepositEthValue } = await strategyTransferUtil.calculateValueOfERC20Deposits(
+					[STRATEGY_DEPOSIT_AMOUNTS[0], STRATEGY_DEPOSIT_AMOUNTS[1]],
+					[mockERC20A, mockERC20B]
+				);
 
-			// [main-test]
-			await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyDeposit(VALID)).to.not.be.reverted;
+				// Check that the EMP address received correct amount of Strategy tokens
+				expect(await yieldSyncV1EMPStrategy.balanceOf(yieldSyncV1EMP.address)).to.be.equal(strategyDepositEthValue);
 
-			// Validate balances
-			expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.be.equal(STRATEGY_DEPOSIT_AMOUNTS[0]);
-			expect(await mockERC20B.balanceOf(strategyInteractorDummy.address)).to.be.equal(STRATEGY_DEPOSIT_AMOUNTS[1]);
-			expect(await mockERC20C.balanceOf(strategyInteractorDummy.address)).to.be.equal(STRATEGY2_DEPOSIT_AMOUNTS[0]);
+				// Check that the OWNER address received something greater than what was put into the 1st strategy
+				expect(await yieldSyncV1EMP.balanceOf(OWNER.address)).to.be.greaterThan(strategyDepositEthValue);
 
-			// Check that the OWNER address received something
-			expect(await yieldSyncV1EMP.balanceOf(OWNER.address)).to.be.greaterThan(0);
+				const { totalValue: strategy2DepositETHValue } = await strategyTransferUtil.calculateValueOfERC20Deposits(
+					[STRATEGY2_DEPOSIT_AMOUNTS[0]],
+					[mockERC20C]
+				)
 
-			const { totalValue: strategyDepositEthValue } = await strategyTransferUtil.calculateValueOfERC20Deposits(
-				[STRATEGY_DEPOSIT_AMOUNTS[0], STRATEGY_DEPOSIT_AMOUNTS[1]],
-				[mockERC20A, mockERC20B]
-			);
+				// Check that the EMP address received correct amount of Strategy tokens
+				expect(await yieldSyncV1EMPStrategy2.balanceOf(yieldSyncV1EMP.address)).to.be.equal(strategy2DepositETHValue);
 
-			// Check that the EMP address received correct amount of Strategy tokens
-			expect(await yieldSyncV1EMPStrategy.balanceOf(yieldSyncV1EMP.address)).to.be.equal(strategyDepositEthValue);
+				// Add up deposit amounts
+				const TOTAL_DEPOSIT_VALUE = strategyDepositEthValue.add(strategy2DepositETHValue);
 
-			// Check that the OWNER address received something greater than what was put into the 1st strategy
-			expect(await yieldSyncV1EMP.balanceOf(OWNER.address)).to.be.greaterThan(strategyDepositEthValue);
+				// Check that the MANAGER address received 0% of the EMP tokens
+				expect(await yieldSyncV1EMP.balanceOf(MANAGER.address)).to.be.equal(0);
 
-			const { totalValue: strategy2DepositETHValue } = await strategyTransferUtil.calculateValueOfERC20Deposits(
-				[STRATEGY2_DEPOSIT_AMOUNTS[0]],
-				[mockERC20C]
-			)
+				// 2% of deposit value
+				const VALUE_CUT = TOTAL_DEPOSIT_VALUE.mul(ethers.utils.parseUnits(".02", 18)).div(
+					ethers.utils.parseUnits("1", 18)
+				);
 
-			// Check that the EMP address received correct amount of Strategy tokens
-			expect(await yieldSyncV1EMPStrategy2.balanceOf(yieldSyncV1EMP.address)).to.be.equal(strategy2DepositETHValue);
+				// Check that the TREASURY address received 98% of the EMP tokens
+				expect(await yieldSyncV1EMP.balanceOf(TREASURY.address)).to.be.equal(VALUE_CUT);
 
-			// Add up deposit amounts
-			const TOTAL_DEPOSIT_VALUE = strategyDepositEthValue.add(strategy2DepositETHValue);
+				// 98% of deposit value
+				const VALUE_AFTER_CUT = TOTAL_DEPOSIT_VALUE.mul(ethers.utils.parseUnits(".98", 18)).div(
+					ethers.utils.parseUnits("1", 18)
+				);
 
-			// Check that the MANAGER address received 0% of the EMP tokens
-			expect(await yieldSyncV1EMP.balanceOf(MANAGER.address)).to.be.equal(0);
+				// Check that the OWNER address received something equal to what was deposited into all strategies via EMP
+				expect(await yieldSyncV1EMP.balanceOf(OWNER.address)).to.be.lessThan(TOTAL_DEPOSIT_VALUE);
 
-			// 2% of deposit value
-			const VALUE_CUT = TOTAL_DEPOSIT_VALUE.mul(ethers.utils.parseUnits(".02", 18)).div(
-				ethers.utils.parseUnits("1", 18)
-			);
+				// Check that the OWNER address received 98% of the EMP tokens
+				expect(await yieldSyncV1EMP.balanceOf(OWNER.address)).to.be.equal(VALUE_AFTER_CUT);
+			});
 
-			// Check that the TREASURY address received 98% of the EMP tokens
-			expect(await yieldSyncV1EMP.balanceOf(TREASURY.address)).to.be.equal(VALUE_CUT);
+			it("Manager & Yield Sync Governance should receive correct amounts of ERC20 if fees are set to greater than 0..", async () => {
+				const [OWNER, MANAGER, TREASURY] = await ethers.getSigners();
 
-			// 98% of deposit value
-			const VALUE_AFTER_CUT = TOTAL_DEPOSIT_VALUE.mul(ethers.utils.parseUnits(".98", 18)).div(
-				ethers.utils.parseUnits("1", 18)
-			);
+				const UTILIZED_STRATEGIES: UtilizedEMPStrategyUpdate = [
+					[yieldSyncV1EMPStrategy.address, PERCENT.FIFTY],
+					[yieldSyncV1EMPStrategy2.address, PERCENT.FIFTY],
+				];
 
-			// Check that the OWNER address received something equal to what was deposited into all strategies via EMP
-			expect(await yieldSyncV1EMP.balanceOf(OWNER.address)).to.be.lessThan(TOTAL_DEPOSIT_VALUE);
+				// Set the utilzation to 2 different strategies
+				await expect(
+					yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyUpdate(UTILIZED_STRATEGIES)
+				).to.be.not.rejected;
 
-			// Check that the OWNER address received 98% of the EMP tokens
-			expect(await yieldSyncV1EMP.balanceOf(OWNER.address)).to.be.equal(VALUE_AFTER_CUT);
-		});
+				// Set the utilzation to 2 different strategies
+				await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyDepositOpenToggle()).to.be.not.rejected;
 
-		it("Manager & Yield Sync Governance should receive correct amounts of ERC20 if fees are set to greater than 0..", async () => {
-			const [OWNER, MANAGER, TREASURY] = await ethers.getSigners();
+				/**
+				* @notice Because UTILIZED_STRATEGIES has 2 stratgies with a split of 50/50, the same amount (2) is set for
+				* each.
+				*/
 
-			const UTILIZED_STRATEGIES: UtilizedEMPStrategyUpdate = [
-				[yieldSyncV1EMPStrategy.address, PERCENT.FIFTY],
-				[yieldSyncV1EMPStrategy2.address, PERCENT.FIFTY],
-			];
+				const STRATEGY_DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil.calculateERC20RequiredByTotalAmount(
+					ethers.utils.parseUnits("2", 18)
+				);
 
-			// Set the utilzation to 2 different strategies
-			await expect(
-				yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyUpdate(UTILIZED_STRATEGIES)
-			).to.be.not.rejected;
+				const STRATEGY2_DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil2.calculateERC20RequiredByTotalAmount(
+					ethers.utils.parseUnits("2", 18)
+				);
 
-			// Set the utilzation to 2 different strategies
-			await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyDepositOpenToggle()).to.be.not.rejected;
+				// Pass in value for 2 strategies
+				const VALID: UtilizedEMPStrategyERC20Amount = [
+					[STRATEGY_DEPOSIT_AMOUNTS[0], STRATEGY_DEPOSIT_AMOUNTS[1]],
+					[STRATEGY2_DEPOSIT_AMOUNTS[0]]
+				];
 
-			// Set manager fee to 2%
-			await expect(yieldSyncV1EMP.feeRateManagerUpdate(ethers.utils.parseUnits(".02", 18))).to.be.not.reverted;
+				// Approve tokens
+				await mockERC20A.approve(strategyInteractorDummy.address, STRATEGY_DEPOSIT_AMOUNTS[0]);
+				await mockERC20B.approve(strategyInteractorDummy.address, STRATEGY_DEPOSIT_AMOUNTS[1]);
+				await mockERC20C.approve(strategyInteractorDummy.address, STRATEGY2_DEPOSIT_AMOUNTS[0]);
 
-			// Set YS Gov fee to 2%
-			await expect(yieldSyncV1EMP.feeRateYieldSyncGovernanceUpdate(ethers.utils.parseUnits(".02", 18))).to.be.not.reverted;
+				// Set manager fee to 2%
+				await expect(yieldSyncV1EMP.feeRateManagerUpdate(ethers.utils.parseUnits(".02", 18))).to.be.not.reverted;
 
-			expect(await yieldSyncV1EMP.feeRateManager()).to.be.equal(ethers.utils.parseUnits(".02", 18));
+				// Set YS Gov fee to 2%
+				await expect(yieldSyncV1EMP.feeRateYieldSyncGovernanceUpdate(ethers.utils.parseUnits(".02", 18))).to.be.not.reverted;
 
-			expect(await yieldSyncV1EMP.feeRateYieldSyncGovernance()).to.be.equal(ethers.utils.parseUnits(".02", 18));
+				expect(await yieldSyncV1EMP.feeRateManager()).to.be.equal(ethers.utils.parseUnits(".02", 18));
 
-			// Set manager to ADDR_1
-			await yieldSyncV1EMP.managerUpdate(MANAGER.address);
+				expect(await yieldSyncV1EMP.feeRateYieldSyncGovernance()).to.be.equal(ethers.utils.parseUnits(".02", 18));
 
-			expect(await yieldSyncV1EMP.manager()).to.be.equal(MANAGER.address);
+				// Set manager to ADDR_1
+				await yieldSyncV1EMP.managerUpdate(MANAGER.address);
 
-			/**
-			* @notice Because UTILIZED_STRATEGIES has 2 stratgies with a split of 50/50, the same amount (2) is set for
-			* each.
-			*/
+				expect(await yieldSyncV1EMP.manager()).to.be.equal(MANAGER.address);
 
-			const STRATEGY_DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil.calculateERC20RequiredByTotalAmount(
-				ethers.utils.parseUnits("2", 18)
-			);
+				// [main-test]
+				await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyDeposit(VALID)).to.not.be.reverted;
 
-			const STRATEGY2_DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil2.calculateERC20RequiredByTotalAmount(
-				ethers.utils.parseUnits("2", 18)
-			);
+				// Validate balances
+				expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.be.equal(STRATEGY_DEPOSIT_AMOUNTS[0]);
+				expect(await mockERC20B.balanceOf(strategyInteractorDummy.address)).to.be.equal(STRATEGY_DEPOSIT_AMOUNTS[1]);
+				expect(await mockERC20C.balanceOf(strategyInteractorDummy.address)).to.be.equal(STRATEGY2_DEPOSIT_AMOUNTS[0]);
 
-			// Pass in value for 2 strategies
-			const VALID: UtilizedEMPStrategyERC20Amount = [
-				[STRATEGY_DEPOSIT_AMOUNTS[0], STRATEGY_DEPOSIT_AMOUNTS[1]],
-				[STRATEGY2_DEPOSIT_AMOUNTS[0]]
-			];
+				// Check that the OWNER address received something
+				expect(await yieldSyncV1EMP.balanceOf(OWNER.address)).to.be.greaterThan(0);
 
-			// Approve tokens
-			await mockERC20A.approve(strategyInteractorDummy.address, STRATEGY_DEPOSIT_AMOUNTS[0]);
-			await mockERC20B.approve(strategyInteractorDummy.address, STRATEGY_DEPOSIT_AMOUNTS[1]);
-			await mockERC20C.approve(strategyInteractorDummy.address, STRATEGY2_DEPOSIT_AMOUNTS[0]);
+				const { totalValue: strategyDepositEthValue } = await strategyTransferUtil.calculateValueOfERC20Deposits(
+					[STRATEGY_DEPOSIT_AMOUNTS[0], STRATEGY_DEPOSIT_AMOUNTS[1]],
+					[mockERC20A, mockERC20B]
+				);
 
-			// [main-test]
-			await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyDeposit(VALID)).to.not.be.reverted;
+				// Check that the EMP address received correct amount of Strategy tokens
+				expect(await yieldSyncV1EMPStrategy.balanceOf(yieldSyncV1EMP.address)).to.be.equal(strategyDepositEthValue);
 
-			// Validate balances
-			expect(await mockERC20A.balanceOf(strategyInteractorDummy.address)).to.be.equal(STRATEGY_DEPOSIT_AMOUNTS[0]);
-			expect(await mockERC20B.balanceOf(strategyInteractorDummy.address)).to.be.equal(STRATEGY_DEPOSIT_AMOUNTS[1]);
-			expect(await mockERC20C.balanceOf(strategyInteractorDummy.address)).to.be.equal(STRATEGY2_DEPOSIT_AMOUNTS[0]);
+				// Check that the OWNER address received something greater than what was put into the 1st strategy
+				expect(await yieldSyncV1EMP.balanceOf(OWNER.address)).to.be.greaterThan(strategyDepositEthValue);
 
-			// Check that the OWNER address received something
-			expect(await yieldSyncV1EMP.balanceOf(OWNER.address)).to.be.greaterThan(0);
+				const { totalValue: strategy2DepositETHValue } = await strategyTransferUtil.calculateValueOfERC20Deposits(
+					[STRATEGY2_DEPOSIT_AMOUNTS[0]],
+					[mockERC20C]
+				)
 
-			const { totalValue: strategyDepositEthValue } = await strategyTransferUtil.calculateValueOfERC20Deposits(
-				[STRATEGY_DEPOSIT_AMOUNTS[0], STRATEGY_DEPOSIT_AMOUNTS[1]],
-				[mockERC20A, mockERC20B]
-			);
+				// Check that the EMP address received correct amount of Strategy tokens
+				expect(await yieldSyncV1EMPStrategy2.balanceOf(yieldSyncV1EMP.address)).to.be.equal(strategy2DepositETHValue);
 
-			// Check that the EMP address received correct amount of Strategy tokens
-			expect(await yieldSyncV1EMPStrategy.balanceOf(yieldSyncV1EMP.address)).to.be.equal(strategyDepositEthValue);
+				// Add up deposit amounts
+				const TOTAL_DEPOSIT_VALUE = strategyDepositEthValue.add(strategy2DepositETHValue);
 
-			// Check that the OWNER address received something greater than what was put into the 1st strategy
-			expect(await yieldSyncV1EMP.balanceOf(OWNER.address)).to.be.greaterThan(strategyDepositEthValue);
+				// 2% of deposit value
+				const VALUE_CUT = TOTAL_DEPOSIT_VALUE.mul(ethers.utils.parseUnits(".02", 18)).div(
+					ethers.utils.parseUnits("1", 18)
+				);
 
-			const { totalValue: strategy2DepositETHValue } = await strategyTransferUtil.calculateValueOfERC20Deposits(
-				[STRATEGY2_DEPOSIT_AMOUNTS[0]],
-				[mockERC20C]
-			)
+				// Check that the MANAGER address received 0% of the EMP tokens
+				expect(await yieldSyncV1EMP.balanceOf(MANAGER.address)).to.be.equal(VALUE_CUT);
 
-			// Check that the EMP address received correct amount of Strategy tokens
-			expect(await yieldSyncV1EMPStrategy2.balanceOf(yieldSyncV1EMP.address)).to.be.equal(strategy2DepositETHValue);
+				// Check that the TREASURY address received 98% of the EMP tokens
+				expect(await yieldSyncV1EMP.balanceOf(TREASURY.address)).to.be.equal(VALUE_CUT);
 
-			// Add up deposit amounts
-			const TOTAL_DEPOSIT_VALUE = strategyDepositEthValue.add(strategy2DepositETHValue);
+				// 98% of deposit value
+				const VALUE_AFTER_CUT = TOTAL_DEPOSIT_VALUE.mul(ethers.utils.parseUnits(".96", 18)).div(
+					ethers.utils.parseUnits("1", 18)
+				);
 
-			// 2% of deposit value
-			const VALUE_CUT = TOTAL_DEPOSIT_VALUE.mul(ethers.utils.parseUnits(".02", 18)).div(
-				ethers.utils.parseUnits("1", 18)
-			);
+				// Check that the OWNER address received something equal to what was deposited into all strategies via EMP
+				expect(await yieldSyncV1EMP.balanceOf(OWNER.address)).to.be.lessThan(TOTAL_DEPOSIT_VALUE);
 
-			// Check that the MANAGER address received 0% of the EMP tokens
-			expect(await yieldSyncV1EMP.balanceOf(MANAGER.address)).to.be.equal(VALUE_CUT);
-
-			// Check that the TREASURY address received 98% of the EMP tokens
-			expect(await yieldSyncV1EMP.balanceOf(TREASURY.address)).to.be.equal(VALUE_CUT);
-
-			// 98% of deposit value
-			const VALUE_AFTER_CUT = TOTAL_DEPOSIT_VALUE.mul(ethers.utils.parseUnits(".96", 18)).div(
-				ethers.utils.parseUnits("1", 18)
-			);
-
-			// Check that the OWNER address received something equal to what was deposited into all strategies via EMP
-			expect(await yieldSyncV1EMP.balanceOf(OWNER.address)).to.be.lessThan(TOTAL_DEPOSIT_VALUE);
-
-			// Check that the OWNER address received 98% of the EMP tokens
-			expect(await yieldSyncV1EMP.balanceOf(OWNER.address)).to.be.equal(VALUE_AFTER_CUT);
+				// Check that the OWNER address received 98% of the EMP tokens
+				expect(await yieldSyncV1EMP.balanceOf(OWNER.address)).to.be.equal(VALUE_AFTER_CUT);
+			});
 		});
 	});
 });
