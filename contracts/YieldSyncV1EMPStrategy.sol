@@ -214,7 +214,7 @@ contract YieldSyncV1EMPStrategy is
 				require(_utilizedERC20Amount[i] == 0, "!(_utilizedERC20Amount[i] == 0)");
 			}
 
-			(bool computed, uint256 utilizedERC20AmountAllocationActual) = SafeMath.tryDiv(
+			uint256 utilizedERC20AmountAllocationActual = SafeMath.div(
 				SafeMath.mul(
 					SafeMath.div(
 						SafeMath.mul(
@@ -225,10 +225,9 @@ contract YieldSyncV1EMPStrategy is
 					),
 					1e18
 				),
-				_utilizedERC20AmountETHValue
+				_utilizedERC20AmountETHValue,
+				"!computed"
 			);
-
-			require(computed, "!computed");
 
 			require(
 				_utilizedERC20[i].allocation == utilizedERC20AmountAllocationActual,
@@ -274,12 +273,11 @@ contract YieldSyncV1EMPStrategy is
 		{
 			if (_utilizedERC20[i].withdraw)
 			{
-				(bool computed, uint256 utilizedERC20AmountPerToken) = SafeMath.tryDiv(
+				uint256 utilizedERC20AmountPerToken = SafeMath.div(
 					SafeMath.mul(iYieldSyncV1EMPStrategyInteractor.utilizedERC20TotalAmount(_utilizedERC20[i].eRC20), 1e18),
-					totalSupply()
+					totalSupply(),
+					"!computed"
 				);
-
-				require(computed, "!computed");
 
 				iYieldSyncV1EMPStrategyInteractor.utilizedERC20Withdraw(
 					_to,

@@ -175,12 +175,11 @@ contract YieldSyncV1EMP is
 
 		for (uint256 i = 0; i < _utilizedYieldSyncV1EMPStrategy.length; i++)
 		{
-			(bool computed, uint256 utilizedERC20AmountAllocationActual) = SafeMath.tryDiv(
+			uint256 utilizedERC20AmountAllocationActual = SafeMath.div(
 				SafeMath.mul(_utilizedERC20ETHValue[i], 1e18),
-				_utilizedERC20ETHValueTotal
+				_utilizedERC20ETHValueTotal,
+				"!computed"
 			);
-
-			require(computed, "!computed");
 
 			require(
 				_utilizedYieldSyncV1EMPStrategy[i].allocation == utilizedERC20AmountAllocationActual,
