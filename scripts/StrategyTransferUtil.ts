@@ -20,7 +20,7 @@ export default class StrategyTransferUtil
 
 	/**
 	 * Calculate ERC20 required by a total ETH Amount
-	 * @param _totalAmount {BigNumber}
+	 * @param _totalAmount {BigNumber} Deposit ETH value
 	 * @returns Object containing utilized ERC 20 amounts
 	 */
 	public async calculateERC20RequiredByTotalAmount(_totalAmount: BigNumber): Promise<BigNumber[]>
@@ -29,15 +29,24 @@ export default class StrategyTransferUtil
 
 		let utilizedERC20Amount: BigNumber[] = [];
 
-		const utilizedERC20 = await this._yieldSyncV1EMPStrategy.utilizedERC20()
+		const UTILIZED_ERC20S = await this._yieldSyncV1EMPStrategy.utilizedERC20s();
 
-		for (let i: number = 0; i < utilizedERC20.length; i++)
+		for (let i: number = 0; i < UTILIZED_ERC20S.length; i++)
 		{
-			const ALLOCATION = utilizedERC20[i].allocation.mul(D_18).div(ONE_HUNDRED_PERCENT);
+			let tokenAmount: BigNumber = ethers.utils.parseUnits("0", 18);
 
-			const TOKEN_AMOUNT = _totalAmount.mul(ALLOCATION).div(D_18);
+			const ERC20 = UTILIZED_ERC20S[i];
 
-			utilizedERC20Amount.push(TOKEN_AMOUNT);
+			const UTILIZATION = await this._yieldSyncV1EMPStrategy.utilizedERC20_utilization(ERC20)
+
+			if (UTILIZATION.deposit)
+			{
+				const ALLOCATION = UTILIZATION.allocation.mul(D_18).div(ONE_HUNDRED_PERCENT);
+
+				tokenAmount = _totalAmount.mul(ALLOCATION).div(D_18);
+			}
+
+			utilizedERC20Amount.push(tokenAmount);
 		}
 
 		return utilizedERC20Amount;
@@ -54,9 +63,9 @@ export default class StrategyTransferUtil
 		_utilizedERC20: Contract[]
 	): Promise<{totalValue: BigNumber, utilizedERC20Amount: BigNumber[]}>
 	{
-		let utilizedERC20Amount: BigNumber[] = [];
-
 		let totalValue: BigNumber = ethers.utils.parseUnits("0", 18);
+
+		let utilizedERC20Amount: BigNumber[] = [];
 
 		// Calculate how much of each utilized tokens are being used
 		for (let i: number = 0; i < _utilizedERC20.length; i++)
@@ -80,22 +89,22 @@ export default class StrategyTransferUtil
 	/**
 	 * This function calculates the ETH value of each token as well as the total value of everything held by deposits param
 	 * @param _utilizedERC20Deposits {BigNumber[]} ERC20 deposits
-	 * @param _utilizedERC20 {Contract[]} ERC20 contracts
 	 * @returns Object containing the ETH value of each ERC20 token and Total ETH value of all ERC20 tokens
 	 */
 	public async calculateValueOfERC20Deposits(
-		_utilizedERC20Deposits: BigNumber[],
-		_utilizedERC20: Contract[],
+		_utilizedERC20Deposits: BigNumber[]
 	): Promise<{totalValue: BigNumber, utilizedERC20Amount: BigNumber[]}>
 	{
-		let utilizedERC20Amount: BigNumber[] = [];
+		const UTILIZED_ERC20S = await this._yieldSyncV1EMPStrategy.utilizedERC20s();
 
 		let totalValue: BigNumber = ethers.utils.parseUnits("0", 18);
 
+		let utilizedERC20Amount: BigNumber[] = [];
+
 		// Calculate how much of each utilized tokens are being used
-		for (let i: number = 0; i < _utilizedERC20.length; i++)
+		for (let i: number = 0; i < UTILIZED_ERC20S.length; i++)
 		{
-			const ETH_VALUE: BigNumber = await this._eTHValueFeed.utilizedERC20ETHValue(_utilizedERC20[i].address);
+			const ETH_VALUE: BigNumber = await this._eTHValueFeed.utilizedERC20ETHValue(UTILIZED_ERC20S[i]);
 
 			totalValue = totalValue.add(_utilizedERC20Deposits[i].mul(ETH_VALUE).div(D_18));
 
