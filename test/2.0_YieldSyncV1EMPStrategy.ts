@@ -2,7 +2,7 @@ const { ethers } = require("hardhat");
 
 
 import { expect } from "chai";
-import { BigNumber, Contract, ContractFactory } from "ethers";
+import { Contract, ContractFactory } from "ethers";
 
 import { ERROR, PERCENT } from "../const";
 
@@ -11,7 +11,8 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () => {
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;
 	let mockERC20C: Contract;
-	let mockYieldSyncGovernance: Contract;
+	let yieldSyncUtilityV1Array: Contract;
+	let yieldSyncGovernance: Contract;
 	let eTHValueFeedDummy: Contract;
 	let strategyInteractorDummy: Contract;
 	let yieldSyncV1EMPRegistry: Contract;
@@ -22,14 +23,14 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () => {
 	beforeEach("[beforeEach] Set up contracts..", async () => {
 		/**
 		* This process mocks the OWNER address to be an EMP to give authorization to access the functions of a strategy.
-		*
 		*/
 		const [OWNER, MANAGER, TREASURY] = await ethers.getSigners();
 
-		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
 		const ETHValueFeedDummy: ContractFactory = await ethers.getContractFactory("ETHValueFeedDummy");
+		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
+		const YieldSyncUtilityV1Array: ContractFactory = await ethers.getContractFactory("YieldSyncUtilityV1Array");
+		const YieldSyncGovernance: ContractFactory = await ethers.getContractFactory("YieldSyncGovernance");
 		const StrategyInteractorDummy: ContractFactory = await ethers.getContractFactory("StrategyInteractorDummy");
-		const MockYieldSyncGovernance: ContractFactory = await ethers.getContractFactory("MockYieldSyncGovernance");
 		const YieldSyncV1EMPRegistry: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPRegistry");
 		const YieldSyncV1EMPStrategy: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPStrategy");
 		const YieldSyncV1EMPStrategyDeployer: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPStrategyDeployer");
@@ -39,14 +40,15 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () => {
 		mockERC20C = await (await MockERC20.deploy()).deployed();
 		eTHValueFeedDummy = await (await ETHValueFeedDummy.deploy()).deployed();
 		strategyInteractorDummy = await (await StrategyInteractorDummy.deploy()).deployed();
-		mockYieldSyncGovernance = await (await MockYieldSyncGovernance.deploy()).deployed();
-		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy(mockYieldSyncGovernance.address)).deployed();
+		yieldSyncUtilityV1Array = await (await YieldSyncUtilityV1Array.deploy()).deployed();
+		yieldSyncGovernance = await (await YieldSyncGovernance.deploy()).deployed();
+		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy(yieldSyncGovernance.address, yieldSyncUtilityV1Array.address)).deployed();
 		yieldSyncV1EMPStrategyDeployer = await (
 			await YieldSyncV1EMPStrategyDeployer.deploy(yieldSyncV1EMPRegistry.address)
 		).deployed();
 
 		// Set Treasury
-		await expect(mockYieldSyncGovernance.payToUpdate(TREASURY.address)).to.not.be.reverted;
+		await expect(yieldSyncGovernance.payToUpdate(TREASURY.address)).to.not.be.reverted;
 
 		// Mock owner being an EMP Deployer
 		await expect(
@@ -112,7 +114,8 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () => {
 
 				await expect(
 					yieldSyncV1EMPStrategy.connect(ADDR_1).utilizedERC20Update(
-						[[mockERC20A.address, true, true, PERCENT.HUNDRED]]
+						[mockERC20A.address],
+						[[true, true, PERCENT.HUNDRED]]
 					)
 				).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
 			}
@@ -123,21 +126,40 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () => {
 			async () => {
 				const [OWNER] = await ethers.getSigners();
 
-				const INVALID_ALLOCATIONS: StrategyUtilizedERC20[] = [
-					[[mockERC20A.address, true, true, PERCENT.FIFTY]],
-					[[mockERC20A.address, true, false, PERCENT.FIFTY]],
-					[[mockERC20A.address, false, false, PERCENT.FIFTY]],
-					[[mockERC20A.address, false, true, PERCENT.HUNDRED]],
-					[[mockERC20A.address, false, false, PERCENT.HUNDRED]],
-					[
-						[mockERC20A.address, true, true, PERCENT.FIFTY],
-						[mockERC20B.address, true, true, PERCENT.TWENTY_FIVE]
-					],
-					[[mockERC20A.address, false, true, PERCENT.FIFTY], [mockERC20B.address, true, true, PERCENT.FIFTY]]
+				const INVALID_ALLOCATION: StrategyUtilizedERC20Update[] = [
+					{
+						utilizedERC20: [mockERC20A.address],
+						utilization: [[true, true, PERCENT.FIFTY]]
+					},
+					{
+						utilizedERC20: [mockERC20A.address],
+						utilization: [[true, false, PERCENT.FIFTY]]
+					},
+					{
+						utilizedERC20: [mockERC20A.address],
+						utilization: [[false, false, PERCENT.FIFTY]]
+					},
+					{
+						utilizedERC20: [mockERC20A.address],
+						utilization: [[false, true, PERCENT.HUNDRED]]
+					},
+					{
+						utilizedERC20: [mockERC20A.address],
+						utilization: [[false, false, PERCENT.HUNDRED]]
+					},
+					{
+						utilizedERC20: [mockERC20A.address, mockERC20B.address],
+						utilization: [[true, true, PERCENT.FIFTY], [true, true, PERCENT.TWENTY_FIVE]],
+					},
+					{
+						utilizedERC20: [mockERC20A.address, mockERC20B.address],
+						utilization: [[false, true, PERCENT.FIFTY], [true, true, PERCENT.FIFTY]]
+					},
 				];
 
-				for (let i: number = 0; i < INVALID_ALLOCATIONS.length; i++)
+				for (let i: number = 0; i < INVALID_ALLOCATION.length; i++)
 				{
+					// Deploy a temporary contract
 					const _YSS = await (
 						await (await ethers.getContractFactory("YieldSyncV1EMPStrategy")).deploy(
 							OWNER.address,
@@ -147,7 +169,9 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () => {
 						)
 					).deployed();
 
-					await expect(_YSS.utilizedERC20Update(INVALID_ALLOCATIONS[i])).to.be.rejectedWith(
+					await expect(
+						_YSS.utilizedERC20Update(INVALID_ALLOCATION[i].utilizedERC20, INVALID_ALLOCATION[i].utilization)
+					).to.be.rejectedWith(
 						ERROR.INVALID_ALLOCATION
 					);
 				}
@@ -159,25 +183,27 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () => {
 			async () => {
 				const [OWNER] = await ethers.getSigners();
 
-				const VALID_ALLOCATION: StrategyUtilizedERC20[] = [
-					[
-						[mockERC20A.address, true, true, PERCENT.FIFTY],
-						[mockERC20B.address, true, true, PERCENT.FIFTY],
-					],
-					[
-						[mockERC20A.address, false, true, PERCENT.ZERO],
-						[mockERC20B.address, true, true, PERCENT.FIFTY],
-						[mockERC20C.address, true, true, PERCENT.FIFTY],
-					],
+				const VALID_INPUTS: StrategyUtilizedERC20Update[] = [
+					{
+						utilizedERC20: [mockERC20A.address],
+						utilization: [[true, true, PERCENT.HUNDRED]]
+					},
+					{
+						utilizedERC20: [mockERC20A.address, mockERC20B.address, mockERC20C.address],
+						utilization: [[false, true, PERCENT.ZERO], [true, true, PERCENT.FIFTY], [true, true, PERCENT.FIFTY]],
+					},
 					// Even if withdraw token is set to 100% it should be accepted
-					[
-						[mockERC20A.address, false, true, PERCENT.HUNDRED],
-						[mockERC20B.address, true, true, PERCENT.FIFTY],
-						[mockERC20C.address, true, true, PERCENT.FIFTY],
-					],
+					{
+						utilizedERC20: [mockERC20A.address, mockERC20B.address, mockERC20C.address],
+						utilization: [
+							[false, true, PERCENT.HUNDRED],
+							[true, true, PERCENT.FIFTY],
+							[true, true, PERCENT.FIFTY],
+						]
+					},
 				];
 
-				for (let i: number = 0; i < VALID_ALLOCATION.length; i++)
+				for (let i: number = 0; i < VALID_INPUTS.length; i++)
 				{
 					const _YSS = await (
 						await (await ethers.getContractFactory("YieldSyncV1EMPStrategy")).deploy(
@@ -188,21 +214,24 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () => {
 						)
 					).deployed();
 
-					await expect(_YSS.utilizedERC20Update(VALID_ALLOCATION[i])).to.be.not.reverted;
+					await expect(
+						_YSS.utilizedERC20Update(VALID_INPUTS[i].utilizedERC20, VALID_INPUTS[i].utilization)
+					).to.be.not.reverted;
 
-					const utilizedERC20 = await _YSS.utilizedERC20();
+					// Its important to note that the array gets reordered by this point
 
-					await expect(utilizedERC20.length).to.be.equal(VALID_ALLOCATION[i].length);
+					const utilizedERC20s = await _YSS.utilizedERC20s();
 
-					for (let ii: number = 0; ii < VALID_ALLOCATION[i].length; ii++)
+					await expect(utilizedERC20s.length).to.be.equal(VALID_INPUTS[i].utilizedERC20.length);
+
+					// Validate allocation
+					for (let ii: number = 0; ii < VALID_INPUTS[i].utilizedERC20.length; ii++)
 					{
-						const allocation = VALID_ALLOCATION[i][ii];
-						const utilizedERC20 = (await _YSS.utilizedERC20())[ii];
+						const allocation = await _YSS.utilizedERC20_utilization(VALID_INPUTS[i].utilizedERC20[ii]);
 
-						expect(utilizedERC20.eRC20).to.be.equal(allocation[0]);
-						expect(utilizedERC20.deposit).to.be.equal(allocation[1]);
-						expect(utilizedERC20.withdraw).to.be.equal(allocation[2]);
-						expect(utilizedERC20.allocation.eq(allocation[3])).to.be.true;
+						expect(VALID_INPUTS[i].utilization[ii][0]).to.be.equal(allocation[0]);
+						expect(VALID_INPUTS[i].utilization[ii][1]).to.be.equal(allocation[1]);
+						expect(allocation[2].eq(VALID_INPUTS[i].utilization[ii][2])).to.be.true;
 					}
 				}
 			}
@@ -298,15 +327,17 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () => {
 		it(
 			"Should toggle utilizedERC20DepositOpen..",
 			async () => {
-				// Initialize strategy with mock ERC20
+				// Set strategy ERC20 tokens
 				await expect(
-					yieldSyncV1EMPStrategy.utilizedERC20Update([[mockERC20A.address, true, true, PERCENT.HUNDRED]])
+					yieldSyncV1EMPStrategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]])
 				).to.not.be.reverted;
 
+				// Set value feed
 				await expect(
 					yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
 				).to.not.be.reverted;
 
+				// Set SI feed
 				await expect(
 					yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 				).to.not.be.reverted;
@@ -324,24 +355,24 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () => {
 		it(
 			"Should not be able to set iYieldSyncV1EMPETHValueFeed when utilizedERC20DepositOpen is true..",
 			async () => {
-				// Initialize strategy with mock ERC20
+				// Set strategy ERC20 tokens
 				await expect(
-					yieldSyncV1EMPStrategy.utilizedERC20Update([[mockERC20A.address, true, true, PERCENT.HUNDRED]])
+					yieldSyncV1EMPStrategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]])
 				).to.not.be.reverted;
 
+				// Set value feed
 				await expect(
 					yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
 				).to.not.be.reverted;
 
+				// Set SI feed
 				await expect(
 					yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 				).to.not.be.reverted;
 
 				expect(await yieldSyncV1EMPStrategy.utilizedERC20DepositOpen()).to.be.false;
 
-				await expect(
-					yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()
-				).to.be.not.reverted;
+				await expect(yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()).to.be.not.reverted;
 
 				expect(await yieldSyncV1EMPStrategy.utilizedERC20DepositOpen()).to.be.true;
 
@@ -354,26 +385,26 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () => {
 		it(
 			"Should not be able to set iYieldSyncV1EMPETHValueFeed when utilizedERC20DepositOpen is true..",
 			async () => {
-				// Initialize strategy with mock ERC20
+				// Set strategy ERC20 tokens
 				await expect(
-					yieldSyncV1EMPStrategy.utilizedERC20Update([[mockERC20A.address, true, true, PERCENT.HUNDRED]])
+					yieldSyncV1EMPStrategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]])
 				).to.not.be.reverted;
 
+				// Set value feed
 				await expect(
 					yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
 				).to.not.be.reverted;
 
+				// Set SI feed
 				await expect(
 					yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 				).to.not.be.reverted;
 
-				expect(await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpen()).to.be.false;
+				expect(await yieldSyncV1EMPStrategy.utilizedERC20DepositOpen()).to.be.false;
 
-				await expect(
-					yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle()
-				).to.be.not.reverted;
+				await expect(yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()).to.be.not.reverted;
 
-				expect(await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpen()).to.be.true;
+				expect(await yieldSyncV1EMPStrategy.utilizedERC20DepositOpen()).to.be.true;
 
 				await expect(
 					yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(strategyInteractorDummy.address)
@@ -386,24 +417,24 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () => {
 		it(
 			"Should not be able to set iYieldSyncV1EMPStrategyInteractor when utilizedERC20DepositOpen is true..",
 			async () => {
-				// Initialize strategy with mock ERC20
+				// Set strategy ERC20 tokens
 				await expect(
-					yieldSyncV1EMPStrategy.utilizedERC20Update([[mockERC20A.address, true, true, PERCENT.HUNDRED]])
+					yieldSyncV1EMPStrategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]])
 				).to.not.be.reverted;
 
+				// Set value feed
 				await expect(
 					yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
 				).to.not.be.reverted;
 
+				// Set SI feed
 				await expect(
 					yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 				).to.not.be.reverted;
 
 				expect(await yieldSyncV1EMPStrategy.utilizedERC20DepositOpen()).to.be.false;
 
-				await expect(
-					yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()
-				).to.be.not.reverted;
+				await expect(yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()).to.be.not.reverted;
 
 				expect(await yieldSyncV1EMPStrategy.utilizedERC20DepositOpen()).to.be.true;
 
@@ -416,26 +447,26 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () => {
 		it(
 			"Should not be able to set iYieldSyncV1EMPStrategyInteractor when utilizedERC20WithdrawOpen is true..",
 			async () => {
-				// Initialize strategy with mock ERC20
+				// Set strategy ERC20 tokens
 				await expect(
-					yieldSyncV1EMPStrategy.utilizedERC20Update([[mockERC20A.address, true, true, PERCENT.HUNDRED]])
+					yieldSyncV1EMPStrategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]])
 				).to.not.be.reverted;
 
+				// Set value feed
 				await expect(
 					yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
 				).to.not.be.reverted;
 
+				// Set SI feed
 				await expect(
 					yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 				).to.not.be.reverted;
 
-				expect(await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpen()).to.be.false;
+				expect(await yieldSyncV1EMPStrategy.utilizedERC20DepositOpen()).to.be.false;
 
-				await expect(
-					yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle()
-				).to.be.not.reverted;
+				await expect(yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()).to.be.not.reverted;
 
-				expect(await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpen()).to.be.true;
+				expect(await yieldSyncV1EMPStrategy.utilizedERC20DepositOpen()).to.be.true;
 
 				await expect(
 					yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
@@ -481,24 +512,24 @@ describe("[2.0] YieldSyncV1EMPStrategy.sol - Setup", async () => {
 		it(
 			"Should toggle utilizedERC20WithdrawOpen..",
 			async () => {
-				// Initialize strategy with mock ERC20
+				// Set strategy ERC20 tokens
 				await expect(
-					yieldSyncV1EMPStrategy.utilizedERC20Update([[mockERC20A.address, true, true, PERCENT.HUNDRED]])
+					yieldSyncV1EMPStrategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]])
 				).to.not.be.reverted;
 
+				// Set value feed
 				await expect(
 					yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
 				).to.not.be.reverted;
 
+				// Set SI feed
 				await expect(
 					yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
 				).to.not.be.reverted;
 
 				expect(await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpen()).to.be.false;
 
-				await expect(
-					yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle()
-				).to.be.not.reverted;
+				await expect(yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle()).to.be.not.reverted;
 
 				expect(await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpen()).to.be.true;
 			}

@@ -1,7 +1,14 @@
 /**
 * EMP Strategy
 */
-type StrategyUtilizedERC20 = [string, boolean, boolean, BigNumber][]
+type StrategyUtiliziedERC20 = string[];
+
+type StrategyUtilization = [boolean, boolean, BigNumber][];
+
+type StrategyUtilizedERC20Update = {
+	utilizedERC20: StrategyUtiliziedERC20,
+	utilization: StrategyUtilization[]
+};
 
 /**
 * EMP

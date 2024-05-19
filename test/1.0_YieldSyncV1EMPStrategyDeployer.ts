@@ -6,7 +6,8 @@ import { Contract, ContractFactory } from "ethers";
 
 
 describe("[1.0] YieldSyncV1EMPStrategyDeployer.sol - Setup", async () => {
-	let mockYieldSyncGovernance: Contract;
+	let yieldSyncUtilityV1Array: Contract;
+	let yieldSyncGovernance: Contract;
 	let yieldSyncV1EMPRegistry: Contract;
 	let yieldSyncV1EMPStrategyDeployer: Contract;
 
@@ -18,20 +19,24 @@ describe("[1.0] YieldSyncV1EMPStrategyDeployer.sol - Setup", async () => {
 		* 2) deploys an EMP Strategy Deployer and registers it on the registry
 		*/
 		const [OWNER, MANAGER, TREASURY] = await ethers.getSigners();
-		const MockYieldSyncGovernance: ContractFactory = await ethers.getContractFactory("MockYieldSyncGovernance");
+		const YieldSyncUtilityV1Array: ContractFactory = await ethers.getContractFactory("YieldSyncUtilityV1Array");
+		const YieldSyncGovernance: ContractFactory = await ethers.getContractFactory("YieldSyncGovernance");
 		const YieldSyncV1EMPRegistry: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPRegistry");
 		const YieldSyncV1EMPStrategyDeployer: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPStrategyDeployer");
 
-		mockYieldSyncGovernance = await (await MockYieldSyncGovernance.deploy()).deployed();
+		yieldSyncUtilityV1Array = await (await YieldSyncUtilityV1Array.deploy()).deployed();
+		yieldSyncGovernance = await (await YieldSyncGovernance.deploy()).deployed();
 
-		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy(mockYieldSyncGovernance.address)).deployed();
+		yieldSyncV1EMPRegistry = await (
+			await YieldSyncV1EMPRegistry.deploy(yieldSyncGovernance.address, yieldSyncUtilityV1Array.address)
+		).deployed();
 
 		yieldSyncV1EMPStrategyDeployer = await (
 			await YieldSyncV1EMPStrategyDeployer.deploy(yieldSyncV1EMPRegistry.address)
 		).deployed();
 
 		// Set Treasury
-		await expect(mockYieldSyncGovernance.payToUpdate(TREASURY.address)).to.not.be.reverted;
+		await expect(yieldSyncGovernance.payToUpdate(TREASURY.address)).to.not.be.reverted;
 
 		await expect(
 			yieldSyncV1EMPRegistry.yieldSyncV1EMPStrategyDeployerUpdate(yieldSyncV1EMPStrategyDeployer.address)

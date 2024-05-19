@@ -5,7 +5,7 @@ pragma solidity ^0.8.18;
 interface IYieldSyncV1EMPETHValueFeed
 {
 	/**
-	* Return the value of the ERC 20 in ETH
+	* @notice Return the value of the ERC 20 in ETH
 	* @param __utilizedERC20 {address}
 	* @return utilizedERC20ETHValue_ {uint256}
 	*/

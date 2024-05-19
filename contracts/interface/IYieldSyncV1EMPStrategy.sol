@@ -4,6 +4,7 @@ pragma solidity ^0.8.18;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import { IYieldSyncUtilityV1Array } from "@yield-sync/v1-sdk/contracts/interface/IYieldSyncUtilityV1Array.sol";
 
 import { IYieldSyncV1EMPETHValueFeed } from "./IYieldSyncV1EMPETHValueFeed.sol";
 import { IYieldSyncV1EMPRegistry } from "./IYieldSyncV1EMPRegistry.sol";
@@ -13,9 +14,8 @@ import { IYieldSyncV1EMPStrategyInteractor } from "./IYieldSyncV1EMPStrategyInte
 using SafeERC20 for IERC20;
 
 
-struct UtilizedERC20
+struct Utilization
 {
-	address eRC20;
 	bool deposit;
 	bool withdraw;
 	uint256 allocation;
@@ -92,6 +92,17 @@ interface IYieldSyncV1EMPStrategy is
 	;
 
 	/**
+	* @dev [view-IYieldSyncUtilityV1Array]
+	* @notice Implemented IYieldSyncUtilityV1Array
+	* @return {IYieldSyncUtilityV1Array}
+	*/
+	function I_YIELD_SYNC_UTILITY_V1_ARRAY()
+		external
+		view
+		returns (IYieldSyncUtilityV1Array)
+	;
+
+	/**
 	* @dev [view-IYieldSyncV1EMPStrategyInteractor]
 	* @notice Implemented IYieldSyncV1EMPStrategyInteractor
 	* @return {IYieldSyncV1EMPStrategyInteractor}
@@ -109,12 +120,22 @@ interface IYieldSyncV1EMPStrategy is
 	/**
 	* @dev [view-address[]]
 	* @notice Utilized ERC20s
-	* @return utilizedERC20_ {UtilizedERC20[]}
+	* @return {address[]}
 	*/
-	function utilizedERC20()
+	function utilizedERC20s()
 		external
 		view
-		returns (UtilizedERC20[] memory utilizedERC20_)
+		returns (address[] memory)
+	;
+
+	/**
+	 * @notice
+	 * @param _utilizedERC20 {address}
+	 */
+	function utilizedERC20_utilization(address _utilizedERC20)
+		external
+		view
+		returns (Utilization memory)
 	;
 
 	/**
@@ -157,9 +178,10 @@ interface IYieldSyncV1EMPStrategy is
 
 	/**
 	* @notice Set utilized ERC20s and purpose
-	* @param _utilizedERC20 {Utilization[]}
+	* @param __utilizedERC20s {address[]}
+	* @param _utilization {Utilization[]}
 	*/
-	function utilizedERC20Update(UtilizedERC20[] memory _utilizedERC20)
+	function utilizedERC20Update(address[] memory __utilizedERC20s, Utilization[] memory _utilization)
 		external
 	;
 

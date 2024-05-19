@@ -11,6 +11,7 @@ contract YieldSyncV1EMPRegistry is
 	IYieldSyncV1EMPRegistry
 {
 	address public override immutable YIELD_SYNC_GOVERNANCE;
+	address public override immutable YIELD_SYNC_V1_UTILITY_ARRAY;
 
 	address public yieldSyncV1EMPDeployer;
 	address public yieldSyncV1EMPStrategyDeployer;
@@ -43,9 +44,10 @@ contract YieldSyncV1EMPRegistry is
 	{}
 
 
-	constructor (address yieldSyncGovernance)
+	constructor (address yieldSyncGovernance, address yieldSyncV1UtilityArray)
 	{
 		YIELD_SYNC_GOVERNANCE = yieldSyncGovernance;
+		YIELD_SYNC_V1_UTILITY_ARRAY = yieldSyncV1UtilityArray;
 
 		yieldSyncEMPIdTracker = 0;
 		yieldSyncEMPStrategyIdTracker = 0;
