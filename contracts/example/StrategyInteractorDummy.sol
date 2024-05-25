@@ -26,28 +26,28 @@ contract StrategyInteractorDummy is
 	* For example an LP tokens could be utilized or an internal mapping integar.
 	*/
 	/// @inheritdoc IYieldSyncV1EMPStrategyInteractor
-	function utilizedERC20TotalAmount(address _utilizedERC20)
+	function utilizedERC20TotalAmount(address __utilizedERC20)
 		public
 		view
 		override
 		returns (uint256 utilizedERC20TotalAmount_)
 	{
-		utilizedERC20TotalAmount_ = IERC20(_utilizedERC20).balanceOf(address(this));
+		utilizedERC20TotalAmount_ = IERC20(__utilizedERC20).balanceOf(address(this));
 	}
 
 	/// @inheritdoc IYieldSyncV1EMPStrategyInteractor
-	function utilizedERC20Deposit(address _from, address _utilizedERC20, uint256 _utilizedERC20Amount)
+	function utilizedERC20Deposit(address _from, address __utilizedERC20, uint256 _utilizedERC20Amount)
 		public
 		override
 	{
-		IERC20(_utilizedERC20).safeTransferFrom(_from, address(this), _utilizedERC20Amount);
+		IERC20(__utilizedERC20).safeTransferFrom(_from, address(this), _utilizedERC20Amount);
 	}
 
 	/// @inheritdoc IYieldSyncV1EMPStrategyInteractor
-	function utilizedERC20Withdraw(address _to, address _utilizedERC20, uint256 _utilizedERC20Amount)
+	function utilizedERC20Withdraw(address _to, address __utilizedERC20, uint256 _utilizedERC20Amount)
 		public
 		override
 	{
-		IERC20(_utilizedERC20).safeTransfer(_to, _utilizedERC20Amount);
+		IERC20(__utilizedERC20).safeTransfer(_to, _utilizedERC20Amount);
 	}
 }

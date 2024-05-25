@@ -111,7 +111,7 @@ contract StrategyInteractorUniswapV2LiquidityPool is
 
 
 	// Moved to another contract
-	function utilizedERC20ETHValue(address _utilizedERC20)
+	function utilizedERC20ETHValue(address __utilizedERC20)
 		public
 		view
 		returns (uint256 utilizedERC20ETHValue_)
@@ -125,7 +125,7 @@ contract StrategyInteractorUniswapV2LiquidityPool is
 		}
 
 		// Return utilizedERC20 price in terms of weth
-		if (_utilizedERC20 < weth)
+		if (__utilizedERC20 < weth)
 		{
 			return uint256(reserve1) * 1e18 / reserve0;
 		}
@@ -136,13 +136,13 @@ contract StrategyInteractorUniswapV2LiquidityPool is
 	}
 
 	/// @inheritdoc IYieldSyncV1EMPStrategyInteractor
-	function utilizedERC20TotalAmount(address _utilizedERC20)
+	function utilizedERC20TotalAmount(address __utilizedERC20)
 		public
 		view
 		override
 		returns (uint256 utilizedERC20TotalAmount_)
 	{
-		utilizedERC20TotalAmount_ = IERC20(_utilizedERC20).balanceOf(address(this));
+		utilizedERC20TotalAmount_ = IERC20(__utilizedERC20).balanceOf(address(this));
 
 		uint256 liquidityPoolBalance = IERC20(address(uniswapV2Pair)).balanceOf(address(this));
 
@@ -161,24 +161,24 @@ contract StrategyInteractorUniswapV2LiquidityPool is
 
 
 	/// @inheritdoc IYieldSyncV1EMPStrategyInteractor
-	function utilizedERC20Deposit(address _from, address _utilizedERC20, uint256 _utilizedERC20Amount)
+	function utilizedERC20Deposit(address _from, address __utilizedERC20, uint256 _utilizedERC20Amount)
 		public
 		override
 		onlyYieldSyncV1EMPStrategy()
 	{
-		IERC20(_utilizedERC20).safeTransferFrom(_from, address(this), _utilizedERC20Amount);
+		IERC20(__utilizedERC20).safeTransferFrom(_from, address(this), _utilizedERC20Amount);
 
-		IERC20(_utilizedERC20).safeApprove(address(uniswapV2Router), _utilizedERC20Amount);
+		IERC20(__utilizedERC20).safeApprove(address(uniswapV2Router), _utilizedERC20Amount);
 	}
 
 	/// @inheritdoc IYieldSyncV1EMPStrategyInteractor
-	function utilizedERC20Withdraw(address _to, address _utilizedERC20, uint256 _utilizedERC20Amount)
+	function utilizedERC20Withdraw(address _to, address __utilizedERC20, uint256 _utilizedERC20Amount)
 		public
 		override
 		onlyYieldSyncV1EMPStrategy()
 	{
-		// Transfer the withdrawn utilizedERC20s to the recipient
-		IERC20(_utilizedERC20).safeTransfer(_to, _utilizedERC20Amount);
+		// Transfer the withdrawn utilizedERC20 to the recipient
+		IERC20(__utilizedERC20).safeTransfer(_to, _utilizedERC20Amount);
 	}
 
 
@@ -219,7 +219,7 @@ contract StrategyInteractorUniswapV2LiquidityPool is
 		// Retrieve the current reserves to estimate the withdrawn amounts
 		(uint256 reserveA, uint256 reserveB, ) = uniswapV2Pair.getReserves();
 
-		// [calculate] Amount of utilizedERC20s to be withdrawn given liquidity amount
+		// [calculate] Amount of utilizedERC20 to be withdrawn given liquidity amount
 		uint256 amountA = _utilizedERC20Amount[0] * reserveA / IERC20(liquidityPool).totalSupply();
 		uint256 amountB = _utilizedERC20Amount[0] * reserveB / IERC20(liquidityPool).totalSupply();
 

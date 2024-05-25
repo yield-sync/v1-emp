@@ -27,14 +27,14 @@ describe("[3.0] YieldSyncV1EMPDeployer.sol - Setup", async () => {
 
 		yieldSyncUtilityV1Array = await (await YieldSyncUtilityV1Array.deploy()).deployed();
 		yieldSyncGovernance = await (await YieldSyncGovernance.deploy()).deployed();
-		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy(yieldSyncGovernance.address, yieldSyncUtilityV1Array.address)).deployed();
+		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy(yieldSyncGovernance.address)).deployed();
 		yieldSyncV1EMPDeployer = await (await YieldSyncV1EMPDeployer.deploy(yieldSyncV1EMPRegistry.address)).deployed();
 
 		// Set Treasury
-		await expect(yieldSyncGovernance.payToUpdate(TREASURY.address)).to.not.be.reverted;
+		await expect(yieldSyncGovernance.payToUpdate(TREASURY.address)).to.be.not.reverted;
 
 		// Set the EMP Deployer on registry
-		await expect(yieldSyncV1EMPRegistry.yieldSyncV1EMPDeployerUpdate(yieldSyncV1EMPDeployer.address)).to.not.be.reverted;
+		await expect(yieldSyncV1EMPRegistry.yieldSyncV1EMPDeployerUpdate(yieldSyncV1EMPDeployer.address)).to.be.not.reverted;
 	});
 
 	describe("Setup process", async () => {

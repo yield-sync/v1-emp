@@ -6,9 +6,9 @@ interface IYieldSyncV1EMPStrategyInteractor
 {
 	/**
 	* @notice Total amounts locked
-	* @param _utilizedERC20 {address}
+	* @param __utilizedERC20 {address}
 	*/
-	function utilizedERC20TotalAmount(address _utilizedERC20)
+	function utilizedERC20TotalAmount(address __utilizedERC20)
 		external
 		view
 		returns (uint256 utilizedERC20Amount_)
@@ -18,20 +18,20 @@ interface IYieldSyncV1EMPStrategyInteractor
 	/**
 	* @notice Deposit utilizedERC20
 	* @param _from {address}
-	* @param _utilizedERC20 {address}
+	* @param __utilizedERC20 {address}
 	* @param _utilizedERC20Amount {uint256}
 	*/
-	function utilizedERC20Deposit(address _from, address _utilizedERC20, uint256 _utilizedERC20Amount)
+	function utilizedERC20Deposit(address _from, address __utilizedERC20, uint256 _utilizedERC20Amount)
 		external
 	;
 
 	/**
 	* @notice Withdraw utilizedERC20
 	* @param _to {address}
-	* @param _utilizedERC20 {address}
+	* @param __utilizedERC20 {address}
 	* @param _utilizedERC20Amount {uint256}
 	*/
-	function utilizedERC20Withdraw(address _to, address _utilizedERC20, uint256 _utilizedERC20Amount)
+	function utilizedERC20Withdraw(address _to, address __utilizedERC20, uint256 _utilizedERC20Amount)
 		external
 	;
 }

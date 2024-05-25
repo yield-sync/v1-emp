@@ -14,8 +14,8 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () => {
 	let mockERC20C: Contract;
 	let yieldSyncUtilityV1Array: Contract;
 	let yieldSyncGovernance: Contract;
-	let eTHValueFeedDummy: Contract;
-	let strategyInteractorDummy: Contract;
+	let eTHValueFeed: Contract;
+	let strategyInteractor: Contract;
 	let yieldSyncV1EMP: Contract;
 	let yieldSyncV1EMPDeployer: Contract;
 	let yieldSyncV1EMPRegistry: Contract;
@@ -66,26 +66,26 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () => {
 		mockERC20A = await (await MockERC20.deploy()).deployed();
 		mockERC20B = await (await MockERC20.deploy()).deployed();
 		mockERC20C = await (await MockERC20.deploy()).deployed();
-		eTHValueFeedDummy = await (await ETHValueFeedDummy.deploy()).deployed();
-		strategyInteractorDummy = await (await StrategyInteractorDummy.deploy()).deployed();
+		eTHValueFeed = await (await ETHValueFeedDummy.deploy()).deployed();
+		strategyInteractor = await (await StrategyInteractorDummy.deploy()).deployed();
 		yieldSyncUtilityV1Array = await (await YieldSyncUtilityV1Array.deploy()).deployed();
 		yieldSyncGovernance = await (await YieldSyncGovernance.deploy()).deployed();
-		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy(yieldSyncGovernance.address, yieldSyncUtilityV1Array.address)).deployed();
+		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy(yieldSyncGovernance.address)).deployed();
 		yieldSyncV1EMPDeployer = await (await YieldSyncV1EMPDeployer.deploy(yieldSyncV1EMPRegistry.address)).deployed();
 		yieldSyncV1EMPStrategyDeployer = await (
-			await YieldSyncV1EMPStrategyDeployer.deploy(yieldSyncV1EMPRegistry.address)
+			await YieldSyncV1EMPStrategyDeployer.deploy(yieldSyncV1EMPRegistry.address, yieldSyncUtilityV1Array.address)
 		).deployed();
 
 		// Set Treasury
-		await expect(yieldSyncGovernance.payToUpdate(TREASURY.address)).to.not.be.reverted;
+		await expect(yieldSyncGovernance.payToUpdate(TREASURY.address)).to.be.not.reverted;
 
 		// Set the EMP Deployer on registry
-		await expect(yieldSyncV1EMPRegistry.yieldSyncV1EMPDeployerUpdate(yieldSyncV1EMPDeployer.address)).to.not.be.reverted;
+		await expect(yieldSyncV1EMPRegistry.yieldSyncV1EMPDeployerUpdate(yieldSyncV1EMPDeployer.address)).to.be.not.reverted;
 
 		// Set the EMP Strategy Deployer on registry
 		await expect(
 			yieldSyncV1EMPRegistry.yieldSyncV1EMPStrategyDeployerUpdate(yieldSyncV1EMPStrategyDeployer.address)
-		).to.not.be.reverted;
+		).to.be.not.reverted;
 
 		strategyUtilizedERC20 = [mockERC20A.address, mockERC20B.address];
 		strategyUtilization = [[true, true, PERCENT.FIFTY], [true, true, PERCENT.FIFTY]];
@@ -129,24 +129,29 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () => {
 
 		// Set the ETH Value Feed
 		await expect(
-			yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
-		).to.not.be.reverted;
+			yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeed.address)
+		).to.be.not.reverted;
 
 		// Set the Strategy Interactor
 		await expect(
-			yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
-		).to.not.be.reverted;
+			yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractor.address)
+		).to.be.not.reverted;
 
 		await expect(
 			yieldSyncV1EMPStrategy.utilizedERC20Update(strategyUtilizedERC20, strategyUtilization)
 		).to.be.not.reverted;
 
 		// Enable Deposits and Withdraws
-		await expect(yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle()).to.not.be.reverted;
-		await expect(yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle()).to.not.be.reverted;
+		await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
+
+		expect(await yieldSyncV1EMPStrategy.utilizedERC20DepositOpen()).to.be.true;
+
+		await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
+
+		expect(await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpen()).to.be.true;
 
 		// Set strategyTransferUtil
-		strategyTransferUtil = new StrategyTransferUtil(yieldSyncV1EMPStrategy, eTHValueFeedDummy)
+		strategyTransferUtil = new StrategyTransferUtil(yieldSyncV1EMPStrategy, eTHValueFeed)
 
 		/**
 		* EMP Strategies 2
@@ -168,71 +173,59 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () => {
 
 		// Set the ETH Value Feed on 2nd strategy
 		await expect(
-			yieldSyncV1EMPStrategy2.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeedDummy.address)
-		).to.not.be.reverted;
+			yieldSyncV1EMPStrategy2.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeed.address)
+		).to.be.not.reverted;
 
 		// Set the Strategy Interactor on 2nd strategy
 		await expect(
-			yieldSyncV1EMPStrategy2.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractorDummy.address)
-		).to.not.be.reverted;
+			yieldSyncV1EMPStrategy2.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractor.address)
+		).to.be.not.reverted;
 
 		await expect(
 			yieldSyncV1EMPStrategy2.utilizedERC20Update(strategy2UtilizedERC20, strategy2Utilization)
 		).to.be.not.reverted;
 
 		// Enable Deposits and Withdraws
-		await expect(yieldSyncV1EMPStrategy2.utilizedERC20DepositOpenToggle()).to.not.be.reverted;
-		await expect(yieldSyncV1EMPStrategy2.utilizedERC20WithdrawOpenToggle()).to.not.be.reverted;
+		await expect(yieldSyncV1EMPStrategy2.utilizedERC20DepositOpenToggle()).to.be.not.reverted;
+		await expect(yieldSyncV1EMPStrategy2.utilizedERC20WithdrawOpenToggle()).to.be.not.reverted;
 
 		// Set strategyTransferUtil
-		strategyTransferUtil2 = new StrategyTransferUtil(yieldSyncV1EMPStrategy2, eTHValueFeedDummy)
+		strategyTransferUtil2 = new StrategyTransferUtil(yieldSyncV1EMPStrategy2, eTHValueFeed)
 	});
 
 
 	describe("function feeRateManagerUpdate()", async () => {
-		it(
-			"[auth] Should revert when unauthorized msg.sender calls..",
-			async () => {
-				const [, ADDR_1] = await ethers.getSigners();
+		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
+			const [, ADDR_1] = await ethers.getSigners();
 
-				await expect(yieldSyncV1EMP.connect(ADDR_1).feeRateManagerUpdate(ADDR_1.address)).to.be.rejectedWith(
-					ERROR.NOT_AUTHORIZED
-				);
-			}
-		);
+			await expect(yieldSyncV1EMP.connect(ADDR_1).feeRateManagerUpdate(ADDR_1.address)).to.be.rejectedWith(
+				ERROR.NOT_AUTHORIZED
+			);
+		});
 
-		it(
-			"Should allow feeRateManager to be changed..",
-			async () => {
-				await expect(yieldSyncV1EMP.feeRateManagerUpdate(1)).to.be.not.reverted;
+		it("Should allow feeRateManager to be changed..", async () => {
+			await expect(yieldSyncV1EMP.feeRateManagerUpdate(1)).to.be.not.reverted;
 
-				expect(await yieldSyncV1EMP.feeRateManager()).to.be.equal(1);
-			}
-		);
+			expect(await yieldSyncV1EMP.feeRateManager()).to.be.equal(1);
+		});
 	});
 
 	describe("function feeRateYieldSyncGovernanceUpdate()", async () => {
-		it(
-			"[auth] Should revert when unauthorized msg.sender calls..",
-			async () => {
-				const [, ADDR_1] = await ethers.getSigners();
+		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
+			const [, ADDR_1] = await ethers.getSigners();
 
-				await expect(
-					yieldSyncV1EMP.connect(ADDR_1).feeRateYieldSyncGovernanceUpdate(ADDR_1.address)
-				).to.be.rejectedWith(
-					ERROR.NOT_AUTHORIZED
-				);
-			}
-		);
+			await expect(
+				yieldSyncV1EMP.connect(ADDR_1).feeRateYieldSyncGovernanceUpdate(ADDR_1.address)
+			).to.be.rejectedWith(
+				ERROR.NOT_AUTHORIZED
+			);
+		});
 
-		it(
-			"Should allow feeRateManager to be changed..",
-			async () => {
-				await expect(yieldSyncV1EMP.feeRateYieldSyncGovernanceUpdate(1)).to.be.not.reverted;
+		it("Should allow feeRateManager to be changed..", async () => {
+			await expect(yieldSyncV1EMP.feeRateYieldSyncGovernanceUpdate(1)).to.be.not.reverted;
 
-				expect(await yieldSyncV1EMP.feeRateYieldSyncGovernance()).to.be.equal(1);
-			}
-		);
+			expect(await yieldSyncV1EMP.feeRateYieldSyncGovernance()).to.be.equal(1);
+		});
 	});
 
 	describe("function utilizedYieldSyncV1EMPStrategyUpdate()", async () => {
@@ -252,9 +245,9 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () => {
 				[yieldSyncV1EMPStrategy2.address, PERCENT.FIFTY],
 			];
 
-			await expect(
-				yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyUpdate(UtilizedEMPStrategy)
-			).to.be.rejectedWith(ERROR.INVALID_ALLOCATION_STRATEGY);
+			await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyUpdate(UtilizedEMPStrategy)).to.be.rejectedWith(
+				ERROR.INVALID_ALLOCATION_STRATEGY
+			);
 		});
 
 		it("Should allow attaching Strategy to EMP..", async () => {
@@ -262,9 +255,7 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () => {
 				[yieldSyncV1EMPStrategy.address, PERCENT.HUNDRED]
 			];
 
-			await expect(
-				yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyUpdate(UtilizedEMPStrategy)
-			).to.be.not.rejected;
+			await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyUpdate(UtilizedEMPStrategy)).to.be.not.reverted;
 
 			const strategies: UtilizedEMPStrategy[] = await yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategy();
 
@@ -280,9 +271,7 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () => {
 				[yieldSyncV1EMPStrategy2.address, PERCENT.FIFTY],
 			];
 
-			await expect(
-				yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyUpdate(UtilizedEMPStrategy)
-			).to.be.not.rejected;
+			await expect(yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategyUpdate(UtilizedEMPStrategy)).to.be.not.reverted;
 
 			const strategies: UtilizedEMPStrategy[] = await yieldSyncV1EMP.utilizedYieldSyncV1EMPStrategy();
 
@@ -297,27 +286,22 @@ describe("[4.0] YieldSyncV1EMP.sol - Setup", async () => {
 	});
 
 	describe("function managerUpdate()", async () => {
-		it(
-			"[auth] Should revert when unauthorized msg.sender calls..",
-			async () => {
-				const [, ADDR_1] = await ethers.getSigners();
-				await expect(
-					yieldSyncV1EMP.connect(ADDR_1).managerUpdate(ADDR_1.address)
-				).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
-			}
-		);
+		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
+			const [, ADDR_1] = await ethers.getSigners();
 
-		it(
-			"Should allow manager to be changed..",
-			async () => {
-				const [, ADDR_1] = await ethers.getSigners();
+			await expect(yieldSyncV1EMP.connect(ADDR_1).managerUpdate(ADDR_1.address)).to.be.rejectedWith(
+				ERROR.NOT_AUTHORIZED
+			);
+		});
 
-				await expect(
-					yieldSyncV1EMP.managerUpdate(ADDR_1.address)
-				).to.be.not.reverted;
+		it("Should allow manager to be changed..", async () => {
+			const [, ADDR_1] = await ethers.getSigners();
 
-				expect(await yieldSyncV1EMP.manager()).to.be.equal(ADDR_1.address);
-			}
-		);
+			await expect(
+				yieldSyncV1EMP.managerUpdate(ADDR_1.address)
+			).to.be.not.reverted;
+
+			expect(await yieldSyncV1EMP.manager()).to.be.equal(ADDR_1.address);
+		});
 	});
 });

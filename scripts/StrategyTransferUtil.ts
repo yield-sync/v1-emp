@@ -20,30 +20,28 @@ export default class StrategyTransferUtil
 
 	/**
 	 * Calculate ERC20 required by a total ETH Amount
-	 * @param _totalAmount {BigNumber} Deposit ETH value
+	 * @param _totalEthValueAmount {BigNumber} Deposit ETH value
 	 * @returns Object containing utilized ERC 20 amounts
 	 */
-	public async calculateERC20RequiredByTotalAmount(_totalAmount: BigNumber): Promise<BigNumber[]>
+	public async calculateERC20RequiredByTotalAmount(_totalEthValueAmount: BigNumber): Promise<BigNumber[]>
 	{
 		const ONE_HUNDRED_PERCENT = await this._yieldSyncV1EMPStrategy.ONE_HUNDRED_PERCENT();
 
-		let utilizedERC20Amount: BigNumber[] = [];
+		const UTILIZED_ERC20S = await this._yieldSyncV1EMPStrategy.utilizedERC20();
 
-		const UTILIZED_ERC20S = await this._yieldSyncV1EMPStrategy.utilizedERC20s();
+		let utilizedERC20Amount: BigNumber[] = [];
 
 		for (let i: number = 0; i < UTILIZED_ERC20S.length; i++)
 		{
 			let tokenAmount: BigNumber = ethers.utils.parseUnits("0", 18);
 
-			const ERC20 = UTILIZED_ERC20S[i];
-
-			const UTILIZATION = await this._yieldSyncV1EMPStrategy.utilizedERC20_utilization(ERC20)
+			const UTILIZATION = await this._yieldSyncV1EMPStrategy.utilizedERC20_utilization(UTILIZED_ERC20S[i]);
 
 			if (UTILIZATION.deposit)
 			{
-				const ALLOCATION = UTILIZATION.allocation.mul(D_18).div(ONE_HUNDRED_PERCENT);
+				const ALLOCATION: BigNumber = UTILIZATION.allocation.mul(D_18).div(ONE_HUNDRED_PERCENT);
 
-				tokenAmount = _totalAmount.mul(ALLOCATION).div(D_18);
+				tokenAmount = _totalEthValueAmount.mul(ALLOCATION).div(D_18);
 			}
 
 			utilizedERC20Amount.push(tokenAmount);
@@ -61,11 +59,11 @@ export default class StrategyTransferUtil
 	public async calculateValueOfERC20BalanceOf(
 		_address: String,
 		_utilizedERC20: Contract[]
-	): Promise<{totalValue: BigNumber, utilizedERC20Amount: BigNumber[]}>
+	): Promise<{totalEthValue: BigNumber, utilizedERC20DepositEthValue: BigNumber[]}>
 	{
-		let totalValue: BigNumber = ethers.utils.parseUnits("0", 18);
+		let totalEthValue: BigNumber = ethers.utils.parseUnits("0", 18);
 
-		let utilizedERC20Amount: BigNumber[] = [];
+		let utilizedERC20DepositEthValue: BigNumber[] = [];
 
 		// Calculate how much of each utilized tokens are being used
 		for (let i: number = 0; i < _utilizedERC20.length; i++)
@@ -77,12 +75,14 @@ export default class StrategyTransferUtil
 			const ETH_VALUE: BigNumber = await this._eTHValueFeed.utilizedERC20ETHValue(_utilizedERC20[i].address);
 
 			// total value = balance * eth value
-			totalValue = totalValue.add(BALANCE.mul(ETH_VALUE).div(D_18));
+			totalEthValue = totalEthValue.add(BALANCE.mul(ETH_VALUE).div(D_18));
+
+			utilizedERC20DepositEthValue.push(_utilizedERC20[i].mul(ETH_VALUE).div(D_18));
 		}
 
 		return {
-			totalValue,
-			utilizedERC20Amount
+			totalEthValue,
+			utilizedERC20DepositEthValue
 		};
 	}
 
@@ -91,29 +91,29 @@ export default class StrategyTransferUtil
 	 * @param _utilizedERC20Deposits {BigNumber[]} ERC20 deposits
 	 * @returns Object containing the ETH value of each ERC20 token and Total ETH value of all ERC20 tokens
 	 */
-	public async calculateValueOfERC20Deposits(
+	public async valueOfERC20Deposits(
 		_utilizedERC20Deposits: BigNumber[]
-	): Promise<{totalValue: BigNumber, utilizedERC20Amount: BigNumber[]}>
+	): Promise<{totalEthValue: BigNumber, utilizedERC20DepositEthValue: BigNumber[]}>
 	{
-		const UTILIZED_ERC20S = await this._yieldSyncV1EMPStrategy.utilizedERC20s();
+		const UTILIZED_ERC20S = await this._yieldSyncV1EMPStrategy.utilizedERC20();
 
-		let totalValue: BigNumber = ethers.utils.parseUnits("0", 18);
+		let totalEthValue: BigNumber = ethers.utils.parseUnits("0", 18);
 
-		let utilizedERC20Amount: BigNumber[] = [];
+		let utilizedERC20DepositEthValue: BigNumber[] = [];
 
 		// Calculate how much of each utilized tokens are being used
 		for (let i: number = 0; i < UTILIZED_ERC20S.length; i++)
 		{
 			const ETH_VALUE: BigNumber = await this._eTHValueFeed.utilizedERC20ETHValue(UTILIZED_ERC20S[i]);
 
-			totalValue = totalValue.add(_utilizedERC20Deposits[i].mul(ETH_VALUE).div(D_18));
+			totalEthValue = totalEthValue.add(_utilizedERC20Deposits[i].mul(ETH_VALUE).div(D_18));
 
-			utilizedERC20Amount.push(_utilizedERC20Deposits[i].mul(ETH_VALUE).div(D_18));
+			utilizedERC20DepositEthValue.push(_utilizedERC20Deposits[i].mul(ETH_VALUE).div(D_18));
 		}
 
 		return {
-			totalValue,
-			utilizedERC20Amount
+			totalEthValue,
+			utilizedERC20DepositEthValue
 		};
 	}
 }

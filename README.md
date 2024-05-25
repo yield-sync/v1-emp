@@ -64,6 +64,8 @@ YIELD_SYNC_V1_B_TRANSFER_REQUEST_PROTOCOL_SEPOLIA=
 
 Strategies must be very simple. They should be able to be changed. Tokens utilized must be immutable.
 
+The ETH value should handle the decimal of the erc 20
+
 ## TODO
 
 - Consider if manager is able to update utilized tokens
