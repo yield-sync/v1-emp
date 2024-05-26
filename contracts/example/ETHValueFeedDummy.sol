@@ -12,11 +12,7 @@ contract ETHValueFeedDummy is
 
 
 	/// @inheritdoc IYieldSyncV1EMPETHValueFeed
-<<<<<<< HEAD
 	function utilizedERC20ETHValue(address __utilizedERC20)
-=======
-	function utilizedERC20ETHValue(address _utilizedERC20)
->>>>>>> master
 		public
 		view
 		override

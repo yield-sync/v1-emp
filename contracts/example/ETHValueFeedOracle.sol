@@ -30,21 +30,13 @@ contract ETHValueFeedOracle is
 
 
 	/// @inheritdoc IYieldSyncV1EMPETHValueFeed
-<<<<<<< HEAD
 	function utilizedERC20ETHValue(address __utilizedERC20)
-=======
-	function utilizedERC20ETHValue(address _utilizedERC20)
->>>>>>> master
 		public
 		view
 		override
 		returns (uint256 utilizedERC20ETHValue_)
 	{
-<<<<<<< HEAD
 		(, int256 price, , , ) = eRC20_aggregatorV3Interface[__utilizedERC20].latestRoundData();
-=======
-		(, int256 price, , , ) = eRC20_aggregatorV3Interface[_utilizedERC20].latestRoundData();
->>>>>>> master
 
 		return uint256(price);
 	}

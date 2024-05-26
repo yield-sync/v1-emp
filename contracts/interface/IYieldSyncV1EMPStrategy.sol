@@ -59,7 +59,6 @@ interface IYieldSyncV1EMPStrategy is
 	;
 
 	/**
-<<<<<<< HEAD
 	* @dev [view-erc256]
 	* @notice Utilized ERC20 Update Tracker
 	* @return {uint256}
@@ -71,8 +70,6 @@ interface IYieldSyncV1EMPStrategy is
 	;
 
 	/**
-=======
->>>>>>> master
 	* @dev [view-uint256]
 	* @notice One Hundred Percent
 	* @return {uint256}
@@ -136,11 +133,7 @@ interface IYieldSyncV1EMPStrategy is
 	* @notice Utilized ERC20s
 	* @return {address[]}
 	*/
-<<<<<<< HEAD
 	function utilizedERC20()
-=======
-	function utilizedERC20s()
->>>>>>> master
 		external
 		view
 		returns (address[] memory)
@@ -150,11 +143,7 @@ interface IYieldSyncV1EMPStrategy is
 	 * @notice
 	 * @param _utilizedERC20 {address}
 	 */
-<<<<<<< HEAD
 	function utilizedERC20_utilization(address __utilizedERC20)
-=======
-	function utilizedERC20_utilization(address _utilizedERC20)
->>>>>>> master
 		external
 		view
 		returns (Utilization memory)
@@ -200,17 +189,10 @@ interface IYieldSyncV1EMPStrategy is
 
 	/**
 	* @notice Set utilized ERC20s and purpose
-<<<<<<< HEAD
 	* @param __utilizedERC20 {address[]}
 	* @param _utilization {Utilization[]}
 	*/
 	function utilizedERC20Update(address[] memory __utilizedERC20, Utilization[] memory _utilization)
-=======
-	* @param __utilizedERC20s {address[]}
-	* @param _utilization {Utilization[]}
-	*/
-	function utilizedERC20Update(address[] memory __utilizedERC20s, Utilization[] memory _utilization)
->>>>>>> master
 		external
 	;
 

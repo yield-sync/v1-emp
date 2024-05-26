@@ -13,7 +13,7 @@ export default class StrategyTransferUtil
 
 	constructor (_yieldSyncV1EMPStrategy: Contract, _eTHValueFeed: Contract)
 	{
-		this._yieldSyncV1EMPStrategy = _yieldSyncV1EMPStrategy;
+		this._yieldSyncV1EMPStrategy = _yieldSyncV1EMPStrategy;2
 		this._eTHValueFeed = _eTHValueFeed;
 	}
 

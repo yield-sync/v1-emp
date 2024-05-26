@@ -39,9 +39,11 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
 		strategyInteractorDummy = await (await StrategyInteractorDummy.deploy()).deployed();
 		yieldSyncUtilityV1Array = await (await YieldSyncUtilityV1Array.deploy()).deployed();
 		yieldSyncGovernance = await (await YieldSyncGovernance.deploy()).deployed();
-		yieldSyncV1EMPRegistry = await (await YieldSyncV1EMPRegistry.deploy(yieldSyncGovernance.address, yieldSyncUtilityV1Array.address)).deployed();
+		yieldSyncV1EMPRegistry = await (
+			await YieldSyncV1EMPRegistry.deploy(yieldSyncGovernance.address)
+		).deployed();
 		yieldSyncV1EMPStrategyDeployer = await (
-			await YieldSyncV1EMPStrategyDeployer.deploy(yieldSyncV1EMPRegistry.address)
+			await YieldSyncV1EMPStrategyDeployer.deploy(yieldSyncV1EMPRegistry.address, yieldSyncUtilityV1Array.address)
 		).deployed();
 
 		// Set Treasury
@@ -449,7 +451,7 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
 					)
 				).to.not.be.reverted;
 
-				const UTILIZED_ERC20: string[] = await yieldSyncV1EMPStrategy.utilizedERC20s();
+				const UTILIZED_ERC20: string[] = await yieldSyncV1EMPStrategy.utilizedERC20();
 
 				// Set value feed
 				await expect(
