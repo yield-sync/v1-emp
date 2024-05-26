@@ -35,9 +35,12 @@ contract YieldSyncV1EMP is
 
 	UtilizedYieldSyncV1EMPStrategy[] internal _utilizedYieldSyncV1EMPStrategy;
 
+<<<<<<< HEAD
 	mapping (
 		address yieldSyncV1Strategy => uint256 utilizedERC20UpdateTracker
 	) public yieldSyncV1Strategy_utilizedERC20UpdateTracker;
+=======
+>>>>>>> master
 
 	receive ()
 		external
