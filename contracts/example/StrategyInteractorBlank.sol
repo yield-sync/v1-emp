@@ -36,55 +36,31 @@ contract StrategyInteractorBlank is
 
 
 	/// @inheritdoc IYieldSyncV1EMPStrategyInteractor
-<<<<<<< HEAD
 	function utilizedERC20TotalAmount(address __utilizedERC20)
-=======
-	function utilizedERC20TotalAmount(address _utilizedERC20)
->>>>>>> master
 		public
 		view
 		override
 		returns (uint256 utilizedERC20TotalAmount_)
 	{
-<<<<<<< HEAD
 		return IERC20(__utilizedERC20).balanceOf(address(this));
-=======
-		return IERC20(_utilizedERC20).balanceOf(address(this));
->>>>>>> master
 	}
 
 
 	/// @inheritdoc IYieldSyncV1EMPStrategyInteractor
-<<<<<<< HEAD
 	function utilizedERC20Deposit(address _from, address __utilizedERC20, uint256 _utilizedERC20Amount)
-=======
-	function utilizedERC20Deposit(address _from, address _utilizedERC20, uint256 _utilizedERC20Amount)
->>>>>>> master
 		public
 		override
 		onlyStrategy()
 	{
-<<<<<<< HEAD
 		return IERC20(__utilizedERC20).safeTransferFrom(_from, address(this), _utilizedERC20Amount);
 	}
 
 	/// @inheritdoc IYieldSyncV1EMPStrategyInteractor
 	function utilizedERC20Withdraw(address _to, address __utilizedERC20, uint256 _utilizedERC20Amount)
-=======
-		return IERC20(_utilizedERC20).safeTransferFrom(_from, address(this), _utilizedERC20Amount);
-	}
-
-	/// @inheritdoc IYieldSyncV1EMPStrategyInteractor
-	function utilizedERC20Withdraw(address _to, address _utilizedERC20, uint256 _utilizedERC20Amount)
->>>>>>> master
 		public
 		override
 		onlyStrategy()
 	{
-<<<<<<< HEAD
 		return IERC20(__utilizedERC20).safeTransfer(_to, _utilizedERC20Amount);
-=======
-		return IERC20(_utilizedERC20).safeTransfer(_to, _utilizedERC20Amount);
->>>>>>> master
 	}
 }

@@ -152,7 +152,6 @@ interface IYieldSyncV1EMP is
 	;
 
 	/**
-<<<<<<< HEAD
 	* @notice Update Utilized ERC20
 	*/
 	function updateUtilizedERC20()
@@ -160,8 +159,6 @@ interface IYieldSyncV1EMP is
 	;
 
 	/**
-=======
->>>>>>> master
 	* @notice Deposit utilized ERC20s
 	* @param utilizedYieldSyncV1EMPStrategyDeposit {uint256[][]}
 	*/
