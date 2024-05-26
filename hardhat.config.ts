@@ -65,5 +65,5 @@ export default {
 	paths: {
 		sources: "./contracts",
 	},
-	solidity: "0.8.18"
+	solidity: "0.8.19"
 } as import("hardhat/config").HardhatUserConfig;
