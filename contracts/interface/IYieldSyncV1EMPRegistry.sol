@@ -14,6 +14,8 @@ interface IYieldSyncV1EMPRegistry
 	;
 
 	/**
+<<<<<<< HEAD
+=======
 	* @dev [view-address]
 	* @return {address}
 	*/
@@ -23,6 +25,7 @@ interface IYieldSyncV1EMPRegistry
 	;
 
 	/**
+>>>>>>> master
 	* @param _yieldSyncV1EMP {address}
 	* @return yieldSyncV1EMPId_ {uint256}
 	*/

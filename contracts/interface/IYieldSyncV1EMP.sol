@@ -152,6 +152,16 @@ interface IYieldSyncV1EMP is
 	;
 
 	/**
+<<<<<<< HEAD
+	* @notice Update Utilized ERC20
+	*/
+	function updateUtilizedERC20()
+		external
+	;
+
+	/**
+=======
+>>>>>>> master
 	* @notice Deposit utilized ERC20s
 	* @param utilizedYieldSyncV1EMPStrategyDeposit {uint256[][]}
 	*/

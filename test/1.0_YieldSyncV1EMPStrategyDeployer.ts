@@ -28,15 +28,15 @@ describe("[1.0] YieldSyncV1EMPStrategyDeployer.sol - Setup", async () => {
 		yieldSyncGovernance = await (await YieldSyncGovernance.deploy()).deployed();
 
 		yieldSyncV1EMPRegistry = await (
-			await YieldSyncV1EMPRegistry.deploy(yieldSyncGovernance.address, yieldSyncUtilityV1Array.address)
+			await YieldSyncV1EMPRegistry.deploy(yieldSyncGovernance.address)
 		).deployed();
 
 		yieldSyncV1EMPStrategyDeployer = await (
-			await YieldSyncV1EMPStrategyDeployer.deploy(yieldSyncV1EMPRegistry.address)
+			await YieldSyncV1EMPStrategyDeployer.deploy(yieldSyncV1EMPRegistry.address, yieldSyncUtilityV1Array.address)
 		).deployed();
 
 		// Set Treasury
-		await expect(yieldSyncGovernance.payToUpdate(TREASURY.address)).to.not.be.reverted;
+		await expect(yieldSyncGovernance.payToUpdate(TREASURY.address)).to.be.not.reverted;
 
 		await expect(
 			yieldSyncV1EMPRegistry.yieldSyncV1EMPStrategyDeployerUpdate(yieldSyncV1EMPStrategyDeployer.address)
@@ -44,17 +44,12 @@ describe("[1.0] YieldSyncV1EMPStrategyDeployer.sol - Setup", async () => {
 	});
 
 	describe("function yieldSyncV1EMPDeployerUpdate()", async () => {
-		it(
-			"[auth] Should be able to deploy a strategy..",
-			async () => {
-				await expect(
-					yieldSyncV1EMPStrategyDeployer.deployYieldSyncV1EMPStrategy("Strategy Name", "S")
-				).to.be.not.reverted;
+		it("[auth] Should be able to deploy a strategy..", async () => {
+			await yieldSyncV1EMPStrategyDeployer.deployYieldSyncV1EMPStrategy("Strategy Name", "S");
 
-				expect(await yieldSyncV1EMPRegistry.yieldSyncV1EMPStrategyId_yieldSyncV1EMPStrategy(1)).to.be.not.equal(
-					ethers.constants.AddressZero
-				);
-			}
-		);
+			expect(await yieldSyncV1EMPRegistry.yieldSyncV1EMPStrategyId_yieldSyncV1EMPStrategy(1)).to.be.not.equal(
+				ethers.constants.AddressZero
+			);
+		});
 	});
 });
