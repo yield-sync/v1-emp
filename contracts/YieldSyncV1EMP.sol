@@ -147,17 +147,6 @@ contract YieldSyncV1EMP is
 	}
 
 	/// @inheritdoc IYieldSyncV1EMP
-	function updateUtilizedERC20()
-		public
-		override
-	{
-		for (uint256 i = 0; i < _utilizedYieldSyncV1EMPStrategy.length; i++)
-		{
-
-		}
-	}
-
-	/// @inheritdoc IYieldSyncV1EMP
 	function utilizedYieldSyncV1EMPStrategyDeposit(uint256[][] memory _utilizedYieldSyncV1EMPStrategyERC20Amount)
 		public
 		override
