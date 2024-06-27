@@ -10,8 +10,6 @@ import { IYieldSyncV1EMPRegistry } from "./interface/IYieldSyncV1EMPRegistry.sol
 contract YieldSyncV1EMPStrategyDeployer is
 	IYieldSyncV1EMPStrategyDeployer
 {
-	address public immutable YIELD_SYNC_UTILITY_V1_ARRAY;
-
 	IYieldSyncV1EMPRegistry public immutable I_YIELD_SYNC_V1_EMP_REGISTRY;
 
 
@@ -27,11 +25,9 @@ contract YieldSyncV1EMPStrategyDeployer is
 	{}
 
 
-	constructor (address _yieldSyncV1EMPRegistry, address _yieldSyncUtilityV1Array)
+	constructor (address _yieldSyncV1EMPRegistry)
 	{
 		I_YIELD_SYNC_V1_EMP_REGISTRY = IYieldSyncV1EMPRegistry(_yieldSyncV1EMPRegistry);
-
-		YIELD_SYNC_UTILITY_V1_ARRAY = _yieldSyncUtilityV1Array;
 	}
 
 
@@ -41,13 +37,7 @@ contract YieldSyncV1EMPStrategyDeployer is
 		returns (address yieldSyncV1EMPStrategy_)
 	{
 		yieldSyncV1EMPStrategy_ = address(
-			new YieldSyncV1EMPStrategy(
-				msg.sender,
-				YIELD_SYNC_UTILITY_V1_ARRAY,
-				address(I_YIELD_SYNC_V1_EMP_REGISTRY),
-				_name,
-				_symbol
-			)
+			new YieldSyncV1EMPStrategy(msg.sender, address(I_YIELD_SYNC_V1_EMP_REGISTRY), _name, _symbol)
 		);
 
 		I_YIELD_SYNC_V1_EMP_REGISTRY.yieldSyncV1EMPStrategyRegister(yieldSyncV1EMPStrategy_);

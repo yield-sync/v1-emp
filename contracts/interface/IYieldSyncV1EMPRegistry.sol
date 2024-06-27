@@ -14,6 +14,61 @@ interface IYieldSyncV1EMPRegistry
 	;
 
 	/**
+	* @dev [view-address]
+	* @return {address}
+	*/
+	function yieldSyncV1EMPArrayUtility()
+		external
+		returns (address)
+	;
+
+	/**
+	* @dev [view-address]
+	* @return {address}
+	*/
+	function yieldSyncV1EMPDeployer()
+		external
+		returns (address)
+	;
+
+	/**
+	* @dev [view-address]
+	* @return {address}
+	*/
+	function yieldSyncV1EMPStrategyDeployer()
+		external
+		returns (address)
+	;
+
+	/**
+	* @dev [view-address]
+	* @return {address}
+	*/
+	function yieldSyncV1EMPStrategyUtility()
+		external
+		returns (address)
+	;
+
+	/**
+	* @dev [view-address]
+	* @return {address}
+	*/
+	function yieldSyncV1EMPUtility()
+		external
+		returns (address)
+	;
+
+	/**
+	* @param eRC20 {address}
+	* @return yieldSyncV1EMPERC20ETHValueFeed_ {address}
+	*/
+	function eRC20_yieldSyncV1EMPERC20ETHValueFeed(address eRC20)
+		external
+		view
+		returns (address yieldSyncV1EMPERC20ETHValueFeed_)
+	;
+
+	/**
 	* @param _yieldSyncV1EMP {address}
 	* @return yieldSyncV1EMPId_ {uint256}
 	*/
@@ -72,6 +127,23 @@ interface IYieldSyncV1EMPRegistry
 
 
 	/**
+	* @notice Update eRC20_iYieldSyncV1EMPERC20ETHValueFeed
+	* @param _eRC20 {address}
+	* @param _yieldSyncV1EMPERC20ETHValueFeed {address}
+	*/
+	function eRC20_yieldSyncV1EMPERC20ETHValueFeedUpdate(address _eRC20, address _yieldSyncV1EMPERC20ETHValueFeed)
+		external
+	;
+
+	/**
+	* @param _yieldSyncV1EMPArrayUtility {address}
+	*/
+	function yieldSyncV1EMPArrayUtilityUpdate(address _yieldSyncV1EMPArrayUtility)
+		external
+	;
+
+
+	/**
 	* @param _yieldSyncV1EMPDeployer {address}
 	*/
 	function yieldSyncV1EMPDeployerUpdate(address _yieldSyncV1EMPDeployer)
@@ -96,6 +168,20 @@ interface IYieldSyncV1EMPRegistry
 	* @param _yieldSyncV1EMPStrategy {address}
 	*/
 	function yieldSyncV1EMPStrategyRegister(address _yieldSyncV1EMPStrategy)
+		external
+	;
+
+	/**
+	* @param _yieldSyncV1EMPStrategyUtility {address}
+	*/
+	function yieldSyncV1EMPStrategyUtilityUpdate(address _yieldSyncV1EMPStrategyUtility)
+		external
+	;
+
+	/**
+	* @param _yieldSyncV1EMPUtility {address}
+	*/
+	function yieldSyncV1EMPUtilityUpdate(address _yieldSyncV1EMPUtility)
 		external
 	;
 }

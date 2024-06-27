@@ -2,13 +2,8 @@
 pragma solidity ^0.8.18;
 
 
-import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-
 import { IYieldSyncV1EMPStrategyInteractor } from "../interface/IYieldSyncV1EMPStrategyInteractor.sol";
-import { IERC20, SafeERC20 } from "../interface/IYieldSyncV1EMPStrategy.sol";
-
-
-using SafeERC20 for IERC20;
+import { IERC20 } from "../interface/IYieldSyncV1EMPStrategy.sol";
 
 
 /**
@@ -40,7 +35,7 @@ contract StrategyInteractorDummy is
 		public
 		override
 	{
-		IERC20(__utilizedERC20).safeTransferFrom(_from, address(this), _utilizedERC20Amount);
+		IERC20(__utilizedERC20).transferFrom(_from, address(this), _utilizedERC20Amount);
 	}
 
 	/// @inheritdoc IYieldSyncV1EMPStrategyInteractor
@@ -48,6 +43,6 @@ contract StrategyInteractorDummy is
 		public
 		override
 	{
-		IERC20(__utilizedERC20).safeTransfer(_to, _utilizedERC20Amount);
+		IERC20(__utilizedERC20).transfer(_to, _utilizedERC20Amount);
 	}
 }

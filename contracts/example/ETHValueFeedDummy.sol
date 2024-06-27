@@ -5,6 +5,9 @@ pragma solidity ^0.8.18;
 import { IYieldSyncV1EMPETHValueFeed } from "../interface/IYieldSyncV1EMPETHValueFeed.sol";
 
 
+/**
+ * @notice WARNING: This contract is ONLY for TESTING. Do not use as actual ETH feed
+ */
 contract ETHValueFeedDummy is
 	IYieldSyncV1EMPETHValueFeed
 {
@@ -12,7 +15,7 @@ contract ETHValueFeedDummy is
 
 
 	/// @inheritdoc IYieldSyncV1EMPETHValueFeed
-	function utilizedERC20ETHValue(address __utilizedERC20)
+	function utilizedERC20ETHValue()
 		public
 		view
 		override

@@ -36,7 +36,9 @@ contract YieldSyncV1EMPDeployer is
 		public
 		returns (address yieldSyncV1EMP_)
 	{
-		yieldSyncV1EMP_ = address(new YieldSyncV1EMP(msg.sender, address(I_YIELD_SYNC_V1_EMP_REGISTRY), _name, _symbol));
+		yieldSyncV1EMP_ = address(
+			new YieldSyncV1EMP(msg.sender, address(I_YIELD_SYNC_V1_EMP_REGISTRY), _name, _symbol)
+		);
 
 		I_YIELD_SYNC_V1_EMP_REGISTRY.yieldSyncV1EMPRegister(yieldSyncV1EMP_);
 	}

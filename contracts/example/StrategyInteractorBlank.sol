@@ -2,14 +2,9 @@
 pragma solidity ^0.8.18;
 
 
-import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-
 import { IYieldSyncV1EMPStrategy } from "../interface/IYieldSyncV1EMPStrategy.sol";
 import { IYieldSyncV1EMPStrategyInteractor } from "../interface/IYieldSyncV1EMPStrategyInteractor.sol";
-import { IERC20, SafeERC20 } from "../interface/IYieldSyncV1EMPStrategy.sol";
-
-
-using SafeERC20 for IERC20;
+import { IERC20 } from "../interface/IYieldSyncV1EMPStrategy.sol";
 
 
 /**
@@ -18,18 +13,18 @@ using SafeERC20 for IERC20;
 contract StrategyInteractorBlank is
 	IYieldSyncV1EMPStrategyInteractor
 {
-	IYieldSyncV1EMPStrategy public immutable yieldSyncV1EMPStrategy;
+	IYieldSyncV1EMPStrategy public immutable YIELD_SYNC_V1_EMP_STRATEGY;
 
 
 	constructor (address _strategy)
 	{
-		yieldSyncV1EMPStrategy = IYieldSyncV1EMPStrategy(_strategy);
+		YIELD_SYNC_V1_EMP_STRATEGY = IYieldSyncV1EMPStrategy(_strategy);
 	}
 
 
 	modifier onlyStrategy()
 	{
-		require(address(yieldSyncV1EMPStrategy) == msg.sender, "address(yieldSyncV1EMPStrategy) != msg.sender");
+		require(address(YIELD_SYNC_V1_EMP_STRATEGY) == msg.sender, "address(YIELD_SYNC_V1_EMP_STRATEGY) != msg.sender");
 
 		_;
 	}
@@ -52,7 +47,7 @@ contract StrategyInteractorBlank is
 		override
 		onlyStrategy()
 	{
-		return IERC20(__utilizedERC20).safeTransferFrom(_from, address(this), _utilizedERC20Amount);
+		IERC20(__utilizedERC20).transferFrom(_from, address(this), _utilizedERC20Amount);
 	}
 
 	/// @inheritdoc IYieldSyncV1EMPStrategyInteractor
@@ -61,6 +56,6 @@ contract StrategyInteractorBlank is
 		override
 		onlyStrategy()
 	{
-		return IERC20(__utilizedERC20).safeTransfer(_to, _utilizedERC20Amount);
+		IERC20(__utilizedERC20).transfer(_to, _utilizedERC20Amount);
 	}
 }

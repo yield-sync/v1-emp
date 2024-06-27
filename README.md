@@ -66,6 +66,8 @@ Strategies must be very simple. They should be able to be changed. Tokens utiliz
 
 The ETH value should handle the decimal of the erc 20
 
-## TODO
+### How to check contract size
 
-- Consider if manager is able to update utilized tokens
+```sol
+npx hardhat size-contracts
+```
