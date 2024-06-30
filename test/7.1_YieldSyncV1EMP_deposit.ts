@@ -219,26 +219,23 @@ describe("[7.1] YieldSyncV1EMP.sol - Depositing Tokens", async () => {
 		});
 
 		describe("Valid", async () => {
-			it("Should allow user to deposit tokens into the EMP and receive correct amount of ERC20..", async () => {
-				const [OWNER, MANAGER, TREASURY] = await ethers.getSigners();
-				/**
-				* @notice This test should test that depositing correct amounts should work.
-				*/
-				const UtilizedEMPStrategy: UtilizedEMPStrategyUpdate = [
-					strategies[0].contract.address,
-					strategies[1].contract.address,
-				];
-
-				const UtilizedEMPStrategyAllocation: UtilizedEMPStrategyAllocationUpdate = [PERCENT.FIFTY, PERCENT.FIFTY];
-
+			beforeEach(async () => {
 				// Set the utilzation to 2 different strategies
-				await eMP.utilizedYieldSyncV1EMPStrategyUpdate(UtilizedEMPStrategy, UtilizedEMPStrategyAllocation);
+				await eMP.utilizedYieldSyncV1EMPStrategyUpdate(
+					[strategies[0].contract.address, strategies[1].contract.address] as UtilizedEMPStrategyUpdate,
+					[PERCENT.FIFTY, PERCENT.FIFTY] as UtilizedEMPStrategyAllocationUpdate
+				);
 
 				// Set the utilzation to 2 different strategies
 				await eMP.utilizedYieldSyncV1EMPStrategyDepositOpenToggle();
 
 				eMPTransferUtil = new EMPTransferUtil(eMP, registry);
+			});
 
+			it("Should allow user to deposit tokens into the EMP and receive correct amount of ERC20..", async () => {
+				/**
+				* @notice This test should test that depositing correct amounts should work.
+				*/
 				const EMP_DEPOSIT_AMOUNTS: UtilizedERC20Amount = await eMPTransferUtil.calculateERC20Required(
 					ethers.utils.parseUnits("2", 18)
 				);
@@ -272,21 +269,6 @@ describe("[7.1] YieldSyncV1EMP.sol - Depositing Tokens", async () => {
 				*/
 				const [OWNER] = await ethers.getSigners();
 
-				const UtilizedEMPStrategy: UtilizedEMPStrategyUpdate = [
-					strategies[0].contract.address,
-					strategies[1].contract.address,
-				];
-
-				const UtilizedEMPStrategyAllocation: UtilizedEMPStrategyAllocationUpdate = [PERCENT.FIFTY, PERCENT.FIFTY];
-
-				// Set the utilzation to 2 different strategies
-				await eMP.utilizedYieldSyncV1EMPStrategyUpdate(UtilizedEMPStrategy, UtilizedEMPStrategyAllocation);
-
-				// Set the utilzation to 2 different strategies
-				await eMP.utilizedYieldSyncV1EMPStrategyDepositOpenToggle();
-
-				eMPTransferUtil = new EMPTransferUtil(eMP, registry);
-
 				const EMP_DEPOSIT_AMOUNTS: UtilizedERC20Amount = await eMPTransferUtil.calculateERC20Required(
 					ethers.utils.parseUnits("2", 18)
 				);
@@ -316,19 +298,6 @@ describe("[7.1] YieldSyncV1EMP.sol - Depositing Tokens", async () => {
 			describe("feeRate", async () => {
 				it("Manager should receive correct amount of ERC20 if fee is set is greater than 0..", async () => {
 					const [OWNER, MANAGER] = await ethers.getSigners();
-
-					const UtilizedEMPStrategy: UtilizedEMPStrategyUpdate = [
-						strategies[0].contract.address,
-						strategies[1].contract.address,
-					];
-
-					const UtilizedEMPStrategyAllocation: UtilizedEMPStrategyAllocationUpdate = [PERCENT.FIFTY, PERCENT.FIFTY];
-
-					// Set the utilzation to 2 different strategies
-					await eMP.utilizedYieldSyncV1EMPStrategyUpdate(UtilizedEMPStrategy, UtilizedEMPStrategyAllocation);
-
-					// Set the utilzation to 2 different strategies
-					await eMP.utilizedYieldSyncV1EMPStrategyDepositOpenToggle();
 
 					/**
 					* @notice Because UTILIZED_STRATEGIES has 2 stratgies with a split of 50/50, the same amount (2) is set for
@@ -419,19 +388,6 @@ describe("[7.1] YieldSyncV1EMP.sol - Depositing Tokens", async () => {
 				it("Yield Sync Governance should receive correct amount of ERC20 if fee is set is greater than 0..", async () => {
 					const [OWNER, MANAGER, TREASURY] = await ethers.getSigners();
 
-					const UtilizedEMPStrategy: UtilizedEMPStrategyUpdate = [
-						strategies[0].contract.address,
-						strategies[1].contract.address,
-					];
-
-					const UtilizedEMPStrategyAllocation: UtilizedEMPStrategyAllocationUpdate = [PERCENT.FIFTY, PERCENT.FIFTY];
-
-					// Set the utilzation to 2 different strategies
-					await eMP.utilizedYieldSyncV1EMPStrategyUpdate(UtilizedEMPStrategy, UtilizedEMPStrategyAllocation);
-
-					// Set the utilzation to 2 different strategies
-					await eMP.utilizedYieldSyncV1EMPStrategyDepositOpenToggle();
-
 					/**
 					* @notice Because UTILIZED_STRATEGIES has 2 stratgies with a split of 50/50, the same amount (2) is set for
 					* each.
@@ -518,19 +474,6 @@ describe("[7.1] YieldSyncV1EMP.sol - Depositing Tokens", async () => {
 
 				it("Manager & Yield Sync Governance should receive correct amounts of ERC20 if fees are set to greater than 0..", async () => {
 					const [OWNER, MANAGER, TREASURY] = await ethers.getSigners();
-
-					const UtilizedEMPStrategy: UtilizedEMPStrategyUpdate = [
-						strategies[0].contract.address,
-						strategies[1].contract.address,
-					];
-
-					const UtilizedEMPStrategyAllocation: UtilizedEMPStrategyAllocationUpdate = [PERCENT.FIFTY, PERCENT.FIFTY];
-
-					// Set the utilzation to 2 different strategies
-					await eMP.utilizedYieldSyncV1EMPStrategyUpdate(UtilizedEMPStrategy, UtilizedEMPStrategyAllocation);
-
-					// Set the utilzation to 2 different strategies
-					await eMP.utilizedYieldSyncV1EMPStrategyDepositOpenToggle();
 
 					/**
 					* @notice Because UTILIZED_STRATEGIES has 2 stratgies with a split of 50/50, the same amount (2) is set for
