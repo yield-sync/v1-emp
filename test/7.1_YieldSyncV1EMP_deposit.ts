@@ -477,4 +477,8 @@ describe("[7.1] YieldSyncV1EMP.sol - Depositing Tokens", async () => {
 			});
 		});
 	});
+
+	describe("function utilizedYieldSyncV1EMPStrategyDeposit()", async () => {
+		it("Verify that the strategy received correct amount of ERC20 tokens..");
+	});
 });
