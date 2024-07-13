@@ -11,75 +11,99 @@ import StrategyTransferUtil from "../scripts/StrategyTransferUtil";
 const LOCATION_IERC20: string = "@openzeppelin/contracts/token/ERC20/IERC20.sol:IERC20";
 
 
-describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
-	let mockERC20A: Contract;
-	let mockERC20B: Contract;
-	let yieldSyncUtilityV1Array: Contract;
-	let yieldSyncGovernance: Contract;
+describe("[4.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
+	let arrayUtility: Contract;
+	let governance: Contract;
 	let eTHValueFeed: Contract;
 	let strategyInteractor: Contract;
-	let yieldSyncV1EMPRegistry: Contract;
-	let yieldSyncV1EMPStrategy: Contract;
-	let yieldSyncV1EMPStrategyDeployer: Contract;
+	let registry: Contract;
+	let strategy: Contract;
+	let strategyUtility: Contract;
+	let strategyDeployer: Contract;
+
+	let mockERC20A: Contract;
+	let mockERC20B: Contract;
+
 	let strategyTransferUtil: StrategyTransferUtil;
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
 		/**
+		* This beforeEach process does the following:
+		* 1) Deploy a Governance contract
+		* 2) Set the treasury on the Governance contract
+		* 3) Deploy an Array Utility contract
+		* 4) Deploy a Registry contract
+		* 5) Register the Array Utility contract on the Registry contract
+		* 6) Deploy a Strategy Utility contract
+		* 7) Register the Strategy Utility contract on the Registry contract
+		*
 		* @dev It is important to utilize the strategyTransferUtil for multiple ERC20 based strategies because they get
 		* reordred when setup. The strategyUtil will return the deposit amounts in the order of the what the conctract
 		* returns for the Utilized ERC20s
 		*/
 		const [OWNER, MANAGER, TREASURY] = await ethers.getSigners();
 
-		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
-		const ETHValueFeedDummy: ContractFactory = await ethers.getContractFactory("ETHValueFeedDummy");
-		const StrategyInteractorDummy: ContractFactory = await ethers.getContractFactory("StrategyInteractorDummy");
-		const YieldSyncUtilityV1Array: ContractFactory = await ethers.getContractFactory("YieldSyncUtilityV1Array");
+
 		const YieldSyncGovernance: ContractFactory = await ethers.getContractFactory("YieldSyncGovernance");
+		const YieldSyncV1EMPArrayUtility: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPArrayUtility");
 		const YieldSyncV1EMPRegistry: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPRegistry");
+		const YieldSyncV1EMPStrategyUtility: ContractFactory= await ethers.getContractFactory("YieldSyncV1EMPStrategyUtility");
 		const YieldSyncV1EMPStrategy: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPStrategy");
 		const YieldSyncV1EMPStrategyDeployer: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPStrategyDeployer");
 
-		mockERC20A = await (await MockERC20.deploy()).deployed();
-		mockERC20B = await (await MockERC20.deploy()).deployed();
+		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
+		const ETHValueFeedDummy: ContractFactory = await ethers.getContractFactory("ETHValueFeedDummy");
+		const StrategyInteractorDummy: ContractFactory = await ethers.getContractFactory("StrategyInteractorDummy");
+
+
+		governance = await (await YieldSyncGovernance.deploy()).deployed();
+
+		await governance.payToUpdate(TREASURY.address);
+
+		arrayUtility = await (await YieldSyncV1EMPArrayUtility.deploy()).deployed();
+
+		registry = await (await YieldSyncV1EMPRegistry.deploy(governance.address)).deployed();
+
+		await registry.yieldSyncV1EMPArrayUtilityUpdate(arrayUtility.address);
+
+		strategyUtility = await (await YieldSyncV1EMPStrategyUtility.deploy(registry.address)).deployed();
+
+		await registry.yieldSyncV1EMPStrategyUtilityUpdate(strategyUtility.address);
+
+		strategyDeployer = await (await YieldSyncV1EMPStrategyDeployer.deploy(registry.address)).deployed();
+
+		mockERC20A = await (await MockERC20.deploy("Mock A", "A")).deployed();
+		mockERC20B = await (await MockERC20.deploy("Mock B", "B")).deployed();
+
 		eTHValueFeed = await (await ETHValueFeedDummy.deploy()).deployed();
+
+		await registry.eRC20_yieldSyncV1EMPERC20ETHValueFeedUpdate(mockERC20A.address, eTHValueFeed.address);
+		await registry.eRC20_yieldSyncV1EMPERC20ETHValueFeedUpdate(mockERC20B.address, eTHValueFeed.address);
+
 		strategyInteractor = await (await StrategyInteractorDummy.deploy()).deployed();
-		yieldSyncUtilityV1Array = await (await YieldSyncUtilityV1Array.deploy()).deployed();
-		yieldSyncGovernance = await (await YieldSyncGovernance.deploy()).deployed();
-		yieldSyncV1EMPRegistry = await (
-			await YieldSyncV1EMPRegistry.deploy(yieldSyncGovernance.address)
-		).deployed();
-		yieldSyncV1EMPStrategyDeployer = await (
-			await YieldSyncV1EMPStrategyDeployer.deploy(yieldSyncV1EMPRegistry.address, yieldSyncUtilityV1Array.address)
-		).deployed();
 
-		// Set Treasury
-		await expect(yieldSyncGovernance.payToUpdate(TREASURY.address)).to.be.not.reverted;
+		/**
+		* @notice The owner has to be registered as the EMP deployer so that it can authorize itself as an EMP to access the
+		* functions available on the strategy.
+		*/
+		await registry.yieldSyncV1EMPUtilityUpdate(OWNER.address);
+		await registry.yieldSyncV1EMPDeployerUpdate(OWNER.address);
+		await registry.yieldSyncV1EMPRegister(OWNER.address);
 
-		// Mock owner being an EMP Deployer
-		await expect(yieldSyncV1EMPRegistry.yieldSyncV1EMPDeployerUpdate(OWNER.address)).to.be.not.reverted;
-
-		// Mock owner being an EMP for authorization
-		await expect(yieldSyncV1EMPRegistry.yieldSyncV1EMPRegister(OWNER.address)).to.be.not.reverted;
 
 		// Set EMP Strategy Deployer on registry
-		await expect(
-			yieldSyncV1EMPRegistry.yieldSyncV1EMPStrategyDeployerUpdate(yieldSyncV1EMPStrategyDeployer.address)
-		).to.be.not.reverted;
+		await registry.yieldSyncV1EMPStrategyDeployerUpdate(strategyDeployer.address);
 
-		await expect(yieldSyncV1EMPStrategyDeployer.deployYieldSyncV1EMPStrategy("Strategy", "S")).to.be.not.reverted;
-
-		expect(await yieldSyncV1EMPRegistry.yieldSyncV1EMPStrategyId_yieldSyncV1EMPStrategy(1)).to.be.not.equal(
-			ethers.constants.AddressZero
-		);
+		// Deploy EMP Strategy
+		await strategyDeployer.deployYieldSyncV1EMPStrategy("Strategy", "S");
 
 		// Attach the deployed YieldSyncV1EMPStrategy address
-		yieldSyncV1EMPStrategy = await YieldSyncV1EMPStrategy.attach(
-			String(await yieldSyncV1EMPRegistry.yieldSyncV1EMPStrategyId_yieldSyncV1EMPStrategy(1))
+		strategy = await YieldSyncV1EMPStrategy.attach(
+			String(await registry.yieldSyncV1EMPStrategyId_yieldSyncV1EMPStrategy(1))
 		);
 
-		strategyTransferUtil = new StrategyTransferUtil(yieldSyncV1EMPStrategy, eTHValueFeed);
+		strategyTransferUtil = new StrategyTransferUtil(strategy, registry);
 	});
 
 
@@ -94,7 +118,7 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
 			const [OWNER] = await ethers.getSigners();
 
 			// Snapshot Total Supply
-			b4TotalSupplyStrategy = await yieldSyncV1EMPStrategy.totalSupply();
+			b4TotalSupplyStrategy = await strategy.totalSupply();
 
 			// Snapshot Balances
 			b4BalanceMockAOwner = await mockERC20A.balanceOf(OWNER.address);
@@ -107,28 +131,14 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
 		});
 
 		describe("Setup Tests", async () => {
-			it("[modifier] Should revert if ETH FEED is not set..", async () => {
+			it("[modifier] Should revert if Strategy Interactor is not set..", async () => {
 				const [OWNER] = await ethers.getSigners();
 
 				// Set strategy ERC20 tokens
-				await yieldSyncV1EMPStrategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
+				await strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
 
-				await expect(yieldSyncV1EMPStrategy.utilizedERC20Withdraw(OWNER.address, 0)).to.be.rejectedWith(
-					ERROR.ETH_FEED_NOT_SET
-				);
-			});
-
-			it("[modifier] Should revert if STRATEGY INTERACTOR is not set..", async () => {
-				const [OWNER] = await ethers.getSigners();
-
-				// Set strategy ERC20 tokens
-				await yieldSyncV1EMPStrategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
-
-				// Set value feed
-				await yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeed.address);
-
-				await expect(yieldSyncV1EMPStrategy.utilizedERC20Withdraw(OWNER.address, 0)).to.be.rejectedWith(
-					ERROR.STRATEGY_NOT_SET
+				await expect(strategy.utilizedERC20Withdraw(0)).to.be.rejectedWith(
+					ERROR.STRATEGY.INTERACTOR_NOT_SET
 				);
 			});
 
@@ -136,16 +146,13 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
 				const [OWNER] = await ethers.getSigners();
 
 				// Set strategy ERC20 tokens
-				await yieldSyncV1EMPStrategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]])
-
-				// Set value feed
-				await yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeed.address);
+				await strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]])
 
 				// Set SI
-				await yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractor.address);
+				await strategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractor.address);
 
 				// Toggle deposits on
-				await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
+				await strategy.utilizedERC20DepositOpenToggle();
 
 				// Set deposit amount
 				const DEPOSIT_AMOUNT: BigNumber = ethers.utils.parseUnits("1", 18);
@@ -154,16 +161,16 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
 				await mockERC20A.approve(strategyInteractor.address, DEPOSIT_AMOUNT);
 
 				// DEPOSIT - ERC20 tokens into the strategy
-				await yieldSyncV1EMPStrategy.utilizedERC20Deposit(OWNER.address, [DEPOSIT_AMOUNT]);
+				await strategy.utilizedERC20Deposit(OWNER.address, [DEPOSIT_AMOUNT]);
 
 				// Expect that owner balance is the difference of the strategy total supply increased
-				expect(await yieldSyncV1EMPStrategy.balanceOf(OWNER.address)).to.be.equal(
-					(await yieldSyncV1EMPStrategy.totalSupply()).sub(b4TotalSupplyStrategy)
+				expect(await strategy.balanceOf(OWNER.address)).to.be.equal(
+					(await strategy.totalSupply()).sub(b4TotalSupplyStrategy)
 				);
 
 				// [main-test] WITHDRAW - ERC20 tokens into the strategy
-				await expect(yieldSyncV1EMPStrategy.utilizedERC20Withdraw(OWNER.address, 0)).to.be.rejectedWith(
-					ERROR.WITHDRAW_NOT_OPEN
+				await expect(strategy.utilizedERC20Withdraw(0)).to.be.rejectedWith(
+					ERROR.STRATEGY.WITHDRAW_NOT_OPEN
 				);
 			});
 		});
@@ -171,22 +178,19 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
 		describe("[SINGLE ERC20]", async () => {
 			beforeEach(async () => {
 				// Set strategy ERC20 tokens
-				await yieldSyncV1EMPStrategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
-
-				// Set value feed
-				await yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeed.address);
+				await strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
 
 				// Set SI
-				await yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractor.address);
+				await strategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractor.address);
 
 				// Toggle deposits on
-				await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
+				await strategy.utilizedERC20DepositOpenToggle();
 
 				// Toggle withdrawals on
-				await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
+				await strategy.utilizedERC20WithdrawOpenToggle();
 
 				// Expect that withdrawals are toggled on
-				expect(await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpen()).to.be.true;
+				expect(await strategy.utilizedERC20WithdrawOpen()).to.be.true;
 			});
 
 			it("Should fail to process withdrawal if Strategy token balance is greater than owned..", async () => {
@@ -199,7 +203,7 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
 				await mockERC20A.approve(strategyInteractor.address, DEPOSIT_AMOUNT);
 
 				// DEPOSIT - mockERC20A tokens into the strategy
-				await yieldSyncV1EMPStrategy.utilizedERC20Deposit(OWNER.address, [DEPOSIT_AMOUNT]);
+				await strategy.utilizedERC20Deposit(OWNER.address, [DEPOSIT_AMOUNT]);
 
 				// Expect that the balance remains less than original
 				expect(await mockERC20A.balanceOf(OWNER.address)).to.be.lessThan(b4BalanceMockAOwner);
@@ -208,12 +212,12 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
 				expect(await mockERC20A.balanceOf(strategyInteractor.address)).to.be.equal(DEPOSIT_AMOUNT);
 
 				// Get current Strategy ERC20 total supply
-				const TOTAL_SUPPLY_STRATEGY: BigNumber = await yieldSyncV1EMPStrategy.totalSupply();
+				const TOTAL_SUPPLY_STRATEGY: BigNumber = await strategy.totalSupply();
 
 				// Expect that strategy total supply has increased
 				expect(TOTAL_SUPPLY_STRATEGY).to.be.greaterThan(b4TotalSupplyStrategy);
 
-				const BALANCE_STRATEGY_OWNER: BigNumber = await yieldSyncV1EMPStrategy.balanceOf(OWNER.address);
+				const BALANCE_STRATEGY_OWNER: BigNumber = await strategy.balanceOf(OWNER.address);
 
 				// Expect that owner balance is the difference of the Strat supply increase
 				expect(BALANCE_STRATEGY_OWNER).to.be.equal(TOTAL_SUPPLY_STRATEGY.sub(b4TotalSupplyStrategy));
@@ -223,9 +227,9 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
 
 				// [main-test] WITHDRAW - Fail to withdraw ERC20 tokens
 				await expect(
-					yieldSyncV1EMPStrategy.utilizedERC20Withdraw(OWNER.address, INVALID_BALANCE)
+					strategy.utilizedERC20Withdraw(INVALID_BALANCE)
 				).to.be.revertedWith(
-					ERROR.INVALID_BALANCE
+					ERROR.STRATEGY.INVALID_BALANCE
 				);
 			});
 
@@ -239,7 +243,7 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
 				await mockERC20A.approve(strategyInteractor.address, DEPOSIT_AMOUNT);
 
 				// DEPOSIT - mockERC20A tokens into the strategy
-				await yieldSyncV1EMPStrategy.utilizedERC20Deposit(OWNER.address, [DEPOSIT_AMOUNT]);
+				await strategy.utilizedERC20Deposit(OWNER.address, [DEPOSIT_AMOUNT]);
 
 				// Expect that the OWNER has deposited MockERC20A
 				expect(await mockERC20A.balanceOf(OWNER.address)).to.be.lessThan(b4BalanceMockAOwner);
@@ -248,43 +252,38 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
 				expect(await mockERC20A.balanceOf(strategyInteractor.address)).to.be.equal(DEPOSIT_AMOUNT);
 
 				// Expect that the Strategy ERC20 total supply has increased
-				expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.greaterThan(b4TotalSupplyStrategy);
+				expect(await strategy.totalSupply()).to.be.greaterThan(b4TotalSupplyStrategy);
 
 				// Capture balance after depositing
 				const AFTER_DEPOSIT_BALANCE_MOCK_A_OWNER = await mockERC20A.balanceOf(OWNER.address);
 
 				// Expect that owner balance is the difference of the Strat supply increase
-				expect(await yieldSyncV1EMPStrategy.balanceOf(OWNER.address)).to.be.equal(
-					(await yieldSyncV1EMPStrategy.totalSupply()).sub(b4TotalSupplyStrategy)
+				expect(await strategy.balanceOf(OWNER.address)).to.be.equal(
+					(await strategy.totalSupply()).sub(b4TotalSupplyStrategy)
 				);
 
 				// Disable transfers
-				await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
-				await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
+				await strategy.utilizedERC20DepositOpenToggle();
+				await strategy.utilizedERC20WithdrawOpenToggle();
 
 				// Set utilization.withdraw to false
-				await yieldSyncV1EMPStrategy.utilizedERC20Update([mockERC20A.address], [[true, false, PERCENT.HUNDRED]]);
+				await strategy.utilizedERC20Update([mockERC20A.address], [[true, false, PERCENT.HUNDRED]]);
 
 				// Enable transfers
-				await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
-				await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
+				await strategy.utilizedERC20DepositOpenToggle();
+				await strategy.utilizedERC20WithdrawOpenToggle();
 
 				// [main-test] Withdraw ERC20 tokens into the strategy
-				await expect(
-					yieldSyncV1EMPStrategy.utilizedERC20Withdraw(
-						OWNER.address,
-						await yieldSyncV1EMPStrategy.balanceOf(OWNER.address)
-					)
-				).to.be.not.reverted;
+				await expect(strategy.utilizedERC20Withdraw(await strategy.balanceOf(OWNER.address))).to.be.not.reverted;
 
 				// Expect that the SI MockERC20A balance has not changed
 				expect(await mockERC20A.balanceOf(strategyInteractor.address)).to.be.equal(DEPOSIT_AMOUNT);
 
 				// Expect that the Strategy tokens have been burned
-				expect(await yieldSyncV1EMPStrategy.balanceOf(OWNER.address)).to.be.equal(0);
+				expect(await strategy.balanceOf(OWNER.address)).to.be.equal(0);
 
 				// Expect that the Strategy total supply is not what it was before the deposit
-				expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.equal(b4TotalSupplyStrategy);
+				expect(await strategy.totalSupply()).to.be.equal(b4TotalSupplyStrategy);
 
 				// Expect that OWNER MockERC20A balance is equal to what it was after depositing
 				expect(await mockERC20A.balanceOf(OWNER.address)).to.be.greaterThanOrEqual(
@@ -305,7 +304,7 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
 				await mockERC20A.approve(strategyInteractor.address, DEPOSIT_AMOUNT);
 
 				// DEPOSIT - mockERC20A tokens into the strategy
-				await yieldSyncV1EMPStrategy.utilizedERC20Deposit(OWNER.address, [DEPOSIT_AMOUNT]);
+				await strategy.utilizedERC20Deposit(OWNER.address, [DEPOSIT_AMOUNT]);
 
 				const AFTER_BALANCE_MOCK_A_SI: BigNumber = await mockERC20A.balanceOf(strategyInteractor.address);
 
@@ -313,23 +312,21 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
 				expect(AFTER_BALANCE_MOCK_A_SI).to.be.equal(b4BalanceMockASI.add(DEPOSIT_AMOUNT));
 
 				// Expect that strategy total supply has increased
-				expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.greaterThan(b4TotalSupplyStrategy);
+				expect(await strategy.totalSupply()).to.be.greaterThan(b4TotalSupplyStrategy);
 
 				// Expect that owner balance is the difference of the Strat supply increase
-				expect(await yieldSyncV1EMPStrategy.balanceOf(OWNER.address)).to.be.equal(
-					(await yieldSyncV1EMPStrategy.totalSupply()).sub(b4TotalSupplyStrategy)
+				expect(await strategy.balanceOf(OWNER.address)).to.be.equal(
+					(await strategy.totalSupply()).sub(b4TotalSupplyStrategy)
 				);
 
 				// [main-test] Withdraw ERC20 tokens into the strategy
-				await expect(
-					yieldSyncV1EMPStrategy.utilizedERC20Withdraw(OWNER.address, DEPOSIT_AMOUNT)
-				).to.be.not.reverted;
+				await expect(strategy.utilizedERC20Withdraw(DEPOSIT_AMOUNT)).to.be.not.reverted;
 
 				// Strategy token burned
-				expect(await yieldSyncV1EMPStrategy.balanceOf(OWNER.address)).to.be.equal(b4BalanceMockASI);
+				expect(await strategy.balanceOf(OWNER.address)).to.be.equal(b4BalanceMockASI);
 
 				// Supply put back to original
-				expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.equal(b4TotalSupplyStrategy);
+				expect(await strategy.totalSupply()).to.be.equal(b4TotalSupplyStrategy);
 
 				// Expect that the balance been returned to original or greater
 				expect(await mockERC20A.balanceOf(OWNER.address)).to.be.greaterThanOrEqual(b4BalanceMockAOwner);
@@ -340,25 +337,22 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
 			describe("[50/50]", async () => {
 				beforeEach(async () => {
 					// Set strategy ERC20 tokens
-					await yieldSyncV1EMPStrategy.utilizedERC20Update(
+					await strategy.utilizedERC20Update(
 						[mockERC20A.address, mockERC20B.address],
 						[[true, true, PERCENT.FIFTY], [true, true, PERCENT.FIFTY]]
 					);
 
-					// Set value feed
-					await yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeed.address);
-
 					// Set SI
-					await yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractor.address);
+					await strategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractor.address);
 
 					// Toggle deposits on
-					await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
+					await strategy.utilizedERC20DepositOpenToggle();
 
 					// Toggle withdrawals on
-					await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
+					await strategy.utilizedERC20WithdrawOpenToggle();
 
 					// Expect that withdrawals are toggled on
-					expect(await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpen()).to.be.true;
+					expect(await strategy.utilizedERC20WithdrawOpen()).to.be.true;
 				});
 
 				it("Should allow caller to burn Strategy ERC20 tokens and receive deposits back..", async () => {
@@ -372,7 +366,7 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
 					await mockERC20B.approve(strategyInteractor.address, DEPOSIT_AMOUNT);
 
 					// DEPOSIT - mockERC20A tokens into the strategy
-					await yieldSyncV1EMPStrategy.utilizedERC20Deposit(OWNER.address, [DEPOSIT_AMOUNT, DEPOSIT_AMOUNT])
+					await strategy.utilizedERC20Deposit(OWNER.address, [DEPOSIT_AMOUNT, DEPOSIT_AMOUNT])
 
 					// mockERC20A BalanceOf SI should equal to deposit amount
 					expect(await mockERC20A.balanceOf(strategyInteractor.address)).to.be.equal(
@@ -385,7 +379,7 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
 					);
 
 					// Get the total supply after deposit
-					const TOTAL_SUPPLY_STRATEGY: BigNumber = await yieldSyncV1EMPStrategy.totalSupply();
+					const TOTAL_SUPPLY_STRATEGY: BigNumber = await strategy.totalSupply();
 
 					// expect that the total supply of strategy has increased
 					expect(TOTAL_SUPPLY_STRATEGY).to.be.greaterThan(b4TotalSupplyStrategy);
@@ -394,21 +388,18 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
 					const TOTAL_NEWLY_MINTED: BigNumber = TOTAL_SUPPLY_STRATEGY.sub(b4TotalSupplyStrategy);
 
 					// Expect that the Strategy balance of owner is correct
-					expect(await yieldSyncV1EMPStrategy.balanceOf(OWNER.address)).to.be.equal(TOTAL_NEWLY_MINTED);
+					expect(await strategy.balanceOf(OWNER.address)).to.be.equal(TOTAL_NEWLY_MINTED);
 
 					// [main-test] Expect to be able to withdraw ERC20 tokens from the strategy
 					await expect(
-						yieldSyncV1EMPStrategy.utilizedERC20Withdraw(
-							OWNER.address,
-							await yieldSyncV1EMPStrategy.balanceOf(OWNER.address)
-						)
+						strategy.utilizedERC20Withdraw(await strategy.balanceOf(OWNER.address))
 					).to.be.not.reverted;
 
 					// Expect that the OWNER balance is returned back to what it was before depositing
-					expect(await yieldSyncV1EMPStrategy.balanceOf(OWNER.address)).to.be.equal(b4BalanceMockASI);
+					expect(await strategy.balanceOf(OWNER.address)).to.be.equal(b4BalanceMockASI);
 
 					// Strategy total supply is restored back to what it was before depositing
-					expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.equal(b4TotalSupplyStrategy);
+					expect(await strategy.totalSupply()).to.be.equal(b4TotalSupplyStrategy);
 
 					// Expect that the OWNER received his previously depositied (and now withdrawn) MockERCA back
 					expect(await mockERC20A.balanceOf(OWNER.address)).to.be.greaterThanOrEqual(b4BalanceMockAOwner);
@@ -421,33 +412,30 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
 			describe("[75/25]", async () => {
 				beforeEach(async () => {
 					// Set strategy ERC20 tokens
-					await yieldSyncV1EMPStrategy.utilizedERC20Update(
+					await strategy.utilizedERC20Update(
 						[mockERC20A.address, mockERC20B.address],
 						[[true, true, PERCENT.SEVENTY_FIVE], [true, true, PERCENT.TWENTY_FIVE]]
 					);
 
-					// Set value feed
-					await yieldSyncV1EMPStrategy.iYieldSyncV1EMPETHValueFeedUpdate(eTHValueFeed.address);
-
 					// Set SI
-					await yieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractor.address);
+					await strategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractor.address);
 
 					// Toggle deposits on
-					await yieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
+					await strategy.utilizedERC20DepositOpenToggle();
 
 					// Toggle withdrawals on
-					await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
+					await strategy.utilizedERC20WithdrawOpenToggle();
 
 					// Expect that withdrawals are toggled on
-					expect(await yieldSyncV1EMPStrategy.utilizedERC20WithdrawOpen()).to.be.true;
+					expect(await strategy.utilizedERC20WithdrawOpen()).to.be.true;
 				});
 
 				it("Should allow caller to burn Strategy ERC20 tokens and receive deposits back..", async () => {
 					const [OWNER] = await ethers.getSigners();
 
-					const UTILIZED_ERC20: string[] = await yieldSyncV1EMPStrategy.utilizedERC20();
+					const UTILIZED_ERC20: string[] = await strategy.utilizedERC20();
 
-					const DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil.calculateERC20RequiredByTotalAmount(
+					const DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil.calculateERC20Required(
 						ethers.utils.parseUnits("1", 18)
 					);
 
@@ -467,9 +455,9 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
 					}
 
 					// DEPOSIT - mockERC20A tokens into the strategy
-					await yieldSyncV1EMPStrategy.utilizedERC20Deposit(OWNER.address, DEPOSIT_AMOUNTS);
+					await strategy.utilizedERC20Deposit(OWNER.address, DEPOSIT_AMOUNTS);
 
-					for (let i = 0; i < UTILIZED_ERC20.length; i++)
+					for (let i: number = 0; i < UTILIZED_ERC20.length; i++)
 					{
 						const IERC20 = await ethers.getContractAt(LOCATION_IERC20, UTILIZED_ERC20[i]);
 
@@ -481,26 +469,23 @@ describe("[2.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
 						);
 					}
 
-					const TOTAL_SUPPLY_STRATEGY: BigNumber = await yieldSyncV1EMPStrategy.totalSupply();
+					const TOTAL_SUPPLY_STRATEGY: BigNumber = await strategy.totalSupply();
 
 					// Expect that strategy total supply has increased
 					expect(TOTAL_SUPPLY_STRATEGY).to.be.greaterThan(b4TotalSupplyStrategy);
 
 					// Expect that the Strat balance of owner is correct
-					expect(await yieldSyncV1EMPStrategy.balanceOf(OWNER.address)).to.be.equal(
+					expect(await strategy.balanceOf(OWNER.address)).to.be.equal(
 						TOTAL_SUPPLY_STRATEGY.sub(b4TotalSupplyStrategy)
 					);
 
 					// [main-test] Withdraw ERC20 tokens into the strategy
 					await expect(
-						yieldSyncV1EMPStrategy.utilizedERC20Withdraw(
-							OWNER.address,
-							await yieldSyncV1EMPStrategy.balanceOf(OWNER.address)
-						)
+						strategy.utilizedERC20Withdraw(await strategy.balanceOf(OWNER.address))
 					).to.be.not.reverted;
 
 					// Supply put back to original
-					expect(await yieldSyncV1EMPStrategy.totalSupply()).to.be.equal(b4TotalSupplyStrategy);
+					expect(await strategy.totalSupply()).to.be.equal(b4TotalSupplyStrategy);
 
 					// Expect that the balance been returned to original or greater
 					expect(await mockERC20A.balanceOf(OWNER.address)).to.be.greaterThanOrEqual(b4BalanceMockAOwner);

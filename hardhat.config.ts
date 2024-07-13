@@ -6,6 +6,7 @@ import "@nomiclabs/hardhat-solhint";
 require("dotenv").config();
 require("@nomiclabs/hardhat-ethers");
 require("@eth-optimism/plugins/hardhat/compiler");
+require("hardhat-contract-sizer");
 
 
 export default {
@@ -60,6 +61,9 @@ export default {
 			url: "http://localhost:8545",
 			accounts: [`0x${process.env.PRIVATE_KEY}` as string],
 			gasPrice: 1000000000,
+		},
+		hardhat: {
+			allowUnlimitedContractSize: true,
 		},
 	},
 	paths: {

@@ -32,6 +32,7 @@
 		"typescript": "^5.4.5"
 	},
 	"dependencies": {
-		"@yield-sync/v1-sdk": "^0.0.56"
+		"@yield-sync/v1-sdk": "^0.0.56",
+		"hardhat-contract-sizer": "^2.10.0"
 	}
 }

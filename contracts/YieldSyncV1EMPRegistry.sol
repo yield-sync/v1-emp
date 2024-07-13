@@ -12,11 +12,16 @@ contract YieldSyncV1EMPRegistry is
 {
 	address public override immutable YIELD_SYNC_GOVERNANCE;
 
-	address public yieldSyncV1EMPDeployer;
-	address public yieldSyncV1EMPStrategyDeployer;
+	address public override yieldSyncV1EMPArrayUtility;
+	address public override yieldSyncV1EMPDeployer;
+	address public override yieldSyncV1EMPStrategyDeployer;
+	address public override yieldSyncV1EMPStrategyUtility;
+	address public override yieldSyncV1EMPUtility;
 
 	uint256 public yieldSyncEMPIdTracker;
 	uint256 public yieldSyncEMPStrategyIdTracker;
+
+	mapping (address eRC20 => address yieldSyncV1EMPERC20ETHValueFeed) public override eRC20_yieldSyncV1EMPERC20ETHValueFeed;
 
 	mapping (address yieldSyncV1EMP => uint256 yieldSyncV1EMPId) public override yieldSyncV1EMP_yieldSyncV1EMPId;
 
@@ -77,11 +82,38 @@ contract YieldSyncV1EMPRegistry is
 
 
 	/// @inheritdoc IYieldSyncV1EMPRegistry
+	function eRC20_yieldSyncV1EMPERC20ETHValueFeedUpdate(address _eRC20, address _yieldSyncV1EMPERC20ETHValueFeed)
+		public
+		override
+		authYieldSyncGovernance()
+	{
+		require(_eRC20 != address(0), "!(_eRC20 != address(0))");
+
+		require(_yieldSyncV1EMPERC20ETHValueFeed != address(0), "!(_yieldSyncV1EMPERC20ETHValueFeed != address(0))");
+
+		eRC20_yieldSyncV1EMPERC20ETHValueFeed[_eRC20] = _yieldSyncV1EMPERC20ETHValueFeed;
+	}
+
+	/// @inheritdoc IYieldSyncV1EMPRegistry
+	function yieldSyncV1EMPArrayUtilityUpdate(address _yieldSyncV1EMPArrayUtility)
+		public
+		override
+		authYieldSyncGovernance()
+	{
+		require(yieldSyncV1EMPArrayUtility == address(0), "!(yieldSyncV1EMPArrayUtility == address(0))");
+
+		yieldSyncV1EMPArrayUtility = _yieldSyncV1EMPArrayUtility;
+	}
+
+
+	/// @inheritdoc IYieldSyncV1EMPRegistry
 	function yieldSyncV1EMPDeployerUpdate(address _yieldSyncV1EMPDeployer)
 		public
 		override
 		authYieldSyncGovernance()
 	{
+		require(yieldSyncV1EMPUtility != address(0), "!(yieldSyncV1EMPUtility != address(0))");
+
 		require(yieldSyncV1EMPDeployer == address(0), "!(yieldSyncV1EMPDeployer == address(0))");
 
 		yieldSyncV1EMPDeployer = _yieldSyncV1EMPDeployer;
@@ -106,6 +138,8 @@ contract YieldSyncV1EMPRegistry is
 		override
 		authYieldSyncGovernance()
 	{
+		require(yieldSyncV1EMPStrategyUtility != address(0), "!(yieldSyncV1EMPStrategyUtility != address(0))");
+
 		require(yieldSyncV1EMPStrategyDeployer == address(0), "!(yieldSyncV1EMPStrategyDeployer == address(0))");
 
 		yieldSyncV1EMPStrategyDeployer = _yieldSyncV1EMPStrategyDeployer;
@@ -122,5 +156,31 @@ contract YieldSyncV1EMPRegistry is
 
 		yieldSyncV1EMPStrategy_yieldSyncV1EMPStrategyId[_yieldSyncV1EMPStrategy] = yieldSyncEMPStrategyIdTracker;
 		yieldSyncV1EMPStrategyId_yieldSyncV1EMPStrategy[yieldSyncEMPStrategyIdTracker] = _yieldSyncV1EMPStrategy;
+	}
+
+	/// @inheritdoc IYieldSyncV1EMPRegistry
+	function yieldSyncV1EMPStrategyUtilityUpdate(address _yieldSyncV1EMPStrategyUtility)
+		public
+		override
+		authYieldSyncGovernance()
+	{
+		require(yieldSyncV1EMPArrayUtility != address(0), "!(yieldSyncV1EMPArrayUtility != address(0))");
+
+		require(yieldSyncV1EMPStrategyUtility == address(0), "!(yieldSyncV1EMPStrategyUtility == address(0))");
+
+		yieldSyncV1EMPStrategyUtility = _yieldSyncV1EMPStrategyUtility;
+	}
+
+	/// @inheritdoc IYieldSyncV1EMPRegistry
+	function yieldSyncV1EMPUtilityUpdate(address _yieldSyncV1EMPUtility)
+		public
+		override
+		authYieldSyncGovernance()
+	{
+		require(yieldSyncV1EMPArrayUtility != address(0), "!(yieldSyncV1EMPArrayUtility != address(0))");
+
+		require(yieldSyncV1EMPUtility == address(0), "!(yieldSyncV1EMPUtility == address(0))");
+
+		yieldSyncV1EMPUtility = _yieldSyncV1EMPUtility;
 	}
 }

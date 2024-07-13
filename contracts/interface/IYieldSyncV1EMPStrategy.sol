@@ -3,23 +3,11 @@ pragma solidity ^0.8.18;
 
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import { IYieldSyncUtilityV1Array } from "@yield-sync/v1-sdk/contracts/interface/IYieldSyncUtilityV1Array.sol";
 
-import { IYieldSyncV1EMPETHValueFeed } from "./IYieldSyncV1EMPETHValueFeed.sol";
 import { IYieldSyncV1EMPRegistry } from "./IYieldSyncV1EMPRegistry.sol";
 import { IYieldSyncV1EMPStrategyInteractor } from "./IYieldSyncV1EMPStrategyInteractor.sol";
-
-
-using SafeERC20 for IERC20;
-
-
-struct Utilization
-{
-	bool deposit;
-	bool withdraw;
-	uint256 allocation;
-}
+import { IYieldSyncV1EMPStrategyUtility } from "./IYieldSyncV1EMPStrategyUtility.sol";
+import { UtilizationERC20 } from "../struct/UtilizationERC20.sol";
 
 
 interface IYieldSyncV1EMPStrategy is
@@ -81,17 +69,6 @@ interface IYieldSyncV1EMPStrategy is
 	;
 
 	/**
-	* @dev [view-IYieldSyncV1EMPETHValueFeed]
-	* @notice Implemented IYieldSyncV1EMPETHValueFeed
-	* @return {IYieldSyncV1EMPETHValueFeed}
-	*/
-	function iYieldSyncV1EMPETHValueFeed()
-		external
-		view
-		returns (IYieldSyncV1EMPETHValueFeed)
-	;
-
-	/**
 	* @dev [view-IYieldSyncV1EMPRegistry]
 	* @notice Implemented IYieldSyncV1EMPRegistry
 	* @return {IYieldSyncV1EMPRegistry}
@@ -103,14 +80,14 @@ interface IYieldSyncV1EMPStrategy is
 	;
 
 	/**
-	* @dev [view-IYieldSyncUtilityV1Array]
-	* @notice Implemented IYieldSyncUtilityV1Array
-	* @return {IYieldSyncUtilityV1Array}
+	* @dev [view-IYieldSyncV1EMPStrategyUtility]
+	* @notice Implemented IYieldSyncV1EMPStrategyUtility
+	* @return {IYieldSyncV1EMPStrategyUtility}
 	*/
-	function I_YIELD_SYNC_UTILITY_V1_ARRAY()
+	function I_YIELD_SYNC_V1_EMP_STRATEGY_UTILITY()
 		external
 		view
-		returns (IYieldSyncUtilityV1Array)
+		returns (IYieldSyncV1EMPStrategyUtility)
 	;
 
 	/**
@@ -143,10 +120,10 @@ interface IYieldSyncV1EMPStrategy is
 	 * @notice
 	 * @param _utilizedERC20 {address}
 	 */
-	function utilizedERC20_utilization(address __utilizedERC20)
+	function utilizedERC20_utilizationERC20(address __utilizedERC20)
 		external
 		view
-		returns (Utilization memory)
+		returns (UtilizationERC20 memory)
 	;
 
 	/**
@@ -162,14 +139,6 @@ interface IYieldSyncV1EMPStrategy is
 
 	/// @notice mutative
 
-
-	/**
-	* @notice Update yieldSyncV1EMPETHValueFeed
-	* @param _yieldSyncV1EMPETHValueFeed {address}
-	*/
-	function iYieldSyncV1EMPETHValueFeedUpdate(address _yieldSyncV1EMPETHValueFeed)
-		external
-	;
 
 	/**
 	* @notice Update iYieldSyncV1EMPStrategyInteractor
@@ -190,9 +159,9 @@ interface IYieldSyncV1EMPStrategy is
 	/**
 	* @notice Set utilized ERC20s and purpose
 	* @param __utilizedERC20 {address[]}
-	* @param _utilization {Utilization[]}
+	* @param _utilizationERC20 {UtilizationERC20[]}
 	*/
-	function utilizedERC20Update(address[] memory __utilizedERC20, Utilization[] memory _utilization)
+	function utilizedERC20Update(address[] memory __utilizedERC20, UtilizationERC20[] memory _utilizationERC20)
 		external
 	;
 
@@ -214,10 +183,9 @@ interface IYieldSyncV1EMPStrategy is
 
 	/**
 	* @notice Withdraw utilized ERC20s
-	* @param _to {address}
-	* @param _ERC20Amount {uint256}
+	* @param _eRC20Amount {uint256}
 	*/
-	function utilizedERC20Withdraw(address _to, uint256 _ERC20Amount)
+	function utilizedERC20Withdraw(uint256 _eRC20Amount)
 		external
 	;
 
