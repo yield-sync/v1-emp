@@ -1,4 +1,10 @@
-# YieldSync V1 Vaults
+# Yield Sync V1 EMP
+
+EMP (Asset Management Protocol) is a protocol that allows automated allocations for managing assets. Whether it be for yield optimization or public goods funding, this protocol allows developers to create the tool they need to direct funds accordingly.
+
+## Note
+
+This protocol complies to the [yield-sync/specifications](https://github.com/yield-sync/specifications/tree/master/v1-amp)
 
 ## Get Started
 
@@ -54,25 +60,14 @@ YIELD_SYNC_V1_B_TRANSFER_REQUEST_PROTOCOL_OP_GOERLI=
 YIELD_SYNC_V1_B_TRANSFER_REQUEST_PROTOCOL_SEPOLIA=
 ```
 
-## Smart Contract Layout & Ordering
+## Note
 
-### Variables
+Strategies must be very simple. They should be able to be changed. Tokens utilized must be immutable.
 
-1. Type (`address`, `bytes`, etc.)
-	2. Visibility (`public` | `private` | `internal` | `external`)
-		3. Array
+The ETH value should handle the decimal of the erc 20
 
-### Mapping
+### How to check contract size
 
-1. Visibility (`public` | `private` | `internal` | `external`)
-	2. Type (`address`, `bytes`, etc.)
-		3. Struct
-
-### Function
-
-1. Interface Implementation
-	2. Visibility (`public` | `private` | `internal` | `external`)
-		3. State Interaction (`pure` | `view`)
-			4. Restriction (`Access Control` etc. DEFAULT_ADMIN_ROLE first)
-				5. Complexity (Calls to inherited functions, external functions, change state)
-					6. Alphabetical
+```sol
+npx hardhat size-contracts
+```

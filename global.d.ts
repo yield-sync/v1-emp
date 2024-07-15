@@ -1,39 +1,20 @@
-// Access
-type Access = {
-	admin: boolean,
-	member: boolean,
-}
+/**
+* EMP Strategy
+*/
+type StrategyUtiliziedERC20 = string[];
 
-// Open transfer request ids
-type OpenTransferRequestIds = number[]
+type StrategyUtilization = [boolean, boolean, BigNumber][];
 
-// Transfer Request
-type TransferRequest = {
-	forERC20: boolean,
-	forERC721: boolean,
-	creator: string,
-	to: string,
-	token: string,
-	amount: number,
-	created: number,
-	tokenId: number,
-}
+type StrategyUtilizedERC20Update = {
+	utilizedERC20: StrategyUtiliziedERC20,
+	utilization: StrategyUtilization[]
+};
 
-type UpdateTransferRequest = [
-	// forERC20
-	boolean,
-	// forERC721
-	boolean,
-	// creator
-	string,
-	// to
-	string,
-	// token
-	string,
-	// amount
-	number,
-	// created
-	number,
-	// tokenId
-	number,
-];
+/**
+* EMP
+*/
+type UtilizedEMPStrategy = string[];
+type UtilizedEMPStrategyUpdate = string[];
+type UtilizedEMPStrategyAllocationUpdate = BigNumber[];
+type UtilizedERC20Amount = BigNumber[];
+type UtilizedEMPStrategyERC20Amount = BigNumber[][];
