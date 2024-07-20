@@ -213,6 +213,38 @@ contract YieldSyncV1EMP is
 	}
 
 	/// @inheritdoc IYieldSyncV1EMP
+	function utilizedERC20DepositOpenToggle()
+		public
+		override
+		authYieldSyncGovernanceOrManager()
+	{
+		utilizedERC20DepositOpen = !utilizedERC20DepositOpen;
+	}
+
+	/// @inheritdoc IYieldSyncV1EMP
+	function utilizedERC20TotalAmount()
+		public
+		view
+		returns (uint256[] memory utilizedERC20TotalAmount_)
+	{
+		utilizedERC20TotalAmount_ = new uint256[](_utilizedERC20.length);
+
+		for (uint256 i = 0; i < _utilizedERC20.length; i++)
+		{
+			utilizedERC20TotalAmount_[i] += IERC20(_utilizedERC20[i]).balanceOf(address(this));
+
+			for (uint256 ii = 0; ii < _utilizedYieldSyncV1EMPStrategy.length; ii++)
+			{
+				utilizedERC20TotalAmount_[i] += IYieldSyncV1EMPStrategy(
+					_utilizedYieldSyncV1EMPStrategy[ii]
+				).iYieldSyncV1EMPStrategyInteractor().utilizedERC20TotalAmount(
+					_utilizedERC20[i]
+				);
+			}
+		}
+	}
+
+	/// @inheritdoc IYieldSyncV1EMP
 	function utilizedERC20Update()
 		public
 		override
@@ -256,11 +288,11 @@ contract YieldSyncV1EMP is
 
 		require(balanceOf(msg.sender) >= _eRC20Amount, "!(balanceOf(msg.sender) >= _eRC20Amount)");
 
-		uint256[] memory utilizedERC20TotalAmount = I_YIELD_SYNC_V1_EMP_UTILITY.utilizedERC20TotalAmount();
+		uint256[] memory _utilizedERC20TotalAmount = utilizedERC20TotalAmount();
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
-			uint256 transferAmount = utilizedERC20TotalAmount[i].mul(1e18).div(totalSupply(), "!computed").mul(_eRC20Amount).div(
+			uint256 transferAmount = _utilizedERC20TotalAmount[i].mul(1e18).div(totalSupply(), "!computed").mul(_eRC20Amount).div(
 				1e18
 			);
 
@@ -273,6 +305,15 @@ contract YieldSyncV1EMP is
 		}
 
 		_burn(msg.sender, _eRC20Amount);
+	}
+
+	/// @inheritdoc IYieldSyncV1EMP
+	function utilizedERC20WithdrawOpenToggle()
+		public
+		override
+		authYieldSyncGovernanceOrManager()
+	{
+		utilizedERC20WithdrawOpen = !utilizedERC20WithdrawOpen;
 	}
 
 	/// @inheritdoc IYieldSyncV1EMP
@@ -294,33 +335,6 @@ contract YieldSyncV1EMP is
 				_yieldSyncV1EMPStrategyUtilizedERC20Amount[i]
 			);
 		}
-	}
-
-	/// @inheritdoc IYieldSyncV1EMP
-	function utilizedYieldSyncV1EMPStrategyWithdraw(uint256[] memory _yieldSyncV1EMPStrategyERC20Amount)
-		public
-		override
-		authYieldSyncGovernanceOrManager()
-		utilizedERC20UpdateBefore()
-	{
-		require(
-			_yieldSyncV1EMPStrategyERC20Amount.length == _utilizedYieldSyncV1EMPStrategy.length,
-			"!(_yieldSyncV1EMPStrategyERC20Amount.length == _utilizedYieldSyncV1EMPStrategy.length)"
-		);
-
-		for (uint256 i = 0; i < _utilizedYieldSyncV1EMPStrategy.length; i++)
-		{
-			IYieldSyncV1EMPStrategy(_utilizedYieldSyncV1EMPStrategy[i]).utilizedERC20Withdraw(_yieldSyncV1EMPStrategyERC20Amount[i]);
-		}
-	}
-
-	/// @inheritdoc IYieldSyncV1EMP
-	function utilizedERC20DepositOpenToggle()
-		public
-		override
-		authYieldSyncGovernanceOrManager()
-	{
-		utilizedERC20DepositOpen = !utilizedERC20DepositOpen;
 	}
 
 	/// @inheritdoc IYieldSyncV1EMP
@@ -357,11 +371,20 @@ contract YieldSyncV1EMP is
 	}
 
 	/// @inheritdoc IYieldSyncV1EMP
-	function utilizedERC20WithdrawOpenToggle()
+	function utilizedYieldSyncV1EMPStrategyWithdraw(uint256[] memory _yieldSyncV1EMPStrategyERC20Amount)
 		public
 		override
 		authYieldSyncGovernanceOrManager()
+		utilizedERC20UpdateBefore()
 	{
-		utilizedERC20WithdrawOpen = !utilizedERC20WithdrawOpen;
+		require(
+			_yieldSyncV1EMPStrategyERC20Amount.length == _utilizedYieldSyncV1EMPStrategy.length,
+			"!(_yieldSyncV1EMPStrategyERC20Amount.length == _utilizedYieldSyncV1EMPStrategy.length)"
+		);
+
+		for (uint256 i = 0; i < _utilizedYieldSyncV1EMPStrategy.length; i++)
+		{
+			IYieldSyncV1EMPStrategy(_utilizedYieldSyncV1EMPStrategy[i]).utilizedERC20Withdraw(_yieldSyncV1EMPStrategyERC20Amount[i]);
+		}
 	}
 }

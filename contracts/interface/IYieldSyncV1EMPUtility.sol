@@ -39,14 +39,4 @@ interface IYieldSyncV1EMPUtility
 		external
 		returns (bool valid_)
 	;
-
-	/**
-	* @notice Utilized ERC20 Total Amount
-	* @return utilizedERC20TotalAmount_ {uint256[]}
-	*/
-	function utilizedERC20TotalAmount()
-		external
-		view
-		returns (uint256[] memory utilizedERC20TotalAmount_)
-	;
 }

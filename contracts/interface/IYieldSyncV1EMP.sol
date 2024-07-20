@@ -186,6 +186,23 @@ interface IYieldSyncV1EMP is
 	;
 
 	/**
+	* @notice Utilized Yield Sync V1 EMP Strategy Deposit Open Toggle
+	*/
+	function utilizedERC20DepositOpenToggle()
+		external
+	;
+
+	/**
+	* @notice Utilized ERC20 Total Amount
+	* @return utilizedERC20TotalAmount_ {uint256[]}
+	*/
+	function utilizedERC20TotalAmount()
+		external
+		view
+		returns (uint256[] memory utilizedERC20TotalAmount_)
+	;
+
+	/**
 	* @notice Utilzied ERC20 Update
 	*/
 	function utilizedERC20Update()
@@ -200,25 +217,17 @@ interface IYieldSyncV1EMP is
 	;
 
 	/**
+	* @notice Utilized Yield Sync V1 EMP Strategy Withdraw Open Toggle
+	*/
+	function utilizedERC20WithdrawOpenToggle()
+		external
+	;
+
+	/**
 	* @notice Deposit utilized ERC20s into strategy
 	* @param _yieldSyncV1EMPStrategyUtilizedERC20Amount {uint256[][]}
 	*/
 	function utilizedYieldSyncV1EMPStrategyDeposit(uint256[][] memory _yieldSyncV1EMPStrategyUtilizedERC20Amount)
-		external
-	;
-
-	/**
-	* @notice Withdraw utilized ERC20s from strategy
-	* @param _yieldSyncV1EMPStrategyERC20Amount {uint256[]}
-	*/
-	function utilizedYieldSyncV1EMPStrategyWithdraw(uint256[] memory _yieldSyncV1EMPStrategyERC20Amount)
-		external
-	;
-
-	/**
-	* @notice Utilized Yield Sync V1 EMP Strategy Deposit Open Toggle
-	*/
-	function utilizedERC20DepositOpenToggle()
 		external
 	;
 
@@ -230,9 +239,10 @@ interface IYieldSyncV1EMP is
 	;
 
 	/**
-	* @notice Utilized Yield Sync V1 EMP Strategy Withdraw Open Toggle
+	* @notice Withdraw utilized ERC20s from strategy
+	* @param _yieldSyncV1EMPStrategyERC20Amount {uint256[]}
 	*/
-	function utilizedERC20WithdrawOpenToggle()
+	function utilizedYieldSyncV1EMPStrategyWithdraw(uint256[] memory _yieldSyncV1EMPStrategyERC20Amount)
 		external
 	;
 }

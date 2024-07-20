@@ -2,7 +2,6 @@
 pragma solidity ^0.8.18;
 
 
-import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 import { IYieldSyncV1EMPArrayUtility } from "./interface/IYieldSyncV1EMPArrayUtility.sol";
@@ -265,32 +264,5 @@ contract YieldSyncV1EMPUtility is
 		}
 
 		return valid_;
-	}
-
-	/// @inheritdoc IYieldSyncV1EMPUtility
-	function utilizedERC20TotalAmount()
-		public
-		view
-		override
-		authEMP()
-		returns (uint256[] memory utilizedERC20TotalAmount_)
-	{
-		address[] memory utilizedERC20 = IYieldSyncV1EMP(msg.sender).utilizedERC20();
-
-		utilizedERC20TotalAmount_ = new uint256[](utilizedERC20.length);
-
-		address[] memory utilizedYieldSyncV1EMPStrategy = IYieldSyncV1EMP(msg.sender).utilizedYieldSyncV1EMPStrategy();
-
-		for (uint256 i = 0; i < utilizedERC20.length; i++)
-		{
-			utilizedERC20TotalAmount_[i] += IERC20(utilizedERC20[i]).balanceOf(address(this));
-
-			for (uint256 ii = 0; ii < utilizedYieldSyncV1EMPStrategy.length; ii++)
-			{
-				utilizedERC20TotalAmount_[i] += IYieldSyncV1EMPStrategy(
-					utilizedYieldSyncV1EMPStrategy[ii]
-				).iYieldSyncV1EMPStrategyInteractor().utilizedERC20TotalAmount(utilizedERC20[i]);
-			}
-		}
 	}
 }
