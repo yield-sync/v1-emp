@@ -61,55 +61,68 @@ contract YieldSyncV1EMPUtility is
 		public
 		override
 		authEMP()
-		returns (bool updatedNeeded_, address[] memory utilizedERC20_, UtilizationERC20[] memory utilizationERC20_)
+		returns (bool updateNeeded, address[] memory utilizedERC20_, UtilizationERC20[] memory utilizationERC20_)
 	{
-		updatedNeeded_ = false;
+		updateNeeded = false;
 
 		uint256 utilizedERC20MaxLength = 0;
 
 		address[] memory utilizedYieldSyncV1EMPStrategy = IYieldSyncV1EMP(msg.sender).utilizedYieldSyncV1EMPStrategy();
 
+		// First get the total length of the ERC20 addresses and check if they need updates
 		for (uint256 i = 0; i < utilizedYieldSyncV1EMPStrategy.length; i++)
 		{
+			// Get the count for the utilized ERC 20 update
 			uint256 utilizedERC20UpdateTracker = IYieldSyncV1EMPStrategy(
 				utilizedYieldSyncV1EMPStrategy[i]
 			).utilizedERC20UpdateTracker();
 
+			// If an update is needed..
 			if (
 				yieldSyncV1EMP_yieldSyncV1EMPStrategy_utilizedERC20UpdateTracker[msg.sender][
 					utilizedYieldSyncV1EMPStrategy[i]
 				] != utilizedERC20UpdateTracker
 			)
 			{
-				updatedNeeded_ = true;
+				// Set updatedNeeded to true
+				updateNeeded = true;
 
+				// Update local record of update tracker
 				yieldSyncV1EMP_yieldSyncV1EMPStrategy_utilizedERC20UpdateTracker[msg.sender][
 					utilizedYieldSyncV1EMPStrategy[i]
 				] = utilizedERC20UpdateTracker;
 			}
 
+			// Set max length of utilized ERC20 to the sum of all lengths of each utilized ERC20 on stratgies
 			utilizedERC20MaxLength += IYieldSyncV1EMPStrategy(utilizedYieldSyncV1EMPStrategy[i]).utilizedERC20().length;
 		}
 
-		if (!updatedNeeded_)
+		// If no update is needed return updateNaded as false
+		if (!updateNeeded)
 		{
-			return (updatedNeeded_, utilizedERC20_, utilizationERC20_);
+			return (updateNeeded, utilizedERC20_, utilizationERC20_);
 		}
 
+		// Initialize the utilizedERC20 to the max possible size it can be
 		utilizedERC20_ = new address[](utilizedERC20MaxLength);
 
+		// Set the count to 0
 		uint256 utilizedERC20I = 0;
 
+		// For each EMP utilized strategy..
 		for (uint256 i = 0; i < utilizedYieldSyncV1EMPStrategy.length; i++)
 		{
+			// Get the utilized ERC20
 			address[] memory strategyUtilizedERC20 = IYieldSyncV1EMPStrategy(utilizedYieldSyncV1EMPStrategy[i]).utilizedERC20();
 
+			// Add each ERC20 to the EMP UtilizedERC20
 			for (uint256 ii = 0; ii < strategyUtilizedERC20.length; ii++)
 			{
 				utilizedERC20_[utilizedERC20I++] = strategyUtilizedERC20[ii];
 			}
 		}
 
+		// Clean up the array
 		utilizedERC20_ = I_YIELD_SYNC_V1_EMP_ARRAY_UTILITY.removeDuplicates(utilizedERC20_);
 		utilizedERC20_ = I_YIELD_SYNC_V1_EMP_ARRAY_UTILITY.sort(utilizedERC20_);
 
@@ -117,14 +130,23 @@ contract YieldSyncV1EMPUtility is
 
 		uint256 utilizedERC20AllocationTotal;
 
+		/**
+		 * This is not done in the loop above because the utilizedERC20 has to be cleaned first before adding the
+		 * utilizations to the values.
+		 */
+
 		// For each strategy..
 		for (uint256 i = 0; i < utilizedYieldSyncV1EMPStrategy.length; i++)
 		{
+			// Initialize an interface for the strategy
 			IYieldSyncV1EMPStrategy iYieldSyncV1EMPStrategy = IYieldSyncV1EMPStrategy(utilizedYieldSyncV1EMPStrategy[i]);
 
 			// For each utilized erc20 for stategy..
 			for (uint256 ii = 0; ii < utilizedERC20_.length; ii++)
 			{
+				/**
+				 * The objective here is to set the utilization for each ERC20
+				 */
 				// Get the utilization
 				UtilizationERC20 memory utilizationERC20 = iYieldSyncV1EMPStrategy.utilizedERC20_utilizationERC20(utilizedERC20_[ii]);
 
@@ -133,17 +155,21 @@ contract YieldSyncV1EMPUtility is
 				{
 					utilizationERC20_[ii].deposit = true;
 
+					// Multiple the allocation for the ERC20 on the strategy with the EMP strategy allocation
 					uint256 utilizationERC20Allocation = utilizationERC20.allocation.mul(
 						IYieldSyncV1EMP(msg.sender).utilizedYieldSyncV1EMPStrategy_allocation(utilizedYieldSyncV1EMPStrategy[i])
 					).div(
 						1e18
 					);
 
-					utilizationERC20_[ii].allocation += utilizationERC20Allocation;
+					// Add the allocation to anything that exists before
+					utilizationERC20_[ii].allocation += utilizationERC20Allocation; // On EMP it is queried by address not placement
 
+					// Add to the total sum of allocation total
 					utilizedERC20AllocationTotal += utilizationERC20Allocation;
 				}
 
+				// If the token is withdrawn set the withdrawn to true
 				if (utilizationERC20.withdraw)
 				{
 					utilizationERC20_[ii].withdraw = true;

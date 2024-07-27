@@ -9,13 +9,13 @@ interface IYieldSyncV1EMPUtility
 {
 	/**
 	* @notice Utilized ERC20 Generator
-	* @return updatedNeeded_
+	* @return updateNeeded
 	* @return utilizedERC20_
 	* @return utilizationERC20_
 	*/
 	function utilizedERC20Generator()
 		external
-		returns (bool updatedNeeded_, address[] memory utilizedERC20_, UtilizationERC20[] memory utilizationERC20_)
+		returns (bool updateNeeded, address[] memory utilizedERC20_, UtilizationERC20[] memory utilizationERC20_)
 	;
 
 	/**
