@@ -2,22 +2,8 @@
 pragma solidity ^0.8.18;
 
 
-import { UtilizationERC20 } from "../struct/UtilizationERC20.sol";
-
-
 interface IYieldSyncV1EMPUtility
 {
-	/**
-	* @notice Utilized ERC20 Generator
-	* @return updateNeeded
-	* @return utilizedERC20_
-	* @return utilizationERC20_
-	*/
-	function utilizedERC20Generator()
-		external
-		returns (bool updateNeeded, address[] memory utilizedERC20_, UtilizationERC20[] memory utilizationERC20_)
-	;
-
 	/**
 	* @notice Utilized ERC20 Amount Valid
 	* @param _utilizedERC20Amount {uint256}

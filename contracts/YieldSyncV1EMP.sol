@@ -8,6 +8,7 @@ import { ERC20, IERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 import { IYieldSyncV1EMP, IYieldSyncV1EMPRegistry, UtilizationERC20 } from "./interface/IYieldSyncV1EMP.sol";
+import { IYieldSyncV1EMPArrayUtility } from "./interface/IYieldSyncV1EMPArrayUtility.sol";
 import { IYieldSyncV1EMPStrategy } from "./interface/IYieldSyncV1EMPStrategy.sol";
 import { IYieldSyncV1EMPUtility } from "./interface/IYieldSyncV1EMPUtility.sol";
 
@@ -33,6 +34,7 @@ contract YieldSyncV1EMP is
 	uint256 public override feeRateManager;
 	uint256 public override feeRateYieldSyncGovernance;
 
+	IYieldSyncV1EMPArrayUtility public immutable I_YIELD_SYNC_V1_EMP_ARRAY_UTILITY;
 	IYieldSyncV1EMPRegistry public override immutable I_YIELD_SYNC_V1_EMP_REGISTRY;
 	IYieldSyncV1EMPUtility public immutable I_YIELD_SYNC_V1_EMP_UTILITY;
 
@@ -43,6 +45,9 @@ contract YieldSyncV1EMP is
 
 	mapping (address utilizedERC20 => UtilizationERC20 utilizationERC20) internal _utilizedERC20_utilizationERC20;
 
+	mapping (
+		address yieldSyncV1EMPStrategy => uint256 utilizedERC20UpdateTracker
+	) public yieldSyncV1EMPStrategy_utilizedERC20UpdateTracker;
 
 	receive ()
 		external
@@ -68,6 +73,9 @@ contract YieldSyncV1EMP is
 		feeRateYieldSyncGovernance = 0;
 
 		I_YIELD_SYNC_V1_EMP_REGISTRY = IYieldSyncV1EMPRegistry(_yieldSyncV1EMPRegistry);
+		I_YIELD_SYNC_V1_EMP_ARRAY_UTILITY = IYieldSyncV1EMPArrayUtility(
+			I_YIELD_SYNC_V1_EMP_REGISTRY.yieldSyncV1EMPArrayUtility()
+		);
 		I_YIELD_SYNC_V1_EMP_UTILITY = IYieldSyncV1EMPUtility(I_YIELD_SYNC_V1_EMP_REGISTRY.yieldSyncV1EMPUtility());
 	}
 
@@ -249,31 +257,133 @@ contract YieldSyncV1EMP is
 		public
 		override
 	{
-		(
-			bool updateRequired,
-			address[] memory __utilizedERC20,
-			UtilizationERC20[] memory  utilizationERC20_
-		) = I_YIELD_SYNC_V1_EMP_UTILITY.utilizedERC20Generator();
+		bool updateRequired = false;
 
-		if (updateRequired)
+		uint256 utilizedERC20MaxLength = 0;
+
+		// First check if update is required and add length of utilizedERC20 to max length count
+		for (uint256 i = 0; i < _utilizedYieldSyncV1EMPStrategy.length; i++)
 		{
-			delete _utilizedERC20;
+			// Get the count for the utilized ERC 20 update
+			uint256 utilizedERC20UpdateTracker = IYieldSyncV1EMPStrategy(
+				_utilizedYieldSyncV1EMPStrategy[i]
+			).utilizedERC20UpdateTracker();
 
-			_utilizedERC20 = __utilizedERC20;
-
-			for (uint256 i = 0; i < _utilizedERC20.length; i++)
+			// If an update is needed..
+			if (yieldSyncV1EMPStrategy_utilizedERC20UpdateTracker[_utilizedYieldSyncV1EMPStrategy[i]] != utilizedERC20UpdateTracker)
 			{
-				_utilizedERC20_utilizationERC20[_utilizedERC20[i]] = utilizationERC20_[i];
+				// Set updatedNeeded to true
+				updateRequired = true;
 
-				for (uint256 ii = 0; ii < _utilizedYieldSyncV1EMPStrategy.length; ii++)
+				// Update local record of update tracker
+				yieldSyncV1EMPStrategy_utilizedERC20UpdateTracker[_utilizedYieldSyncV1EMPStrategy[i]] = utilizedERC20UpdateTracker;
+			}
+
+			// Set max length of utilized ERC20 to the sum of all lengths of each utilized ERC20 on stratgies
+			utilizedERC20MaxLength += IYieldSyncV1EMPStrategy(_utilizedYieldSyncV1EMPStrategy[i]).utilizedERC20().length;
+		}
+
+		if (!updateRequired)
+		{
+			return;
+		}
+
+		delete _utilizedERC20;
+
+		// Initialize the utilizedERC20 to the max possible size it can be
+		address[] memory tempUtilizedERC20 = new address[](utilizedERC20MaxLength);
+
+		// Set the count to 0
+		uint256 utilizedERC20I = 0;
+
+		// For each EMP utilized strategy..
+		for (uint256 i = 0; i < _utilizedYieldSyncV1EMPStrategy.length; i++)
+		{
+			// Get the utilized ERC20
+			address[] memory strategyUtilizedERC20 = IYieldSyncV1EMPStrategy(_utilizedYieldSyncV1EMPStrategy[i]).utilizedERC20();
+
+			// Add each ERC20 to the EMP UtilizedERC20
+			for (uint256 ii = 0; ii < strategyUtilizedERC20.length; ii++)
+			{
+				tempUtilizedERC20[utilizedERC20I++] = strategyUtilizedERC20[ii];
+			}
+		}
+
+		// Clean up the array
+		tempUtilizedERC20 = I_YIELD_SYNC_V1_EMP_ARRAY_UTILITY.removeDuplicates(tempUtilizedERC20);
+		tempUtilizedERC20 = I_YIELD_SYNC_V1_EMP_ARRAY_UTILITY.sort(tempUtilizedERC20);
+
+		uint256 utilizedERC20AllocationTotal;
+
+		UtilizationERC20[] memory utilizationERC20 = new UtilizationERC20[](tempUtilizedERC20.length);
+
+
+		/**
+		 * This is not done in the loop above because the utilizedERC20 has to be cleaned first before adding the
+		 * utilizations to the values.
+		 */
+
+		// For each strategy..
+		for (uint256 i = 0; i < _utilizedYieldSyncV1EMPStrategy.length; i++)
+		{
+			// Initialize an interface for the strategy
+			IYieldSyncV1EMPStrategy iYieldSyncV1EMPStrategy = IYieldSyncV1EMPStrategy(_utilizedYieldSyncV1EMPStrategy[i]);
+
+			// For each utilized erc20 for stategy..
+			for (uint256 ii = 0; ii < tempUtilizedERC20.length; ii++)
+			{
+				/**
+				 * The objective here is to set the utilization for each ERC20
+				 */
+				// Get the utilization
+				UtilizationERC20 memory utilizationERC20_ = iYieldSyncV1EMPStrategy.utilizedERC20_utilizationERC20(
+					tempUtilizedERC20[ii]
+				);
+
+				// If for depositing..
+				if (utilizationERC20_.deposit)
 				{
-					IERC20(_utilizedERC20[i]).approve(
-						address(
-							IYieldSyncV1EMPStrategy(_utilizedYieldSyncV1EMPStrategy[ii]).iYieldSyncV1EMPStrategyInteractor()
-						),
-						type(uint256).max
+					utilizationERC20[ii].deposit = true;
+
+					// Multiple the allocation for the ERC20 on the strategy with the EMP strategy allocation
+					uint256 utilizationERC20Allocation = utilizationERC20_.allocation.mul(
+						utilizedYieldSyncV1EMPStrategy_allocation[_utilizedYieldSyncV1EMPStrategy[i]]
+					).div(
+						1e18
 					);
+
+					// Add the allocation to anything that exists before
+					utilizationERC20[ii].allocation += utilizationERC20Allocation; // On EMP it is queried by address not placement
+
+					// Add to the total sum of allocation total
+					utilizedERC20AllocationTotal += utilizationERC20Allocation;
 				}
+
+				// If the token is withdrawn set the withdrawn to true
+				if (utilizationERC20_.withdraw)
+				{
+					utilizationERC20[ii].withdraw = true;
+				}
+			}
+		}
+
+		// Check that the total alocation is 100%
+		require(utilizedERC20AllocationTotal == ONE_HUNDRED_PERCENT, "!(utilizedERC20AllocationTotal == ONE_HUNDRED_PERCENT)");
+
+		_utilizedERC20 = tempUtilizedERC20;
+
+		for (uint256 i = 0; i < _utilizedERC20.length; i++)
+		{
+			_utilizedERC20_utilizationERC20[_utilizedERC20[i]] = utilizationERC20[i];
+
+			for (uint256 ii = 0; ii < _utilizedYieldSyncV1EMPStrategy.length; ii++)
+			{
+				IERC20(_utilizedERC20[i]).approve(
+					address(
+						IYieldSyncV1EMPStrategy(_utilizedYieldSyncV1EMPStrategy[ii]).iYieldSyncV1EMPStrategyInteractor()
+					),
+					type(uint256).max
+				);
 			}
 		}
 	}
