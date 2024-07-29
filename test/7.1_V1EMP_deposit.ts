@@ -334,9 +334,9 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 					expect(await eMP.balanceOf(manager.address)).to.be.equal(EXPECTED_EMP_AMOUNT_MANAGER);
 				});
 
-				it("Yield Sync Governance Treasury should receive correct amount of ERC20 if fee is set is greater than 0..", async () => {
+				it("Governance Treasury should receive correct amount of ERC20 if fee is set is greater than 0..", async () => {
 					// Set YS Gov fee to 2%
-					await eMP.feeRateYieldSyncGovernanceUpdate(ethers.utils.parseUnits(".02", 18));
+					await eMP.feeRateGovernanceUpdate(ethers.utils.parseUnits(".02", 18));
 
 					await eMP.utilizedERC20Deposit(eMPDepositAmounts);
 
@@ -366,12 +366,12 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 					expect(await eMP.balanceOf(treasury.address)).to.be.equal(EXPECTED_EMP_AMOUNT_TREASURY);
 				});
 
-				it("Manager & Yield Sync Governance should receive correct amounts of ERC20 if fees are set to greater than 0..", async () => {
+				it("Manager & Governance should receive correct amounts of ERC20 if fees are set to greater than 0..", async () => {
 					// Set manager fee to 2%
 					await eMP.feeRateManagerUpdate(ethers.utils.parseUnits(".02", 18));
 
 					// Set YS Gov fee to 2%
-					await eMP.feeRateYieldSyncGovernanceUpdate(ethers.utils.parseUnits(".02", 18));
+					await eMP.feeRateGovernanceUpdate(ethers.utils.parseUnits(".02", 18));
 
 					// Deposit
 					await eMP.utilizedERC20Deposit(eMPDepositAmounts);

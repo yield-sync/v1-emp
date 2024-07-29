@@ -17,7 +17,7 @@ interface IV1EMPAmountsValidator
 	;
 
 	/**
-	* @notice Yield Sync V1 EMP Strategy Utilized ERC20 Amount Valid
+	* @notice V1 EMP Strategy Utilized ERC20 Amount Valid
 	* @param _v1EMPStrategyUtilizedERC20Amount {uint256[][]}
 	* @return valid_ {bool}
 	*/

@@ -8,7 +8,7 @@ interface IV1EMPRegistry
 	* @dev [view-address]
 	* @return {address}
 	*/
-	function YIELD_SYNC_GOVERNANCE()
+	function GOVERNANCE()
 		external
 		returns (address)
 	;
@@ -116,7 +116,7 @@ interface IV1EMPRegistry
 	* @dev [view-address]
 	* @return {address}
 	*/
-	function yieldSyncGovernancePayTo()
+	function governancePayTo()
 		external
 		view
 		returns (address)

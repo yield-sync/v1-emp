@@ -185,17 +185,17 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 		});
 	});
 
-	describe("function feeRateYieldSyncGovernanceUpdate()", async () => {
+	describe("function feeRateGovernanceUpdate()", async () => {
 		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
-			await expect(eMP.connect(outsider).feeRateYieldSyncGovernanceUpdate(outsider.address)).to.be.rejectedWith(
+			await expect(eMP.connect(outsider).feeRateGovernanceUpdate(outsider.address)).to.be.rejectedWith(
 				ERROR.NOT_AUTHORIZED
 			);
 		});
 
 		it("Should allow feeRateManager to be changed..", async () => {
-			await expect(eMP.feeRateYieldSyncGovernanceUpdate(1)).to.be.not.rejected;
+			await expect(eMP.feeRateGovernanceUpdate(1)).to.be.not.rejected;
 
-			expect(await eMP.feeRateYieldSyncGovernance()).to.be.equal(1);
+			expect(await eMP.feeRateGovernance()).to.be.equal(1);
 		});
 	});
 

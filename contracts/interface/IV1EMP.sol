@@ -24,7 +24,7 @@ interface IV1EMP is
 
 	/**
 	* @dev [view-boolean]
-	* @notice Utilized Yield Sync V1 EMP Strategy Deposit Open
+	* @notice Utilized ERC20 Deposit Open
 	* @return {bool}
 	*/
 	function utilizedERC20DepositOpen()
@@ -35,7 +35,7 @@ interface IV1EMP is
 
 	/**
 	* @dev [view-boolean]
-	* @notice Utilized Yield Sync V1 EMP Strategy Withdraw Open
+	* @notice Utilized ERC20 Withdraw Open
 	* @return {bool}
 	*/
 	function utilizedERC20WithdrawOpen()
@@ -78,11 +78,11 @@ interface IV1EMP is
 	;
 
 	/**
-	* @notice Fee Rate for Yield Sync Governance
+	* @notice Fee Rate for Governance
 	* @dev [view-uint256]
 	* @return {uint256}
 	*/
-	function feeRateYieldSyncGovernance()
+	function feeRateGovernance()
 		external
 		view
 		returns (uint256)
@@ -139,7 +139,7 @@ interface IV1EMP is
 
 	/**
 	* @dev [view-address[]]
-	* @notice Utilized Yield Sync V1 EMP Strategy
+	* @notice Utilized V1 EMP Strategy
 	* @return {address[]}
 	*/
 	function utilizedV1EMPStrategy()
@@ -161,10 +161,10 @@ interface IV1EMP is
 	;
 
 	/**
-	* @notice Udpate Fee Rate for Yield Sync Governance
-	* @param _feeRateYieldSyncGovernance {uint256}
+	* @notice Udpate Fee Rate for Governance
+	* @param _feeRateGovernance {uint256}
 	*/
-	function feeRateYieldSyncGovernanceUpdate(uint256 _feeRateYieldSyncGovernance)
+	function feeRateGovernanceUpdate(uint256 _feeRateGovernance)
 		external
 	;
 
@@ -186,7 +186,7 @@ interface IV1EMP is
 	;
 
 	/**
-	* @notice Utilized Yield Sync V1 EMP Strategy Deposit Open Toggle
+	* @notice Utilized ERC20 Deposit Open Toggle
 	*/
 	function utilizedERC20DepositOpenToggle()
 		external
@@ -217,7 +217,7 @@ interface IV1EMP is
 	;
 
 	/**
-	* @notice Utilized Yield Sync V1 EMP Strategy Withdraw Open Toggle
+	* @notice Utilized ERC20 Withdraw Open Toggle
 	*/
 	function utilizedERC20WithdrawOpenToggle()
 		external

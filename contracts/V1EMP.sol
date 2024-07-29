@@ -20,6 +20,7 @@ contract V1EMP is
 {
 	using SafeMath for uint256;
 
+
 	address public override manager;
 
 	address[] internal _utilizedERC20;
@@ -31,8 +32,8 @@ contract V1EMP is
 	uint256 public constant override INITIAL_MINT_RATE = 100;
 	uint256 public constant override ONE_HUNDRED_PERCENT = 1e18;
 
+	uint256 public override feeRateGovernance;
 	uint256 public override feeRateManager;
-	uint256 public override feeRateYieldSyncGovernance;
 
 	IV1EMPArrayUtility public immutable I_V1_EMP_ARRAY_UTILITY;
 	IV1EMPRegistry public override immutable I_V1_EMP_REGISTRY;
@@ -65,8 +66,8 @@ contract V1EMP is
 
 		manager = _manager;
 
+		feeRateGovernance = 0;
 		feeRateManager = 0;
-		feeRateYieldSyncGovernance = 0;
 
 		I_V1_EMP_REGISTRY = IV1EMPRegistry(_v1EMPRegistry);
 		I_V1_EMP_ARRAY_UTILITY = IV1EMPArrayUtility(I_V1_EMP_REGISTRY.v1EMPArrayUtility());
@@ -74,10 +75,10 @@ contract V1EMP is
 	}
 
 
-	modifier authYieldSyncGovernanceOrManager()
+	modifier authGovernanceOrManager()
 	{
 		require(
-			msg.sender == manager || IAccessControlEnumerable(I_V1_EMP_REGISTRY.YIELD_SYNC_GOVERNANCE()).hasRole(
+			msg.sender == manager || IAccessControlEnumerable(I_V1_EMP_REGISTRY.GOVERNANCE()).hasRole(
 				bytes32(0),
 				msg.sender
 			),
@@ -152,7 +153,7 @@ contract V1EMP is
 	/// @inheritdoc IV1EMP
 	function feeRateManagerUpdate(uint256 _feeRateManager)
 		public
-		authYieldSyncGovernanceOrManager()
+		authGovernanceOrManager()
 	{
 		require(_feeRateManager <= ONE_HUNDRED_PERCENT, "!(_feeRateManager <= ONE_HUNDRED_PERCENT)");
 
@@ -160,25 +161,22 @@ contract V1EMP is
 	}
 
 	/// @inheritdoc IV1EMP
-	function feeRateYieldSyncGovernanceUpdate(uint256 _feeRateYieldSyncGovernance)
+	function feeRateGovernanceUpdate(uint256 _feeRateGovernance)
 		public
 		override
 	{
-		require(
-			IAccessControlEnumerable(I_V1_EMP_REGISTRY.YIELD_SYNC_GOVERNANCE()).hasRole(bytes32(0), msg.sender),
-			"!authorized"
-		);
+		require(IAccessControlEnumerable(I_V1_EMP_REGISTRY.GOVERNANCE()).hasRole(bytes32(0), msg.sender), "!authorized");
 
-		require(_feeRateYieldSyncGovernance <= ONE_HUNDRED_PERCENT, "!(_feeRateYieldSyncGovernance <= ONE_HUNDRED_PERCENT)");
+		require(_feeRateGovernance <= ONE_HUNDRED_PERCENT, "!(_feeRateGovernance <= ONE_HUNDRED_PERCENT)");
 
-		feeRateYieldSyncGovernance = _feeRateYieldSyncGovernance;
+		feeRateGovernance = _feeRateGovernance;
 	}
 
 	/// @inheritdoc IV1EMP
 	function managerUpdate(address _manager)
 		public
 		override
-		authYieldSyncGovernanceOrManager()
+		authGovernanceOrManager()
 	{
 		manager = _manager;
 	}
@@ -203,20 +201,20 @@ contract V1EMP is
 
 		uint256 mintAmountManager = utilizedERC20AmountTotalETHValue.mul(feeRateManager).div(ONE_HUNDRED_PERCENT);
 
-		uint256 mintAmountYieldSyncGovernancePayTo = utilizedERC20AmountTotalETHValue.mul(feeRateYieldSyncGovernance).div(
+		uint256 mintAmountGovernancePayTo = utilizedERC20AmountTotalETHValue.mul(feeRateGovernance).div(
 			ONE_HUNDRED_PERCENT
 		);
 
 		_mint(manager, mintAmountManager);
-		_mint(I_V1_EMP_REGISTRY.yieldSyncGovernancePayTo(), mintAmountYieldSyncGovernancePayTo);
-		_mint(msg.sender, utilizedERC20AmountTotalETHValue - mintAmountManager - mintAmountYieldSyncGovernancePayTo);
+		_mint(I_V1_EMP_REGISTRY.governancePayTo(), mintAmountGovernancePayTo);
+		_mint(msg.sender, utilizedERC20AmountTotalETHValue - mintAmountManager - mintAmountGovernancePayTo);
 	}
 
 	/// @inheritdoc IV1EMP
 	function utilizedERC20DepositOpenToggle()
 		public
 		override
-		authYieldSyncGovernanceOrManager()
+		authGovernanceOrManager()
 	{
 		utilizedERC20DepositOpen = !utilizedERC20DepositOpen;
 	}
@@ -375,7 +373,7 @@ contract V1EMP is
 	function utilizedERC20WithdrawOpenToggle()
 		public
 		override
-		authYieldSyncGovernanceOrManager()
+		authGovernanceOrManager()
 	{
 		utilizedERC20WithdrawOpen = !utilizedERC20WithdrawOpen;
 	}
@@ -402,7 +400,7 @@ contract V1EMP is
 	function utilizedV1EMPStrategyUpdate(address[] memory _v1EMPStrategy, uint256[] memory _allocation)
 		public
 		override
-		authYieldSyncGovernanceOrManager()
+		authGovernanceOrManager()
 		utilizedV1EMPStrategyTransferClosed()
 	{
 		require(_v1EMPStrategy.length == _allocation.length, "!(_v1EMPStrategy.length == _allocation.length)");
@@ -435,7 +433,7 @@ contract V1EMP is
 	function utilizedV1EMPStrategyWithdraw(uint256[] memory _v1EMPStrategyERC20Amount)
 		public
 		override
-		authYieldSyncGovernanceOrManager()
+		authGovernanceOrManager()
 		utilizedERC20UpdateBefore()
 	{
 		require(

@@ -2,7 +2,7 @@
 pragma solidity ^0.8.18;
 
 
-import { IYieldSyncGovernance } from "@yield-sync/v1-sdk/contracts/interface/IYieldSyncGovernance.sol";
+import { IGovernance } from "@yield-sync/v1-sdk/contracts/interface/IGovernance.sol";
 
 import { IV1EMPRegistry } from "./interface/IV1EMPRegistry.sol";
 
@@ -10,7 +10,7 @@ import { IV1EMPRegistry } from "./interface/IV1EMPRegistry.sol";
 contract V1EMPRegistry is
 	IV1EMPRegistry
 {
-	address public override immutable YIELD_SYNC_GOVERNANCE;
+	address public override immutable GOVERNANCE;
 
 	address public override v1EMPArrayUtility;
 	address public override v1EMPDeployer;
@@ -44,18 +44,18 @@ contract V1EMPRegistry is
 	{}
 
 
-	constructor (address yieldSyncGovernance)
+	constructor (address governance)
 	{
-		YIELD_SYNC_GOVERNANCE = yieldSyncGovernance;
+		GOVERNANCE = governance;
 
 		eMPIdTracker = 0;
 		eMPStrategyIdTracker = 0;
 	}
 
 
-	modifier authYieldSyncGovernance()
+	modifier authGovernance()
 	{
-		require(IYieldSyncGovernance(YIELD_SYNC_GOVERNANCE).hasRole(bytes32(0), msg.sender), "!authorized");
+		require(IGovernance(GOVERNANCE).hasRole(bytes32(0), msg.sender), "!authorized");
 
 		_;
 	}
@@ -65,12 +65,12 @@ contract V1EMPRegistry is
 
 
 	/// @inheritdoc IV1EMPRegistry
-	function yieldSyncGovernancePayTo()
+	function governancePayTo()
 		public
 		view
 		returns (address)
 	{
-		return IYieldSyncGovernance(YIELD_SYNC_GOVERNANCE).payTo();
+		return IGovernance(GOVERNANCE).payTo();
 	}
 
 
@@ -81,7 +81,7 @@ contract V1EMPRegistry is
 	function eRC20_v1EMPERC20ETHValueFeedUpdate(address _eRC20, address _v1EMPERC20ETHValueFeed)
 		public
 		override
-		authYieldSyncGovernance()
+		authGovernance()
 	{
 		require(_eRC20 != address(0), "!(_eRC20 != address(0))");
 
@@ -94,7 +94,7 @@ contract V1EMPRegistry is
 	function v1EMPArrayUtilityUpdate(address _v1EMPArrayUtility)
 		public
 		override
-		authYieldSyncGovernance()
+		authGovernance()
 	{
 		require(v1EMPArrayUtility == address(0), "!(v1EMPArrayUtility == address(0))");
 
@@ -106,7 +106,7 @@ contract V1EMPRegistry is
 	function v1EMPDeployerUpdate(address _v1EMPDeployer)
 		public
 		override
-		authYieldSyncGovernance()
+		authGovernance()
 	{
 		require(v1EMPAmountsValidator != address(0), "!(v1EMPAmountsValidator != address(0))");
 
@@ -132,7 +132,7 @@ contract V1EMPRegistry is
 	function v1EMPStrategyDeployerUpdate(address _v1EMPStrategyDeployer)
 		public
 		override
-		authYieldSyncGovernance()
+		authGovernance()
 	{
 		require(v1EMPStrategyUtility != address(0), "!(v1EMPStrategyUtility != address(0))");
 
@@ -158,7 +158,7 @@ contract V1EMPRegistry is
 	function v1EMPStrategyUtilityUpdate(address _v1EMPStrategyUtility)
 		public
 		override
-		authYieldSyncGovernance()
+		authGovernance()
 	{
 		require(v1EMPArrayUtility != address(0), "!(v1EMPArrayUtility != address(0))");
 
@@ -171,7 +171,7 @@ contract V1EMPRegistry is
 	function v1EMPAmountsValidatorUpdate(address _v1EMPAmountsValidator)
 		public
 		override
-		authYieldSyncGovernance()
+		authGovernance()
 	{
 		require(v1EMPArrayUtility != address(0), "!(v1EMPArrayUtility != address(0))");
 
