@@ -291,8 +291,9 @@ contract V1EMPStrategy is
 		{
 			if (_utilizedERC20_utilizationERC20[_utilizedERC20[i]].withdraw)
 			{
-				uint256 utilizedERC20AmountPerToken = SafeMath.div(
-					SafeMath.mul(iV1EMPStrategyInteractor.utilizedERC20TotalAmount(_utilizedERC20[i]), 1e18),
+				uint256 utilizedERC20AmountPerToken = iV1EMPStrategyInteractor.utilizedERC20TotalAmount(_utilizedERC20[i]).mul(
+					1e18
+				).div(
 					totalSupply(),
 					"!computed"
 				);
@@ -300,7 +301,7 @@ contract V1EMPStrategy is
 				iV1EMPStrategyInteractor.utilizedERC20Withdraw(
 					msg.sender,
 					_utilizedERC20[i],
-					SafeMath.div(SafeMath.mul(utilizedERC20AmountPerToken, _eRC20Amount), 1e18)
+					utilizedERC20AmountPerToken.mul(_eRC20Amount).div(1e18)
 				);
 			}
 		}
