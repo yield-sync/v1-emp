@@ -33,6 +33,7 @@ contract V1EMPStrategy is
 	bool public override utilizedERC20WithdrawOpen;
 
 	uint256 public constant override ONE_HUNDRED_PERCENT = 1e18;
+
 	uint256 public override utilizedERC20UpdateTracker;
 
 	IV1EMPRegistry public override immutable I_V1_EMP_REGISTRY;
