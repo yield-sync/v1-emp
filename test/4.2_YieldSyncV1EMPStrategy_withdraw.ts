@@ -87,7 +87,7 @@ describe("[4.2] YieldSyncV1EMPStrategy.sol - Withdrawing Tokens", async () => {
 		* @notice The owner has to be registered as the EMP deployer so that it can authorize itself as an EMP to access the
 		* functions available on the strategy.
 		*/
-		await registry.yieldSyncV1EMPUtilityUpdate(OWNER.address);
+		await registry.yieldSyncV1EMPAmountsValidatorUpdate(OWNER.address);
 		await registry.yieldSyncV1EMPDeployerUpdate(OWNER.address);
 		await registry.yieldSyncV1EMPRegister(OWNER.address);
 

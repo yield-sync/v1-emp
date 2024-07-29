@@ -10,7 +10,7 @@ import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import { IYieldSyncV1EMP, IYieldSyncV1EMPRegistry, UtilizationERC20 } from "./interface/IYieldSyncV1EMP.sol";
 import { IYieldSyncV1EMPArrayUtility } from "./interface/IYieldSyncV1EMPArrayUtility.sol";
 import { IYieldSyncV1EMPStrategy } from "./interface/IYieldSyncV1EMPStrategy.sol";
-import { IYieldSyncV1EMPUtility } from "./interface/IYieldSyncV1EMPUtility.sol";
+import { IYieldSyncV1EMPAmountsValidator } from "./interface/IYieldSyncV1EMPAmountsValidator.sol";
 
 
 contract YieldSyncV1EMP is
@@ -36,7 +36,7 @@ contract YieldSyncV1EMP is
 
 	IYieldSyncV1EMPArrayUtility public immutable I_YIELD_SYNC_V1_EMP_ARRAY_UTILITY;
 	IYieldSyncV1EMPRegistry public override immutable I_YIELD_SYNC_V1_EMP_REGISTRY;
-	IYieldSyncV1EMPUtility public immutable I_YIELD_SYNC_V1_EMP_UTILITY;
+	IYieldSyncV1EMPAmountsValidator public immutable I_YIELD_SYNC_V1_EMP_UTILITY;
 
 
 	mapping (
@@ -76,7 +76,7 @@ contract YieldSyncV1EMP is
 		I_YIELD_SYNC_V1_EMP_ARRAY_UTILITY = IYieldSyncV1EMPArrayUtility(
 			I_YIELD_SYNC_V1_EMP_REGISTRY.yieldSyncV1EMPArrayUtility()
 		);
-		I_YIELD_SYNC_V1_EMP_UTILITY = IYieldSyncV1EMPUtility(I_YIELD_SYNC_V1_EMP_REGISTRY.yieldSyncV1EMPUtility());
+		I_YIELD_SYNC_V1_EMP_UTILITY = IYieldSyncV1EMPAmountsValidator(I_YIELD_SYNC_V1_EMP_REGISTRY.yieldSyncV1EMPAmountsValidator());
 	}
 
 

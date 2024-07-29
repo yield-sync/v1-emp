@@ -6,7 +6,7 @@ export const D_18 = ethers.utils.parseUnits('1', 18);
 export const ERROR = {
 	REGISTRY: {
 		ARRAY_UTILITY_NOT_SET: "!(yieldSyncV1EMPArrayUtility != address(0))",
-		EMP_UTILITY_NOT_SET: "!(yieldSyncV1EMPUtility != address(0))",
+		EMP_UTILITY_NOT_SET: "!(yieldSyncV1EMPAmountsValidator != address(0))",
 		EMP_STRATEGY_UTILITY_NOT_SET: "!(yieldSyncV1EMPStrategyUtility != address(0))",
 		NOT_EMP_DEPLOYER: "!(yieldSyncV1EMPDeployer == msg.sender)",
 		NOT_STRATEGY_DEPLOYER: "!(yieldSyncV1EMPStrategyDeployer == msg.sender)",

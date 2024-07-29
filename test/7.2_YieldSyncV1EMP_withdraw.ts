@@ -86,7 +86,7 @@ describe("[7.2] YieldSyncV1EMP.sol - Withdrawing Tokens", async () => {
 		const YieldSyncV1EMPStrategy: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPStrategy");
 		const YieldSyncV1EMPStrategyDeployer: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPStrategyDeployer");
 		const YieldSyncV1EMPStrategyUtility: ContractFactory= await ethers.getContractFactory("YieldSyncV1EMPStrategyUtility");
-		const YieldSyncV1EMPUtility: ContractFactory= await ethers.getContractFactory("YieldSyncV1EMPUtility");
+		const YieldSyncV1EMPAmountsValidator: ContractFactory= await ethers.getContractFactory("YieldSyncV1EMPAmountsValidator");
 
 		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
 		const ETHValueFeedDummy: ContractFactory = await ethers.getContractFactory("ETHValueFeedDummy");
@@ -112,9 +112,9 @@ describe("[7.2] YieldSyncV1EMP.sol - Withdrawing Tokens", async () => {
 
 		await registry.yieldSyncV1EMPStrategyDeployerUpdate(strategyDeployer.address);
 
-		eMPUtility = await (await YieldSyncV1EMPUtility.deploy(registry.address)).deployed();
+		eMPUtility = await (await YieldSyncV1EMPAmountsValidator.deploy(registry.address)).deployed();
 
-		await registry.yieldSyncV1EMPUtilityUpdate(eMPUtility.address);
+		await registry.yieldSyncV1EMPAmountsValidatorUpdate(eMPUtility.address);
 
 		eMPDeployer = await (await YieldSyncV1EMPDeployer.deploy(registry.address)).deployed();
 

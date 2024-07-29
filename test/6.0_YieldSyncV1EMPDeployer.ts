@@ -36,7 +36,7 @@ describe("[6.0] YieldSyncV1EMPDeployer.sol - Setup", async () => {
 		// Set Treasury
 		await expect(governance.payToUpdate(TREASURY.address)).to.be.not.rejected;
 
-		await registry.yieldSyncV1EMPUtilityUpdate(arrayUtility.address);
+		await registry.yieldSyncV1EMPAmountsValidatorUpdate(arrayUtility.address);
 
 		// Set the EMP Deployer on registry
 		await registry.yieldSyncV1EMPDeployerUpdate(empDeployer.address);

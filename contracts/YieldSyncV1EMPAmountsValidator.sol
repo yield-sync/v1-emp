@@ -8,11 +8,11 @@ import { IYieldSyncV1EMP } from "./interface/IYieldSyncV1EMP.sol";
 import { IYieldSyncV1EMPETHValueFeed } from "./interface/IYieldSyncV1EMPETHValueFeed.sol";
 import { IYieldSyncV1EMPRegistry } from "./interface/IYieldSyncV1EMPRegistry.sol";
 import { IYieldSyncV1EMPStrategy } from "./interface/IYieldSyncV1EMPStrategy.sol";
-import { IYieldSyncV1EMPUtility } from "./interface/IYieldSyncV1EMPUtility.sol";
+import { IYieldSyncV1EMPAmountsValidator } from "./interface/IYieldSyncV1EMPAmountsValidator.sol";
 
 
-contract YieldSyncV1EMPUtility is
-	IYieldSyncV1EMPUtility
+contract YieldSyncV1EMPAmountsValidator is
+	IYieldSyncV1EMPAmountsValidator
 {
 	using SafeMath for uint256;
 
@@ -47,7 +47,7 @@ contract YieldSyncV1EMPUtility is
 	}
 
 
-	/// @inheritdoc IYieldSyncV1EMPUtility
+	/// @inheritdoc IYieldSyncV1EMPAmountsValidator
 	function utilizedERC20AmountValid(uint256[] memory _utilizedERC20Amount)
 		public
 		view
@@ -102,7 +102,7 @@ contract YieldSyncV1EMPUtility is
 		return (valid_, utilizedERC20AmountTotalETHValue_);
 	}
 
-	/// @inheritdoc IYieldSyncV1EMPUtility
+	/// @inheritdoc IYieldSyncV1EMPAmountsValidator
 	function yieldSyncV1EMPStrategyUtilizedERC20AmountValid(uint256[][] memory _yieldSyncV1EMPStrategyUtilizedERC20Amount)
 		public
 		override

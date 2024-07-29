@@ -53,7 +53,7 @@ interface IYieldSyncV1EMPRegistry
 	* @dev [view-address]
 	* @return {address}
 	*/
-	function yieldSyncV1EMPUtility()
+	function yieldSyncV1EMPAmountsValidator()
 		external
 		returns (address)
 	;
@@ -179,9 +179,9 @@ interface IYieldSyncV1EMPRegistry
 	;
 
 	/**
-	* @param _yieldSyncV1EMPUtility {address}
+	* @param _yieldSyncV1EMPAmountsValidator {address}
 	*/
-	function yieldSyncV1EMPUtilityUpdate(address _yieldSyncV1EMPUtility)
+	function yieldSyncV1EMPAmountsValidatorUpdate(address _yieldSyncV1EMPAmountsValidator)
 		external
 	;
 }

@@ -16,7 +16,7 @@ contract YieldSyncV1EMPRegistry is
 	address public override yieldSyncV1EMPDeployer;
 	address public override yieldSyncV1EMPStrategyDeployer;
 	address public override yieldSyncV1EMPStrategyUtility;
-	address public override yieldSyncV1EMPUtility;
+	address public override yieldSyncV1EMPAmountsValidator;
 
 	uint256 public yieldSyncEMPIdTracker;
 	uint256 public yieldSyncEMPStrategyIdTracker;
@@ -112,7 +112,7 @@ contract YieldSyncV1EMPRegistry is
 		override
 		authYieldSyncGovernance()
 	{
-		require(yieldSyncV1EMPUtility != address(0), "!(yieldSyncV1EMPUtility != address(0))");
+		require(yieldSyncV1EMPAmountsValidator != address(0), "!(yieldSyncV1EMPAmountsValidator != address(0))");
 
 		require(yieldSyncV1EMPDeployer == address(0), "!(yieldSyncV1EMPDeployer == address(0))");
 
@@ -172,15 +172,15 @@ contract YieldSyncV1EMPRegistry is
 	}
 
 	/// @inheritdoc IYieldSyncV1EMPRegistry
-	function yieldSyncV1EMPUtilityUpdate(address _yieldSyncV1EMPUtility)
+	function yieldSyncV1EMPAmountsValidatorUpdate(address _yieldSyncV1EMPAmountsValidator)
 		public
 		override
 		authYieldSyncGovernance()
 	{
 		require(yieldSyncV1EMPArrayUtility != address(0), "!(yieldSyncV1EMPArrayUtility != address(0))");
 
-		require(yieldSyncV1EMPUtility == address(0), "!(yieldSyncV1EMPUtility == address(0))");
+		require(yieldSyncV1EMPAmountsValidator == address(0), "!(yieldSyncV1EMPAmountsValidator == address(0))");
 
-		yieldSyncV1EMPUtility = _yieldSyncV1EMPUtility;
+		yieldSyncV1EMPAmountsValidator = _yieldSyncV1EMPAmountsValidator;
 	}
 }

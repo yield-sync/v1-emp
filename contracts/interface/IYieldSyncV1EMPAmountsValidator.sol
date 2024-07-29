@@ -2,7 +2,7 @@
 pragma solidity ^0.8.18;
 
 
-interface IYieldSyncV1EMPUtility
+interface IYieldSyncV1EMPAmountsValidator
 {
 	/**
 	* @notice Utilized ERC20 Amount Valid

@@ -46,11 +46,11 @@ describe("[1.0] YieldSyncV1EMPRegistry.sol", async () => {
 		});
 	});
 
-	describe("function yieldSyncV1EMPUtilityUpdate()", async () => {
+	describe("function yieldSyncV1EMPAmountsValidatorUpdate()", async () => {
 		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
 			const [, ADDR_1] = await ethers.getSigners();
 
-			await expect(registry.connect(ADDR_1).yieldSyncV1EMPUtilityUpdate(ADDR_1.address)).to.be.rejectedWith(
+			await expect(registry.connect(ADDR_1).yieldSyncV1EMPAmountsValidatorUpdate(ADDR_1.address)).to.be.rejectedWith(
 				ERROR.NOT_AUTHORIZED
 			);
 		});
@@ -58,7 +58,7 @@ describe("[1.0] YieldSyncV1EMPRegistry.sol", async () => {
 		it("Should not allow to set the EMP Utility until the Array Utility is set..", async () => {
 			const [TEMP] = await ethers.getSigners();
 
-			await expect(registry.yieldSyncV1EMPUtilityUpdate(TEMP.address)).to.be.rejectedWith(
+			await expect(registry.yieldSyncV1EMPAmountsValidatorUpdate(TEMP.address)).to.be.rejectedWith(
 				ERROR.REGISTRY.ARRAY_UTILITY_NOT_SET
 			);
 		});
@@ -68,9 +68,9 @@ describe("[1.0] YieldSyncV1EMPRegistry.sol", async () => {
 
 			await registry.yieldSyncV1EMPArrayUtilityUpdate(arrayUtility.address);
 
-			await expect(registry.yieldSyncV1EMPUtilityUpdate(TEMP.address)).to.be.not.rejected;
+			await expect(registry.yieldSyncV1EMPAmountsValidatorUpdate(TEMP.address)).to.be.not.rejected;
 
-			expect(await registry.yieldSyncV1EMPUtility()).to.be.equal(TEMP.address);
+			expect(await registry.yieldSyncV1EMPAmountsValidator()).to.be.equal(TEMP.address);
 		});
 	});
 
@@ -80,7 +80,7 @@ describe("[1.0] YieldSyncV1EMPRegistry.sol", async () => {
 
 			await registry.yieldSyncV1EMPArrayUtilityUpdate(arrayUtility.address);
 
-			await registry.yieldSyncV1EMPUtilityUpdate(TEMP.address);
+			await registry.yieldSyncV1EMPAmountsValidatorUpdate(TEMP.address);
 
 			await expect(
 				registry.connect(ADDR_1).yieldSyncV1EMPDeployerUpdate(TEMP.address)
@@ -102,7 +102,7 @@ describe("[1.0] YieldSyncV1EMPRegistry.sol", async () => {
 
 			await registry.yieldSyncV1EMPArrayUtilityUpdate(arrayUtility.address);
 
-			await registry.yieldSyncV1EMPUtilityUpdate(TEMP.address);
+			await registry.yieldSyncV1EMPAmountsValidatorUpdate(TEMP.address);
 
 			await expect(registry.yieldSyncV1EMPDeployerUpdate(TEMP.address)).to.be.not.rejected;
 
@@ -116,7 +116,7 @@ describe("[1.0] YieldSyncV1EMPRegistry.sol", async () => {
 
 			await registry.yieldSyncV1EMPArrayUtilityUpdate(arrayUtility.address);
 
-			await registry.yieldSyncV1EMPUtilityUpdate(TEMP.address);
+			await registry.yieldSyncV1EMPAmountsValidatorUpdate(TEMP.address);
 
 			await registry.yieldSyncV1EMPDeployerUpdate(TEMP.address);
 		});
