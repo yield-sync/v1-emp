@@ -77,10 +77,10 @@ contract V1EMP is
 	modifier authYieldSyncGovernanceOrManager()
 	{
 		require(
-			IAccessControlEnumerable(I_V1_EMP_REGISTRY.YIELD_SYNC_GOVERNANCE()).hasRole(
+			msg.sender == manager || IAccessControlEnumerable(I_V1_EMP_REGISTRY.YIELD_SYNC_GOVERNANCE()).hasRole(
 				bytes32(0),
 				msg.sender
-			) || msg.sender == manager,
+			),
 			"!authorized"
 		);
 
