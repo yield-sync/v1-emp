@@ -15,7 +15,6 @@ contract V1EMPRegistry is
 	address public override v1EMPArrayUtility;
 	address public override v1EMPDeployer;
 	address public override v1EMPStrategyDeployer;
-	address public override v1EMPStrategyUtility;
 	address public override v1EMPAmountsValidator;
 
 	uint256 public eMPIdTracker;
@@ -134,8 +133,6 @@ contract V1EMPRegistry is
 		override
 		authGovernance()
 	{
-		require(v1EMPStrategyUtility != address(0), "!(v1EMPStrategyUtility != address(0))");
-
 		require(v1EMPStrategyDeployer == address(0), "!(v1EMPStrategyDeployer == address(0))");
 
 		v1EMPStrategyDeployer = _v1EMPStrategyDeployer;
@@ -152,19 +149,6 @@ contract V1EMPRegistry is
 
 		v1EMPStrategy_v1EMPStrategyId[_v1EMPStrategy] = eMPStrategyIdTracker;
 		v1EMPStrategyId_v1EMPStrategy[eMPStrategyIdTracker] = _v1EMPStrategy;
-	}
-
-	/// @inheritdoc IV1EMPRegistry
-	function v1EMPStrategyUtilityUpdate(address _v1EMPStrategyUtility)
-		public
-		override
-		authGovernance()
-	{
-		require(v1EMPArrayUtility != address(0), "!(v1EMPArrayUtility != address(0))");
-
-		require(v1EMPStrategyUtility == address(0), "!(v1EMPStrategyUtility == address(0))");
-
-		v1EMPStrategyUtility = _v1EMPStrategyUtility;
 	}
 
 	/// @inheritdoc IV1EMPRegistry

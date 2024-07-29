@@ -7,10 +7,14 @@ import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuar
 import { ERC20, IERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-import { IV1EMP, IV1EMPRegistry, UtilizationERC20 } from "./interface/IV1EMP.sol";
-import { IV1EMPArrayUtility } from "./interface/IV1EMPArrayUtility.sol";
+import {
+	IV1EMP,
+	IV1EMPAmountsValidator,
+	IV1EMPArrayUtility,
+	IV1EMPRegistry,
+	UtilizationERC20
+} from "./interface/IV1EMP.sol";
 import { IV1EMPStrategy } from "./interface/IV1EMPStrategy.sol";
-import { IV1EMPAmountsValidator } from "./interface/IV1EMPAmountsValidator.sol";
 
 
 contract V1EMP is
@@ -35,9 +39,9 @@ contract V1EMP is
 	uint256 public override feeRateGovernance;
 	uint256 public override feeRateManager;
 
-	IV1EMPArrayUtility public immutable I_V1_EMP_ARRAY_UTILITY;
+	IV1EMPAmountsValidator public override immutable I_V1_EMP_AMOUNTS_VALIDATOR;
+	IV1EMPArrayUtility public override immutable I_V1_EMP_ARRAY_UTILITY;
 	IV1EMPRegistry public override immutable I_V1_EMP_REGISTRY;
-	IV1EMPAmountsValidator public immutable I_V1_EMP_UTILITY;
 
 
 	mapping (address utilizedV1EMPStrategy => uint256 allocation) public override utilizedV1EMPStrategy_allocation;
@@ -71,7 +75,7 @@ contract V1EMP is
 
 		I_V1_EMP_REGISTRY = IV1EMPRegistry(_v1EMPRegistry);
 		I_V1_EMP_ARRAY_UTILITY = IV1EMPArrayUtility(I_V1_EMP_REGISTRY.v1EMPArrayUtility());
-		I_V1_EMP_UTILITY = IV1EMPAmountsValidator(I_V1_EMP_REGISTRY.v1EMPAmountsValidator());
+		I_V1_EMP_AMOUNTS_VALIDATOR = IV1EMPAmountsValidator(I_V1_EMP_REGISTRY.v1EMPAmountsValidator());
 	}
 
 
@@ -189,7 +193,9 @@ contract V1EMP is
 		utilizedERC20DepositOpenRequired()
 		utilizedERC20UpdateBefore()
 	{
-		(bool valid, uint256 utilizedERC20AmountTotalETHValue) = I_V1_EMP_UTILITY.utilizedERC20AmountValid(_utilizedERC20Amount);
+		(bool valid, uint256 utilizedERC20AmountTotalETHValue) = I_V1_EMP_AMOUNTS_VALIDATOR.utilizedERC20AmountValid(
+			_utilizedERC20Amount
+		);
 
 		require(valid, "!valid");
 
@@ -386,8 +392,8 @@ contract V1EMP is
 		utilizedERC20DepositOpenRequired()
 	{
 		require(
-			I_V1_EMP_UTILITY.v1EMPStrategyUtilizedERC20AmountValid(_v1EMPStrategyUtilizedERC20Amount),
-			"!I_V1_EMP_UTILITY.v1EMPStrategyUtilizedERC20AmountValid(_v1EMPStrategyUtilizedERC20Amount)"
+			I_V1_EMP_AMOUNTS_VALIDATOR.v1EMPStrategyUtilizedERC20AmountValid(_v1EMPStrategyUtilizedERC20Amount),
+			"!I_V1_EMP_AMOUNTS_VALIDATOR.v1EMPStrategyUtilizedERC20AmountValid(_v1EMPStrategyUtilizedERC20Amount)"
 		);
 
 		for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)

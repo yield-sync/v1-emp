@@ -142,63 +142,21 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 		});
 	});
 
-	describe("function v1EMPStrategyUtilityUpdate()", async () => {
-		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
-			const [, ADDR_1] = await ethers.getSigners();
-
-			await expect(registry.connect(ADDR_1).v1EMPStrategyUtilityUpdate(ADDR_1.address)).to.be.rejectedWith(
-				ERROR.NOT_AUTHORIZED
-			);
-		});
-
-		it("Should not allow to set the EMP Strategy Utility until the Array Utility is set..", async () => {
-			const [TEMP] = await ethers.getSigners();
-
-			await expect(registry.v1EMPStrategyUtilityUpdate(TEMP.address)).to.be.rejectedWith(
-				ERROR.REGISTRY.ARRAY_UTILITY_NOT_SET
-			);
-		});
-
-		it("Should allow authorized caller to update EMP Utility..", async () => {
-			const [TEMP] = await ethers.getSigners();
-
-			await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
-
-			await expect(registry.v1EMPStrategyUtilityUpdate(TEMP.address)).to.be.not.rejected;
-
-			expect(await registry.v1EMPStrategyUtility()).to.be.equal(TEMP.address);
-		});
-	});
-
 	describe("function v1EMPStrategyDeployerUpdate()", async () => {
 		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
 			const [TEMP, ADDR_1] = await ethers.getSigners();
 
 			await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
 
-			await registry.v1EMPStrategyUtilityUpdate(TEMP.address);
-
 			await expect(
 				registry.connect(ADDR_1).v1EMPStrategyDeployerUpdate(ADDR_1.address)
 			).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
-		});
-
-		it("Should not allow to set the EMP Strategy Deployer until the EMP Strategy Utility is set..", async () => {
-			const [TEMP] = await ethers.getSigners();
-
-			await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
-
-			await expect(registry.v1EMPStrategyDeployerUpdate(TEMP.address)).to.be.rejectedWith(
-				ERROR.REGISTRY.EMP_STRATEGY_UTILITY_NOT_SET
-			);
 		});
 
 		it("Should allow authorized caller to update EMP Strategy Deployer..", async () => {
 			const [TEMP] = await ethers.getSigners();
 
 			await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
-
-			await registry.v1EMPStrategyUtilityUpdate(TEMP.address);
 
 			await expect(registry.v1EMPStrategyDeployerUpdate(TEMP.address)).to.be.not.rejected;
 
@@ -211,8 +169,6 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 			const [TEMP] = await ethers.getSigners();
 
 			await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
-
-			await registry.v1EMPStrategyUtilityUpdate(TEMP.address);
 
 			await registry.v1EMPStrategyDeployerUpdate(TEMP.address);
 
@@ -247,8 +203,6 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 			const [TEMP] = await ethers.getSigners();
 
 			await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
-
-			await registry.v1EMPStrategyUtilityUpdate(TEMP.address);
 
 			await registry.v1EMPStrategyDeployerUpdate(TEMP.address);
 

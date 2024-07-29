@@ -44,15 +44,6 @@ interface IV1EMPRegistry
 	* @dev [view-address]
 	* @return {address}
 	*/
-	function v1EMPStrategyUtility()
-		external
-		returns (address)
-	;
-
-	/**
-	* @dev [view-address]
-	* @return {address}
-	*/
 	function v1EMPAmountsValidator()
 		external
 		returns (address)
@@ -168,13 +159,6 @@ interface IV1EMPRegistry
 	* @param _v1EMPStrategy {address}
 	*/
 	function v1EMPStrategyRegister(address _v1EMPStrategy)
-		external
-	;
-
-	/**
-	* @param _v1EMPStrategyUtility {address}
-	*/
-	function v1EMPStrategyUtilityUpdate(address _v1EMPStrategyUtility)
 		external
 	;
 

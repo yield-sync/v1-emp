@@ -48,7 +48,6 @@ describe("[4.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 		const YieldSyncGovernance: ContractFactory = await ethers.getContractFactory("YieldSyncGovernance");
 		const V1EMPArrayUtility: ContractFactory = await ethers.getContractFactory("V1EMPArrayUtility");
 		const V1EMPRegistry: ContractFactory = await ethers.getContractFactory("V1EMPRegistry");
-		const V1EMPStrategyUtility: ContractFactory= await ethers.getContractFactory("V1EMPStrategyUtility");
 		const V1EMPStrategy: ContractFactory = await ethers.getContractFactory("V1EMPStrategy");
 		const V1EMPStrategyDeployer: ContractFactory = await ethers.getContractFactory("V1EMPStrategyDeployer");
 
@@ -66,10 +65,6 @@ describe("[4.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 		registry = await (await V1EMPRegistry.deploy(governance.address)).deployed();
 
 		await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
-
-		strategyUtility = await (await V1EMPStrategyUtility.deploy(registry.address)).deployed();
-
-		await registry.v1EMPStrategyUtilityUpdate(strategyUtility.address);
 
 		strategyDeployer = await (await V1EMPStrategyDeployer.deploy(registry.address)).deployed();
 
