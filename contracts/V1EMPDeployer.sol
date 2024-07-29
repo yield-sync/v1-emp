@@ -36,9 +36,7 @@ contract V1EMPDeployer is
 		public
 		returns (address v1EMP_)
 	{
-		v1EMP_ = address(
-			new V1EMP(msg.sender, address(I_V1_EMP_REGISTRY), _name, _symbol)
-		);
+		v1EMP_ = address(new V1EMP(msg.sender, address(I_V1_EMP_REGISTRY), _name, _symbol));
 
 		I_V1_EMP_REGISTRY.v1EMPRegister(v1EMP_);
 	}

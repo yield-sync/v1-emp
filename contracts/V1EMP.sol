@@ -39,15 +39,11 @@ contract V1EMP is
 	IV1EMPAmountsValidator public immutable I_V1_EMP_UTILITY;
 
 
-	mapping (
-		address utilizedV1EMPStrategy => uint256 allocation
-	) public override utilizedV1EMPStrategy_allocation;
+	mapping (address utilizedV1EMPStrategy => uint256 allocation) public override utilizedV1EMPStrategy_allocation;
 
 	mapping (address utilizedERC20 => UtilizationERC20 utilizationERC20) internal _utilizedERC20_utilizationERC20;
 
-	mapping (
-		address v1EMPStrategy => uint256 utilizedERC20UpdateTracker
-	) public v1EMPStrategy_utilizedERC20UpdateTracker;
+	mapping (address v1EMPStrategy => uint256 utilizedERC20UpdateTracker) public v1EMPStrategy_utilizedERC20UpdateTracker;
 
 	receive ()
 		external
@@ -73,9 +69,7 @@ contract V1EMP is
 		feeRateYieldSyncGovernance = 0;
 
 		I_V1_EMP_REGISTRY = IV1EMPRegistry(_v1EMPRegistry);
-		I_V1_EMP_ARRAY_UTILITY = IV1EMPArrayUtility(
-			I_V1_EMP_REGISTRY.v1EMPArrayUtility()
-		);
+		I_V1_EMP_ARRAY_UTILITY = IV1EMPArrayUtility(I_V1_EMP_REGISTRY.v1EMPArrayUtility());
 		I_V1_EMP_UTILITY = IV1EMPAmountsValidator(I_V1_EMP_REGISTRY.v1EMPAmountsValidator());
 	}
 
@@ -197,9 +191,7 @@ contract V1EMP is
 		utilizedERC20DepositOpenRequired()
 		utilizedERC20UpdateBefore()
 	{
-		(bool valid, uint256 utilizedERC20AmountTotalETHValue) = I_V1_EMP_UTILITY.utilizedERC20AmountValid(
-			_utilizedERC20Amount
-		);
+		(bool valid, uint256 utilizedERC20AmountTotalETHValue) = I_V1_EMP_UTILITY.utilizedERC20AmountValid(_utilizedERC20Amount);
 
 		require(valid, "!valid");
 
@@ -243,9 +235,8 @@ contract V1EMP is
 
 			for (uint256 ii = 0; ii < _utilizedV1EMPStrategy.length; ii++)
 			{
-				utilizedERC20TotalAmount_[i] += IV1EMPStrategy(
-					_utilizedV1EMPStrategy[ii]
-				).iV1EMPStrategyInteractor().utilizedERC20TotalAmount(
+				utilizedERC20TotalAmount_[i] += IV1EMPStrategy(_utilizedV1EMPStrategy[ii]).iV1EMPStrategyInteractor(
+				).utilizedERC20TotalAmount(
 					_utilizedERC20[i]
 				);
 			}
@@ -261,25 +252,17 @@ contract V1EMP is
 
 		uint256 utilizedERC20MaxLength = 0;
 
-		// First check if update is required and add length of utilizedERC20 to max length count
 		for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
 		{
-			// Get the count for the utilized ERC 20 update
-			uint256 utilizedERC20UpdateTracker = IV1EMPStrategy(
-				_utilizedV1EMPStrategy[i]
-			).utilizedERC20UpdateTracker();
+			uint256 utilizedERC20UpdateTracker = IV1EMPStrategy(_utilizedV1EMPStrategy[i]).utilizedERC20UpdateTracker();
 
-			// If an update is needed..
 			if (v1EMPStrategy_utilizedERC20UpdateTracker[_utilizedV1EMPStrategy[i]] != utilizedERC20UpdateTracker)
 			{
-				// Set updatedNeeded to true
 				updateRequired = true;
 
-				// Update local record of update tracker
 				v1EMPStrategy_utilizedERC20UpdateTracker[_utilizedV1EMPStrategy[i]] = utilizedERC20UpdateTracker;
 			}
 
-			// Set max length of utilized ERC20 to the sum of all lengths of each utilized ERC20 on stratgies
 			utilizedERC20MaxLength += IV1EMPStrategy(_utilizedV1EMPStrategy[i]).utilizedERC20().length;
 		}
 
@@ -290,26 +273,20 @@ contract V1EMP is
 
 		delete _utilizedERC20;
 
-		// Initialize the utilizedERC20 to the max possible size it can be
 		address[] memory tempUtilizedERC20 = new address[](utilizedERC20MaxLength);
 
-		// Set the count to 0
 		uint256 utilizedERC20I = 0;
 
-		// For each EMP utilized strategy..
 		for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
 		{
-			// Get the utilized ERC20
 			address[] memory strategyUtilizedERC20 = IV1EMPStrategy(_utilizedV1EMPStrategy[i]).utilizedERC20();
 
-			// Add each ERC20 to the EMP UtilizedERC20
 			for (uint256 ii = 0; ii < strategyUtilizedERC20.length; ii++)
 			{
 				tempUtilizedERC20[utilizedERC20I++] = strategyUtilizedERC20[ii];
 			}
 		}
 
-		// Clean up the array
 		tempUtilizedERC20 = I_V1_EMP_ARRAY_UTILITY.removeDuplicates(tempUtilizedERC20);
 		tempUtilizedERC20 = I_V1_EMP_ARRAY_UTILITY.sort(tempUtilizedERC20);
 
@@ -317,49 +294,29 @@ contract V1EMP is
 
 		UtilizationERC20[] memory utilizationERC20 = new UtilizationERC20[](tempUtilizedERC20.length);
 
-
-		/**
-		 * This is not done in the loop above because the utilizedERC20 has to be cleaned first before adding the
-		 * utilizations to the values.
-		 */
-
-		// For each strategy..
 		for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
 		{
-			// Initialize an interface for the strategy
 			IV1EMPStrategy iV1EMPStrategy = IV1EMPStrategy(_utilizedV1EMPStrategy[i]);
 
-			// For each utilized erc20 for stategy..
 			for (uint256 ii = 0; ii < tempUtilizedERC20.length; ii++)
 			{
-				/**
-				 * The objective here is to set the utilization for each ERC20
-				 */
-				// Get the utilization
-				UtilizationERC20 memory utilizationERC20_ = iV1EMPStrategy.utilizedERC20_utilizationERC20(
-					tempUtilizedERC20[ii]
-				);
+				UtilizationERC20 memory utilizationERC20_ = iV1EMPStrategy.utilizedERC20_utilizationERC20(tempUtilizedERC20[ii]);
 
-				// If for depositing..
 				if (utilizationERC20_.deposit)
 				{
 					utilizationERC20[ii].deposit = true;
 
-					// Multiple the allocation for the ERC20 on the strategy with the EMP strategy allocation
 					uint256 utilizationERC20Allocation = utilizationERC20_.allocation.mul(
 						utilizedV1EMPStrategy_allocation[_utilizedV1EMPStrategy[i]]
 					).div(
 						1e18
 					);
 
-					// Add the allocation to anything that exists before
-					utilizationERC20[ii].allocation += utilizationERC20Allocation; // On EMP it is queried by address not placement
+					utilizationERC20[ii].allocation += utilizationERC20Allocation;
 
-					// Add to the total sum of allocation total
 					utilizedERC20AllocationTotal += utilizationERC20Allocation;
 				}
 
-				// If the token is withdrawn set the withdrawn to true
 				if (utilizationERC20_.withdraw)
 				{
 					utilizationERC20[ii].withdraw = true;
@@ -367,7 +324,6 @@ contract V1EMP is
 			}
 		}
 
-		// Check that the total alocation is 100%
 		require(utilizedERC20AllocationTotal == ONE_HUNDRED_PERCENT, "!(utilizedERC20AllocationTotal == ONE_HUNDRED_PERCENT)");
 
 		_utilizedERC20 = tempUtilizedERC20;
@@ -379,9 +335,7 @@ contract V1EMP is
 			for (uint256 ii = 0; ii < _utilizedV1EMPStrategy.length; ii++)
 			{
 				IERC20(_utilizedERC20[i]).approve(
-					address(
-						IV1EMPStrategy(_utilizedV1EMPStrategy[ii]).iV1EMPStrategyInteractor()
-					),
+					address(IV1EMPStrategy(_utilizedV1EMPStrategy[ii]).iV1EMPStrategyInteractor()),
 					type(uint256).max
 				);
 			}
@@ -440,10 +394,7 @@ contract V1EMP is
 
 		for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
 		{
-			IV1EMPStrategy(_utilizedV1EMPStrategy[i]).utilizedERC20Deposit(
-				address(this),
-				_v1EMPStrategyUtilizedERC20Amount[i]
-			);
+			IV1EMPStrategy(_utilizedV1EMPStrategy[i]).utilizedERC20Deposit(address(this), _v1EMPStrategyUtilizedERC20Amount[i]);
 		}
 	}
 

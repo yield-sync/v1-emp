@@ -36,9 +36,7 @@ contract V1EMPStrategyDeployer is
 		public
 		returns (address v1EMPStrategy_)
 	{
-		v1EMPStrategy_ = address(
-			new V1EMPStrategy(msg.sender, address(I_V1_EMP_REGISTRY), _name, _symbol)
-		);
+		v1EMPStrategy_ = address(new V1EMPStrategy(msg.sender, address(I_V1_EMP_REGISTRY), _name, _symbol));
 
 		I_V1_EMP_REGISTRY.v1EMPStrategyRegister(v1EMPStrategy_);
 	}

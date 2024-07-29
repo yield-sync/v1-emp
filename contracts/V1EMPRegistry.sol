@@ -25,15 +25,11 @@ contract V1EMPRegistry is
 
 	mapping (address v1EMP => uint256 v1EMPId) public override v1EMP_v1EMPId;
 
-	mapping (
-		address v1EMPStrategy => uint256 v1EMPStrategyId
-	) public override v1EMPStrategy_v1EMPStrategyId;
+	mapping (address v1EMPStrategy => uint256 v1EMPStrategyId) public override v1EMPStrategy_v1EMPStrategyId;
 
 	mapping (uint256 v1EMPId => address v1EMP) public override v1EMPId_v1EMP;
 
-	mapping (
-		uint256 v1EMPStrategyId => address v1EMPStrategy
-	) public override v1EMPStrategyId_v1EMPStrategy;
+	mapping (uint256 v1EMPStrategyId => address v1EMPStrategy) public override v1EMPStrategyId_v1EMPStrategy;
 
 
 	receive ()

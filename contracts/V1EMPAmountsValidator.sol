@@ -68,9 +68,7 @@ contract V1EMPAmountsValidator is
 		for (uint256 i = 0; i < utilizedERC20.length; i++)
 		{
 			uint256 utilizedERC20AmountETHValue = _utilizedERC20Amount[i].mul(
-				IV1EMPETHValueFeed(
-					I_V1_EMP_REGISTRY.eRC20_v1EMPERC20ETHValueFeed(utilizedERC20[i])
-				).utilizedERC20ETHValue()
+				IV1EMPETHValueFeed(I_V1_EMP_REGISTRY.eRC20_v1EMPERC20ETHValueFeed(utilizedERC20[i])).utilizedERC20ETHValue()
 			).div(
 				1e18
 			);
@@ -87,11 +85,7 @@ contract V1EMPAmountsValidator is
 				"!computed"
 			);
 
-			if (
-				utilizedERC20AllocationActual != IV1EMP(msg.sender).utilizedERC20_utilizationERC20(
-					utilizedERC20[i]
-				).allocation
-			)
+			if (utilizedERC20AllocationActual != IV1EMP(msg.sender).utilizedERC20_utilizationERC20(utilizedERC20[i]).allocation)
 			{
 				valid_ = false;
 
@@ -125,9 +119,7 @@ contract V1EMPAmountsValidator is
 
 		for (uint256 i = 0; i < utilizedV1EMPStrategy.length; i++)
 		{
-			(uint256 utilizedERC20AmountETHValueTotal_, ) = IV1EMPStrategy(
-				utilizedV1EMPStrategy[i]
-			).utilizedERC20AmountETHValue(
+			(uint256 utilizedERC20AmountETHValueTotal_, ) = IV1EMPStrategy(utilizedV1EMPStrategy[i]).utilizedERC20AmountETHValue(
 				_v1EMPStrategyUtilizedERC20Amount[i]
 			);
 
@@ -143,11 +135,7 @@ contract V1EMPAmountsValidator is
 				"!computed"
 			);
 
-			if (
-				utilizedERC20AmountAllocationActual != IV1EMP(msg.sender).utilizedV1EMPStrategy_allocation(
-					utilizedV1EMPStrategy[i]
-				)
-			)
+			if (utilizedERC20AmountAllocationActual != IV1EMP(msg.sender).utilizedV1EMPStrategy_allocation(utilizedV1EMPStrategy[i]))
 			{
 				valid_ = false;
 

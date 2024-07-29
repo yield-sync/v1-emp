@@ -17,9 +17,7 @@ contract V1EMPStrategyUtility is
 	constructor (address _v1EMPRegistry)
 	{
 		I_V1_EMP_REGISTRY = IV1EMPRegistry(_v1EMPRegistry);
-		I_V1_EMP_ARRAY_UTILITY = IV1EMPArrayUtility(
-			I_V1_EMP_REGISTRY.v1EMPArrayUtility()
-		);
+		I_V1_EMP_ARRAY_UTILITY = IV1EMPArrayUtility(I_V1_EMP_REGISTRY.v1EMPArrayUtility());
 	}
 
 
