@@ -22,6 +22,9 @@ contract YieldSyncV1EMPStrategy is
 	ERC20,
 	IYieldSyncV1EMPStrategy
 {
+	using SafeMath for uint256;
+
+
 	address public override manager;
 
 	address[] internal _utilizedERC20;
@@ -132,21 +135,25 @@ contract YieldSyncV1EMPStrategy is
 		public
 		view
 		override
-		returns (uint256 utilizedERC20AmountTotalETHValue_)
+		returns (uint256 utilizedERC20AmountETHValueTotal_, uint256[] memory utilizedERC20AmountETHValue_)
 	{
+		utilizedERC20AmountETHValue_ = new uint256[](_utilizedERC20Amount.length);
+
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
 			if (_utilizedERC20_utilizationERC20[_utilizedERC20[i]].deposit)
 			{
-				utilizedERC20AmountTotalETHValue_ += SafeMath.div(
-					SafeMath.mul(
-						_utilizedERC20Amount[i],
-						IYieldSyncV1EMPETHValueFeed(
-							I_YIELD_SYNC_V1_EMP_REGISTRY.eRC20_yieldSyncV1EMPERC20ETHValueFeed(_utilizedERC20[i])
-						).utilizedERC20ETHValue()
-					),
+				uint256 ethValue = _utilizedERC20Amount[i].mul(
+					IYieldSyncV1EMPETHValueFeed(
+						I_YIELD_SYNC_V1_EMP_REGISTRY.eRC20_yieldSyncV1EMPERC20ETHValueFeed(_utilizedERC20[i])
+					).utilizedERC20ETHValue()
+				).div(
 					1e18
 				);
+
+				utilizedERC20AmountETHValueTotal_ += ethValue;
+
+				utilizedERC20AmountETHValue_[i] = ethValue;
 			}
 		}
 	}
@@ -231,7 +238,10 @@ contract YieldSyncV1EMPStrategy is
 
 		require(_utilizedERC20.length == _utilizedERC20Amount.length, "!(_utilizedERC20.length == _utilizedERC20Amount.length)");
 
-		uint256 _utilizedERC20AmountETHValue = utilizedERC20AmountETHValue(_utilizedERC20Amount);
+		(
+			uint256 utilizedERC20AmountETHValueTotal_,
+			uint256[] memory utilizedERC20AmountETHValue_
+		) = utilizedERC20AmountETHValue(_utilizedERC20Amount);
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
@@ -240,14 +250,8 @@ contract YieldSyncV1EMPStrategy is
 				require(_utilizedERC20Amount[i] == 0, "!(_utilizedERC20Amount[i] == 0)");
 			}
 
-			uint256 utilizedERC20AmountAllocationActual = SafeMath.div(
-				SafeMath.mul(
-					_utilizedERC20Amount[i],
-					IYieldSyncV1EMPETHValueFeed(
-						I_YIELD_SYNC_V1_EMP_REGISTRY.eRC20_yieldSyncV1EMPERC20ETHValueFeed(_utilizedERC20[i])
-					).utilizedERC20ETHValue()
-				),
-				_utilizedERC20AmountETHValue,
+			uint256 utilizedERC20AmountAllocationActual = utilizedERC20AmountETHValue_[i].mul(1e18).div(
+				utilizedERC20AmountETHValueTotal_,
 				"!computed"
 			);
 
@@ -266,7 +270,7 @@ contract YieldSyncV1EMPStrategy is
 			);
 		}
 
-		_mint(msg.sender, _utilizedERC20AmountETHValue);
+		_mint(msg.sender, utilizedERC20AmountETHValueTotal_);
 	}
 
 	/// @inheritdoc IYieldSyncV1EMPStrategy

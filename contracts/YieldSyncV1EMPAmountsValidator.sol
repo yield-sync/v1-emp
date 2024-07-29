@@ -75,9 +75,9 @@ contract YieldSyncV1EMPAmountsValidator is
 				1e18
 			);
 
-			eRC20AmountETHValue[i] = utilizedERC20AmountETHValue;
-
 			utilizedERC20AmountTotalETHValue_ += utilizedERC20AmountETHValue;
+
+			eRC20AmountETHValue[i] = utilizedERC20AmountETHValue;
 		}
 
 		for (uint256 i = 0; i < utilizedERC20.length; i++)
@@ -125,15 +125,15 @@ contract YieldSyncV1EMPAmountsValidator is
 
 		for (uint256 i = 0; i < utilizedYieldSyncV1EMPStrategy.length; i++)
 		{
-			uint256 utilizedERC20AmountETHValue = IYieldSyncV1EMPStrategy(
+			(uint256 utilizedERC20AmountETHValueTotal_, ) = IYieldSyncV1EMPStrategy(
 				utilizedYieldSyncV1EMPStrategy[i]
 			).utilizedERC20AmountETHValue(
 				_yieldSyncV1EMPStrategyUtilizedERC20Amount[i]
 			);
 
-			utilizedYieldSyncV1EMPStrategyERC20AmountETHValue[i] = utilizedERC20AmountETHValue;
+			utilizedYieldSyncV1EMPStrategyERC20AmountETHValueTotal_ += utilizedERC20AmountETHValueTotal_;
 
-			utilizedYieldSyncV1EMPStrategyERC20AmountETHValueTotal_ += utilizedERC20AmountETHValue;
+			utilizedYieldSyncV1EMPStrategyERC20AmountETHValue[i] = utilizedERC20AmountETHValueTotal_;
 		}
 
 		for (uint256 i = 0; i < utilizedYieldSyncV1EMPStrategy.length; i++)
