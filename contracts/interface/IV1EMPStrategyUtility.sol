@@ -2,7 +2,7 @@
 pragma solidity ^0.8.18;
 
 
-interface IYieldSyncV1EMPStrategyUtility
+interface IV1EMPStrategyUtility
 {
 	/**
 	* @notice Sort

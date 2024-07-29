@@ -6,9 +6,9 @@ import { Contract, ContractFactory } from "ethers";
 
 
 const stageContracts = async () => {
-	const TestYieldSyncV1EMPArrayUtility: ContractFactory = await ethers.getContractFactory("TestYieldSyncV1EMPArrayUtility");
+	const TestV1EMPArrayUtility: ContractFactory = await ethers.getContractFactory("TestV1EMPArrayUtility");
 
-	const arrayUtility: Contract = await (await TestYieldSyncV1EMPArrayUtility.deploy()).deployed();
+	const arrayUtility: Contract = await (await TestV1EMPArrayUtility.deploy()).deployed();
 
 	return {
 		arrayUtility
@@ -16,7 +16,7 @@ const stageContracts = async () => {
 }
 
 
-describe("[0.0] YieldSyncV1EMPArrayUtility.sol", async () => {
+describe("[0.0] V1EMPArrayUtility.sol", async () => {
 	let arrayUtility: Contract;
 
 

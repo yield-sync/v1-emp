@@ -2,7 +2,7 @@
 pragma solidity ^0.8.18;
 
 
-interface IYieldSyncV1EMPAmountsValidator
+interface IV1EMPAmountsValidator
 {
 	/**
 	* @notice Utilized ERC20 Amount Valid
@@ -18,10 +18,10 @@ interface IYieldSyncV1EMPAmountsValidator
 
 	/**
 	* @notice Yield Sync V1 EMP Strategy Utilized ERC20 Amount Valid
-	* @param _yieldSyncV1EMPStrategyUtilizedERC20Amount {uint256[][]}
+	* @param _v1EMPStrategyUtilizedERC20Amount {uint256[][]}
 	* @return valid_ {bool}
 	*/
-	function yieldSyncV1EMPStrategyUtilizedERC20AmountValid(uint256[][] memory _yieldSyncV1EMPStrategyUtilizedERC20Amount)
+	function v1EMPStrategyUtilizedERC20AmountValid(uint256[][] memory _v1EMPStrategyUtilizedERC20Amount)
 		external
 		returns (bool valid_)
 	;

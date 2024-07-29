@@ -4,13 +4,13 @@ pragma solidity ^0.8.18;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-import { IYieldSyncV1EMPRegistry } from "./IYieldSyncV1EMPRegistry.sol";
-import { IYieldSyncV1EMPStrategyInteractor } from "./IYieldSyncV1EMPStrategyInteractor.sol";
-import { IYieldSyncV1EMPStrategyUtility } from "./IYieldSyncV1EMPStrategyUtility.sol";
+import { IV1EMPRegistry } from "./IV1EMPRegistry.sol";
+import { IV1EMPStrategyInteractor } from "./IV1EMPStrategyInteractor.sol";
+import { IV1EMPStrategyUtility } from "./IV1EMPStrategyUtility.sol";
 import { UtilizationERC20 } from "../struct/UtilizationERC20.sol";
 
 
-interface IYieldSyncV1EMPStrategy is
+interface IV1EMPStrategy is
 	IERC20
 {
 	/**
@@ -69,36 +69,36 @@ interface IYieldSyncV1EMPStrategy is
 	;
 
 	/**
-	* @dev [view-IYieldSyncV1EMPRegistry]
-	* @notice Implemented IYieldSyncV1EMPRegistry
-	* @return {IYieldSyncV1EMPRegistry}
+	* @dev [view-IV1EMPRegistry]
+	* @notice Implemented IV1EMPRegistry
+	* @return {IV1EMPRegistry}
 	*/
-	function I_YIELD_SYNC_V1_EMP_REGISTRY()
+	function I_V1_EMP_REGISTRY()
 		external
 		view
-		returns (IYieldSyncV1EMPRegistry)
+		returns (IV1EMPRegistry)
 	;
 
 	/**
-	* @dev [view-IYieldSyncV1EMPStrategyUtility]
-	* @notice Implemented IYieldSyncV1EMPStrategyUtility
-	* @return {IYieldSyncV1EMPStrategyUtility}
+	* @dev [view-IV1EMPStrategyUtility]
+	* @notice Implemented IV1EMPStrategyUtility
+	* @return {IV1EMPStrategyUtility}
 	*/
-	function I_YIELD_SYNC_V1_EMP_STRATEGY_UTILITY()
+	function I_V1_EMP_STRATEGY_UTILITY()
 		external
 		view
-		returns (IYieldSyncV1EMPStrategyUtility)
+		returns (IV1EMPStrategyUtility)
 	;
 
 	/**
-	* @dev [view-IYieldSyncV1EMPStrategyInteractor]
-	* @notice Implemented IYieldSyncV1EMPStrategyInteractor
-	* @return {IYieldSyncV1EMPStrategyInteractor}
+	* @dev [view-IV1EMPStrategyInteractor]
+	* @notice Implemented IV1EMPStrategyInteractor
+	* @return {IV1EMPStrategyInteractor}
 	*/
-	function iYieldSyncV1EMPStrategyInteractor()
+	function iV1EMPStrategyInteractor()
 		external
 		view
-		returns (IYieldSyncV1EMPStrategyInteractor)
+		returns (IV1EMPStrategyInteractor)
 	;
 
 
@@ -141,10 +141,10 @@ interface IYieldSyncV1EMPStrategy is
 
 
 	/**
-	* @notice Update iYieldSyncV1EMPStrategyInteractor
+	* @notice Update iV1EMPStrategyInteractor
 	* @param _iYieldSyncStrategyInteractor {address}
 	*/
-	function iYieldSyncV1EMPStrategyInteractorUpdate(address _iYieldSyncStrategyInteractor)
+	function iV1EMPStrategyInteractorUpdate(address _iYieldSyncStrategyInteractor)
 		external
 	;
 

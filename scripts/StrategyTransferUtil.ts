@@ -8,12 +8,12 @@ import { D_18 } from "../const"
 export default class StrategyTransferUtil
 {
 	private _registry: Contract;
-	private _yieldSyncV1EMPStrategy: Contract;
+	private _v1EMPStrategy: Contract;
 
 
-	constructor (_yieldSyncV1EMPStrategy: Contract, _registry: Contract)
+	constructor (_v1EMPStrategy: Contract, _registry: Contract)
 	{
-		this._yieldSyncV1EMPStrategy = _yieldSyncV1EMPStrategy;
+		this._v1EMPStrategy = _v1EMPStrategy;
 		this._registry = _registry;
 	}
 
@@ -25,9 +25,9 @@ export default class StrategyTransferUtil
 	 */
 	public async calculateERC20Required(ETHValue: BigNumber): Promise<BigNumber[]>
 	{
-		const ONE_HUNDRED_PERCENT = await this._yieldSyncV1EMPStrategy.ONE_HUNDRED_PERCENT();
+		const ONE_HUNDRED_PERCENT = await this._v1EMPStrategy.ONE_HUNDRED_PERCENT();
 
-		const UTILIZED_ERC20S = await this._yieldSyncV1EMPStrategy.utilizedERC20();
+		const UTILIZED_ERC20S = await this._v1EMPStrategy.utilizedERC20();
 
 		let utilizedERC20Amount: BigNumber[] = [];
 
@@ -35,7 +35,7 @@ export default class StrategyTransferUtil
 		{
 			let tokenAmount: BigNumber = ethers.utils.parseUnits("0", 18);
 
-			const UTILIZATION = await this._yieldSyncV1EMPStrategy.utilizedERC20_utilizationERC20(UTILIZED_ERC20S[i]);
+			const UTILIZATION = await this._v1EMPStrategy.utilizedERC20_utilizationERC20(UTILIZED_ERC20S[i]);
 
 			if (UTILIZATION.deposit)
 			{
@@ -73,7 +73,7 @@ export default class StrategyTransferUtil
 
 			const feed = await ethers.getContractAt(
 				"ETHValueFeedDummy",
-				await this._registry.eRC20_yieldSyncV1EMPERC20ETHValueFeed(_utilizedERC20[i])
+				await this._registry.eRC20_v1EMPERC20ETHValueFeed(_utilizedERC20[i])
 			);
 
 			// Get value of each token in ETH
@@ -100,7 +100,7 @@ export default class StrategyTransferUtil
 		_utilizedERC20Deposits: BigNumber[]
 	): Promise<{totalEthValue: BigNumber, utilizedERC20DepositEthValue: BigNumber[]}>
 	{
-		const UTILIZED_ERC20S = await this._yieldSyncV1EMPStrategy.utilizedERC20();
+		const UTILIZED_ERC20S = await this._v1EMPStrategy.utilizedERC20();
 
 		let totalEthValue: BigNumber = ethers.utils.parseUnits("0", 18);
 
@@ -111,7 +111,7 @@ export default class StrategyTransferUtil
 		{
 			const feed = await ethers.getContractAt(
 				"ETHValueFeedDummy",
-				await this._registry.eRC20_yieldSyncV1EMPERC20ETHValueFeed(UTILIZED_ERC20S[i])
+				await this._registry.eRC20_v1EMPERC20ETHValueFeed(UTILIZED_ERC20S[i])
 			);
 
 			const ETH_VALUE: BigNumber = await feed.utilizedERC20ETHValue();

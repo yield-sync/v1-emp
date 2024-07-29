@@ -4,11 +4,11 @@ pragma solidity ^0.8.18;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-import { IYieldSyncV1EMPRegistry } from "./IYieldSyncV1EMPRegistry.sol";
+import { IV1EMPRegistry } from "./IV1EMPRegistry.sol";
 import { UtilizationERC20 } from "../struct/UtilizationERC20.sol";
 
 
-interface IYieldSyncV1EMP is
+interface IV1EMP is
 	IERC20
 {
 	/**
@@ -89,23 +89,23 @@ interface IYieldSyncV1EMP is
 	;
 
 	/**
-	* @dev [view-IYieldSyncV1EMPRegistry]
-	* @notice Implemented IYieldSyncV1EMPRegistry
-	* @return {IYieldSyncV1EMPRegistry}
+	* @dev [view-IV1EMPRegistry]
+	* @notice Implemented IV1EMPRegistry
+	* @return {IV1EMPRegistry}
 	*/
-	function I_YIELD_SYNC_V1_EMP_REGISTRY()
+	function I_V1_EMP_REGISTRY()
 		external
 		view
-		returns (IYieldSyncV1EMPRegistry)
+		returns (IV1EMPRegistry)
 	;
 
 	/**
 	* @dev [view-mapping]
-	* @notice UtilizedYieldSyncV1EMPStrategy -> Allocation
-	* @param _utilizedYieldSyncV1EMPStrategy {address}
+	* @notice UtilizedV1EMPStrategy -> Allocation
+	* @param _utilizedV1EMPStrategy {address}
 	* @return {uin256}
 	*/
-	function utilizedYieldSyncV1EMPStrategy_allocation(address _utilizedYieldSyncV1EMPStrategy)
+	function utilizedV1EMPStrategy_allocation(address _utilizedV1EMPStrategy)
 		external
 		returns (uint256)
 	;
@@ -142,7 +142,7 @@ interface IYieldSyncV1EMP is
 	* @notice Utilized Yield Sync V1 EMP Strategy
 	* @return {address[]}
 	*/
-	function utilizedYieldSyncV1EMPStrategy()
+	function utilizedV1EMPStrategy()
 		external
 		view
 		returns (address[] memory)
@@ -225,24 +225,24 @@ interface IYieldSyncV1EMP is
 
 	/**
 	* @notice Deposit utilized ERC20s into strategy
-	* @param _yieldSyncV1EMPStrategyUtilizedERC20Amount {uint256[][]}
+	* @param _v1EMPStrategyUtilizedERC20Amount {uint256[][]}
 	*/
-	function utilizedYieldSyncV1EMPStrategyDeposit(uint256[][] memory _yieldSyncV1EMPStrategyUtilizedERC20Amount)
+	function utilizedV1EMPStrategyDeposit(uint256[][] memory _v1EMPStrategyUtilizedERC20Amount)
 		external
 	;
 
 	/**
 	* @notice
 	*/
-	function utilizedYieldSyncV1EMPStrategyUpdate(address[] memory _yieldSyncV1EMPStrategy, uint256[] memory _allocation)
+	function utilizedV1EMPStrategyUpdate(address[] memory _v1EMPStrategy, uint256[] memory _allocation)
 		external
 	;
 
 	/**
 	* @notice Withdraw utilized ERC20s from strategy
-	* @param _yieldSyncV1EMPStrategyERC20Amount {uint256[]}
+	* @param _v1EMPStrategyERC20Amount {uint256[]}
 	*/
-	function utilizedYieldSyncV1EMPStrategyWithdraw(uint256[] memory _yieldSyncV1EMPStrategyERC20Amount)
+	function utilizedV1EMPStrategyWithdraw(uint256[] memory _v1EMPStrategyERC20Amount)
 		external
 	;
 }

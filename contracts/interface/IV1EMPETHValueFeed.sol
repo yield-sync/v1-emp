@@ -2,7 +2,7 @@
 pragma solidity ^0.8.18;
 
 
-interface IYieldSyncV1EMPETHValueFeed
+interface IV1EMPETHValueFeed
 {
 	/**
 	* @notice Return the value of the ERC20 denominated in ETH

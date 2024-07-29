@@ -33,8 +33,8 @@ export default class EMPTransferUtil
 		{
 			const ERC20_ETH_VALUE = await (
 				await ethers.getContractAt(
-					"IYieldSyncV1EMPETHValueFeed",
-					await this._registry.eRC20_yieldSyncV1EMPERC20ETHValueFeed(UTILIZED_ERC20S[i])
+					"IV1EMPETHValueFeed",
+					await this._registry.eRC20_v1EMPERC20ETHValueFeed(UTILIZED_ERC20S[i])
 				)
 			).utilizedERC20ETHValue();
 
@@ -73,7 +73,7 @@ export default class EMPTransferUtil
 		{
 			const feed = await ethers.getContractAt(
 				"ETHValueFeedDummy",
-				await this._registry.eRC20_yieldSyncV1EMPERC20ETHValueFeed(UTILIZED_ERC20S[i])
+				await this._registry.eRC20_v1EMPERC20ETHValueFeed(UTILIZED_ERC20S[i])
 			);
 
 			const ETH_VALUE: BigNumber = await feed.utilizedERC20ETHValue();

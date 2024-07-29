@@ -5,7 +5,7 @@ import { expect } from "chai";
 import { Contract, ContractFactory } from "ethers";
 
 
-describe("[3.0] YieldSyncV1EMPStrategyDeployer.sol", async () => {
+describe("[3.0] V1EMPStrategyDeployer.sol", async () => {
 	let arrayUtility: Contract;
 	let governance: Contract;
 	let registry: Contract;
@@ -28,43 +28,43 @@ describe("[3.0] YieldSyncV1EMPStrategyDeployer.sol", async () => {
 
 
 		const YieldSyncGovernance: ContractFactory = await ethers.getContractFactory("YieldSyncGovernance");
-		const YieldSyncV1EMPArrayUtility: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPArrayUtility");
-		const YieldSyncV1EMPRegistry: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPRegistry");
-		const YieldSyncV1EMPStrategyUtility: ContractFactory= await ethers.getContractFactory("YieldSyncV1EMPStrategyUtility");
-		const YieldSyncV1EMPStrategyDeployer: ContractFactory= await ethers.getContractFactory("YieldSyncV1EMPStrategyDeployer");
+		const V1EMPArrayUtility: ContractFactory = await ethers.getContractFactory("V1EMPArrayUtility");
+		const V1EMPRegistry: ContractFactory = await ethers.getContractFactory("V1EMPRegistry");
+		const V1EMPStrategyUtility: ContractFactory= await ethers.getContractFactory("V1EMPStrategyUtility");
+		const V1EMPStrategyDeployer: ContractFactory= await ethers.getContractFactory("V1EMPStrategyDeployer");
 
 
 		governance = await (await YieldSyncGovernance.deploy()).deployed();
 
 		await governance.payToUpdate(TREASURY.address);
 
-		arrayUtility = await (await YieldSyncV1EMPArrayUtility.deploy()).deployed();
+		arrayUtility = await (await V1EMPArrayUtility.deploy()).deployed();
 
-		registry = await (await YieldSyncV1EMPRegistry.deploy(governance.address)).deployed();
+		registry = await (await V1EMPRegistry.deploy(governance.address)).deployed();
 
-		await registry.yieldSyncV1EMPArrayUtilityUpdate(arrayUtility.address);
+		await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
 
 		strategyUtility = await (
-			await YieldSyncV1EMPStrategyUtility.deploy(registry.address)
+			await V1EMPStrategyUtility.deploy(registry.address)
 		).deployed();
 
-		await registry.yieldSyncV1EMPStrategyUtilityUpdate(strategyUtility.address);
+		await registry.v1EMPStrategyUtilityUpdate(strategyUtility.address);
 
 		strategyDeployer = await (
-			await YieldSyncV1EMPStrategyDeployer.deploy(registry.address)
+			await V1EMPStrategyDeployer.deploy(registry.address)
 		).deployed();
 
 		// Set the Strategy Deployer
-		await registry.yieldSyncV1EMPStrategyDeployerUpdate(strategyDeployer.address);
+		await registry.v1EMPStrategyDeployerUpdate(strategyDeployer.address);
 	});
 
-	describe("function yieldSyncV1EMPDeployerUpdate()", async () => {
+	describe("function v1EMPDeployerUpdate()", async () => {
 		it("Should be able to deploy a strategy..", async () => {
 			await expect(
-				strategyDeployer.deployYieldSyncV1EMPStrategy("Strategy Name", "S")
+				strategyDeployer.deployV1EMPStrategy("Strategy Name", "S")
 			).to.be.not.rejected;
 
-			expect(await registry.yieldSyncV1EMPStrategyId_yieldSyncV1EMPStrategy(1)).to.be.not.equal(
+			expect(await registry.v1EMPStrategyId_v1EMPStrategy(1)).to.be.not.equal(
 				ethers.constants.AddressZero
 			);
 		});

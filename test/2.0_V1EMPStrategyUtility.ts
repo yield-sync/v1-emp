@@ -5,7 +5,7 @@ import { expect } from "chai";
 import { Contract, ContractFactory } from "ethers";
 
 
-describe("[2.0] YieldSyncV1EMPStrategyUtility.sol", async () => {
+describe("[2.0] V1EMPStrategyUtility.sol", async () => {
 	let arrayUtility: Contract;
 	let governance: Contract;
 	let registry: Contract;
@@ -27,26 +27,26 @@ describe("[2.0] YieldSyncV1EMPStrategyUtility.sol", async () => {
 
 
 		const YieldSyncGovernance: ContractFactory = await ethers.getContractFactory("YieldSyncGovernance");
-		const YieldSyncV1EMPArrayUtility: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPArrayUtility");
-		const YieldSyncV1EMPRegistry: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPRegistry");
-		const YieldSyncV1EMPStrategyUtility: ContractFactory= await ethers.getContractFactory("YieldSyncV1EMPStrategyUtility");
+		const V1EMPArrayUtility: ContractFactory = await ethers.getContractFactory("V1EMPArrayUtility");
+		const V1EMPRegistry: ContractFactory = await ethers.getContractFactory("V1EMPRegistry");
+		const V1EMPStrategyUtility: ContractFactory= await ethers.getContractFactory("V1EMPStrategyUtility");
 
 
 		governance = await (await YieldSyncGovernance.deploy()).deployed();
 
 		await governance.payToUpdate(TREASURY.address);
 
-		arrayUtility = await (await YieldSyncV1EMPArrayUtility.deploy()).deployed();
+		arrayUtility = await (await V1EMPArrayUtility.deploy()).deployed();
 
-		registry = await (await YieldSyncV1EMPRegistry.deploy(governance.address)).deployed();
+		registry = await (await V1EMPRegistry.deploy(governance.address)).deployed();
 
-		await registry.yieldSyncV1EMPArrayUtilityUpdate(arrayUtility.address);
+		await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
 
 		strategyUtility = await (
-			await YieldSyncV1EMPStrategyUtility.deploy(registry.address)
+			await V1EMPStrategyUtility.deploy(registry.address)
 		).deployed();
 
-		await registry.yieldSyncV1EMPStrategyUtilityUpdate(strategyUtility.address);
+		await registry.v1EMPStrategyUtilityUpdate(strategyUtility.address);
 	});
 
 

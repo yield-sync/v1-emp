@@ -2,14 +2,14 @@
 pragma solidity ^0.8.18;
 
 
-import { YieldSyncV1EMPArrayUtility } from "../YieldSyncV1EMPArrayUtility.sol";
+import { V1EMPArrayUtility } from "../V1EMPArrayUtility.sol";
 
 
 /**
  * @notice This is a wrapper contract made only for testing. Do not set this is the Array Utility.
  */
-contract TestYieldSyncV1EMPArrayUtility is
-	YieldSyncV1EMPArrayUtility
+contract TestV1EMPArrayUtility is
+	V1EMPArrayUtility
 {
 	function uniqueAddresses()
 		public

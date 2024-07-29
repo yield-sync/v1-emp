@@ -10,10 +10,10 @@ import StrategyTransferUtil from "../scripts/StrategyTransferUtil";
 
 
 const LOCATION_MOCKERC20: string = "MockERC20";
-const LOCATION_STRATGY: string = "YieldSyncV1EMPStrategy";
+const LOCATION_STRATGY: string = "V1EMPStrategy";
 
 
-describe("[7.1] YieldSyncV1EMP.sol - Depositing Tokens", async () => {
+describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 	let eMPUtilizedERC20: string[];
 
 	let arrayUtility: Contract;
@@ -66,14 +66,14 @@ describe("[7.1] YieldSyncV1EMP.sol - Depositing Tokens", async () => {
 		[owner, manager, treasury] = await ethers.getSigners();
 
 		const YieldSyncGovernance: ContractFactory = await ethers.getContractFactory("YieldSyncGovernance");
-		const YieldSyncV1EMP: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMP");
-		const YieldSyncV1EMPArrayUtility: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPArrayUtility");
-		const YieldSyncV1EMPDeployer: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPDeployer");
-		const YieldSyncV1EMPRegistry: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPRegistry");
-		const YieldSyncV1EMPStrategy: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPStrategy");
-		const YieldSyncV1EMPStrategyDeployer: ContractFactory = await ethers.getContractFactory("YieldSyncV1EMPStrategyDeployer");
-		const YieldSyncV1EMPStrategyUtility: ContractFactory= await ethers.getContractFactory("YieldSyncV1EMPStrategyUtility");
-		const YieldSyncV1EMPAmountsValidator: ContractFactory= await ethers.getContractFactory("YieldSyncV1EMPAmountsValidator");
+		const V1EMP: ContractFactory = await ethers.getContractFactory("V1EMP");
+		const V1EMPArrayUtility: ContractFactory = await ethers.getContractFactory("V1EMPArrayUtility");
+		const V1EMPDeployer: ContractFactory = await ethers.getContractFactory("V1EMPDeployer");
+		const V1EMPRegistry: ContractFactory = await ethers.getContractFactory("V1EMPRegistry");
+		const V1EMPStrategy: ContractFactory = await ethers.getContractFactory("V1EMPStrategy");
+		const V1EMPStrategyDeployer: ContractFactory = await ethers.getContractFactory("V1EMPStrategyDeployer");
+		const V1EMPStrategyUtility: ContractFactory= await ethers.getContractFactory("V1EMPStrategyUtility");
+		const V1EMPAmountsValidator: ContractFactory= await ethers.getContractFactory("V1EMPAmountsValidator");
 
 		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
 		const ETHValueFeedDummy: ContractFactory = await ethers.getContractFactory("ETHValueFeedDummy");
@@ -85,27 +85,27 @@ describe("[7.1] YieldSyncV1EMP.sol - Depositing Tokens", async () => {
 
 		await governance.payToUpdate(treasury.address);
 
-		arrayUtility = await (await YieldSyncV1EMPArrayUtility.deploy()).deployed();
+		arrayUtility = await (await V1EMPArrayUtility.deploy()).deployed();
 
-		registry = await (await YieldSyncV1EMPRegistry.deploy(governance.address)).deployed();
+		registry = await (await V1EMPRegistry.deploy(governance.address)).deployed();
 
-		await registry.yieldSyncV1EMPArrayUtilityUpdate(arrayUtility.address);
+		await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
 
-		strategyUtility = await (await YieldSyncV1EMPStrategyUtility.deploy(registry.address)).deployed();
+		strategyUtility = await (await V1EMPStrategyUtility.deploy(registry.address)).deployed();
 
-		await registry.yieldSyncV1EMPStrategyUtilityUpdate(strategyUtility.address);
+		await registry.v1EMPStrategyUtilityUpdate(strategyUtility.address);
 
-		strategyDeployer = await (await YieldSyncV1EMPStrategyDeployer.deploy(registry.address)).deployed();
+		strategyDeployer = await (await V1EMPStrategyDeployer.deploy(registry.address)).deployed();
 
-		await registry.yieldSyncV1EMPStrategyDeployerUpdate(strategyDeployer.address);
+		await registry.v1EMPStrategyDeployerUpdate(strategyDeployer.address);
 
-		eMPUtility = await (await YieldSyncV1EMPAmountsValidator.deploy(registry.address)).deployed();
+		eMPUtility = await (await V1EMPAmountsValidator.deploy(registry.address)).deployed();
 
-		await registry.yieldSyncV1EMPAmountsValidatorUpdate(eMPUtility.address);
+		await registry.v1EMPAmountsValidatorUpdate(eMPUtility.address);
 
-		eMPDeployer = await (await YieldSyncV1EMPDeployer.deploy(registry.address)).deployed();
+		eMPDeployer = await (await V1EMPDeployer.deploy(registry.address)).deployed();
 
-		await registry.yieldSyncV1EMPDeployerUpdate(eMPDeployer.address);
+		await registry.v1EMPDeployerUpdate(eMPDeployer.address);
 
 
 		// Testing contracts
@@ -115,22 +115,22 @@ describe("[7.1] YieldSyncV1EMP.sol - Depositing Tokens", async () => {
 
 		eTHValueFeed = await (await ETHValueFeedDummy.deploy()).deployed();
 
-		await registry.eRC20_yieldSyncV1EMPERC20ETHValueFeedUpdate(mockERC20A.address, eTHValueFeed.address);
-		await registry.eRC20_yieldSyncV1EMPERC20ETHValueFeedUpdate(mockERC20B.address, eTHValueFeed.address);
-		await registry.eRC20_yieldSyncV1EMPERC20ETHValueFeedUpdate(mockERC20C.address, eTHValueFeed.address);
+		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20A.address, eTHValueFeed.address);
+		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20B.address, eTHValueFeed.address);
+		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20C.address, eTHValueFeed.address);
 
 
 		/**
 		* EMP
 		*/
 		// Deploy an EMP
-		await eMPDeployer.deployYieldSyncV1EMP("EMP Name", "EMP");
+		await eMPDeployer.deployV1EMP("EMP Name", "EMP");
 
 		// Verify that a EMP has been registered
-		expect(await registry.yieldSyncV1EMPId_yieldSyncV1EMP(1)).to.be.not.equal(ethers.constants.AddressZero);
+		expect(await registry.v1EMPId_v1EMP(1)).to.be.not.equal(ethers.constants.AddressZero);
 
 		// Attach the deployed EMP address to a variable
-		eMP = await YieldSyncV1EMP.attach(String(await registry.yieldSyncV1EMPId_yieldSyncV1EMP(1)));
+		eMP = await V1EMP.attach(String(await registry.v1EMPId_v1EMP(1)));
 
 		// Set the Manager
 		await eMP.managerUpdate(manager.address);
@@ -157,38 +157,38 @@ describe("[7.1] YieldSyncV1EMP.sol - Depositing Tokens", async () => {
 			let strategyInteractor: Contract = await (await StrategyInteractorDummy.deploy()).deployed();
 
 			// Deploy EMP Strategy
-			await strategyDeployer.deployYieldSyncV1EMPStrategy(`EMP Strategy ${i}`, `EMPS${i}`);
+			await strategyDeployer.deployV1EMPStrategy(`EMP Strategy ${i}`, `EMPS${i}`);
 
-			// Attach the deployed YieldSyncV1EMPStrategy address to variable
-			let deployedYieldSyncV1EMPStrategy = await YieldSyncV1EMPStrategy.attach(
-				String(await registry.yieldSyncV1EMPStrategyId_yieldSyncV1EMPStrategy(i + 1))
+			// Attach the deployed V1EMPStrategy address to variable
+			let deployedV1EMPStrategy = await V1EMPStrategy.attach(
+				String(await registry.v1EMPStrategyId_v1EMPStrategy(i + 1))
 			);
 
 			// Set the Strategy Interactor
-			await deployedYieldSyncV1EMPStrategy.iYieldSyncV1EMPStrategyInteractorUpdate(strategyInteractor.address);
+			await deployedV1EMPStrategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
 
-			await deployedYieldSyncV1EMPStrategy.utilizedERC20Update(
+			await deployedV1EMPStrategy.utilizedERC20Update(
 				deployStrategies[i].strategyUtilizedERC20,
 				deployStrategies[i].strategyUtilization
 			);
 
 			// Enable Deposits and Withdraws
-			await deployedYieldSyncV1EMPStrategy.utilizedERC20DepositOpenToggle();
+			await deployedV1EMPStrategy.utilizedERC20DepositOpenToggle();
 
-			expect(await deployedYieldSyncV1EMPStrategy.utilizedERC20DepositOpen()).to.be.true;
+			expect(await deployedV1EMPStrategy.utilizedERC20DepositOpen()).to.be.true;
 
-			await deployedYieldSyncV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
+			await deployedV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
 
-			expect(await deployedYieldSyncV1EMPStrategy.utilizedERC20WithdrawOpen()).to.be.true;
+			expect(await deployedV1EMPStrategy.utilizedERC20WithdrawOpen()).to.be.true;
 
 			strategies[i] = {
-				contract: deployedYieldSyncV1EMPStrategy,
-				strategyTransferUtil: new StrategyTransferUtil(deployedYieldSyncV1EMPStrategy, eTHValueFeed)
+				contract: deployedV1EMPStrategy,
+				strategyTransferUtil: new StrategyTransferUtil(deployedV1EMPStrategy, eTHValueFeed)
 			};
 		}
 
 		// Set the utilzation to 2 different strategies
-		await eMP.utilizedYieldSyncV1EMPStrategyUpdate(
+		await eMP.utilizedV1EMPStrategyUpdate(
 			[strategies[0].contract.address, strategies[1].contract.address] as UtilizedEMPStrategyUpdate,
 			[PERCENT.FIFTY, PERCENT.FIFTY] as UtilizedEMPStrategyAllocationUpdate
 		);
@@ -455,7 +455,7 @@ describe("[7.1] YieldSyncV1EMP.sol - Depositing Tokens", async () => {
 		});
 	});
 
-	describe("function utilizedYieldSyncV1EMPStrategyDeposit()", async () => {
+	describe("function utilizedV1EMPStrategyDeposit()", async () => {
 		let eTHValueEMPDepositAmount: BigNumber = ethers.utils.parseUnits("2", 18);
 		let eMPDepositAmounts: UtilizedERC20Amount;
 
@@ -493,12 +493,12 @@ describe("[7.1] YieldSyncV1EMP.sol - Depositing Tokens", async () => {
 				expect(await eMP.utilizedERC20DepositOpen()).to.be.false;
 
 				// Attempt to deposit the tokens
-				await expect(eMP.utilizedYieldSyncV1EMPStrategyDeposit([])).to.be.rejectedWith(ERROR.EMP.DEPOSIT_NOT_OPEN);
+				await expect(eMP.utilizedV1EMPStrategyDeposit([])).to.be.rejectedWith(ERROR.EMP.DEPOSIT_NOT_OPEN);
 			});
 
 			it("Should revert if invalid ERC20 amounts is passed..", async () => {
 				// Pass incorrect length of deposit amounts
-				await expect(eMP.utilizedYieldSyncV1EMPStrategyDeposit([])).to.be.rejectedWith(
+				await expect(eMP.utilizedV1EMPStrategyDeposit([])).to.be.rejectedWith(
 					ERROR.EMP.INVALID_UTILIZED_ERC20_AMOUNT_LENGTH
 				);
 			});
@@ -525,7 +525,7 @@ describe("[7.1] YieldSyncV1EMP.sol - Depositing Tokens", async () => {
 				);
 
 				// Pass incorrect length of deposit amounts
-				await eMP.utilizedYieldSyncV1EMPStrategyDeposit([depositAmount[0], depositAmount[1]]);
+				await eMP.utilizedV1EMPStrategyDeposit([depositAmount[0], depositAmount[1]]);
 			});
 
 
@@ -541,7 +541,7 @@ describe("[7.1] YieldSyncV1EMP.sol - Depositing Tokens", async () => {
 			});
 
 			it("Should deposit correct amount of ERC20 tokens into Strategy Interactors..", async () => {
-				const STRATEGIES: string[] = await eMP.utilizedYieldSyncV1EMPStrategy();
+				const STRATEGIES: string[] = await eMP.utilizedV1EMPStrategy();
 
 				// For each strategy..
 				for (let i = 0; i < STRATEGIES.length; i++)
@@ -550,7 +550,7 @@ describe("[7.1] YieldSyncV1EMP.sol - Depositing Tokens", async () => {
 					const STRATEGY: Contract = await ethers.getContractAt(LOCATION_STRATGY, STRATEGIES[i]);
 
 					// Get the strategy interactor contract
-					const STRATEGY_INTERACTOR: Contract = await STRATEGY.iYieldSyncV1EMPStrategyInteractor();
+					const STRATEGY_INTERACTOR: Contract = await STRATEGY.iV1EMPStrategyInteractor();
 
 					// Get the array of utilized ERC20 tokens for the specified strategy
 					const UTILIZED_ERC20: string[] = await STRATEGY.utilizedERC20();
