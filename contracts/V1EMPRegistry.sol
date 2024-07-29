@@ -18,8 +18,8 @@ contract V1EMPRegistry is
 	address public override v1EMPStrategyUtility;
 	address public override v1EMPAmountsValidator;
 
-	uint256 public yieldSyncEMPIdTracker;
-	uint256 public yieldSyncEMPStrategyIdTracker;
+	uint256 public eMPIdTracker;
+	uint256 public eMPStrategyIdTracker;
 
 	mapping (address eRC20 => address v1EMPERC20ETHValueFeed) public override eRC20_v1EMPERC20ETHValueFeed;
 
@@ -48,8 +48,8 @@ contract V1EMPRegistry is
 	{
 		YIELD_SYNC_GOVERNANCE = yieldSyncGovernance;
 
-		yieldSyncEMPIdTracker = 0;
-		yieldSyncEMPStrategyIdTracker = 0;
+		eMPIdTracker = 0;
+		eMPStrategyIdTracker = 0;
 	}
 
 
@@ -122,10 +122,10 @@ contract V1EMPRegistry is
 	{
 		require(v1EMPDeployer == msg.sender, "!(v1EMPDeployer == msg.sender)");
 
-		yieldSyncEMPIdTracker++;
+		eMPIdTracker++;
 
-		v1EMP_v1EMPId[_v1EMP] = yieldSyncEMPIdTracker;
-		v1EMPId_v1EMP[yieldSyncEMPIdTracker] = _v1EMP;
+		v1EMP_v1EMPId[_v1EMP] = eMPIdTracker;
+		v1EMPId_v1EMP[eMPIdTracker] = _v1EMP;
 	}
 
 	/// @inheritdoc IV1EMPRegistry
@@ -148,10 +148,10 @@ contract V1EMPRegistry is
 	{
 		require(v1EMPStrategyDeployer == msg.sender, "!(v1EMPStrategyDeployer == msg.sender)");
 
-		yieldSyncEMPStrategyIdTracker++;
+		eMPStrategyIdTracker++;
 
-		v1EMPStrategy_v1EMPStrategyId[_v1EMPStrategy] = yieldSyncEMPStrategyIdTracker;
-		v1EMPStrategyId_v1EMPStrategy[yieldSyncEMPStrategyIdTracker] = _v1EMPStrategy;
+		v1EMPStrategy_v1EMPStrategyId[_v1EMPStrategy] = eMPStrategyIdTracker;
+		v1EMPStrategyId_v1EMPStrategy[eMPStrategyIdTracker] = _v1EMPStrategy;
 	}
 
 	/// @inheritdoc IV1EMPRegistry

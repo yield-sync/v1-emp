@@ -86,10 +86,7 @@ contract V1EMPStrategy is
 
 	modifier initialized()
 	{
-		require(
-			address(iV1EMPStrategyInteractor) != address(0),
-			"!(address(iV1EMPStrategyInteractor) != address(0))"
-		);
+		require(address(iV1EMPStrategyInteractor) != address(0), "!(address(iV1EMPStrategyInteractor) != address(0))");
 
 		_;
 	}
@@ -159,13 +156,13 @@ contract V1EMPStrategy is
 
 
 	/// @inheritdoc IV1EMPStrategy
-	function iV1EMPStrategyInteractorUpdate(address _iYieldSyncStrategyInteractor)
+	function iV1EMPStrategyInteractorUpdate(address _iStrategyInteractor)
 		public
 		override
 		authManager()
 		utilizedERC20TransferClosed()
 	{
-		iV1EMPStrategyInteractor = IV1EMPStrategyInteractor(_iYieldSyncStrategyInteractor);
+		iV1EMPStrategyInteractor = IV1EMPStrategyInteractor(_iStrategyInteractor);
 	}
 
 	/// @inheritdoc IV1EMPStrategy

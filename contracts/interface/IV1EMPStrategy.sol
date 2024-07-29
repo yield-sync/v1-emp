@@ -142,9 +142,9 @@ interface IV1EMPStrategy is
 
 	/**
 	* @notice Update iV1EMPStrategyInteractor
-	* @param _iYieldSyncStrategyInteractor {address}
+	* @param _iStrategyInteractor {address}
 	*/
-	function iV1EMPStrategyInteractorUpdate(address _iYieldSyncStrategyInteractor)
+	function iV1EMPStrategyInteractorUpdate(address _iStrategyInteractor)
 		external
 	;
 

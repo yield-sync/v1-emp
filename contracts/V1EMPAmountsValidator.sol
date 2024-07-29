@@ -113,9 +113,7 @@ contract V1EMPAmountsValidator is
 
 		uint256 utilizedV1EMPStrategyERC20AmountETHValueTotal_ = 0;
 
-		uint256[] memory utilizedV1EMPStrategyERC20AmountETHValue = new uint256[](
-			utilizedV1EMPStrategy.length
-		);
+		uint256[] memory utilizedV1EMPStrategyERC20AmountETHValue = new uint256[](utilizedV1EMPStrategy.length);
 
 		for (uint256 i = 0; i < utilizedV1EMPStrategy.length; i++)
 		{
