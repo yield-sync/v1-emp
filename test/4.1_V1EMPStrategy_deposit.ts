@@ -150,6 +150,8 @@ describe("[4.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 				).to.rejectedWith(ERROR.STRATEGY.DEPOSIT_NOT_OPEN);
 			});
 
+			it("Should revert if invalid lengthed _utilizedERC20Amount passed..");
+
 			it("Should revert if denominator is 0..", async () => {
 				const [OWNER] = await ethers.getSigners();
 
