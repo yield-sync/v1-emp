@@ -12,10 +12,10 @@ contract V1EMPRegistry is
 {
 	address public override immutable GOVERNANCE;
 
+	address public override v1EMPAmountsValidator;
 	address public override v1EMPArrayUtility;
 	address public override v1EMPDeployer;
 	address public override v1EMPStrategyDeployer;
-	address public override v1EMPAmountsValidator;
 
 	uint256 public eMPIdTracker;
 	uint256 public eMPStrategyIdTracker;
