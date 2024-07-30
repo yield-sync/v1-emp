@@ -184,7 +184,6 @@ contract V1EMPStrategy is
 	{
 		require(__utilizedERC20.length == _utilizationERC20.length, "!(__utilizedERC20.length == _utilizationERC20.length)");
 
-		// TODO: Write a test for this
 		require(
 			!I_V1_EMP_ARRAY_UTILITY.containsDuplicates(__utilizedERC20),
 			"I_V1_EMP_ARRAY_UTILITY.containsDuplicates(__utilizedERC20)"

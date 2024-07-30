@@ -120,6 +120,26 @@ describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
 			).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
 		});
 
+		it("Should revert if different lengths for __utilizedERC20 and _utilizationERC2 passed..", async () => {
+			await expect(strategy.utilizedERC20Update([mockERC20A.address], [])).to.be.rejectedWith(
+				ERROR.STRATEGY.INVALID_PARAMS_LENGTHS
+			);
+		});
+
+		it("Should revert if array contains duplicates..", async () => {
+			await expect(
+				strategy.utilizedERC20Update(
+					[mockERC20A.address, mockERC20A.address],
+					[
+						[true, true, PERCENT.FIFTY],
+						[true, true, PERCENT.FIFTY],
+					]
+				)
+			).to.be.rejectedWith(
+				ERROR.STRATEGY.INVALID_PARAMS_CONTAINS_DUPLCIATES
+			);
+		});
+
 		it("Should revert if no ETH Value feed set for the utilized ERC20..", async () => {
 			const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
 

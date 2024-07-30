@@ -29,6 +29,8 @@ export const ERROR = {
 		INVALID_AMOUNT_LENGTH: "!(_utilizedERC20.length == _utilizedERC20Amount.length)",
 		INVALID_BALANCE: "!(balanceOf(msg.sender) >= _eRC20Amount)",
 		INVALID_UTILIZED_ERC20_AMOUNT: "!(_utilizedERC20_utilizationERC20[_utilizedERC20[i]].allocation == utilizedERC20AmountAllocationActual)",
+		INVALID_PARAMS_LENGTHS: "!(__utilizedERC20.length == _utilizationERC20.length)",
+		INVALID_PARAMS_CONTAINS_DUPLCIATES: "I_V1_EMP_ARRAY_UTILITY.containsDuplicates(__utilizedERC20)",
 		UTILIZED_ERC20_AMOUNT_NOT_ZERO: "!(_utilizedERC20Amount[i] == 0)",
 		UTILIZED_ERC20_TRANSFERS_OPEN: "!(!utilizedERC20DepositOpen && !utilizedERC20WithdrawOpen)",
 		WITHDRAW_NOT_OPEN: "!utilizedERC20WithdrawOpen",

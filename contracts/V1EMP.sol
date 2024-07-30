@@ -207,9 +207,7 @@ contract V1EMP is
 
 		uint256 mintAmountManager = utilizedERC20AmountTotalETHValue.mul(feeRateManager).div(ONE_HUNDRED_PERCENT);
 
-		uint256 mintAmountGovernancePayTo = utilizedERC20AmountTotalETHValue.mul(feeRateGovernance).div(
-			ONE_HUNDRED_PERCENT
-		);
+		uint256 mintAmountGovernancePayTo = utilizedERC20AmountTotalETHValue.mul(feeRateGovernance).div(ONE_HUNDRED_PERCENT);
 
 		_mint(manager, mintAmountManager);
 		_mint(I_V1_EMP_REGISTRY.governancePayTo(), mintAmountGovernancePayTo);
