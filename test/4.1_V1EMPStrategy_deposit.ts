@@ -150,7 +150,22 @@ describe("[4.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 				).to.rejectedWith(ERROR.STRATEGY.DEPOSIT_NOT_OPEN);
 			});
 
-			it("Should revert if invalid lengthed _utilizedERC20Amount passed..");
+			it("Should revert if invalid lengthed _utilizedERC20Amount passed..", async () => {
+				const [OWNER] = await ethers.getSigners();
+
+				// Set strategy ERC20 tokens
+				await strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
+
+				await strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
+
+				// Toggle deposits on
+				await strategy.utilizedERC20DepositOpenToggle();
+
+				await expect(strategy.utilizedERC20Deposit(OWNER.address, [])).to.be.rejectedWith(
+					ERROR.STRATEGY.INVAILD_PARAMS_DEPOSIT_LENGTH
+				);
+
+			});
 
 			it("Should revert if denominator is 0..", async () => {
 				const [OWNER] = await ethers.getSigners();

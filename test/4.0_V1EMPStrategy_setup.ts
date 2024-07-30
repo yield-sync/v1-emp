@@ -122,7 +122,7 @@ describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
 
 		it("Should revert if different lengths for __utilizedERC20 and _utilizationERC2 passed..", async () => {
 			await expect(strategy.utilizedERC20Update([mockERC20A.address], [])).to.be.rejectedWith(
-				ERROR.STRATEGY.INVALID_PARAMS_LENGTHS
+				ERROR.STRATEGY.INVALID_PARAMS_UPDATE_LENGTHS
 			);
 		});
 
@@ -136,7 +136,7 @@ describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
 					]
 				)
 			).to.be.rejectedWith(
-				ERROR.STRATEGY.INVALID_PARAMS_CONTAINS_DUPLCIATES
+				ERROR.STRATEGY.INVALID_PARAMS_UPDATE_CONTAINS_DUPLCIATES
 			);
 		});
 
