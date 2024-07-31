@@ -193,6 +193,8 @@ contract V1EMP is
 		utilizedERC20DepositOpenRequired()
 		utilizedERC20UpdateBefore()
 	{
+		require(_utilizedERC20Amount.length == _utilizedERC20.length, "!(_utilizedERC20Amount.length == _utilizedERC20.length)");
+
 		(bool valid, uint256 utilizedERC20AmountTotalETHValue) = I_V1_EMP_AMOUNTS_VALIDATOR.utilizedERC20AmountValid(
 			_utilizedERC20Amount
 		);
@@ -389,6 +391,11 @@ contract V1EMP is
 		nonReentrant()
 		utilizedERC20DepositOpenRequired()
 	{
+		require(
+			_v1EMPStrategyUtilizedERC20Amount.length == _utilizedV1EMPStrategy.length,
+			"!(_v1EMPStrategyUtilizedERC20Amount.length == _utilizedV1EMPStrategy.length)"
+		);
+
 		require(
 			I_V1_EMP_AMOUNTS_VALIDATOR.v1EMPStrategyUtilizedERC20AmountValid(_v1EMPStrategyUtilizedERC20Amount),
 			"!I_V1_EMP_AMOUNTS_VALIDATOR.v1EMPStrategyUtilizedERC20AmountValid(_v1EMPStrategyUtilizedERC20Amount)"

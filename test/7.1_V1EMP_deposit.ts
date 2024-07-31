@@ -491,10 +491,10 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 				await expect(eMP.utilizedV1EMPStrategyDeposit([])).to.be.rejectedWith(ERROR.EMP.DEPOSIT_NOT_OPEN);
 			});
 
-			it("Should revert if invalid ERC20 amounts is passed..", async () => {
+			it("Should revert if invalid lengthed _v1EMPStrategyUtilizedERC20Amount passed..", async () => {
 				// Pass incorrect length of deposit amounts
 				await expect(eMP.utilizedV1EMPStrategyDeposit([])).to.be.rejectedWith(
-					ERROR.EMP.INVALID_UTILIZED_ERC20_AMOUNT_LENGTH
+					ERROR.EMP.INVALID_STRATEGY_UTILIZED_ERC20_AMOUNT_LENGTH
 				);
 			});
 		});

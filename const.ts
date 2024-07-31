@@ -44,8 +44,10 @@ export const ERROR = {
 			"!(_v1EMPStrategyERC20Amount.length == _utilizedV1EMPStrategy.length)"
 		,
 		INVALID_UTILIZED_ERC20_LENGTH:
-			"!(_utilizedERC20Amount.length == utilizedERC20.length)"
+			"!(_utilizedERC20Amount.length == _utilizedERC20.length)"
 		,
+		INVALID_STRATEGY_UTILIZED_ERC20_AMOUNT_LENGTH:
+			"!(_v1EMPStrategyUtilizedERC20Amount.length == _utilizedV1EMPStrategy.length)",
 		WITHDRAW_NOT_OPEN:
 			"!utilizedERC20WithdrawOpen"
 		,
