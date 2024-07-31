@@ -228,7 +228,7 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 					[PERCENT.HUNDRED, PERCENT.FIFTY] as UtilizedEMPStrategyAllocationUpdate
 				)
 			).to.be.rejectedWith(
-				ERROR.EMP.INVALID_ALLOCATION
+				ERROR.EMP.INVALID_STRATEGY_ALLOCATION_TOTAL
 			);
 		});
 
