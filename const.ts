@@ -31,6 +31,12 @@ export const ERROR = {
 		DEPOSIT_NOT_OPEN:
 			"!utilizedERC20DepositOpen"
 		,
+		FEE_RATE_GOVERNANCE_GREATER_THAN_100_PERCENT:
+			"!(_feeRateGovernance <= ONE_HUNDRED_PERCENT)"
+		,
+		FEE_RATE_MANAGER_GREATER_THAN_100_PERCENT:
+			"!(_feeRateManager <= ONE_HUNDRED_PERCENT)"
+		,
 		INVALID_ALLOCATION:
 			"!(utilizedV1EMPStrategyAllocationTotal == ONE_HUNDRED_PERCENT)"
 		,

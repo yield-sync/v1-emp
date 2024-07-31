@@ -173,7 +173,11 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 			);
 		});
 
-		it("Should NOT allow greater than 100% fee rate..");
+		it("Should NOT allow greater than 100% fee rate..", async () => {
+			await expect(eMP.feeRateManagerUpdate(ethers.utils.parseUnits("2", 18))).to.be.rejectedWith(
+				ERROR.EMP.FEE_RATE_MANAGER_GREATER_THAN_100_PERCENT
+			);
+		});
 
 		it("Should allow feeRateManager to be changed..", async () => {
 			await expect(eMP.feeRateManagerUpdate(1)).to.be.not.rejected;
@@ -189,7 +193,11 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 			);
 		});
 
-		it("Should NOT allow greater than 100% fee rate..");
+		it("Should NOT allow greater than 100% fee rate..", async () => {
+			await expect(eMP.feeRateGovernanceUpdate(ethers.utils.parseUnits("2", 18))).to.be.rejectedWith(
+				ERROR.EMP.FEE_RATE_GOVERNANCE_GREATER_THAN_100_PERCENT
+			);
+		});
 
 		it("Should allow feeRateManager to be changed..", async () => {
 			await expect(eMP.feeRateGovernanceUpdate(1)).to.be.not.rejected;
