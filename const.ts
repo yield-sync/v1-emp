@@ -53,11 +53,12 @@ export const ERROR = {
 			"!(_utilizedERC20Amount.length == _utilizedERC20.length)"
 		,
 		INVALID_STRATEGY_UTILIZED_ERC20_AMOUNT_LENGTH:
-			"!(_v1EMPStrategyUtilizedERC20Amount.length == _utilizedV1EMPStrategy.length)",
+			"!(_v1EMPStrategyUtilizedERC20Amount.length == _utilizedV1EMPStrategy.length)"
+		,
 		WITHDRAW_NOT_OPEN:
 			"!utilizedERC20WithdrawOpen"
 		,
-		NOT_PASSING_AMOUNTS_VALIDATOR:
+		AMOUNTS_VALIDATOR_FAILURE:
 			"!I_V1_EMP_AMOUNTS_VALIDATOR.v1EMPStrategyUtilizedERC20AmountValid(_v1EMPStrategyUtilizedERC20Amount)"
 		,
 	},

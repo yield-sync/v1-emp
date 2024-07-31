@@ -497,6 +497,25 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 					ERROR.EMP.INVALID_STRATEGY_UTILIZED_ERC20_AMOUNT_LENGTH
 				);
 			});
+
+			it("Should revert if invalid _v1EMPStrategyUtilizedERC20Amount passed..", async () => {
+				let depositAmount: BigNumber[][] = [];
+
+				depositAmount[0] = await strategies[0].strategyTransferUtil.calculateERC20Required(
+					eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(D_18)
+				);
+
+				depositAmount[1] = await strategies[1].strategyTransferUtil.calculateERC20Required(
+					eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(D_18)
+				);
+
+				// Make value invalid
+				depositAmount[0][0] = depositAmount[0][0].add(ethers.utils.parseUnits("1", 18)),
+
+				await expect(eMP.utilizedV1EMPStrategyDeposit([depositAmount[0], depositAmount[1]])).to.be.revertedWith(
+					ERROR.EMP.AMOUNTS_VALIDATOR_FAILURE
+				);
+			});
 		});
 
 		describe("Valid", async () => {
@@ -519,7 +538,6 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 					eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(D_18)
 				);
 
-				// Pass incorrect length of deposit amounts
 				await eMP.utilizedV1EMPStrategyDeposit([depositAmount[0], depositAmount[1]]);
 			});
 
