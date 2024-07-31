@@ -215,7 +215,7 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 				await expect(eMP.utilizedERC20Deposit([])).to.be.rejectedWith(ERROR.STRATEGY.DEPOSIT_NOT_OPEN);
 			});
 
-			it("Should NOT allow invalid length of _utilizedERC20Amount to be passed..", async () => {
+			it("Should NOT allow invalid lengthed _utilizedERC20Amount to be passed..", async () => {
 				/**
 				* @notice This test is to check that if the total amount of strategies is correctly set, then passing in a param
 				* with incorrect first dimension of the 2d param will be rejected.
@@ -226,6 +226,8 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 
 				await expect(eMP.utilizedERC20Deposit(INVALID)).to.be.rejectedWith(ERROR.EMP.INVALID_UTILIZED_ERC20_LENGTH);
 			});
+
+			it("Should revert if invalid _utilizedERC20Amount passed..");
 		});
 
 		describe("Valid", async () => {
