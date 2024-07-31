@@ -72,7 +72,7 @@ export const ERROR = {
 		INTERACTOR_NOT_SET:
 			"!(address(iV1EMPStrategyInteractor) != address(0))"
 		,
-		INVALID_ALLOCATION:
+		INVALID_ERC20_ALLOCATION_TOTAL:
 			"!(utilizedERC20AllocationTotal == ONE_HUNDRED_PERCENT)"
 		,
 		INVALID_AMOUNT_LENGTH:

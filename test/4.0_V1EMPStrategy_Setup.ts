@@ -199,7 +199,7 @@ describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
 				await expect(
 					_YSS.utilizedERC20Update(INVALID_ALLOCATION[i].utilizedERC20, INVALID_ALLOCATION[i].utilization)
 				).to.be.rejectedWith(
-					ERROR.STRATEGY.INVALID_ALLOCATION
+					ERROR.STRATEGY.INVALID_ERC20_ALLOCATION_TOTAL
 				);
 			}
 		});
