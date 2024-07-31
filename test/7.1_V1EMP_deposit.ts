@@ -227,7 +227,26 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 				await expect(eMP.utilizedERC20Deposit(INVALID)).to.be.rejectedWith(ERROR.EMP.INVALID_UTILIZED_ERC20_LENGTH);
 			});
 
-			it("Should revert if invalid _utilizedERC20Amount passed..");
+			it("Should revert if invalid _utilizedERC20Amount passed..", async () => {
+				let eTHValueEMPDepositAmount: BigNumber = ethers.utils.parseUnits("2", 18);
+				let eMPDepositAmounts: UtilizedERC20Amount;
+
+				eMPDepositAmounts = await eMPTransferUtil.calculateERC20Required(eTHValueEMPDepositAmount);
+
+				// Approve the ERC20 tokens for the strategy interactor
+				for (let i: number = 0; i < eMPUtilizedERC20.length; i++)
+				{
+					await (await ethers.getContractAt(LOCATION_MOCKERC20, eMPUtilizedERC20[i])).approve(
+						eMP.address,
+						eMPDepositAmounts[i]
+					);
+				}
+
+				// Make invalid for expected failure
+				eMPDepositAmounts[0] = eMPDepositAmounts[0].sub(eMPDepositAmounts[0]);
+
+				await expect(eMP.utilizedERC20Deposit(eMPDepositAmounts)).to.be.revertedWith(ERROR.EMP.INVALID);
+			});
 		});
 
 		describe("Valid", async () => {

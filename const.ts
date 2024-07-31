@@ -62,7 +62,7 @@ export const ERROR = {
 			"!I_V1_EMP_AMOUNTS_VALIDATOR.v1EMPStrategyUtilizedERC20AmountValid(_v1EMPStrategyUtilizedERC20Amount)"
 		,
 		INVALID:
-			"!invalid"
+			"!valid"
 		,
 	},
 	STRATEGY: {
