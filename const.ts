@@ -49,6 +49,9 @@ export const ERROR = {
 		WITHDRAW_NOT_OPEN:
 			"!utilizedERC20WithdrawOpen"
 		,
+		NOT_PASSING_AMOUNTS_VALIDATOR:
+			"!I_V1_EMP_AMOUNTS_VALIDATOR.v1EMPStrategyUtilizedERC20AmountValid(_v1EMPStrategyUtilizedERC20Amount)"
+		,
 	},
 	STRATEGY: {
 		DEPOSIT_NOT_OPEN:

@@ -173,6 +173,8 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 			);
 		});
 
+		it("Should NOT allow greater than 100% fee rate..");
+
 		it("Should allow feeRateManager to be changed..", async () => {
 			await expect(eMP.feeRateManagerUpdate(1)).to.be.not.rejected;
 
@@ -186,6 +188,8 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 				ERROR.NOT_AUTHORIZED
 			);
 		});
+
+		it("Should NOT allow greater than 100% fee rate..");
 
 		it("Should allow feeRateManager to be changed..", async () => {
 			await expect(eMP.feeRateGovernanceUpdate(1)).to.be.not.rejected;

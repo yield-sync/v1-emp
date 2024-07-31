@@ -100,6 +100,7 @@ contract V1EMPAmountsValidator is
 	function v1EMPStrategyUtilizedERC20AmountValid(uint256[][] memory _v1EMPStrategyUtilizedERC20Amount)
 		public
 		override
+		authEMP()
 		returns (bool valid_)
 	{
 		address[] memory utilizedV1EMPStrategy = IV1EMP(msg.sender).utilizedV1EMPStrategy();
