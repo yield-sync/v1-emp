@@ -166,6 +166,18 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 	});
 
 
+	describe("function managerUpdate()", async () => {
+		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
+			await expect(eMP.connect(outsider).managerUpdate(outsider.address)).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
+		});
+
+		it("Should update manager..", async () => {
+			await expect(eMP.managerUpdate(outsider.address)).to.be.not.rejected;
+
+			expect(await eMP.manager()).to.be.equal(outsider.address);
+		});
+	});
+
 	describe("function feeRateManagerUpdate()", async () => {
 		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
 			await expect(eMP.connect(outsider).feeRateManagerUpdate(outsider.address)).to.be.rejectedWith(
@@ -366,18 +378,6 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 
 				expect(eMPUtilizedERC20.length).to.be.equal(3);
 			});
-		});
-	});
-
-	describe("function managerUpdate()", async () => {
-		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
-			await expect(eMP.connect(outsider).managerUpdate(outsider.address)).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
-		});
-
-		it("Should allow manager to be changed..", async () => {
-			await expect(eMP.managerUpdate(outsider.address)).to.be.not.rejected;
-
-			expect(await eMP.manager()).to.be.equal(outsider.address);
 		});
 	});
 });

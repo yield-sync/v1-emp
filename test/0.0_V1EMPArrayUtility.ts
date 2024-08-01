@@ -2,7 +2,7 @@ const { ethers } = require("hardhat");
 
 
 import { expect } from "chai";
-import { Contract, ContractFactory } from "ethers";
+import { Contract, ContractFactory, VoidSigner } from "ethers";
 
 
 const stageContracts = async () => {
@@ -19,6 +19,9 @@ const stageContracts = async () => {
 describe("[0.0] V1EMPArrayUtility.sol", async () => {
 	let arrayUtility: Contract;
 
+	let owner: VoidSigner;
+	let manager: VoidSigner;
+
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
 		const stagedContracts = await stageContracts();
@@ -31,36 +34,36 @@ describe("[0.0] V1EMPArrayUtility.sol", async () => {
 		it(
 			"Should sort an unordered array..",
 			async () => {
-				const [ADDR_1, ADDR_2] = await ethers.getSigners();
+				[owner, manager] = await ethers.getSigners();
 
-				const ADDR_1_IN_BASE_10 = parseInt(ADDR_1.address, 16)
-				const ADDR_2_IN_BASE_10 = parseInt(ADDR_2.address, 16)
+				const OWNER_IN_BASE_10 = parseInt(owner.address, 16)
+				const MANAGER_IN_BASE_10 = parseInt(manager.address, 16)
 
 				// Simple
 				let result = await arrayUtility.sort(
-					[ADDR_1.address, ADDR_1.address, ethers.constants.AddressZero]
+					[owner.address, owner.address, ethers.constants.AddressZero]
 				);
 
 				expect(result[0]).to.be.equal(ethers.constants.AddressZero);
-				expect(result[1]).to.be.equal(ADDR_1.address);
-				expect(result[2]).to.be.equal(ADDR_1.address);
+				expect(result[1]).to.be.equal(owner.address);
+				expect(result[2]).to.be.equal(owner.address);
 
 				// With multiple addresses
 				let result2 = await arrayUtility.sort(
-					[ADDR_2.address, ADDR_1.address, ethers.constants.AddressZero]
+					[manager.address, owner.address, ethers.constants.AddressZero]
 				);
 
 				expect(result2[0]).to.be.equal(ethers.constants.AddressZero);
 
-				if (ADDR_1_IN_BASE_10 > ADDR_2_IN_BASE_10)
+				if (OWNER_IN_BASE_10 > MANAGER_IN_BASE_10)
 				{
-					expect(result2[1]).to.be.equal(ADDR_2.address);
-					expect(result2[2]).to.be.equal(ADDR_1.address);
+					expect(result2[1]).to.be.equal(manager.address);
+					expect(result2[2]).to.be.equal(owner.address);
 				}
 				else
 				{
-					expect(result2[1]).to.be.equal(ADDR_1.address);
-					expect(result2[2]).to.be.equal(ADDR_2.address);
+					expect(result2[1]).to.be.equal(owner.address);
+					expect(result2[2]).to.be.equal(manager.address);
 				}
 			}
 		);
@@ -70,9 +73,7 @@ describe("[0.0] V1EMPArrayUtility.sol", async () => {
 		it(
 			"Should return true if duplicates are in array..",
 			async () => {
-				const [ADDR_1] = await ethers.getSigners();
-
-				await arrayUtility.containsDuplicates([ADDR_1.address, ADDR_1.address]);
+				await arrayUtility.containsDuplicates([owner.address, owner.address]);
 
 				expect(await arrayUtility.duplicateFound()).to.be.equal(true);
 			}
@@ -81,9 +82,7 @@ describe("[0.0] V1EMPArrayUtility.sol", async () => {
 		it(
 			"Should return false if duplicates NOT in array..",
 			async () => {
-				const [ADDR_1, ADDR_2] = await ethers.getSigners();
-
-				await arrayUtility.containsDuplicates([ADDR_1.address, ADDR_2.address]);
+				await arrayUtility.containsDuplicates([owner.address, manager.address]);
 
 				expect(await arrayUtility.duplicateFound()).to.be.equal(false);
 			}
@@ -92,15 +91,13 @@ describe("[0.0] V1EMPArrayUtility.sol", async () => {
 		it(
 			"Should clear seen mapping after utilzing..",
 			async () => {
-				const [ADDR_1, ADDR_2] = await ethers.getSigners();
-
-				await arrayUtility.containsDuplicates([ADDR_1.address, ADDR_2.address]);
+				await arrayUtility.containsDuplicates([owner.address, manager.address]);
 
 				expect(await arrayUtility.duplicateFound()).to.be.equal(false);
 
-				expect(await arrayUtility.seen(ADDR_1.address)).to.be.equal(false);
+				expect(await arrayUtility.seen(owner.address)).to.be.equal(false);
 
-				expect(await arrayUtility.seen(ADDR_2.address)).to.be.equal(false);
+				expect(await arrayUtility.seen(manager.address)).to.be.equal(false);
 			}
 		);
 
@@ -110,14 +107,12 @@ describe("[0.0] V1EMPArrayUtility.sol", async () => {
 		it(
 			"Should remove duplicates from an array..",
 			async () => {
-				const [ADDR_1] = await ethers.getSigners();
-
-				await arrayUtility.removeDuplicates([ADDR_1.address, ADDR_1.address]);
+				await arrayUtility.removeDuplicates([owner.address, owner.address]);
 
 				let result = await arrayUtility.uniqueAddresses();
 
 				expect(result.length).to.be.equal(1);
-				expect(result[0]).to.be.equal(ADDR_1.address);
+				expect(result[0]).to.be.equal(owner.address);
 			}
 		);
 	});
