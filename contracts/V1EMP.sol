@@ -356,20 +356,37 @@ contract V1EMP is
 
 		require(balanceOf(msg.sender) >= _eRC20Amount, "!(balanceOf(msg.sender) >= _eRC20Amount)");
 
+		bool utilizedERC20Available = true;
+
 		uint256[] memory _utilizedERC20TotalAmount = utilizedERC20TotalAmount();
+
+		uint256[] memory transferAmount = new uint256[](_utilizedERC20.length);
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
-			uint256 transferAmount = _utilizedERC20TotalAmount[i].mul(1e18).div(totalSupply(), "!computed").mul(_eRC20Amount).div(
+			transferAmount[i] = _utilizedERC20TotalAmount[i].mul(1e18).div(totalSupply(), "!computed").mul(_eRC20Amount).div(
 				1e18
 			);
 
-			require(
-				IERC20(_utilizedERC20[i]).balanceOf(address(this)) >= transferAmount,
-				"IERC20(_utilizedERC20[i]).balanceOf(address(this)) >= transferAmount"
-			);
+			if (IERC20(_utilizedERC20[i]).balanceOf(address(this)) < transferAmount[i])
+			{
+				utilizedERC20Available = false;
+			}
+		}
 
-			transfer(msg.sender, transferAmount);
+		if (utilizedERC20Available)
+		{
+			for (uint256 i = 0; i < _utilizedERC20.length; i++)
+			{
+				transfer(msg.sender, transferAmount[i]);
+			}
+		}
+		else
+		{
+			/*
+			* Burn amount required to fufill the transfer. This can be the percent that _eRC20Amount is to the holdings of
+			* the strategy contract tokens
+			*/
 		}
 
 		_burn(msg.sender, _eRC20Amount);
