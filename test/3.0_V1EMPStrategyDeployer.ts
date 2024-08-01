@@ -2,7 +2,7 @@ const { ethers } = require("hardhat");
 
 
 import { expect } from "chai";
-import { Contract, ContractFactory } from "ethers";
+import { Contract, ContractFactory, VoidSigner } from "ethers";
 
 
 describe("[3.0] V1EMPStrategyDeployer.sol", async () => {
@@ -11,6 +11,8 @@ describe("[3.0] V1EMPStrategyDeployer.sol", async () => {
 	let registry: Contract;
 	let strategyUtility: Contract;
 	let strategyDeployer: Contract;
+
+	let treasury: VoidSigner;
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
@@ -24,7 +26,7 @@ describe("[3.0] V1EMPStrategyDeployer.sol", async () => {
 		* 6) Deploy a Strategy Utility contract
 		* 7) Register the Strategy Utility contract on the Registry contract
 		*/
-		const [, , TREASURY] = await ethers.getSigners();
+		[, , treasury] = await ethers.getSigners();
 
 
 		const YieldSyncGovernance: ContractFactory = await ethers.getContractFactory("YieldSyncGovernance");
@@ -35,7 +37,7 @@ describe("[3.0] V1EMPStrategyDeployer.sol", async () => {
 
 		governance = await (await YieldSyncGovernance.deploy()).deployed();
 
-		await governance.payToUpdate(TREASURY.address);
+		await governance.payToUpdate(treasury.address);
 
 		arrayUtility = await (await V1EMPArrayUtility.deploy()).deployed();
 

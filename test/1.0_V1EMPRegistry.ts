@@ -2,7 +2,7 @@ const { ethers } = require("hardhat");
 
 
 import { expect } from "chai";
-import { Contract, ContractFactory } from "ethers";
+import { Contract, ContractFactory, VoidSigner } from "ethers";
 
 import { ERROR } from "../const";
 
@@ -12,9 +12,15 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 	let governance: Contract;
 	let registry: Contract;
 
+	let owner: VoidSigner;
+	let manager: VoidSigner;
+	let treasury: VoidSigner;
+	let fakeERC20: VoidSigner;
+	let fakeEthValueFeed: VoidSigner;
+
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
-		const [OWNER, MANAGER, TREASURY] = await ethers.getSigners();
+		[owner, manager, treasury, fakeERC20, fakeEthValueFeed] = await ethers.getSigners();
 
 		const V1EMPArrayUtility: ContractFactory = await ethers.getContractFactory("V1EMPArrayUtility");
 		const YieldSyncGovernance: ContractFactory = await ethers.getContractFactory("YieldSyncGovernance");
@@ -26,15 +32,13 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 		registry = await (await V1EMPRegistry.deploy(governance.address)).deployed();
 
 		// Set Treasury
-		await expect(governance.payToUpdate(TREASURY.address)).to.be.not.rejected;
+		await expect(governance.payToUpdate(treasury.address)).to.be.not.rejected;
 	});
 
 
 	describe("function v1EMPArrayUtilityUpdate()", async () => {
 		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
-			const [, ADDR_1] = await ethers.getSigners();
-
-			await expect(registry.connect(ADDR_1).v1EMPArrayUtilityUpdate(arrayUtility.address)).to.be.rejectedWith(
+			await expect(registry.connect(manager).v1EMPArrayUtilityUpdate(arrayUtility.address)).to.be.rejectedWith(
 				ERROR.NOT_AUTHORIZED
 			);
 		});
@@ -48,205 +52,167 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 
 	describe("function v1EMPAmountsValidatorUpdate()", async () => {
 		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
-			const [, ADDR_1] = await ethers.getSigners();
-
-			await expect(registry.connect(ADDR_1).v1EMPAmountsValidatorUpdate(ADDR_1.address)).to.be.rejectedWith(
+			await expect(registry.connect(manager).v1EMPAmountsValidatorUpdate(manager.address)).to.be.rejectedWith(
 				ERROR.NOT_AUTHORIZED
 			);
 		});
 
 		it("Should not allow to set the EMP Utility until the Array Utility is set..", async () => {
-			const [TEMP] = await ethers.getSigners();
-
-			await expect(registry.v1EMPAmountsValidatorUpdate(TEMP.address)).to.be.rejectedWith(
+			await expect(registry.v1EMPAmountsValidatorUpdate(owner.address)).to.be.rejectedWith(
 				ERROR.REGISTRY.ARRAY_UTILITY_NOT_SET
 			);
 		});
 
 		it("Should allow authorized caller to update EMP Utility..", async () => {
-			const [TEMP] = await ethers.getSigners();
-
 			await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
 
-			await expect(registry.v1EMPAmountsValidatorUpdate(TEMP.address)).to.be.not.rejected;
+			await expect(registry.v1EMPAmountsValidatorUpdate(owner.address)).to.be.not.rejected;
 
-			expect(await registry.v1EMPAmountsValidator()).to.be.equal(TEMP.address);
+			expect(await registry.v1EMPAmountsValidator()).to.be.equal(owner.address);
 		});
 	});
 
 	describe("function v1EMPDeployerUpdate()", async () => {
 		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
-			const [TEMP, ADDR_1] = await ethers.getSigners();
-
 			await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
 
-			await registry.v1EMPAmountsValidatorUpdate(TEMP.address);
+			await registry.v1EMPAmountsValidatorUpdate(owner.address);
 
 			await expect(
-				registry.connect(ADDR_1).v1EMPDeployerUpdate(TEMP.address)
+				registry.connect(manager).v1EMPDeployerUpdate(owner.address)
 			).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
 		});
 
 		it("Should not allow to set the EMP Deployer until the EMP Utility is set..", async () => {
-			const [TEMP] = await ethers.getSigners();
-
 			await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
 
-			await expect(registry.v1EMPDeployerUpdate(TEMP.address)).to.be.rejectedWith(
+			await expect(registry.v1EMPDeployerUpdate(owner.address)).to.be.rejectedWith(
 				ERROR.REGISTRY.EMP_UTILITY_NOT_SET
 			);
 		});
 
 		it("Should allow authorized caller to update EMP Deployer..", async () => {
-			const [TEMP] = await ethers.getSigners();
-
 			await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
 
-			await registry.v1EMPAmountsValidatorUpdate(TEMP.address);
+			await registry.v1EMPAmountsValidatorUpdate(owner.address);
 
-			await expect(registry.v1EMPDeployerUpdate(TEMP.address)).to.be.not.rejected;
+			await expect(registry.v1EMPDeployerUpdate(owner.address)).to.be.not.rejected;
 
-			expect(await registry.v1EMPDeployer()).to.be.equal(TEMP.address);
+			expect(await registry.v1EMPDeployer()).to.be.equal(owner.address);
 		});
 	});
 
 	describe("function v1EMPRegister()", async () => {
 		beforeEach(async () => {
-			const [TEMP] = await ethers.getSigners();
-
 			await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
 
-			await registry.v1EMPAmountsValidatorUpdate(TEMP.address);
+			await registry.v1EMPAmountsValidatorUpdate(owner.address);
 
-			await registry.v1EMPDeployerUpdate(TEMP.address);
+			await registry.v1EMPDeployerUpdate(owner.address);
 		});
 
 		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
-			const [, ADDR_1] = await ethers.getSigners();
-
-			await expect(registry.connect(ADDR_1).v1EMPRegister(ADDR_1.address)).to.be.rejectedWith(
+			await expect(registry.connect(manager).v1EMPRegister(manager.address)).to.be.rejectedWith(
 				ERROR.REGISTRY.NOT_EMP_DEPLOYER
 			);
 		});
 
 		it("Should allow authorized caller to register an EMP..", async () => {
-			const [TEMP] = await ethers.getSigners();
+			await expect(registry.v1EMPRegister(owner.address)).to.be.not.rejected;
 
-			await expect(registry.v1EMPRegister(TEMP.address)).to.be.not.rejected;
-
-			const v1EMPStrategyId = await registry.v1EMP_v1EMPId(TEMP.address);
+			const v1EMPStrategyId = await registry.v1EMP_v1EMPId(owner.address);
 
 			expect(v1EMPStrategyId).to.be.greaterThan(0);
 
-			expect(await registry.v1EMPId_v1EMP(v1EMPStrategyId)).to.be.equal(TEMP.address);
+			expect(await registry.v1EMPId_v1EMP(v1EMPStrategyId)).to.be.equal(owner.address);
 		});
 	});
 
 	describe("function v1EMPStrategyDeployerUpdate()", async () => {
 		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
-			const [TEMP, ADDR_1] = await ethers.getSigners();
-
 			await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
 
 			await expect(
-				registry.connect(ADDR_1).v1EMPStrategyDeployerUpdate(ADDR_1.address)
+				registry.connect(manager).v1EMPStrategyDeployerUpdate(manager.address)
 			).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
 		});
 
 		it("Should allow authorized caller to update EMP Strategy Deployer..", async () => {
-			const [TEMP] = await ethers.getSigners();
-
 			await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
 
-			await expect(registry.v1EMPStrategyDeployerUpdate(TEMP.address)).to.be.not.rejected;
+			await expect(registry.v1EMPStrategyDeployerUpdate(owner.address)).to.be.not.rejected;
 
-			expect(await registry.v1EMPStrategyDeployer()).to.be.equal(TEMP.address);
+			expect(await registry.v1EMPStrategyDeployer()).to.be.equal(owner.address);
 		});
 	});
 
 	describe("function v1EMPStrategyRegister()", async () => {
 		beforeEach(async () => {
-			const [TEMP] = await ethers.getSigners();
-
 			await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
 
-			await registry.v1EMPStrategyDeployerUpdate(TEMP.address);
+			await registry.v1EMPStrategyDeployerUpdate(owner.address);
 
-			expect(await registry.v1EMPStrategyDeployer()).to.be.equal(TEMP.address);
+			expect(await registry.v1EMPStrategyDeployer()).to.be.equal(owner.address);
 		});
 
 		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
-			const [, ADDR_1] = await ethers.getSigners();
-
-			await expect(registry.connect(ADDR_1).v1EMPStrategyRegister(ADDR_1.address)).to.be.rejectedWith(
+			await expect(registry.connect(manager).v1EMPStrategyRegister(manager.address)).to.be.rejectedWith(
 				ERROR.REGISTRY.NOT_STRATEGY_DEPLOYER
 			);
 		});
 
 		it("Should allow authorized caller to register an EMP strategy..", async () => {
-			const [TEMP] = await ethers.getSigners();
+			await expect(registry.v1EMPStrategyRegister(owner.address)).to.be.not.rejected;
 
-			await expect(registry.v1EMPStrategyRegister(TEMP.address)).to.be.not.rejected;
-
-			const v1EMPStrategyId = await registry.v1EMPStrategy_v1EMPStrategyId(TEMP.address);
+			const v1EMPStrategyId = await registry.v1EMPStrategy_v1EMPStrategyId(owner.address);
 
 			expect(v1EMPStrategyId).to.be.greaterThan(0);
 
 			expect(await registry.v1EMPStrategyId_v1EMPStrategy(v1EMPStrategyId)).to.be.equal(
-				TEMP.address
+				owner.address
 			);
 		});
 	});
 
 	describe("function eRC20_v1EMPERC20ETHValueFeedUpdate()", async () => {
 		beforeEach(async () => {
-			const [TEMP] = await ethers.getSigners();
-
 			await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
 
-			await registry.v1EMPStrategyDeployerUpdate(TEMP.address);
+			await registry.v1EMPStrategyDeployerUpdate(owner.address);
 
-			expect(await registry.v1EMPStrategyDeployer()).to.be.equal(TEMP.address);
+			expect(await registry.v1EMPStrategyDeployer()).to.be.equal(owner.address);
 		});
 
 		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
-			const [, ADDR_1, ERC20, ETH_VALUE_FEED] = await ethers.getSigners();
-
 			await expect(
-				registry.connect(ADDR_1).eRC20_v1EMPERC20ETHValueFeedUpdate(ERC20.address, ETH_VALUE_FEED.address)
+				registry.connect(manager).eRC20_v1EMPERC20ETHValueFeedUpdate(fakeERC20.address, fakeEthValueFeed.address)
 			).to.be.rejectedWith(
 				ERROR.NOT_AUTHORIZED
 			);
 		});
 
 		it("Should not allow address(0) to be passed a _erc20 parameter..", async () => {
-			const [, , , ETH_VALUE_FEED] = await ethers.getSigners();
-
 			await expect(
-				registry.eRC20_v1EMPERC20ETHValueFeedUpdate(ethers.constants.AddressZero, ETH_VALUE_FEED.address)
+				registry.eRC20_v1EMPERC20ETHValueFeedUpdate(ethers.constants.AddressZero, fakeEthValueFeed.address)
 			).to.be.rejectedWith(
 				ERROR.REGISTRY.ERC20_ADDRESS_ZERO
 			);
 		});
 
 		it("Should not allow address(0) to be passed a _v1EMPERC20ETHValueFeed parameter..", async () => {
-			const [, , ERC20] = await ethers.getSigners();
-
 			await expect(
-				registry.eRC20_v1EMPERC20ETHValueFeedUpdate(ERC20.address, ethers.constants.AddressZero)
+				registry.eRC20_v1EMPERC20ETHValueFeedUpdate(fakeERC20.address, ethers.constants.AddressZero)
 			).to.be.rejectedWith(
 				ERROR.REGISTRY.ETH_VALUE_FEED_ADDRESS_ZERO
 			);
 		});
 
 		it("Should allow authorized caller to register an ETH Value Feed..", async () => {
-			const [, ADDR_1, ERC20, ETH_VALUE_FEED] = await ethers.getSigners();
-
 			await expect(
-				registry.eRC20_v1EMPERC20ETHValueFeedUpdate(ERC20.address, ETH_VALUE_FEED.address)
+				registry.eRC20_v1EMPERC20ETHValueFeedUpdate(fakeERC20.address, fakeEthValueFeed.address)
 			).to.be.not.rejected;
 
-			expect(await registry.eRC20_v1EMPERC20ETHValueFeed(ERC20.address)).to.be.equal(ETH_VALUE_FEED.address);
+			expect(await registry.eRC20_v1EMPERC20ETHValueFeed(fakeERC20.address)).to.be.equal(fakeEthValueFeed.address);
 		});
 	});
 });

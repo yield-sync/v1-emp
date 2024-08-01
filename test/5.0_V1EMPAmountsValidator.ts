@@ -2,7 +2,7 @@ const { ethers } = require("hardhat");
 
 
 import { expect } from "chai";
-import { Contract, ContractFactory } from "ethers";
+import { Contract, ContractFactory, VoidSigner } from "ethers";
 
 
 describe("[5.0] V1EMPAmountsValidator.sol", async () => {
@@ -11,9 +11,11 @@ describe("[5.0] V1EMPAmountsValidator.sol", async () => {
 	let registry: Contract;
 	let eMPUtility: Contract;
 
+	let treasury: VoidSigner;
+
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
-		const [, , TREASURY] = await ethers.getSigners();
+		[, , treasury] = await ethers.getSigners();
 
 
 		const YieldSyncGovernance: ContractFactory = await ethers.getContractFactory("YieldSyncGovernance");
@@ -28,7 +30,7 @@ describe("[5.0] V1EMPAmountsValidator.sol", async () => {
 		eMPUtility = await (await V1EMPAmountsValidator.deploy(registry.address)).deployed();
 
 
-		await governance.payToUpdate(TREASURY.address);
+		await governance.payToUpdate(treasury.address);
 		await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
 	});
 });

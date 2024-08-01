@@ -2,7 +2,7 @@ const { ethers } = require("hardhat");
 
 
 import { expect } from "chai";
-import { Contract, ContractFactory } from "ethers";
+import { Contract, ContractFactory, VoidSigner } from "ethers";
 
 import { ERROR, PERCENT } from "../const";
 
@@ -21,6 +21,11 @@ describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
 	let mockERC20B: Contract;
 	let mockERC20C: Contract;
 
+	let owner: VoidSigner;
+	let manager: VoidSigner;
+	let treasury: VoidSigner;
+	let badActor: VoidSigner;
+
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
 		/**
@@ -33,7 +38,7 @@ describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
 		* 6) Deploy a Strategy Utility contract
 		* 7) Register the Strategy Utility contract on the Registry contract
 		*/
-		const [OWNER, MANAGER, TREASURY] = await ethers.getSigners();
+		[owner, manager, treasury, badActor] = await ethers.getSigners();
 
 
 		const YieldSyncGovernance: ContractFactory = await ethers.getContractFactory("YieldSyncGovernance");
@@ -50,7 +55,7 @@ describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
 		// Core contracts
 		governance = await (await YieldSyncGovernance.deploy()).deployed();
 
-		await governance.payToUpdate(TREASURY.address);
+		await governance.payToUpdate(treasury.address);
 
 		arrayUtility = await (await V1EMPArrayUtility.deploy()).deployed();
 
@@ -77,9 +82,9 @@ describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
 		* @notice The owner has to be registered as the EMP deployer so that it can authorize itself as an EMP to access the
 		* functions available on the strategy.
 		*/
-		await registry.v1EMPAmountsValidatorUpdate(OWNER.address);
-		await registry.v1EMPDeployerUpdate(OWNER.address);
-		await registry.v1EMPRegister(OWNER.address);
+		await registry.v1EMPAmountsValidatorUpdate(owner.address);
+		await registry.v1EMPDeployerUpdate(owner.address);
+		await registry.v1EMPRegister(owner.address);
 
 
 		// Set EMP Strategy Deployer on registry
@@ -97,26 +102,20 @@ describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
 
 	describe("function managerUpdate()", async () => {
 		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
-			const [, ADDR_1] = await ethers.getSigners();
-
-			await expect(strategy.connect(ADDR_1).managerUpdate(ADDR_1.address)).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
+			await expect(strategy.connect(badActor).managerUpdate(badActor.address)).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
 		});
 
 		it("Should allow manager to be changed..", async () => {
-			const [, ADDR_1] = await ethers.getSigners();
+			await expect(strategy.managerUpdate(manager.address)).to.be.not.rejected;
 
-			await expect(strategy.managerUpdate(ADDR_1.address)).to.be.not.rejected;
-
-			expect(await strategy.manager()).to.be.equal(ADDR_1.address);
+			expect(await strategy.manager()).to.be.equal(manager.address);
 		});
 	});
 
 	describe("function utilizedERC20Update()", async () => {
 		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
-			const [, ADDR_1] = await ethers.getSigners();
-
 			await expect(
-				strategy.connect(ADDR_1).utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]])
+				strategy.connect(badActor).utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]])
 			).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
 		});
 
@@ -151,8 +150,6 @@ describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
 		});
 
 		it("Should revert when INVALID allocation passed..", async () => {
-			const [OWNER] = await ethers.getSigners();
-
 			const INVALID_ALLOCATION: StrategyUtilizedERC20Update[] = [
 				{
 					utilizedERC20: [mockERC20A.address],
@@ -189,7 +186,7 @@ describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
 				// Deploy a temporary contract
 				const _YSS = await (
 					await (await ethers.getContractFactory("V1EMPStrategy")).deploy(
-						OWNER.address,
+						owner.address,
 						registry.address,
 						"Exampe",
 						"EX"
@@ -205,8 +202,6 @@ describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
 		});
 
 		it("Should not revert when VALID allocation passed..", async () => {
-			const [OWNER] = await ethers.getSigners();
-
 			const VALID_INPUTS: StrategyUtilizedERC20Update[] = [
 				{
 					utilizedERC20: [mockERC20A.address],
@@ -233,7 +228,7 @@ describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
 
 				const _YSS = await (
 					await (await ethers.getContractFactory("V1EMPStrategy")).deploy(
-						OWNER.address,
+						owner.address,
 						registry.address,
 						"Exampe",
 						"EX"
@@ -269,13 +264,11 @@ describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
 		it(
 			"[auth] Should revert when unauthorized msg.sender calls..",
 			async () => {
-				const [, ADDR_1] = await ethers.getSigners();
-
 				await expect(
-					strategy.connect(ADDR_1).iV1EMPStrategyInteractorUpdate(
-						strategyInteractor.address
-					)
-				).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
+					strategy.connect(badActor).iV1EMPStrategyInteractorUpdate(strategyInteractor.address)
+				).to.be.rejectedWith(
+					ERROR.NOT_AUTHORIZED
+				);
 			}
 		);
 
@@ -284,18 +277,16 @@ describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
 			async () => {
 				await strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
 
-				expect(await strategy.iV1EMPStrategyInteractor()).to.be.equal(
-					strategyInteractor.address
-				);
+				expect(await strategy.iV1EMPStrategyInteractor()).to.be.equal(strategyInteractor.address);
 			}
 		);
 	});
 
 	describe("function utilizedERC20DepositOpenToggle()", async () => {
 		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
-			const [, ADDR_1] = await ethers.getSigners();
-
-			await expect(strategy.connect(ADDR_1).utilizedERC20DepositOpenToggle()).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
+			await expect(strategy.connect(badActor).utilizedERC20DepositOpenToggle()).to.be.rejectedWith(
+				ERROR.NOT_AUTHORIZED
+			);
 		});
 
 		it("[modifier] Should revert if Strategy Interactor is not set..", async () => {
@@ -319,10 +310,8 @@ describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
 
 	describe("function utilizedERC20WithdrawOpenToggle()", async () => {
 		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
-			const [, ADDR_1] = await ethers.getSigners();
-
 			await expect(
-				strategy.connect(ADDR_1).utilizedERC20WithdrawOpenToggle()
+				strategy.connect(badActor).utilizedERC20WithdrawOpenToggle()
 			).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
 		});
 

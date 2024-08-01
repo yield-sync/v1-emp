@@ -2,7 +2,7 @@ const { ethers } = require("hardhat");
 
 
 import { expect } from "chai";
-import { Contract, ContractFactory } from "ethers";
+import { Contract, ContractFactory, VoidSigner } from "ethers";
 
 
 describe("[6.0] V1EMPDeployer.sol - Setup", async () => {
@@ -11,6 +11,10 @@ describe("[6.0] V1EMPDeployer.sol - Setup", async () => {
 	let governance: Contract;
 	let registry: Contract;
 
+	let owner: VoidSigner;
+	let manager: VoidSigner;
+	let treasury: VoidSigner;
+
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
 		/**
@@ -18,7 +22,7 @@ describe("[6.0] V1EMPDeployer.sol - Setup", async () => {
 		* 1) Deploy a registry
 		* 2) deploys an EMP Deployer and registers it on the registry
 		*/
-		const [OWNER, MANAGER, TREASURY] = await ethers.getSigners();
+		[owner, manager, treasury] = await ethers.getSigners();
 
 		const V1EMPArrayUtility: ContractFactory = await ethers.getContractFactory("V1EMPArrayUtility");
 		const YieldSyncGovernance: ContractFactory = await ethers.getContractFactory("YieldSyncGovernance");
@@ -34,7 +38,7 @@ describe("[6.0] V1EMPDeployer.sol - Setup", async () => {
 		empDeployer = await (await V1EMPDeployer.deploy(registry.address)).deployed();
 
 		// Set Treasury
-		await expect(governance.payToUpdate(TREASURY.address)).to.be.not.rejected;
+		await expect(governance.payToUpdate(treasury.address)).to.be.not.rejected;
 
 		await registry.v1EMPAmountsValidatorUpdate(arrayUtility.address);
 
