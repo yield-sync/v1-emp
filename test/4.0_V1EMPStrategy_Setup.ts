@@ -261,6 +261,13 @@ describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
 	});
 
 	describe("function iV1EMPStrategyInteractorUpdate() (Part 1)", async () => {
+
+		/**
+		 * @notice
+		 * This is split up because the next tests for Deposits/Withdrawals toggle functions is dependant on the SI to be
+		 * set. Part 2 is dependant the Deposits/Withdrawals toggle to be functional.
+		*/
+
 		it(
 			"[auth] Should revert when unauthorized msg.sender calls..",
 			async () => {
