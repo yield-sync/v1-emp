@@ -10,7 +10,6 @@ describe("[2.0] V1EMPAmountsValidator.sol", async () => {
 	let arrayUtility: Contract;
 	let governance: Contract;
 	let registry: Contract;
-	let strategyUtility: Contract;
 	let amountsValidator: Contract;
 
 	let treasury: VoidSigner;

@@ -45,9 +45,7 @@ describe("[3.0] V1EMPStrategyDeployer.sol", async () => {
 
 		await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
 
-		strategyDeployer = await (
-			await V1EMPStrategyDeployer.deploy(registry.address)
-		).deployed();
+		strategyDeployer = await (await V1EMPStrategyDeployer.deploy(registry.address)).deployed();
 
 		// Set the Strategy Deployer
 		await registry.v1EMPStrategyDeployerUpdate(strategyDeployer.address);
@@ -55,13 +53,9 @@ describe("[3.0] V1EMPStrategyDeployer.sol", async () => {
 
 	describe("function v1EMPDeployerUpdate()", async () => {
 		it("Should be able to deploy a strategy..", async () => {
-			await expect(
-				strategyDeployer.deployV1EMPStrategy("Strategy Name", "S")
-			).to.be.not.rejected;
+			await expect(strategyDeployer.deployV1EMPStrategy("Strategy Name", "S")).to.be.not.rejected;
 
-			expect(await registry.v1EMPStrategyId_v1EMPStrategy(1)).to.be.not.equal(
-				ethers.constants.AddressZero
-			);
+			expect(await registry.v1EMPStrategyId_v1EMPStrategy(1)).to.be.not.equal(ethers.constants.AddressZero);
 		});
 	});
 });
