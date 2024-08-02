@@ -314,7 +314,7 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 	});
 
 
-	describe("function utilizedERC20Withdraw() (1/2)", async () => {
+	describe("function utilizedERC20Withdraw() (1/2) - Full Withdrawals Disabled", async () => {
 		beforeEach(async () => {
 			await eMP.utilizedV1EMPStrategyWithdraw([
 				await strategies[0].contract.balanceOf(eMP.address),
@@ -417,7 +417,7 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 		});
 	});
 
-	describe("function utilizedERC20Withdraw() (2/2) - Full Withdrawal", async () => {
+	describe("function utilizedERC20Withdraw() (2/2) - Full Withdrawals Enabled", async () => {
 		describe("Invalid", async () => {
 			it("Should fail to withdraw tokens from stragegy if utilizedERC20WithdrawFull is not toggled true..", async () => {
 				const OWNER_EMP_BALANCE = await eMP.balanceOf(owner.address);
