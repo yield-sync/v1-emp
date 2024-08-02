@@ -119,7 +119,7 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 		* EMP
 		*/
 		// Deploy an EMP
-		await eMPDeployer.deployV1EMP("EMP Name", "EMP");
+		await eMPDeployer.deployV1EMP(false, "EMP Name", "EMP");
 
 		// Verify that a EMP has been registered
 		expect(await registry.v1EMPId_v1EMP(1)).to.be.not.equal(ethers.constants.AddressZero);

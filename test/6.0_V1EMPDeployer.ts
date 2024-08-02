@@ -49,7 +49,7 @@ describe("[6.0] V1EMPDeployer.sol - Setup", async () => {
 	describe("Setup process", async () => {
 		it("Should initialize the contract correctly", async () => {
 			// Deploy an EMP
-			await expect(empDeployer.deployV1EMP("EMP Name", "EMP")).to.be.not.rejected;
+			await expect(empDeployer.deployV1EMP(false, "EMP Name", "EMP")).to.be.not.rejected;
 
 			// Verify that a EMP Strategy has been registered
 			expect(await registry.v1EMPId_v1EMP(1)).to.be.not.equal(ethers.constants.AddressZero);

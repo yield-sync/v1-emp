@@ -8,7 +8,7 @@ interface IV1EMPDeployer
 	* @param _name {string}
 	* @param _symbol {string}
 	*/
-	function deployV1EMP(string memory _name, string memory _symbol)
+	function deployV1EMP(bool _utilizedERC20WithdrawFull, string memory _name, string memory _symbol)
 		external
 		returns (address v1EMP_)
 	;

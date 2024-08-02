@@ -63,17 +63,23 @@ contract V1EMP is
 	{}
 
 
-	constructor (address _manager, address _v1EMPRegistry, string memory _name, string memory _symbol)
+	constructor (
+		address _manager,
+		address _v1EMPRegistry,
+		bool _utilizedERC20WithdrawFull,
+		string memory _name,
+		string memory _symbol
+	)
 		ERC20(_name, _symbol)
 	{
 		utilizedERC20DepositOpen = false;
-		utilizedERC20WithdrawFull = false;
 		utilizedERC20WithdrawOpen = false;
-
-		manager = _manager;
 
 		feeRateGovernance = 0;
 		feeRateManager = 0;
+
+		manager = _manager;
+		utilizedERC20WithdrawFull = _utilizedERC20WithdrawFull;
 
 		I_V1_EMP_REGISTRY = IV1EMPRegistry(_v1EMPRegistry);
 		I_V1_EMP_ARRAY_UTILITY = IV1EMPArrayUtility(I_V1_EMP_REGISTRY.v1EMPArrayUtility());
