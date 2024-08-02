@@ -260,7 +260,7 @@ contract V1EMPStrategy is
 			iV1EMPStrategyInteractor.utilizedERC20Deposit(_from, _utilizedERC20[i], _utilizedERC20Amount[i]);
 		}
 
-		_mint(msg.sender, utilizedERC20AmountETHValueTotal_);
+		_mint(_from, utilizedERC20AmountETHValueTotal_);
 	}
 
 	/// @inheritdoc IV1EMPStrategy
