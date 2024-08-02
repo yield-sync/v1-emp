@@ -455,7 +455,7 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 				const s2Balance = await strategies[1].contract.balanceOf(eMP.address);
 
 				// Withdraw only partial balanceOf EMP
-				await eMP.utilizedV1EMPStrategyWithdraw([s1Balance.div(2), s2Balance.div(2)])
+				await eMP.utilizedV1EMPStrategyWithdraw([s1Balance.div(24), s2Balance.div(13)])
 
 				// Expect that the owner address received something
 				expect(await eMP.balanceOf(owner.address)).to.be.greaterThan(0);
