@@ -5,10 +5,10 @@ pragma solidity ^0.8.18;
 import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 import { IV1EMP } from "./interface/IV1EMP.sol";
+import { IV1EMPAmountsValidator } from "./interface/IV1EMPAmountsValidator.sol";
 import { IV1EMPETHValueFeed } from "./interface/IV1EMPETHValueFeed.sol";
 import { IV1EMPRegistry } from "./interface/IV1EMPRegistry.sol";
 import { IV1EMPStrategy } from "./interface/IV1EMPStrategy.sol";
-import { IV1EMPAmountsValidator } from "./interface/IV1EMPAmountsValidator.sol";
 
 
 contract V1EMPAmountsValidator is
