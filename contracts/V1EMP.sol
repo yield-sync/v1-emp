@@ -51,6 +51,7 @@ contract V1EMP is
 
 	mapping (address v1EMPStrategy => uint256 utilizedERC20UpdateTracker) public v1EMPStrategy_utilizedERC20UpdateTracker;
 
+
 	receive ()
 		external
 		payable
