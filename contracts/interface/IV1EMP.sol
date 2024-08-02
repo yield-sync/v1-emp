@@ -37,6 +37,17 @@ interface IV1EMP is
 
 	/**
 	* @dev [view-boolean]
+	* @notice Utilized ERC20 Withdraw Full
+	* @return {bool}
+	*/
+	function utilizedERC20WithdrawFull()
+		external
+		view
+		returns (bool)
+	;
+
+	/**
+	* @dev [view-boolean]
 	* @notice Utilized ERC20 Withdraw Open
 	* @return {bool}
 	*/
@@ -237,6 +248,13 @@ interface IV1EMP is
 	* @notice
 	*/
 	function utilizedERC20Withdraw(uint256 _eRC20Amount)
+		external
+	;
+
+	/**
+	* @notice Utilized ERC20 Withdraw Full Toggle
+	*/
+	function utilizedERC20WithdrawFullToggle()
 		external
 	;
 

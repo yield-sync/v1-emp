@@ -31,6 +31,7 @@ contract V1EMP is
 	address[] internal _utilizedV1EMPStrategy;
 
 	bool public override utilizedERC20DepositOpen;
+	bool public override utilizedERC20WithdrawFull;
 	bool public override utilizedERC20WithdrawOpen;
 
 	uint256 public constant override INITIAL_MINT_RATE = 100;
@@ -66,6 +67,7 @@ contract V1EMP is
 		ERC20(_name, _symbol)
 	{
 		utilizedERC20DepositOpen = false;
+		utilizedERC20WithdrawFull = false;
 		utilizedERC20WithdrawOpen = false;
 
 		manager = _manager;
@@ -356,23 +358,66 @@ contract V1EMP is
 
 		require(balanceOf(msg.sender) >= _eRC20Amount, "!(balanceOf(msg.sender) >= _eRC20Amount)");
 
+		bool utilizedERC20Available = true;
+
 		uint256[] memory _utilizedERC20TotalAmount = utilizedERC20TotalAmount();
+
+		uint256[] memory transferAmount = new uint256[](_utilizedERC20.length);
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
-			uint256 transferAmount = _utilizedERC20TotalAmount[i].mul(1e18).div(totalSupply(), "!computed").mul(_eRC20Amount).div(
+			transferAmount[i] = _utilizedERC20TotalAmount[i].mul(1e18).div(totalSupply(), "!computed").mul(_eRC20Amount).div(
 				1e18
 			);
 
-			require(
-				IERC20(_utilizedERC20[i]).balanceOf(address(this)) >= transferAmount,
-				"IERC20(_utilizedERC20[i]).balanceOf(address(this)) >= transferAmount"
-			);
+			if (IERC20(_utilizedERC20[i]).balanceOf(address(this)) < transferAmount[i])
+			{
+				utilizedERC20Available = false;
+			}
+		}
 
-			transfer(msg.sender, transferAmount);
+		if (utilizedERC20Available)
+		{
+			for (uint256 i = 0; i < _utilizedERC20.length; i++)
+			{
+				transfer(msg.sender, transferAmount[i]);
+			}
+		}
+		else
+		{
+			if (utilizedERC20WithdrawFull)
+			{
+				uint256[] memory v1EMPStrategyERC20Amount = new uint256[](_utilizedV1EMPStrategy.length);
+
+				uint256 _eRC20AmountPercentOfTotalSupply = _eRC20Amount.mul(1e18).div(totalSupply());
+
+				for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
+				{
+					v1EMPStrategyERC20Amount[i] = _eRC20AmountPercentOfTotalSupply.mul(
+						IERC20(_utilizedV1EMPStrategy[i]).balanceOf(address(this))
+					).div(
+						1e18
+					);
+				}
+
+				utilizedV1EMPStrategyWithdraw(v1EMPStrategyERC20Amount);
+			}
+			else
+			{
+				revert("!(utilizedERC20Available)");
+			}
 		}
 
 		_burn(msg.sender, _eRC20Amount);
+	}
+
+	/// @inheritdoc IV1EMP
+	function utilizedERC20WithdrawFullToggle()
+		public
+		override
+		authGovernanceOrManager()
+	{
+		utilizedERC20WithdrawFull = !utilizedERC20WithdrawFull;
 	}
 
 	/// @inheritdoc IV1EMP
@@ -454,7 +499,10 @@ contract V1EMP is
 
 		for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
 		{
-			IV1EMPStrategy(_utilizedV1EMPStrategy[i]).utilizedERC20Withdraw(_v1EMPStrategyERC20Amount[i]);
+			if (_v1EMPStrategyERC20Amount[i] > 0)
+			{
+				IV1EMPStrategy(_utilizedV1EMPStrategy[i]).utilizedERC20Withdraw(_v1EMPStrategyERC20Amount[i]);
+			}
 		}
 	}
 }

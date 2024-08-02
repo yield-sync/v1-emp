@@ -64,6 +64,9 @@ export const ERROR = {
 		INVALID:
 			"!valid"
 		,
+		UTILIZED_ERC20_NOT_AVAILABLE:
+			"!(utilizedERC20Available)"
+		,
 	},
 	STRATEGY: {
 		DEPOSIT_NOT_OPEN:
