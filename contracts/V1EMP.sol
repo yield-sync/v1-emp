@@ -31,6 +31,7 @@ contract V1EMP is
 	address[] internal _utilizedV1EMPStrategy;
 
 	bool public override utilizedERC20DepositOpen;
+	bool public override utilizedERC20WithdrawFull;
 	bool public override utilizedERC20WithdrawOpen;
 
 	uint256 public constant override INITIAL_MINT_RATE = 100;
@@ -66,6 +67,7 @@ contract V1EMP is
 		ERC20(_name, _symbol)
 	{
 		utilizedERC20DepositOpen = false;
+		utilizedERC20WithdrawFull = false;
 		utilizedERC20WithdrawOpen = false;
 
 		manager = _manager;
@@ -383,13 +385,39 @@ contract V1EMP is
 		}
 		else
 		{
-			/*
-			* Burn amount required to fufill the transfer. This can be the percent that _eRC20Amount is to the holdings of
-			* the strategy contract tokens
-			*/
+			if (utilizedERC20WithdrawFull)
+			{
+				uint256[] memory v1EMPStrategyERC20Amount = new uint256[](_utilizedV1EMPStrategy.length);
+
+				uint256 _eRC20AmountPercentOfTotalSupply = _eRC20Amount.mul(1e18).div(totalSupply());
+
+				for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
+				{
+					v1EMPStrategyERC20Amount[i] = _eRC20AmountPercentOfTotalSupply.mul(
+						IERC20(_utilizedV1EMPStrategy[i]).balanceOf(address(this))
+					).div(
+						1e18
+					);
+				}
+
+				utilizedV1EMPStrategyWithdraw(v1EMPStrategyERC20Amount);
+			}
+			else
+			{
+				revert("!(utilizedERC20Available)");
+			}
 		}
 
 		_burn(msg.sender, _eRC20Amount);
+	}
+
+	/// @inheritdoc IV1EMP
+	function utilizedERC20WithdrawFullToggle()
+		public
+		override
+		authGovernanceOrManager()
+	{
+		utilizedERC20WithdrawFull = !utilizedERC20WithdrawFull;
 	}
 
 	/// @inheritdoc IV1EMP
@@ -471,7 +499,10 @@ contract V1EMP is
 
 		for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
 		{
-			IV1EMPStrategy(_utilizedV1EMPStrategy[i]).utilizedERC20Withdraw(_v1EMPStrategyERC20Amount[i]);
+			if (_v1EMPStrategyERC20Amount[i] > 0)
+			{
+				IV1EMPStrategy(_utilizedV1EMPStrategy[i]).utilizedERC20Withdraw(_v1EMPStrategyERC20Amount[i]);
+			}
 		}
 	}
 }
