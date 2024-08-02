@@ -43,9 +43,9 @@ contract V1EMPRegistry is
 	{}
 
 
-	constructor (address governance)
+	constructor (address _governance)
 	{
-		GOVERNANCE = governance;
+		GOVERNANCE = _governance;
 
 		eMPIdTracker = 0;
 		eMPStrategyIdTracker = 0;
