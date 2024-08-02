@@ -99,9 +99,7 @@ describe("[4.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 		await strategyDeployer.deployV1EMPStrategy("Strategy", "S");
 
 		// Attach the deployed V1EMPStrategy address
-		strategy = await V1EMPStrategy.attach(
-			String(await registry.v1EMPStrategyId_v1EMPStrategy(1))
-		);
+		strategy = await V1EMPStrategy.attach(String(await registry.v1EMPStrategyId_v1EMPStrategy(1)));
 
 		strategyTransferUtil = new StrategyTransferUtil(strategy, registry);
 	});
@@ -125,9 +123,7 @@ describe("[4.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 
 				await strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
 
-				await expect(
-					strategy.connect(badActor).utilizedERC20Deposit(badActor.address, [])
-				).to.be.rejectedWith(
+				await expect(strategy.connect(badActor).utilizedERC20Deposit(badActor.address, [])).to.be.rejectedWith(
 					ERROR.NOT_AUTHORIZED
 				);
 			});
@@ -178,9 +174,7 @@ describe("[4.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 
 				const DEPOSIT_AMOUNT: BigNumber = ethers.utils.parseUnits("1", 18);
 
-				await expect(
-					strategy.utilizedERC20Deposit(owner.address, [DEPOSIT_AMOUNT])
-				).to.be.rejectedWith(
+				await expect(strategy.utilizedERC20Deposit(owner.address, [DEPOSIT_AMOUNT])).to.be.rejectedWith(
 					ERROR.NOT_COMPUTED
 				);
 			});
@@ -267,9 +261,7 @@ describe("[4.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 					await mockERC20A.approve(strategyInteractor.address, DEPOSIT_AMOUNT);
 
 					// DEPOSIT - ERC20 tokens into the strategy
-					await expect(
-						strategy.utilizedERC20Deposit(owner.address, [DEPOSIT_AMOUNT])
-					).to.be.not.rejected;
+					await expect(strategy.utilizedERC20Deposit(owner.address, [DEPOSIT_AMOUNT])).to.be.not.rejected;
 
 					const { totalEthValue } = await strategyTransferUtil.valueOfERC20Deposits([DEPOSIT_AMOUNT]);
 
@@ -371,9 +363,7 @@ describe("[4.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 						}
 
 						// [main-test] Deposit ERC20 tokens into the strategy
-						await expect(
-							strategy.utilizedERC20Deposit(owner.address, DEPOSIT_AMOUNTS)
-						).to.be.not.rejected;
+						await expect(strategy.utilizedERC20Deposit(owner.address, DEPOSIT_AMOUNTS)).to.be.not.rejected;
 
 						for (let i: number = 0; i < utilizedERC20.length; i++)
 						{
@@ -404,9 +394,7 @@ describe("[4.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 						}
 
 						// [main-test] Deposit ERC20 tokens into the strategy
-						await expect(
-							strategy.utilizedERC20Deposit(owner.address, DEPOSIT_AMOUNTS)
-						).to.be.not.rejected;
+						await expect(strategy.utilizedERC20Deposit(owner.address, DEPOSIT_AMOUNTS)).to.be.not.rejected;
 
 						// Get current supply
 						const TOTAL_SUPPLY_STRATEGY: BigNumber = await strategy.totalSupply();
@@ -496,9 +484,7 @@ describe("[4.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 							const IERC20 = await ethers.getContractAt(LOCATION_IERC20, utilizedERC20[i]);
 
 							// [main-test] Check balances of Utilized ERC20 tokens
-							expect(await IERC20.balanceOf(strategyInteractor.address)).to.be.equal(
-								depositAmounts[i]
-							)
+							expect(await IERC20.balanceOf(strategyInteractor.address)).to.be.equal(depositAmounts[i]);
 						}
 					});
 

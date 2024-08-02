@@ -116,7 +116,9 @@ describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
 		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
 			await expect(
 				strategy.connect(badActor).utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]])
-			).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
+			).to.be.rejectedWith(
+				ERROR.NOT_AUTHORIZED
+			);
 		});
 
 		it("Should revert if different lengths for __utilizedERC20 and _utilizationERC2 passed..", async () => {
@@ -359,9 +361,9 @@ describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
 
 			expect(await strategy.utilizedERC20DepositOpen()).to.be.true;
 
-			await expect(
-				strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address)
-			).to.be.rejectedWith(ERROR.STRATEGY.UTILIZED_ERC20_TRANSFERS_OPEN);
+			await expect(strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address)).to.be.rejectedWith(
+				ERROR.STRATEGY.UTILIZED_ERC20_TRANSFERS_OPEN
+			);
 		});
 
 		it("Should not be able to set iV1EMPStrategyInteractor when utilizedERC20WithdrawOpen is true..", async () => {
@@ -369,9 +371,9 @@ describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
 
 			expect(await strategy.utilizedERC20WithdrawOpen()).to.be.true;
 
-			await expect(
-				strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address)
-			).to.be.rejectedWith(ERROR.STRATEGY.UTILIZED_ERC20_TRANSFERS_OPEN);
+			await expect(strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address)).to.be.rejectedWith(
+				ERROR.STRATEGY.UTILIZED_ERC20_TRANSFERS_OPEN
+			);
 		});
 	});
 });

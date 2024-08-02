@@ -23,8 +23,8 @@ describe("[2.0] V1EMPAmountsValidator.sol", async () => {
 		* 3) Deploy an Array Utility contract
 		* 4) Deploy a Registry contract
 		* 5) Register the Array Utility contract on the Registry contract
-		* 6) Deploy a Strategy Utility contract
-		* 7) Register the Strategy Utility contract on the Registry contract
+		* 6) Deploy a Amount Validator
+		* 7) Attach to local variable
 		*/
 		[, , treasury] = await ethers.getSigners();
 

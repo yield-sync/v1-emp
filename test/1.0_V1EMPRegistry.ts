@@ -78,9 +78,9 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 
 			await registry.v1EMPAmountsValidatorUpdate(owner.address);
 
-			await expect(
-				registry.connect(manager).v1EMPDeployerUpdate(owner.address)
-			).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
+			await expect(registry.connect(manager).v1EMPDeployerUpdate(owner.address)).to.be.rejectedWith(
+				ERROR.NOT_AUTHORIZED
+			);
 		});
 
 		it("Should not allow to set the EMP Deployer until the EMP Utility is set..", async () => {
@@ -132,9 +132,9 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
 			await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
 
-			await expect(
-				registry.connect(manager).v1EMPStrategyDeployerUpdate(manager.address)
-			).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
+			await expect(registry.connect(manager).v1EMPStrategyDeployerUpdate(manager.address)).to.be.rejectedWith(
+				ERROR.NOT_AUTHORIZED
+			);
 		});
 
 		it("Should allow authorized caller to update EMP Strategy Deployer..", async () => {
@@ -168,9 +168,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 
 			expect(v1EMPStrategyId).to.be.greaterThan(0);
 
-			expect(await registry.v1EMPStrategyId_v1EMPStrategy(v1EMPStrategyId)).to.be.equal(
-				owner.address
-			);
+			expect(await registry.v1EMPStrategyId_v1EMPStrategy(v1EMPStrategyId)).to.be.equal(owner.address);
 		});
 	});
 
