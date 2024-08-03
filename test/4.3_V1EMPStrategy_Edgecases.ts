@@ -11,7 +11,7 @@ import StrategyTransferUtil from "../scripts/StrategyTransferUtil";
 const LOCATION_IERC20: string = "@openzeppelin/contracts/token/ERC20/IERC20.sol:IERC20";
 
 
-describe("[4.3] V1EMPStrategy.sol - Scenarios", async () => {
+describe("[4.3] V1EMPStrategy.sol - Edgecases", async () => {
 	let arrayUtility: Contract;
 	let governance: Contract;
 	let eTHValueFeed: Contract;
