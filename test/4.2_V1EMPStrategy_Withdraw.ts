@@ -49,7 +49,7 @@ describe("[4.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 		* reordred when setup. The strategyUtil will return the deposit amounts in the order of the what the conctract
 		* returns for the Utilized ERC20s
 		*/
-		[owner, manager, treasury] = await ethers.getSigners();
+		[owner, manager, treasury, badActor] = await ethers.getSigners();
 
 
 		const YieldSyncGovernance: ContractFactory = await ethers.getContractFactory("YieldSyncGovernance");
@@ -105,9 +105,7 @@ describe("[4.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 		await strategyDeployer.deployV1EMPStrategy("Strategy", "S");
 
 		// Attach the deployed V1EMPStrategy address
-		strategy = await V1EMPStrategy.attach(
-			String(await registry.v1EMPStrategyId_v1EMPStrategy(1))
-		);
+		strategy = await V1EMPStrategy.attach(String(await registry.v1EMPStrategyId_v1EMPStrategy(1)));
 
 		strategyTransferUtil = new StrategyTransferUtil(strategy, registry);
 	});
@@ -142,6 +140,17 @@ describe("[4.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 				await expect(strategy.utilizedERC20Withdraw(0)).to.be.rejectedWith(
 					ERROR.STRATEGY.INTERACTOR_NOT_SET
 				);
+			});
+
+			it("[modifier][auth] Should only allow mocked EMP (owner address) to call fn..", async () => {
+				/**
+				* @notice
+				* In this test suite the OWNER address is mocked to be an EMP
+				*/
+
+				await strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
+
+				await expect(strategy.connect(badActor).utilizedERC20Withdraw(0)).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
 			});
 		});
 

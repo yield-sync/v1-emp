@@ -106,9 +106,7 @@ describe("[4.3] V1EMPStrategy.sol - Edgecases", async () => {
 		await strategyDeployer.deployV1EMPStrategy("Strategy", "S");
 
 		// Attach the deployed V1EMPStrategy address
-		strategy = await V1EMPStrategy.attach(
-			String(await registry.v1EMPStrategyId_v1EMPStrategy(1))
-		);
+		strategy = await V1EMPStrategy.attach(String(await registry.v1EMPStrategyId_v1EMPStrategy(1)));
 
 		// Set the Strategy Interactor
 		await strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
