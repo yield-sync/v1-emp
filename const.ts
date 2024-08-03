@@ -117,6 +117,8 @@ export const ERROR = {
 export const PERCENT = {
 	HUNDRED: ethers.utils.parseUnits('1', 18),
 	FIFTY: ethers.utils.parseUnits('.5', 18),
+	FORTY: ethers.utils.parseUnits('.4', 18),
+	TEN: ethers.utils.parseUnits('.1', 18),
 	TWENTY_FIVE: ethers.utils.parseUnits('.25', 18),
 	SEVENTY_FIVE: ethers.utils.parseUnits('.75', 18),
 	ZERO: ethers.utils.parseUnits('0', 18),

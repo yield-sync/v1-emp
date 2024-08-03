@@ -23,6 +23,8 @@ describe("[4.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;
+	let mockERC20C: Contract;
+	let mockERC20D: Contract;
 
 	let strategyTransferUtil: StrategyTransferUtil;
 
@@ -75,11 +77,15 @@ describe("[4.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 
 		mockERC20A = await (await MockERC20.deploy("Mock A", "A")).deployed();
 		mockERC20B = await (await MockERC20.deploy("Mock B", "B")).deployed();
+		mockERC20C = await (await MockERC20.deploy("Mock C", "C")).deployed();
+		mockERC20D = await (await MockERC20.deploy("Mock D", "D")).deployed();
 
 		eTHValueFeed = await (await ETHValueFeedDummy.deploy()).deployed();
 
 		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20A.address, eTHValueFeed.address);
 		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20B.address, eTHValueFeed.address);
+		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20C.address, eTHValueFeed.address);
+		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20D.address, eTHValueFeed.address);
 
 		strategyInteractor = await (await StrategyInteractorDummy.deploy()).deployed();
 
@@ -291,15 +297,25 @@ describe("[4.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 			});
 		});
 
-		describe("[MULTIPLE ERC20] - 75/25", async () => {
+		describe("[MULTIPLE ERC20] - A 40%, B 25%, C 25%, D 10%", async () => {
 			beforeEach(async () => {
 				// Set strategy ERC20 tokens
 				b4TotalSupplyStrategy = await strategy.totalSupply();
 
 				// Snapshot Total Supply
 				await strategy.utilizedERC20Update(
-					[mockERC20A.address, mockERC20B.address],
-					[[true, true, PERCENT.SEVENTY_FIVE], [true, true, PERCENT.TWENTY_FIVE]]
+					[
+						mockERC20A.address,
+						mockERC20B.address,
+						mockERC20C.address,
+						mockERC20D.address,
+					],
+					[
+						[true, true, PERCENT.FORTY],
+						[true, true, PERCENT.TWENTY_FIVE],
+						[true, true, PERCENT.TWENTY_FIVE],
+						[true, true, PERCENT.TEN],
+					]
 				);
 
 				// Capture utilized ERC20
@@ -315,16 +331,25 @@ describe("[4.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 
 			describe("Invalid", async () => {
 				it("Should revert if invalid utilizedERC20Amounts passed..", async () => {
-					const INVALID_DEPOSIT_AMOUNT_A: BigNumber = ethers.utils.parseUnits(".5", 18);
-					const INVALID_DEPOSIT_AMOUNT_B: BigNumber = ethers.utils.parseUnits(".25", 18);
+					const INVALID_DEPOSIT_AMOUNT: BigNumber = ethers.utils.parseUnits(".5", 18);
 
 					// APPROVE - SI contract to spend tokens on behalf of owner
-					await mockERC20A.approve(strategyInteractor.address, INVALID_DEPOSIT_AMOUNT_A);
-					await mockERC20B.approve(strategyInteractor.address, INVALID_DEPOSIT_AMOUNT_B);
+					await mockERC20A.approve(strategyInteractor.address, INVALID_DEPOSIT_AMOUNT);
+					await mockERC20B.approve(strategyInteractor.address, INVALID_DEPOSIT_AMOUNT);
+					await mockERC20C.approve(strategyInteractor.address, INVALID_DEPOSIT_AMOUNT);
+					await mockERC20D.approve(strategyInteractor.address, INVALID_DEPOSIT_AMOUNT);
 
 					// [main-test] Deposit ERC20 tokens into the strategy
 					await expect(
-						strategy.utilizedERC20Deposit(owner.address, [INVALID_DEPOSIT_AMOUNT_A, INVALID_DEPOSIT_AMOUNT_B])
+						strategy.utilizedERC20Deposit(
+							owner.address,
+							[
+								INVALID_DEPOSIT_AMOUNT,
+								INVALID_DEPOSIT_AMOUNT,
+								INVALID_DEPOSIT_AMOUNT,
+								INVALID_DEPOSIT_AMOUNT,
+							]
+						)
 					).to.be.rejectedWith(
 						ERROR.STRATEGY.INVALID_UTILIZED_ERC20_AMOUNT
 					);
@@ -364,7 +389,6 @@ describe("[4.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 				});
 
 				it("Should issue strategy ERC20 tokens upon utilized ERC20 deposit..", async () => {
-					// [calculate] YSS balance ETH Value = (a * p(a) / 1e18) + (b * p(b) / 1e18)
 					const { totalEthValue } = await strategyTransferUtil.valueOfERC20Deposits(depositAmounts);
 
 					// [main-test]

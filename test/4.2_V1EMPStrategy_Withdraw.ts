@@ -23,6 +23,8 @@ describe("[4.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;
+	let mockERC20C: Contract;
+	let mockERC20D: Contract;
 
 	let strategyTransferUtil: StrategyTransferUtil;
 
@@ -75,11 +77,15 @@ describe("[4.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 
 		mockERC20A = await (await MockERC20.deploy("Mock A", "A")).deployed();
 		mockERC20B = await (await MockERC20.deploy("Mock B", "B")).deployed();
+		mockERC20C = await (await MockERC20.deploy("Mock C", "C")).deployed();
+		mockERC20D = await (await MockERC20.deploy("Mock D", "D")).deployed();
 
 		eTHValueFeed = await (await ETHValueFeedDummy.deploy()).deployed();
 
 		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20A.address, eTHValueFeed.address);
 		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20B.address, eTHValueFeed.address);
+		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20C.address, eTHValueFeed.address);
+		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20D.address, eTHValueFeed.address);
 
 		strategyInteractor = await (await StrategyInteractorDummy.deploy()).deployed();
 
@@ -327,12 +333,22 @@ describe("[4.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 			});
 		});
 
-		describe("[MULTIPLE ERC20] - 75/25", async () => {
+		describe("[MULTIPLE ERC20] - A 40%, B 25%, C 25%, D 10%", async () => {
 			beforeEach(async () => {
 				// Set strategy ERC20 tokens
 				await strategy.utilizedERC20Update(
-					[mockERC20A.address, mockERC20B.address],
-					[[true, true, PERCENT.SEVENTY_FIVE], [true, true, PERCENT.TWENTY_FIVE]]
+					[
+						mockERC20A.address,
+						mockERC20B.address,
+						mockERC20C.address,
+						mockERC20D.address,
+					],
+					[
+						[true, true, PERCENT.FORTY],
+						[true, true, PERCENT.TWENTY_FIVE],
+						[true, true, PERCENT.TWENTY_FIVE],
+						[true, true, PERCENT.TEN],
+					]
 				);
 
 				// Set SI
