@@ -255,7 +255,7 @@ describe("[4.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 
 					// Expect that owner balance is the difference of the Strat supply increase
 					expect(await strategy.balanceOf(owner.address)).to.be.equal(
-						(await strategy.totalSupply()).sub(b4TotalSupplyStrategy)
+						totalSupplyStrategy.sub(b4TotalSupplyStrategy)
 					);
 
 					// Disable transfers
