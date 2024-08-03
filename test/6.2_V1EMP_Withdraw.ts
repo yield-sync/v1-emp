@@ -36,7 +36,7 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 	let owner: VoidSigner;
 	let manager: VoidSigner;
 	let treasury: VoidSigner;
-	let outsider: VoidSigner;
+	let badActor: VoidSigner;
 
 	let eMPDepositAmounts: UtilizedERC20Amount;
 
@@ -76,7 +76,7 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 		* 16) Open the withdrawals
 		*/
 
-		[owner, manager, treasury, outsider] = await ethers.getSigners();
+		[owner, manager, treasury, badActor] = await ethers.getSigners();
 
 		const YieldSyncGovernance: ContractFactory = await ethers.getContractFactory("YieldSyncGovernance");
 		const V1EMP: ContractFactory = await ethers.getContractFactory("V1EMP");
@@ -240,7 +240,7 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 
 	describe("function utilizedV1EMPStrategyWithdraw()", async () => {
 		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
-			await expect(eMP.connect(outsider).utilizedV1EMPStrategyWithdraw([])).to.be.rejectedWith(
+			await expect(eMP.connect(badActor).utilizedV1EMPStrategyWithdraw([])).to.be.rejectedWith(
 				ERROR.NOT_AUTHORIZED
 			);
 		});
@@ -320,6 +320,8 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 				await strategies[0].contract.balanceOf(eMP.address),
 				await strategies[1].contract.balanceOf(eMP.address),
 			])
+
+			expect(await eMP.utilizedERC20WithdrawFull()).to.be.false;
 		});
 
 
@@ -414,6 +416,21 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 
 				expect(eMPUtilizedERC20.length).to.be.equal(2);
 			});
+		});
+	});
+
+	describe("function utilizedERC20WithdrawFullToggle()", async () => {
+		it("[modifier][auth] Should revert when unauthorized msg.sender calls..", async () => {
+			await expect(eMP.connect(badActor).utilizedERC20WithdrawFullToggle()).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
+		});
+
+		it("Should toggle utilizedERC20WithdrawOpen..", async () => {
+
+			expect(await eMP.utilizedERC20WithdrawFull()).to.be.false;
+
+			await expect(eMP.utilizedERC20WithdrawFullToggle()).to.be.not.rejected;
+
+			expect(await eMP.utilizedERC20WithdrawFull()).to.be.true;
 		});
 	});
 
