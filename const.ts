@@ -78,9 +78,6 @@ export const ERROR = {
 		INVALID_ERC20_ALLOCATION_TOTAL:
 			"!(utilizedERC20AllocationTotal == ONE_HUNDRED_PERCENT)"
 		,
-		INVALID_AMOUNT_LENGTH:
-			"!(_utilizedERC20.length == _utilizedERC20Amount.length)"
-		,
 		INVALID_BALANCE:
 			"!(balanceOf(msg.sender) >= _eRC20Amount)"
 		,

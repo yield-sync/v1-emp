@@ -128,7 +128,7 @@ describe("[4.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 			b4BalanceMockBSI = await mockERC20B.balanceOf(strategyInteractor.address);
 		});
 
-		describe("Setup Tests", async () => {
+		describe("Modifier", async () => {
 			it("[modifier] Should revert if Strategy Interactor is not set..", async () => {
 				// Set strategy ERC20 tokens
 				await strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
@@ -137,7 +137,9 @@ describe("[4.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 					ERROR.STRATEGY.INTERACTOR_NOT_SET
 				);
 			});
+		});
 
+		describe("Invalid", async () => {
 			it("Should revert if withdrawals are not open..", async () => {
 				// Set strategy ERC20 tokens
 				await strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]])
@@ -187,235 +189,166 @@ describe("[4.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 				expect(await strategy.utilizedERC20WithdrawOpen()).to.be.true;
 			});
 
-			it("Should fail to process withdrawal if Strategy token balance is greater than owned..", async () => {
-				// Set deposit amount
-				const DEPOSIT_AMOUNT: BigNumber = ethers.utils.parseUnits("1", 18);
+			describe("Invalid", async () => {
+				it("Should fail to process withdrawal if Strategy token balance is greater than owned..", async () => {
+					// Set deposit amount
+					const DEPOSIT_AMOUNT: BigNumber = ethers.utils.parseUnits("1", 18);
 
-				// APPROVE - SI contract to spend tokens on behalf of owner
-				await mockERC20A.approve(strategyInteractor.address, DEPOSIT_AMOUNT);
+					// APPROVE - SI contract to spend tokens on behalf of owner
+					await mockERC20A.approve(strategyInteractor.address, DEPOSIT_AMOUNT);
 
-				// DEPOSIT - mockERC20A tokens into the strategy
-				await strategy.utilizedERC20Deposit(owner.address, [DEPOSIT_AMOUNT]);
+					// DEPOSIT - mockERC20A tokens into the strategy
+					await strategy.utilizedERC20Deposit(owner.address, [DEPOSIT_AMOUNT]);
 
-				// Expect that the balance remains less than original
-				expect(await mockERC20A.balanceOf(owner.address)).to.be.lessThan(b4BalanceMockAOwner);
+					// Expect that the balance remains less than original
+					expect(await mockERC20A.balanceOf(owner.address)).to.be.lessThan(b4BalanceMockAOwner);
 
-				// SI mock a balance should equal to deposit amount
-				expect(await mockERC20A.balanceOf(strategyInteractor.address)).to.be.equal(DEPOSIT_AMOUNT);
+					// SI mock a balance should equal to deposit amount
+					expect(await mockERC20A.balanceOf(strategyInteractor.address)).to.be.equal(DEPOSIT_AMOUNT);
 
-				// Get current Strategy ERC20 total supply
-				const TOTAL_SUPPLY_STRATEGY: BigNumber = await strategy.totalSupply();
+					// Get current Strategy ERC20 total supply
+					const TOTAL_SUPPLY_STRATEGY: BigNumber = await strategy.totalSupply();
 
-				// Expect that strategy total supply has increased
-				expect(TOTAL_SUPPLY_STRATEGY).to.be.greaterThan(b4TotalSupplyStrategy);
+					// Expect that strategy total supply has increased
+					expect(TOTAL_SUPPLY_STRATEGY).to.be.greaterThan(b4TotalSupplyStrategy);
 
-				const BALANCE_STRATEGY_OWNER: BigNumber = await strategy.balanceOf(owner.address);
+					const BALANCE_STRATEGY_OWNER: BigNumber = await strategy.balanceOf(owner.address);
 
-				// Expect that owner balance is the difference of the Strat supply increase
-				expect(BALANCE_STRATEGY_OWNER).to.be.equal(TOTAL_SUPPLY_STRATEGY.sub(b4TotalSupplyStrategy));
+					// Expect that owner balance is the difference of the Strat supply increase
+					expect(BALANCE_STRATEGY_OWNER).to.be.equal(TOTAL_SUPPLY_STRATEGY.sub(b4TotalSupplyStrategy));
 
-				// Create invalid balance to test with
-				const INVALID_BALANCE: BigNumber = (BALANCE_STRATEGY_OWNER).add(ethers.utils.parseUnits(".1", 18));
+					// Create invalid balance to test with
+					const INVALID_BALANCE: BigNumber = (BALANCE_STRATEGY_OWNER).add(ethers.utils.parseUnits(".1", 18));
 
-				// [main-test] WITHDRAW - Fail to withdraw ERC20 tokens
-				await expect(
-					strategy.utilizedERC20Withdraw(INVALID_BALANCE)
-				).to.be.rejectedWith(
-					ERROR.STRATEGY.INVALID_BALANCE
-				);
-			});
-
-			it("Should fail to return ERC20 if purpose.withdraw != true..", async () => {
-				// Set deposit amount
-				const DEPOSIT_AMOUNT: BigNumber = ethers.utils.parseUnits("1", 18);
-
-				// APPROVE - SI contract to spend tokens on behalf of owner
-				await mockERC20A.approve(strategyInteractor.address, DEPOSIT_AMOUNT);
-
-				// DEPOSIT - mockERC20A tokens into the strategy
-				await strategy.utilizedERC20Deposit(owner.address, [DEPOSIT_AMOUNT]);
-
-				// Expect that the owner has deposited MockERC20A
-				expect(await mockERC20A.balanceOf(owner.address)).to.be.lessThan(b4BalanceMockAOwner);
-
-				// Expect that the SI received the mockERC20A tokens
-				expect(await mockERC20A.balanceOf(strategyInteractor.address)).to.be.equal(DEPOSIT_AMOUNT);
-
-				// Expect that the Strategy ERC20 total supply has increased
-				expect(await strategy.totalSupply()).to.be.greaterThan(b4TotalSupplyStrategy);
-
-				// Capture balance after depositing
-				const AFTER_DEPOSIT_BALANCE_MOCK_A_OWNER = await mockERC20A.balanceOf(owner.address);
-
-				// Expect that owner balance is the difference of the Strat supply increase
-				expect(await strategy.balanceOf(owner.address)).to.be.equal(
-					(await strategy.totalSupply()).sub(b4TotalSupplyStrategy)
-				);
-
-				// Disable transfers
-				await strategy.utilizedERC20DepositOpenToggle();
-				await strategy.utilizedERC20WithdrawOpenToggle();
-
-				// Set utilization.withdraw to false
-				await strategy.utilizedERC20Update([mockERC20A.address], [[true, false, PERCENT.HUNDRED]]);
-
-				// Enable transfers
-				await strategy.utilizedERC20DepositOpenToggle();
-				await strategy.utilizedERC20WithdrawOpenToggle();
-
-				// [main-test] Withdraw ERC20 tokens into the strategy
-				await expect(strategy.utilizedERC20Withdraw(await strategy.balanceOf(owner.address))).to.be.not.rejected;
-
-				// Expect that the SI MockERC20A balance has not changed
-				expect(await mockERC20A.balanceOf(strategyInteractor.address)).to.be.equal(DEPOSIT_AMOUNT);
-
-				// Expect that the Strategy tokens have been burned
-				expect(await strategy.balanceOf(owner.address)).to.be.equal(0);
-
-				// Expect that the Strategy total supply is not what it was before the deposit
-				expect(await strategy.totalSupply()).to.be.equal(b4TotalSupplyStrategy);
-
-				// Expect that owner MockERC20A balance is equal to what it was after depositing
-				expect(await mockERC20A.balanceOf(owner.address)).to.be.greaterThanOrEqual(
-					AFTER_DEPOSIT_BALANCE_MOCK_A_OWNER
-				);
-
-				// Expect that owner MockERC20A balance is less than what it was before depositing
-				expect(await mockERC20A.balanceOf(owner.address)).to.be.lessThan(b4BalanceMockAOwner);
-			});
-
-			it("Should allow caller to burn Strategy ERC20 tokens and receive deposits back..", async () => {
-				// Set deposit amount
-				const DEPOSIT_AMOUNT: BigNumber = ethers.utils.parseUnits("1", 18);
-
-				// APPROVE - SI contract to spend tokens on behalf of owner
-				await mockERC20A.approve(strategyInteractor.address, DEPOSIT_AMOUNT);
-
-				// DEPOSIT - mockERC20A tokens into the strategy
-				await strategy.utilizedERC20Deposit(owner.address, [DEPOSIT_AMOUNT]);
-
-				const AFTER_BALANCE_MOCK_A_SI: BigNumber = await mockERC20A.balanceOf(strategyInteractor.address);
-
-				// mockERC20A BalanceOf strategy interactor should equal to deposit amount
-				expect(AFTER_BALANCE_MOCK_A_SI).to.be.equal(b4BalanceMockASI.add(DEPOSIT_AMOUNT));
-
-				// Expect that strategy total supply has increased
-				expect(await strategy.totalSupply()).to.be.greaterThan(b4TotalSupplyStrategy);
-
-				// Expect that owner balance is the difference of the Strat supply increase
-				expect(await strategy.balanceOf(owner.address)).to.be.equal(
-					(await strategy.totalSupply()).sub(b4TotalSupplyStrategy)
-				);
-
-				// [main-test] Withdraw ERC20 tokens into the strategy
-				await expect(strategy.utilizedERC20Withdraw(DEPOSIT_AMOUNT)).to.be.not.rejected;
-
-				// Strategy token burned
-				expect(await strategy.balanceOf(owner.address)).to.be.equal(b4BalanceMockASI);
-
-				// Supply put back to original
-				expect(await strategy.totalSupply()).to.be.equal(b4TotalSupplyStrategy);
-
-				// Expect that the balance been returned to original or greater
-				expect(await mockERC20A.balanceOf(owner.address)).to.be.greaterThanOrEqual(b4BalanceMockAOwner);
-			});
-		});
-
-		describe("[MULTIPLE ERC20]", async () => {
-			describe("[50/50]", async () => {
-				beforeEach(async () => {
-					// Set strategy ERC20 tokens
-					await strategy.utilizedERC20Update(
-						[mockERC20A.address, mockERC20B.address],
-						[[true, true, PERCENT.FIFTY], [true, true, PERCENT.FIFTY]]
+					// [main-test] WITHDRAW - Fail to withdraw ERC20 tokens
+					await expect(
+						strategy.utilizedERC20Withdraw(INVALID_BALANCE)
+					).to.be.rejectedWith(
+						ERROR.STRATEGY.INVALID_BALANCE
 					);
-
-					// Set SI
-					await strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
-
-					// Toggle deposits on
-					await strategy.utilizedERC20DepositOpenToggle();
-
-					// Toggle withdrawals on
-					await strategy.utilizedERC20WithdrawOpenToggle();
-
-					// Expect that withdrawals are toggled on
-					expect(await strategy.utilizedERC20WithdrawOpen()).to.be.true;
 				});
 
+				it("Should fail to return ERC20 if purpose.withdraw != true..", async () => {
+					// Set deposit amount
+					const DEPOSIT_AMOUNT: BigNumber = ethers.utils.parseUnits("1", 18);
+
+					// APPROVE - SI contract to spend tokens on behalf of owner
+					await mockERC20A.approve(strategyInteractor.address, DEPOSIT_AMOUNT);
+
+					// DEPOSIT - mockERC20A tokens into the strategy
+					await strategy.utilizedERC20Deposit(owner.address, [DEPOSIT_AMOUNT]);
+
+					// Expect that the owner has deposited MockERC20A
+					expect(await mockERC20A.balanceOf(owner.address)).to.be.lessThan(b4BalanceMockAOwner);
+
+					// Expect that the SI received the mockERC20A tokens
+					expect(await mockERC20A.balanceOf(strategyInteractor.address)).to.be.equal(DEPOSIT_AMOUNT);
+
+					// Expect that the Strategy ERC20 total supply has increased
+					expect(await strategy.totalSupply()).to.be.greaterThan(b4TotalSupplyStrategy);
+
+					// Capture balance after depositing
+					const AFTER_DEPOSIT_BALANCE_MOCK_A_OWNER = await mockERC20A.balanceOf(owner.address);
+
+					// Expect that owner balance is the difference of the Strat supply increase
+					expect(await strategy.balanceOf(owner.address)).to.be.equal(
+						(await strategy.totalSupply()).sub(b4TotalSupplyStrategy)
+					);
+
+					// Disable transfers
+					await strategy.utilizedERC20DepositOpenToggle();
+					await strategy.utilizedERC20WithdrawOpenToggle();
+
+					// Set utilization.withdraw to false
+					await strategy.utilizedERC20Update([mockERC20A.address], [[true, false, PERCENT.HUNDRED]]);
+
+					// Enable transfers
+					await strategy.utilizedERC20DepositOpenToggle();
+					await strategy.utilizedERC20WithdrawOpenToggle();
+
+					// [main-test] Withdraw ERC20 tokens into the strategy
+					await expect(strategy.utilizedERC20Withdraw(await strategy.balanceOf(owner.address))).to.be.not.rejected;
+
+					// Expect that the SI MockERC20A balance has not changed
+					expect(await mockERC20A.balanceOf(strategyInteractor.address)).to.be.equal(DEPOSIT_AMOUNT);
+
+					// Expect that the Strategy tokens have been burned
+					expect(await strategy.balanceOf(owner.address)).to.be.equal(0);
+
+					// Expect that the Strategy total supply is not what it was before the deposit
+					expect(await strategy.totalSupply()).to.be.equal(b4TotalSupplyStrategy);
+
+					// Expect that owner MockERC20A balance is equal to what it was after depositing
+					expect(await mockERC20A.balanceOf(owner.address)).to.be.greaterThanOrEqual(
+						AFTER_DEPOSIT_BALANCE_MOCK_A_OWNER
+					);
+
+					// Expect that owner MockERC20A balance is less than what it was before depositing
+					expect(await mockERC20A.balanceOf(owner.address)).to.be.lessThan(b4BalanceMockAOwner);
+				});
+			});
+
+			describe("Valid", async () => {
 				it("Should allow caller to burn Strategy ERC20 tokens and receive deposits back..", async () => {
 					// Set deposit amount
 					const DEPOSIT_AMOUNT: BigNumber = ethers.utils.parseUnits("1", 18);
 
 					// APPROVE - SI contract to spend tokens on behalf of owner
 					await mockERC20A.approve(strategyInteractor.address, DEPOSIT_AMOUNT);
-					await mockERC20B.approve(strategyInteractor.address, DEPOSIT_AMOUNT);
 
 					// DEPOSIT - mockERC20A tokens into the strategy
-					await strategy.utilizedERC20Deposit(owner.address, [DEPOSIT_AMOUNT, DEPOSIT_AMOUNT])
+					await strategy.utilizedERC20Deposit(owner.address, [DEPOSIT_AMOUNT]);
 
-					// mockERC20A BalanceOf SI should equal to deposit amount
-					expect(await mockERC20A.balanceOf(strategyInteractor.address)).to.be.equal(
-						b4BalanceMockASI.add(DEPOSIT_AMOUNT)
+					const AFTER_BALANCE_MOCK_A_SI: BigNumber = await mockERC20A.balanceOf(strategyInteractor.address);
+
+					// mockERC20A BalanceOf strategy interactor should equal to deposit amount
+					expect(AFTER_BALANCE_MOCK_A_SI).to.be.equal(b4BalanceMockASI.add(DEPOSIT_AMOUNT));
+
+					// Expect that strategy total supply has increased
+					expect(await strategy.totalSupply()).to.be.greaterThan(b4TotalSupplyStrategy);
+
+					// Expect that owner balance is the difference of the Strat supply increase
+					expect(await strategy.balanceOf(owner.address)).to.be.equal(
+						(await strategy.totalSupply()).sub(b4TotalSupplyStrategy)
 					);
 
-					// mockERC20B BalanceOf SI should equal to deposit amount
-					expect(await mockERC20B.balanceOf(strategyInteractor.address)).to.be.equal(
-						b4BalanceMockBSI.add(DEPOSIT_AMOUNT)
-					);
+					// [main-test] Withdraw ERC20 tokens into the strategy
+					await expect(strategy.utilizedERC20Withdraw(DEPOSIT_AMOUNT)).to.be.not.rejected;
 
-					// Get the total supply after deposit
-					const TOTAL_SUPPLY_STRATEGY: BigNumber = await strategy.totalSupply();
-
-					// expect that the total supply of strategy has increased
-					expect(TOTAL_SUPPLY_STRATEGY).to.be.greaterThan(b4TotalSupplyStrategy);
-
-					// Calculate newly minted tokens by subtracting current total supply with b4 total supply
-					const TOTAL_NEWLY_MINTED: BigNumber = TOTAL_SUPPLY_STRATEGY.sub(b4TotalSupplyStrategy);
-
-					// Expect that the Strategy balance of owner is correct
-					expect(await strategy.balanceOf(owner.address)).to.be.equal(TOTAL_NEWLY_MINTED);
-
-					// [main-test] Expect to be able to withdraw ERC20 tokens from the strategy
-					await expect(
-						strategy.utilizedERC20Withdraw(await strategy.balanceOf(owner.address))
-					).to.be.not.rejected;
-
-					// Expect that the owner balance is returned back to what it was before depositing
+					// Strategy token burned
 					expect(await strategy.balanceOf(owner.address)).to.be.equal(b4BalanceMockASI);
 
-					// Strategy total supply is restored back to what it was before depositing
+					// Supply put back to original
 					expect(await strategy.totalSupply()).to.be.equal(b4TotalSupplyStrategy);
 
-					// Expect that the owner received his previously depositied (and now withdrawn) MockERCA back
+					// Expect that the balance been returned to original or greater
 					expect(await mockERC20A.balanceOf(owner.address)).to.be.greaterThanOrEqual(b4BalanceMockAOwner);
-
-					// Expect that the owner received his previously deposited (and now withdrawn) MockERCB back
-					expect(await mockERC20B.balanceOf(owner.address)).to.be.greaterThanOrEqual(b4BalanceMockBOwner);
 				});
 			});
+		});
 
-			describe("[75/25]", async () => {
-				beforeEach(async () => {
-					// Set strategy ERC20 tokens
-					await strategy.utilizedERC20Update(
-						[mockERC20A.address, mockERC20B.address],
-						[[true, true, PERCENT.SEVENTY_FIVE], [true, true, PERCENT.TWENTY_FIVE]]
-					);
+		describe("[MULTIPLE ERC20] - 75/25", async () => {
+			beforeEach(async () => {
+				// Set strategy ERC20 tokens
+				await strategy.utilizedERC20Update(
+					[mockERC20A.address, mockERC20B.address],
+					[[true, true, PERCENT.SEVENTY_FIVE], [true, true, PERCENT.TWENTY_FIVE]]
+				);
 
-					// Set SI
-					await strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
+				// Set SI
+				await strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
 
-					// Toggle deposits on
-					await strategy.utilizedERC20DepositOpenToggle();
+				// Toggle deposits on
+				await strategy.utilizedERC20DepositOpenToggle();
 
-					// Toggle withdrawals on
-					await strategy.utilizedERC20WithdrawOpenToggle();
+				// Toggle withdrawals on
+				await strategy.utilizedERC20WithdrawOpenToggle();
 
-					// Expect that withdrawals are toggled on
-					expect(await strategy.utilizedERC20WithdrawOpen()).to.be.true;
-				});
+				// Expect that withdrawals are toggled on
+				expect(await strategy.utilizedERC20WithdrawOpen()).to.be.true;
+			});
 
+			describe("Valid", async () => {
 				it("Should allow caller to burn Strategy ERC20 tokens and receive deposits back..", async () => {
 					const UTILIZED_ERC20: string[] = await strategy.utilizedERC20();
 

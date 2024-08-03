@@ -110,7 +110,7 @@ describe("[4.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 		let b4TotalSupplyStrategy: BigNumber;
 
 
-		describe("Set Up Process Test", async () => {
+		describe("Modifier", async () => {
 			it("[modifier] Should revert if Strategy Interactor is not set..", async () => {
 				await expect(strategy.utilizedERC20Deposit(owner.address, [])).to.be.rejectedWith(
 					ERROR.STRATEGY.INTERACTOR_NOT_SET
@@ -127,7 +127,9 @@ describe("[4.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 					ERROR.NOT_AUTHORIZED
 				);
 			});
+		});
 
+		describe("Invalid", async () => {
 			it("Should revert if deposits not open..", async () => {
 				// Set strategy ERC20 tokens
 				await strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
@@ -157,7 +159,6 @@ describe("[4.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 				await expect(strategy.utilizedERC20Deposit(owner.address, [])).to.be.rejectedWith(
 					ERROR.STRATEGY.INVAILD_PARAMS_DEPOSIT_LENGTH
 				);
-
 			});
 
 			it("Should revert if denominator is 0..", async () => {
@@ -176,27 +177,6 @@ describe("[4.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 
 				await expect(strategy.utilizedERC20Deposit(owner.address, [DEPOSIT_AMOUNT])).to.be.rejectedWith(
 					ERROR.NOT_COMPUTED
-				);
-			});
-
-			it("Should return false if INVALID ERC20 amounts passed..", async () => {
-				// Set strategy ERC20 tokens
-				await strategy.utilizedERC20Update(
-					[mockERC20A.address, mockERC20B.address],
-					[[true, true, PERCENT.FIFTY], [true, true, PERCENT.FIFTY]]
-				);
-
-				await strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
-
-				// Toggle deposits on
-				await strategy.utilizedERC20DepositOpenToggle();
-
-				const DEPOSIT_AMOUNT: BigNumber = ethers.utils.parseUnits("1", 18);
-
-				await expect(
-					strategy.utilizedERC20Deposit(owner.address, [0, DEPOSIT_AMOUNT])
-				).to.be.rejectedWith(
-					ERROR.STRATEGY.INVALID_UTILIZED_ERC20_AMOUNT
 				);
 			});
 
@@ -220,6 +200,25 @@ describe("[4.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 					ERROR.STRATEGY.UTILIZED_ERC20_AMOUNT_NOT_ZERO
 				);
 			});
+
+			it("Should return false if INVALID ERC20 amounts passed..", async () => {
+				// Set strategy ERC20 tokens
+				await strategy.utilizedERC20Update(
+					[mockERC20A.address, mockERC20B.address],
+					[[true, true, PERCENT.FIFTY], [true, true, PERCENT.FIFTY]]
+				);
+
+				await strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
+
+				// Toggle deposits on
+				await strategy.utilizedERC20DepositOpenToggle();
+
+				const DEPOSIT_AMOUNT: BigNumber = ethers.utils.parseUnits("1", 18);
+
+				await expect(strategy.utilizedERC20Deposit(owner.address, [0, DEPOSIT_AMOUNT])).to.be.rejectedWith(
+					ERROR.STRATEGY.INVALID_UTILIZED_ERC20_AMOUNT
+				);
+			});
 		});
 
 		describe("[SINGLE ERC20]", async () => {
@@ -241,19 +240,7 @@ describe("[4.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 			});
 
 
-			describe("Invalid", async () => {
-				it("Should revert if invalid _utilizedERC20Amount.length passed..", async () => {
-					const DEPOSIT_AMOUNT: BigNumber = ethers.utils.parseUnits("1", 18);
-
-					// APPROVE - SI contract to spend tokens on behalf of owner
-					await mockERC20A.approve(strategyInteractor.address, DEPOSIT_AMOUNT);
-
-					// [main-test] Deposit ERC20 tokens into the strategy
-					await expect(
-						strategy.utilizedERC20Deposit(owner.address, [DEPOSIT_AMOUNT, DEPOSIT_AMOUNT])
-					).to.rejectedWith(ERROR.STRATEGY.INVALID_AMOUNT_LENGTH);
-				});
-
+			describe("Valid", async () => {
 				it("Should be able to deposit ERC20 into strategy interactor..", async () => {
 					const DEPOSIT_AMOUNT: BigNumber = ethers.utils.parseUnits("1", 18);
 
@@ -267,9 +254,7 @@ describe("[4.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 
 					expect(await mockERC20A.balanceOf(strategyInteractor.address)).to.be.equal(totalEthValue);
 				});
-			});
 
-			describe("Valid", async () => {
 				it("Should issue strategy ERC20 tokens upon utilized ERC20 deposit..", async () => {
 					const DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil.calculateERC20Required(
 						ethers.utils.parseUnits("1", 18)
@@ -306,195 +291,84 @@ describe("[4.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 			});
 		});
 
-		describe("[MULTIPLE ERC20]", async () => {
-			describe("[50/50]", async () => {
-				beforeEach(async () => {
-					// Snapshot Total Supply
-					b4TotalSupplyStrategy = await strategy.totalSupply();
+		describe("[MULTIPLE ERC20] - 75/25", async () => {
+			beforeEach(async () => {
+				// Set strategy ERC20 tokens
+				b4TotalSupplyStrategy = await strategy.totalSupply();
 
-					// Set strategy ERC20 tokens
-					await strategy.utilizedERC20Update(
-						[mockERC20A.address, mockERC20B.address],
-						[[true, true, PERCENT.FIFTY], [true, true, PERCENT.FIFTY]]
+				// Snapshot Total Supply
+				await strategy.utilizedERC20Update(
+					[mockERC20A.address, mockERC20B.address],
+					[[true, true, PERCENT.SEVENTY_FIVE], [true, true, PERCENT.TWENTY_FIVE]]
+				);
+
+				// Capture utilized ERC20
+				utilizedERC20 = await strategy.utilizedERC20();
+
+				// Set SI
+				await strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
+
+				// Toggle deposits on
+				await strategy.utilizedERC20DepositOpenToggle();
+			});
+
+
+			describe("Invalid", async () => {
+				it("Should revert if invalid utilizedERC20Amounts passed..", async () => {
+					const INVALID_DEPOSIT_AMOUNT_A: BigNumber = ethers.utils.parseUnits(".5", 18);
+					const INVALID_DEPOSIT_AMOUNT_B: BigNumber = ethers.utils.parseUnits(".25", 18);
+
+					// APPROVE - SI contract to spend tokens on behalf of owner
+					await mockERC20A.approve(strategyInteractor.address, INVALID_DEPOSIT_AMOUNT_A);
+					await mockERC20B.approve(strategyInteractor.address, INVALID_DEPOSIT_AMOUNT_B);
+
+					// [main-test] Deposit ERC20 tokens into the strategy
+					await expect(
+						strategy.utilizedERC20Deposit(owner.address, [INVALID_DEPOSIT_AMOUNT_A, INVALID_DEPOSIT_AMOUNT_B])
+					).to.be.rejectedWith(
+						ERROR.STRATEGY.INVALID_UTILIZED_ERC20_AMOUNT
 					);
-
-					// Capture utilized ERC20
-					utilizedERC20 = await strategy.utilizedERC20();
-
-					// Set SI
-					await strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
-
-					// Toggle deposits on
-					await strategy.utilizedERC20DepositOpenToggle();
-				});
-
-
-				describe("Invalid", async () => {
-					it("Should revert if invalid utilizedERC20Amounts passed..", async () => {
-						const INVALID_DEPOSIT_AMOUNT_A: BigNumber = ethers.utils.parseUnits("1", 18);
-						const INVALID_DEPOSIT_AMOUNT_B: BigNumber = ethers.utils.parseUnits(".8", 18);
-
-						// APPROVE - SI contract to spend tokens on behalf of owner
-						await mockERC20A.approve(strategyInteractor.address, INVALID_DEPOSIT_AMOUNT_A);
-						await mockERC20B.approve(strategyInteractor.address, INVALID_DEPOSIT_AMOUNT_B);
-
-						// DEPOSIT - ERC20 tokens into the strategy
-						await expect(
-							strategy.utilizedERC20Deposit(
-								owner.address,
-								[INVALID_DEPOSIT_AMOUNT_A, INVALID_DEPOSIT_AMOUNT_B]
-							)
-						).to.be.rejectedWith(ERROR.STRATEGY.INVALID_UTILIZED_ERC20_AMOUNT);
-					});
-
-					it("Should be able to deposit ERC20s into strategy interactor..", async () => {
-						const DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil.calculateERC20Required(
-							ethers.utils.parseUnits(".4", 18)
-						);
-
-						expect(DEPOSIT_AMOUNTS.length).to.be.equal(utilizedERC20.length);
-
-						for (let i: number = 0; i < utilizedERC20.length; i++)
-						{
-							const IERC20 = await ethers.getContractAt(LOCATION_IERC20, utilizedERC20[i]);
-
-							// APPROVE - SI contract to spend tokens on behalf of owner
-							await IERC20.approve(strategyInteractor.address, DEPOSIT_AMOUNTS[i]);
-						}
-
-						// [main-test] Deposit ERC20 tokens into the strategy
-						await expect(strategy.utilizedERC20Deposit(owner.address, DEPOSIT_AMOUNTS)).to.be.not.rejected;
-
-						for (let i: number = 0; i < utilizedERC20.length; i++)
-						{
-							const IERC20 = await ethers.getContractAt(LOCATION_IERC20, utilizedERC20[i]);
-
-							const BALANCE = await IERC20.balanceOf(strategyInteractor.address);
-
-							// [main-test]
-							expect(BALANCE).to.be.equal(DEPOSIT_AMOUNTS[i]);
-						}
-					});
-				});
-
-				describe("Valid", async () => {
-					it("Should issue strategy ERC20 tokens upon utilized ERC20 deposit..", async () => {
-						const DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil.calculateERC20Required(
-							ethers.utils.parseUnits("2", 18)
-						);
-
-						expect(DEPOSIT_AMOUNTS.length).to.be.equal(utilizedERC20.length);
-
-						for (let i: number = 0; i < utilizedERC20.length; i++)
-						{
-							const IERC20 = await ethers.getContractAt(LOCATION_IERC20, utilizedERC20[i]);
-
-							// APPROVE - SI contract to spend tokens on behalf of owner
-							await IERC20.approve(strategyInteractor.address, DEPOSIT_AMOUNTS[i]);
-						}
-
-						// [main-test] Deposit ERC20 tokens into the strategy
-						await expect(strategy.utilizedERC20Deposit(owner.address, DEPOSIT_AMOUNTS)).to.be.not.rejected;
-
-						// Get current supply
-						const TOTAL_SUPPLY_STRATEGY: BigNumber = await strategy.totalSupply();
-
-						// Calculate minted amount
-						const MINTED_STRATEGY_TOKENS: BigNumber = TOTAL_SUPPLY_STRATEGY.sub(b4TotalSupplyStrategy);
-
-						// Get values
-						const { totalEthValue } = await strategyTransferUtil.valueOfERC20Deposits(DEPOSIT_AMOUNTS);
-
-						// Expect that the owner received the strategy tokens
-						expect(await strategy.balanceOf(owner.address)).to.be.equal(MINTED_STRATEGY_TOKENS);
-
-						// Expect that the strategy token amount issued is equal to the ETH value of the deposits
-						expect(await strategy.balanceOf(owner.address)).to.be.equal(totalEthValue);
-					});
 				});
 			});
 
-			describe("[75/25]", async () => {
+			describe("Valid", async () => {
+				let depositAmounts: BigNumber[];
+
+
 				beforeEach(async () => {
-					// Set strategy ERC20 tokens
-					b4TotalSupplyStrategy = await strategy.totalSupply();
+					depositAmounts = await strategyTransferUtil.calculateERC20Required(ethers.utils.parseUnits("3", 18));
 
-					// Snapshot Total Supply
-					await strategy.utilizedERC20Update(
-						[mockERC20A.address, mockERC20B.address],
-						[[true, true, PERCENT.SEVENTY_FIVE], [true, true, PERCENT.TWENTY_FIVE]]
-					);
+					expect(depositAmounts.length).to.be.equal(utilizedERC20.length);
 
-					// Capture utilized ERC20
-					utilizedERC20 = await strategy.utilizedERC20();
-
-					// Set SI
-					await strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
-
-					// Toggle deposits on
-					await strategy.utilizedERC20DepositOpenToggle();
-				});
-
-				describe("Invalid", async () => {
-					it("Should revert if invalid utilizedERC20Amounts passed..", async () => {
-						const INVALID_DEPOSIT_AMOUNT_A: BigNumber = ethers.utils.parseUnits(".5", 18);
-						const INVALID_DEPOSIT_AMOUNT_B: BigNumber = ethers.utils.parseUnits(".25", 18);
+					for (let i: number = 0; i < utilizedERC20.length; i++)
+					{
+						const IERC20 = await ethers.getContractAt(LOCATION_IERC20, utilizedERC20[i]);
 
 						// APPROVE - SI contract to spend tokens on behalf of owner
-						await mockERC20A.approve(strategyInteractor.address, INVALID_DEPOSIT_AMOUNT_A);
-						await mockERC20B.approve(strategyInteractor.address, INVALID_DEPOSIT_AMOUNT_B);
+						await IERC20.approve(strategyInteractor.address, depositAmounts[i]);
+					}
 
-						// [main-test] Deposit ERC20 tokens into the strategy
-						await expect(
-							strategy.utilizedERC20Deposit(
-								owner.address,
-								[INVALID_DEPOSIT_AMOUNT_A, INVALID_DEPOSIT_AMOUNT_B]
-							)
-						).to.be.rejectedWith(ERROR.STRATEGY.INVALID_UTILIZED_ERC20_AMOUNT);
-					});
+					// [main-test] Deposit ERC20 tokens into the strategy
+					await expect(strategy.utilizedERC20Deposit(owner.address, depositAmounts)).to.be.not.rejected;
 				});
 
-				describe("Invalid", async () => {
-					let depositAmounts: BigNumber[];
 
+				it("Should be able to deposit ERC20s into strategy interactor..", async () => {
+					for (let i: number = 0; i < utilizedERC20.length; i++)
+					{
+						const IERC20 = await ethers.getContractAt(LOCATION_IERC20, utilizedERC20[i]);
 
-					beforeEach(async () => {
-						depositAmounts = await strategyTransferUtil.calculateERC20Required(
-							ethers.utils.parseUnits("3", 18)
-						);
+						// [main-test] Check balances of Utilized ERC20 tokens
+						expect(await IERC20.balanceOf(strategyInteractor.address)).to.be.equal(depositAmounts[i]);
+					}
+				});
 
-						expect(depositAmounts.length).to.be.equal(utilizedERC20.length);
+				it("Should issue strategy ERC20 tokens upon utilized ERC20 deposit..", async () => {
+					// [calculate] YSS balance ETH Value = (a * p(a) / 1e18) + (b * p(b) / 1e18)
+					const { totalEthValue } = await strategyTransferUtil.valueOfERC20Deposits(depositAmounts);
 
-						for (let i: number = 0; i < utilizedERC20.length; i++)
-						{
-							const IERC20 = await ethers.getContractAt(LOCATION_IERC20, utilizedERC20[i]);
-
-							// APPROVE - SI contract to spend tokens on behalf of owner
-							await IERC20.approve(strategyInteractor.address, depositAmounts[i]);
-						}
-
-						// [main-test] Deposit ERC20 tokens into the strategy
-						await expect(strategy.utilizedERC20Deposit(owner.address, depositAmounts)).to.be.not.rejected;
-					});
-
-
-					it("Should be able to deposit ERC20s into strategy interactor..", async () => {
-						for (let i: number = 0; i < utilizedERC20.length; i++)
-						{
-							const IERC20 = await ethers.getContractAt(LOCATION_IERC20, utilizedERC20[i]);
-
-							// [main-test] Check balances of Utilized ERC20 tokens
-							expect(await IERC20.balanceOf(strategyInteractor.address)).to.be.equal(depositAmounts[i]);
-						}
-					});
-
-					it("Should issue strategy ERC20 tokens upon utilized ERC20 deposit..", async () => {
-						// [calculate] YSS balance ETH Value = (a * p(a) / 1e18) + (b * p(b) / 1e18)
-						const { totalEthValue } = await strategyTransferUtil.valueOfERC20Deposits(depositAmounts);
-
-						// [main-test]
-						expect(await strategy.balanceOf(owner.address)).to.be.equal(totalEthValue);
-					});
+					// [main-test]
+					expect(await strategy.balanceOf(owner.address)).to.be.equal(totalEthValue);
 				});
 			});
 		});
