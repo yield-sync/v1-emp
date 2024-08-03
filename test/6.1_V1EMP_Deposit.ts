@@ -13,7 +13,7 @@ const LOCATION_MOCKERC20: string = "MockERC20";
 const LOCATION_STRATGY: string = "V1EMPStrategy";
 
 
-describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
+describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 	let eMPUtilizedERC20: string[];
 
 	let arrayUtility: Contract;

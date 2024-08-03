@@ -12,7 +12,7 @@ import StrategyTransferUtil from "../scripts/StrategyTransferUtil";
 const LOCATION_MOCKERC20: string = "MockERC20";
 
 
-describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
+describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 	let eMPUtilizedERC20: string[];
 
 	let eTHValueEMPDepositAmount: BigNumber = ethers.utils.parseUnits("2", 18);

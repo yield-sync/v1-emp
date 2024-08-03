@@ -8,7 +8,7 @@ import { ERROR, PERCENT } from "../const";
 import StrategyTransferUtil from "../scripts/StrategyTransferUtil";
 
 
-describe("[7.0] V1EMP.sol - Setup", async () => {
+describe("[6.0] V1EMP.sol - Setup", async () => {
 	let arrayUtility: Contract;
 	let governance: Contract;
 	let eTHValueFeed: Contract;
