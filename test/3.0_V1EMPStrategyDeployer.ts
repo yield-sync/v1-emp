@@ -51,7 +51,8 @@ describe("[3.0] V1EMPStrategyDeployer.sol", async () => {
 		await registry.v1EMPStrategyDeployerUpdate(strategyDeployer.address);
 	});
 
-	describe("function v1EMPDeployerUpdate()", async () => {
+
+	describe("function deployV1EMPStrategy()", async () => {
 		it("Should be able to deploy a strategy..", async () => {
 			await expect(strategyDeployer.deployV1EMPStrategy("Strategy Name", "S")).to.be.not.rejected;
 

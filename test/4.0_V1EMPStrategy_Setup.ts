@@ -112,7 +112,7 @@ describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
 		});
 	});
 
-	describe("function utilizedERC20Update()", async () => {
+	describe("function utilizedERC20Update() (1/2)", async () => {
 		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
 			await expect(
 				strategy.connect(badActor).utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]])
@@ -262,7 +262,7 @@ describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
 		});
 	});
 
-	describe("function iV1EMPStrategyInteractorUpdate() (Part 1)", async () => {
+	describe("function iV1EMPStrategyInteractorUpdate() (1/2)", async () => {
 
 		/**
 		 * @notice
@@ -343,7 +343,7 @@ describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
 		});
 	});
 
-	describe("function iV1EMPStrategyInteractorUpdate() (Part 2)", async () => {
+	describe("function iV1EMPStrategyInteractorUpdate() (2/2)", async () => {
 		beforeEach(async () => {
 			// Set strategy ERC20 tokens
 			await strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
@@ -355,6 +355,7 @@ describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
 
 			expect(await strategy.utilizedERC20WithdrawOpen()).to.be.false;
 		});
+
 
 		it("Should not be able to set iV1EMPStrategyInteractor when utilizedERC20DepositOpen is true..", async () => {
 			await expect(strategy.utilizedERC20DepositOpenToggle()).to.be.not.rejected;
@@ -372,6 +373,33 @@ describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
 			expect(await strategy.utilizedERC20WithdrawOpen()).to.be.true;
 
 			await expect(strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address)).to.be.rejectedWith(
+				ERROR.STRATEGY.UTILIZED_ERC20_TRANSFERS_OPEN
+			);
+		});
+	});
+
+	describe("function utilizedERC20Update() (2/2)", async () => {
+		beforeEach(async () => {
+			// Set strategy ERC20 tokens
+			await strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
+
+			// Set SI
+			await strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
+
+			expect(await strategy.utilizedERC20DepositOpen()).to.be.false;
+
+			expect(await strategy.utilizedERC20WithdrawOpen()).to.be.false;
+		});
+
+
+		it("Should not be able to set update utilized ERC20 when utilizedERC20DepositOpen is true..", async () => {
+			await strategy.utilizedERC20DepositOpenToggle();
+
+			expect(await strategy.utilizedERC20DepositOpen()).to.be.true;
+
+			await expect(
+				strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]])
+			).to.be.rejectedWith(
 				ERROR.STRATEGY.UTILIZED_ERC20_TRANSFERS_OPEN
 			);
 		});

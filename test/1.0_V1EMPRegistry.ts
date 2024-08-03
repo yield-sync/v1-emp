@@ -189,7 +189,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 			);
 		});
 
-		it("Should not allow address(0) to be passed a _erc20 parameter..", async () => {
+		it("Should not allow _erc20 parameter to be address(0)..", async () => {
 			await expect(
 				registry.eRC20_v1EMPERC20ETHValueFeedUpdate(ethers.constants.AddressZero, fakeEthValueFeed.address)
 			).to.be.rejectedWith(
@@ -197,7 +197,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 			);
 		});
 
-		it("Should not allow address(0) to be passed a _v1EMPERC20ETHValueFeed parameter..", async () => {
+		it("Should not allow _v1EMPERC20ETHValueFeed parameter to be address(0)..", async () => {
 			await expect(
 				registry.eRC20_v1EMPERC20ETHValueFeedUpdate(fakeERC20.address, ethers.constants.AddressZero)
 			).to.be.rejectedWith(
