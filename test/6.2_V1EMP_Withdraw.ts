@@ -242,10 +242,12 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 
 
 	describe("function utilizedV1EMPStrategyWithdraw()", async () => {
-		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
-			await expect(eMP.connect(badActor).utilizedV1EMPStrategyWithdraw([])).to.be.rejectedWith(
-				ERROR.NOT_AUTHORIZED
-			);
+		describe("Modifier", async () => {
+			it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
+				await expect(eMP.connect(badActor).utilizedV1EMPStrategyWithdraw([])).to.be.rejectedWith(
+					ERROR.NOT_AUTHORIZED
+				);
+			});
 		});
 
 		it("Should revert invalid lengthed _v1EMPStrategyERC20Amount param passed..", async () => {
@@ -315,7 +317,6 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 			});
 		});
 	});
-
 
 	describe("function utilizedERC20Withdraw() (1/3) - utilizedV1EMPStrategyWithdraw() NOT called before", async () => {
 		describe("Expected Failure", async () => {
