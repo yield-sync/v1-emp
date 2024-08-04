@@ -360,6 +360,7 @@ contract V1EMP is
 	function utilizedERC20Withdraw(uint256 _eRC20Amount)
 		public
 		override
+		nonReentrant()
 		utilizedERC20UpdateBefore()
 	{
 		require(utilizedERC20WithdrawOpen, "!utilizedERC20WithdrawOpen");
@@ -441,7 +442,6 @@ contract V1EMP is
 	function utilizedV1EMPStrategyDeposit(uint256[][] memory _v1EMPStrategyUtilizedERC20Amount)
 		public
 		override
-		nonReentrant()
 		utilizedERC20DepositOpenRequired()
 	{
 		require(
