@@ -232,6 +232,9 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 		// Pass incorrect length of deposit amounts
 		await eMP.utilizedV1EMPStrategyDeposit([depositAmount[0], depositAmount[1]]);
 
+		// Expect that the owner address received something
+		expect(await eMP.balanceOf(owner.address)).to.be.greaterThan(0);
+
 		await eMP.utilizedERC20WithdrawOpenToggle();
 
 		expect(await eMP.utilizedERC20WithdrawOpen()).to.be.true;
@@ -314,7 +317,19 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 	});
 
 
-	describe("function utilizedERC20Withdraw() (1/2) - Full Withdrawals Disabled", async () => {
+	describe("function utilizedERC20Withdraw() (1/3) - utilizedV1EMPStrategyWithdraw() NOT called before", async () => {
+		describe("Expected Failure", async () => {
+			it("Should fail to withdraw tokens from Strategy if not enough tokens available on EMP..", async () => {
+				const OWNER_EMP_BALANCE = await eMP.balanceOf(owner.address);
+
+				await expect(eMP.utilizedERC20Withdraw(OWNER_EMP_BALANCE)).to.be.revertedWith(
+					ERROR.EMP.UTILIZED_ERC20_NOT_AVAILABLE
+				);
+			});
+		});
+	});
+
+	describe("function utilizedERC20Withdraw() (2/3) - Full Withdrawals Disabled", async () => {
 		beforeEach(async () => {
 			await eMP.utilizedV1EMPStrategyWithdraw([
 				await strategies[0].contract.balanceOf(eMP.address),
@@ -325,7 +340,7 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 		});
 
 
-		describe("Invalid", async () => {
+		describe("Expected Failure", async () => {
 			it("Should NOT allow withdrawing if not open..", async () => {
 				/**
 				* @notice This test is to check that depositing must be toggled on in order to call the function properly.
@@ -341,13 +356,10 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 				);
 			});
 
-			it("Should not allow msg.sender to withdraw with EMP ERC20 that they do not have..", async () => {
+			it("Should not allow msg.sender to withdraw with insufficient EMP balance..", async () => {
 				/**
 				* @notice This test should test that msg.sender cannot withdraw more than what they have.
 				*/
-
-				// Expect that the owner address received something
-				expect(await eMP.balanceOf(owner.address)).to.be.greaterThan(0);
 
 				const INVALID_BALANCE = (await eMP.balanceOf(owner.address)).add(1);
 
@@ -357,14 +369,11 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 			});
 		});
 
-		describe("Valid", async () => {
-			it("Should allow withdrawing tokens from strategy..", async () => {
+		describe("Expected Success", async () => {
+			it("Should allow withdrawing tokens from Strategy..", async () => {
 				/**
 				* @notice This test should test that msg.sender cannot withdraw more than what they have.
 				*/
-
-				// Expect that the owner address received something
-				expect(await eMP.balanceOf(owner.address)).to.be.greaterThan(0);
 
 				const OWNER_EMP_BALANCE = await eMP.balanceOf(owner.address);
 
@@ -435,17 +444,7 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 	});
 
 	describe("function utilizedERC20Withdraw() (2/2) - Full Withdrawals Enabled", async () => {
-		describe("Invalid", async () => {
-			it("Should fail to withdraw tokens from stragegy if utilizedERC20WithdrawFull is not toggled true..", async () => {
-				const OWNER_EMP_BALANCE = await eMP.balanceOf(owner.address);
-
-				await expect(eMP.utilizedERC20Withdraw(OWNER_EMP_BALANCE)).to.be.revertedWith(
-					ERROR.EMP.UTILIZED_ERC20_NOT_AVAILABLE
-				);
-			});
-		});
-
-		describe("Valid", async () => {
+		describe("Expected Success", async () => {
 			beforeEach(async () => {
 				expect(await eMP.utilizedERC20WithdrawFull()).to.be.false;
 
@@ -455,7 +454,7 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 			});
 
 
-			it("Should allow withdrawing tokens from strategy even if not prewithdrawn from stratgies..", async () => {
+			it("Should allow withdrawing tokens from Strategy even if not prewithdrawn from stratgies..", async () => {
 				const OWNER_EMP_BALANCE = await eMP.balanceOf(owner.address);
 
 				await eMP.utilizedERC20Withdraw(OWNER_EMP_BALANCE);
@@ -467,15 +466,12 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 				expect(await strategies[1].contract.balanceOf(eMP.address)).to.be.equal(0);
 			});
 
-			it("Should allow withdrawing tokens from strategy even if only partially prewithdrawn from stratgies..", async () => {
+			it("Should allow withdrawing tokens from Strategy even if only partially prewithdrawn from stratgies..", async () => {
 				const s1Balance = await strategies[0].contract.balanceOf(eMP.address);
 				const s2Balance = await strategies[1].contract.balanceOf(eMP.address);
 
 				// Withdraw only partial balanceOf EMP
 				await eMP.utilizedV1EMPStrategyWithdraw([s1Balance.div(24), s2Balance.div(13)])
-
-				// Expect that the owner address received something
-				expect(await eMP.balanceOf(owner.address)).to.be.greaterThan(0);
 
 				const VALID_BALANCE = await eMP.balanceOf(owner.address);
 

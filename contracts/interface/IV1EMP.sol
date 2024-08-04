@@ -145,18 +145,6 @@ interface IV1EMP is
 		returns (uint256)
 	;
 
-	/**
-	* @dev [view-mapping]
-	* @notice utilizedERC20 -> utilizationERC20
-	* @param __utilizedERC20 {address}
-	* @return {UtilizationERC20}
-	*/
-	function utilizedERC20_utilizationERC20(address __utilizedERC20)
-		external
-		view
-		returns (UtilizationERC20 memory)
-	;
-
 
 	/// @notice view
 
@@ -181,6 +169,28 @@ interface IV1EMP is
 		external
 		view
 		returns (address[] memory)
+	;
+
+	/**
+	* @notice Utilized ERC20 Total Amount
+	* @return utilizedERC20TotalAmount_ {uint256[]}
+	*/
+	function utilizedERC20TotalAmount()
+		external
+		view
+		returns (uint256[] memory utilizedERC20TotalAmount_)
+	;
+
+	/**
+	* @dev [view-mapping]
+	* @notice utilizedERC20 -> utilizationERC20
+	* @param __utilizedERC20 {address}
+	* @return {UtilizationERC20}
+	*/
+	function utilizedERC20_utilizationERC20(address __utilizedERC20)
+		external
+		view
+		returns (UtilizationERC20 memory)
 	;
 
 
@@ -225,16 +235,6 @@ interface IV1EMP is
 	*/
 	function utilizedERC20DepositOpenToggle()
 		external
-	;
-
-	/**
-	* @notice Utilized ERC20 Total Amount
-	* @return utilizedERC20TotalAmount_ {uint256[]}
-	*/
-	function utilizedERC20TotalAmount()
-		external
-		view
-		returns (uint256[] memory utilizedERC20TotalAmount_)
 	;
 
 	/**

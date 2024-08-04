@@ -135,7 +135,7 @@ describe("[4.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 			});
 		});
 
-		describe("Invalid", async () => {
+		describe("Expected Failure", async () => {
 			it("Should revert if deposits not open..", async () => {
 				// Set strategy ERC20 tokens
 				await strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
@@ -246,7 +246,7 @@ describe("[4.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 			});
 
 
-			describe("Valid", async () => {
+			describe("Expected Success", async () => {
 				it("Should be able to deposit ERC20 into strategy interactor..", async () => {
 					const DEPOSIT_AMOUNT: BigNumber = ethers.utils.parseUnits("1", 18);
 
@@ -329,7 +329,7 @@ describe("[4.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 			});
 
 
-			describe("Invalid", async () => {
+			describe("Expected Failure", async () => {
 				it("Should revert if invalid utilizedERC20Amounts passed..", async () => {
 					const INVALID_DEPOSIT_AMOUNT: BigNumber = ethers.utils.parseUnits(".5", 18);
 
@@ -356,7 +356,7 @@ describe("[4.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 				});
 			});
 
-			describe("Valid", async () => {
+			describe("Expected Success", async () => {
 				let depositAmounts: BigNumber[];
 
 

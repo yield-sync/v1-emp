@@ -154,7 +154,7 @@ describe("[4.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 			});
 		});
 
-		describe("Invalid", async () => {
+		describe("Expected Failure", async () => {
 			it("Should revert if withdrawals are not open..", async () => {
 				// Set strategy ERC20 tokens
 				await strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]])
@@ -204,7 +204,7 @@ describe("[4.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 				expect(await strategy.utilizedERC20WithdrawOpen()).to.be.true;
 			});
 
-			describe("Invalid", async () => {
+			describe("Expected Failure", async () => {
 				let depositAmount: BigNumber;
 				let totalSupplyStrategy: BigNumber;
 
@@ -291,7 +291,7 @@ describe("[4.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 				});
 			});
 
-			describe("Valid", async () => {
+			describe("Expected Success", async () => {
 				it("Should allow caller to burn Strategy ERC20 tokens and receive deposits back..", async () => {
 					// Set deposit amount
 					const DEPOSIT_AMOUNT: BigNumber = ethers.utils.parseUnits("1", 18);
@@ -361,7 +361,7 @@ describe("[4.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 				expect(await strategy.utilizedERC20WithdrawOpen()).to.be.true;
 			});
 
-			describe("Valid", async () => {
+			describe("Expected Success", async () => {
 				it("Should allow caller to burn Strategy ERC20 tokens and receive deposits back..", async () => {
 					const UTILIZED_ERC20: string[] = await strategy.utilizedERC20();
 

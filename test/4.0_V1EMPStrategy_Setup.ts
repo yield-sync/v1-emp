@@ -111,7 +111,7 @@ describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
 	});
 
 	describe("function utilizedERC20Update() (1/2)", async () => {
-		describe("Invalid", async () => {
+		describe("Expected Failure", async () => {
 			it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
 				await expect(
 					strategy.connect(badActor).utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]])
@@ -203,7 +203,7 @@ describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
 			});
 		});
 
-		describe("Valid", async () => {
+		describe("Expected Success", async () => {
 			it("Should not revert when VALID allocation passed..", async () => {
 				const VALID_INPUTS: StrategyUtilizedERC20Update[] = [
 					{

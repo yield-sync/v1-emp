@@ -200,7 +200,7 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 
 
 	describe("function utilizedERC20Deposit()", async () => {
-		describe("Invalid", async () => {
+		describe("Expected Failure", async () => {
 			it("Should NOT allow depositing if not open..", async () => {
 				/**
 				* @notice This test is to check that depositing must be toggled on in order to call the function properly.
@@ -249,7 +249,7 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 			});
 		});
 
-		describe("Valid", async () => {
+		describe("Expected Success", async () => {
 			let eTHValueEMPDepositAmount: BigNumber = ethers.utils.parseUnits("2", 18);
 			let eMPDepositAmounts: UtilizedERC20Amount;
 
@@ -500,7 +500,7 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 		});
 
 
-		describe("Invalid", async () => {
+		describe("Expected Failure", async () => {
 			it("Should NOT allow depositing into strategies if not open..", async () => {
 				// Close deposits
 				await eMP.utilizedERC20DepositOpenToggle();
@@ -539,7 +539,7 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 			});
 		});
 
-		describe("Valid", async () => {
+		describe("Expected Success", async () => {
 			let depositAmount: BigNumber[][] = [];
 
 
@@ -598,7 +598,7 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 						// Retrieve the balance of the Strategy Interactor
 						const BALANCE: BigNumber = await IERC20.balanceOf(STRATEGY_INTERACTOR);
 
-						// Validate the balance of the Stragegy Interactor
+						// Validate the balance of the strategy Interactor
 						expect(BALANCE).to.be.equal(depositAmount[i][ii]);
 					}
 				}
