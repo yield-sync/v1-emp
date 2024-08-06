@@ -289,7 +289,7 @@ contract V1EMPStrategy is
 		{
 			if (_utilizedERC20_utilizationERC20[_utilizedERC20[i]].withdraw)
 			{
-				uint256 utilizedERC20AmountPerToken = iV1EMPStrategyInteractor.utilizedERC20TotalAmount(_utilizedERC20[i]).mul(
+				uint256 utilizedERC20AmountPerToken = iV1EMPStrategyInteractor.utilizedERC20TotalBalance(_utilizedERC20[i]).mul(
 					1e18
 				).div(
 					totalSupply(),

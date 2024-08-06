@@ -150,7 +150,7 @@ contract V1EMP is
 	}
 
 	/// @inheritdoc IV1EMP
-	function utilizedERC20TotalAmount()
+	function utilizedERC20TotalBalance()
 		public
 		view
 		override
@@ -165,7 +165,7 @@ contract V1EMP is
 			for (uint256 ii = 0; ii < _utilizedV1EMPStrategy.length; ii++)
 			{
 				utilizedERC20TotalAmount_[i] += IV1EMPStrategy(_utilizedV1EMPStrategy[ii]).iV1EMPStrategyInteractor(
-				).utilizedERC20TotalAmount(
+				).utilizedERC20TotalBalance(
 					_utilizedERC20[i]
 				);
 			}
@@ -369,7 +369,7 @@ contract V1EMP is
 
 		bool utilizedERC20Available = true;
 
-		uint256[] memory _utilizedERC20TotalAmount = utilizedERC20TotalAmount();
+		uint256[] memory _utilizedERC20TotalAmount = utilizedERC20TotalBalance();
 
 		uint256[] memory transferAmount = new uint256[](_utilizedERC20.length);
 

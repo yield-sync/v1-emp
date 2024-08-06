@@ -21,7 +21,7 @@ contract StrategyInteractorDummy is
 	* For example an LP tokens could be utilized or an internal mapping integar.
 	*/
 	/// @inheritdoc IV1EMPStrategyInteractor
-	function utilizedERC20TotalAmount(address __utilizedERC20)
+	function utilizedERC20TotalBalance(address __utilizedERC20)
 		public
 		view
 		override

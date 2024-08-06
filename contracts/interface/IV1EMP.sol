@@ -175,7 +175,7 @@ interface IV1EMP is
 	* @notice Utilized ERC20 Total Amount
 	* @return utilizedERC20TotalAmount_ {uint256[]}
 	*/
-	function utilizedERC20TotalAmount()
+	function utilizedERC20TotalBalance()
 		external
 		view
 		returns (uint256[] memory utilizedERC20TotalAmount_)

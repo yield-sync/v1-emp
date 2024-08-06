@@ -278,7 +278,7 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 				beforeEach(async () => {
 					/**
 					* @notice
-					* 1) Deposit ERC20 tokens
+					* 1) Deposit ERC20 tokens into EMP
 					*/
 
 					await eMP.utilizedERC20Deposit(eMPDepositAmounts);
@@ -468,6 +468,44 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 					expect(eMPUtilizedERC20.length).to.be.equal(2);
 				});
 			})
+		});
+	});
+
+	describe("function utilizedERC20TotalBalance() (1/2)", async () => {
+		let eTHValueEMPDepositAmount: BigNumber = ethers.utils.parseUnits("2", 18);
+		let eMPDepositAmounts: UtilizedERC20Amount;
+		
+		
+		beforeEach(async () => {
+			/**
+			* @notice
+			* 1) Calculate EMP Deposit Amounts
+			* 2) Approve the tokens
+			* 3) Deposit ERC20 tokens into EMP
+			*/
+
+			eMPDepositAmounts = await eMPTransferUtil.calculateERC20Required(eTHValueEMPDepositAmount);
+
+			// Approve the ERC20 tokens for the strategy interactor
+			for (let i: number = 0; i < eMPUtilizedERC20.length; i++)
+			{
+				await (await ethers.getContractAt(LOCATION_MOCKERC20, eMPUtilizedERC20[i])).approve(
+					eMP.address,
+					eMPDepositAmounts[i]
+				);
+			}
+
+			await eMP.utilizedERC20Deposit(eMPDepositAmounts);
+		});
+
+
+		it("Should return the holdings of the EMP..", async () => {
+			const EMP_ERC20_BALANCES = await eMP.utilizedERC20TotalBalance();
+			
+			for (let i = 0; i < eMPUtilizedERC20.length; i++)
+			{
+				expect(EMP_ERC20_BALANCES[i]).to.equal(eMPDepositAmounts[i]);
+			}
 		});
 	});
 

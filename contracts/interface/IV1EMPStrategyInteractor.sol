@@ -8,7 +8,7 @@ interface IV1EMPStrategyInteractor
 	* @notice Total amounts locked
 	* @param __utilizedERC20 {address}
 	*/
-	function utilizedERC20TotalAmount(address __utilizedERC20)
+	function utilizedERC20TotalBalance(address __utilizedERC20)
 		external
 		view
 		returns (uint256 utilizedERC20Amount_)
