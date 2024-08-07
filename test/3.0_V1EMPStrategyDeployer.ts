@@ -9,9 +9,8 @@ describe("[3.0] V1EMPStrategyDeployer.sol", async () => {
 	let arrayUtility: Contract;
 	let governance: Contract;
 	let registry: Contract;
-	let strategyUtility: Contract;
 	let strategyDeployer: Contract;
-
+	
 	let treasury: VoidSigner;
 
 

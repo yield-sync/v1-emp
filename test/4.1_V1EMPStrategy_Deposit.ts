@@ -18,9 +18,7 @@ describe("[4.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 	let strategyInteractor: Contract;
 	let registry: Contract;
 	let strategy: Contract;
-	let strategyUtility: Contract;
 	let strategyDeployer: Contract;
-
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;
 	let mockERC20C: Contract;

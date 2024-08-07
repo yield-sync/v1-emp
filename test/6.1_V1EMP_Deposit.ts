@@ -24,8 +24,6 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 	let eMPUtility: Contract;
 	let registry: Contract;
 	let strategyDeployer: Contract;
-	let strategyUtility: Contract;
-
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;
 	let mockERC20C: Contract;

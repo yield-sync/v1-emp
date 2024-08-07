@@ -18,7 +18,6 @@ describe("[4.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 	let strategyInteractor: Contract;
 	let registry: Contract;
 	let strategy: Contract;
-	let strategyUtility: Contract;
 	let strategyDeployer: Contract;
 
 	let mockERC20A: Contract;

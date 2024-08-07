@@ -18,7 +18,6 @@ describe("[6.0] V1EMP.sol - Setup", async () => {
 	let registry: Contract;
 	let strategyDeployer: Contract;
 	let strategyInteractor: Contract;
-	let strategyUtility: Contract;
 
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;

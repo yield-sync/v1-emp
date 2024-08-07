@@ -18,7 +18,6 @@ describe("[4.3] V1EMPStrategy.sol - Edgecases", async () => {
 	let strategyInteractor: Contract;
 	let registry: Contract;
 	let strategy: Contract;
-	let strategyUtility: Contract;
 	let strategyDeployer: Contract;
 
 	let mockERC20A: Contract;
