@@ -11,9 +11,6 @@ export const ERROR = {
 		EMP_UTILITY_NOT_SET:
 			"!(v1EMPAmountsValidator != address(0))"
 		,
-		EMP_STRATEGY_UTILITY_NOT_SET:
-			"!(v1EMPStrategyUtility != address(0))"
-		,
 		NOT_EMP_DEPLOYER:
 			"!(v1EMPDeployer == msg.sender)"
 		,
