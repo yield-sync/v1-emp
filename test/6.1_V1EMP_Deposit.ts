@@ -316,115 +316,68 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 			});
 
 			describe("Fee Rate", async () => {
-				const DEPOSIT_ETH_VALUE: BigNumber = ethers.utils.parseUnits("2", 18);;
+				const feeRateTests = [
+					{
+						description: "Manager should receive correct amount of ERC20 if fee is set is greater than 0..",
+						managerFee: ethers.utils.parseUnits(".02", 18),
+						governanceFee: ethers.utils.parseUnits("0", 18),
+						expectedOwnerAmount: eTHValueEMPDepositAmount.mul(ethers.utils.parseUnits(".98", 18)).div(
+							ethers.utils.parseUnits("1", 18)
+						),
+						expectedAmountManager: eTHValueEMPDepositAmount.mul(ethers.utils.parseUnits(".02", 18)).div(
+							ethers.utils.parseUnits("1", 18)
+						),
+						expectedAmountGovernance: ethers.utils.parseUnits("0", 18),
+					},
+					{
+						description: "Governance Treasury should receive correct amount of ERC20 if fee is set is greater than 0..",
+						managerFee: ethers.utils.parseUnits("0", 18),
+						governanceFee: ethers.utils.parseUnits(".02", 18),
+						expectedOwnerAmount: eTHValueEMPDepositAmount.mul(ethers.utils.parseUnits(".98", 18)).div(
+							ethers.utils.parseUnits("1", 18)
+						),
+						expectedAmountManager: ethers.utils.parseUnits("0", 18),
+						expectedAmountGovernance: eTHValueEMPDepositAmount.mul(ethers.utils.parseUnits(".02", 18)).div(
+							ethers.utils.parseUnits("1", 18)
+						),
+					},
+					{
+						description: "Manager & Governance should receive correct amounts of ERC20 if fees are set to greater than 0..",
+						managerFee: ethers.utils.parseUnits(".02", 18),
+						governanceFee: ethers.utils.parseUnits(".02", 18),
+						expectedOwnerAmount: eTHValueEMPDepositAmount.mul(ethers.utils.parseUnits(".96", 18)).div(
+							ethers.utils.parseUnits("1", 18)
+						),
+						expectedAmountManager: eTHValueEMPDepositAmount.mul(ethers.utils.parseUnits(".02", 18)).div(
+							ethers.utils.parseUnits("1", 18)
+						),
+						expectedAmountGovernance: eTHValueEMPDepositAmount.mul(ethers.utils.parseUnits(".02", 18)).div(
+							ethers.utils.parseUnits("1", 18)
+						),
+					}
+				];
 
+				for (let i = 0; i < feeRateTests.length; i++) {
+					it(feeRateTests[i].description, async () => {
+						// Set manager fee to 2%
+						await eMP.feeRateManagerUpdate(feeRateTests[i].managerFee);
 
-				it("Manager should receive correct amount of ERC20 if fee is set is greater than 0..", async () => {
-					// Set manager fee to 2%
-					await eMP.feeRateManagerUpdate(ethers.utils.parseUnits(".02", 18));
+						// Set YS Gov fee to 2%
+						await eMP.feeRateGovernanceUpdate(feeRateTests[i].governanceFee);
 
-					await eMP.utilizedERC20Deposit(eMPDepositAmounts);
+						// Deposit the tokens
+						await eMP.utilizedERC20Deposit(eMPDepositAmounts);
 
-					// Expect that the owner address received something
-					expect(await eMP.balanceOf(owner.address)).to.be.greaterThan(0);
+						// Expect that the owner recieved 98% of the deposit value
+						expect(await eMP.balanceOf(owner.address)).to.be.equal(feeRateTests[i].expectedOwnerAmount);
 
-					// Calculate the EMP tokens that the owner should receive
-					const EXPECTED_EMP_AMOUNT_OWNER = DEPOSIT_ETH_VALUE.mul(ethers.utils.parseUnits(".98", 18)).div(
-						ethers.utils.parseUnits("1", 18)
-					);
+						// Expect that the owner recieved 2% of the deposit value
+						expect(await eMP.balanceOf(manager.address)).to.be.equal(feeRateTests[i].expectedAmountManager);
 
-					// Expect that the owner recieved 98% of the deposit value
-					expect(await eMP.balanceOf(owner.address)).to.be.equal(EXPECTED_EMP_AMOUNT_OWNER);
-
-					// Expect that the manager address received something
-					expect(await eMP.balanceOf(manager.address)).to.be.greaterThan(0);
-
-					// Calculate the EMP tokens that the manager should receive
-					const EXPECTED_EMP_AMOUNT_MANAGER = DEPOSIT_ETH_VALUE.mul(ethers.utils.parseUnits(".02", 18)).div(
-						ethers.utils.parseUnits("1", 18)
-					);
-
-					// Expect that the owner recieved 2% of the deposit value
-					expect(await eMP.balanceOf(manager.address)).to.be.equal(EXPECTED_EMP_AMOUNT_MANAGER);
-				});
-
-				it("Governance Treasury should receive correct amount of ERC20 if fee is set is greater than 0..", async () => {
-					// Set YS Gov fee to 2%
-					await eMP.feeRateGovernanceUpdate(ethers.utils.parseUnits(".02", 18));
-
-					await eMP.utilizedERC20Deposit(eMPDepositAmounts);
-
-					// Expect that the manager address received 0% of the EMP tokens
-					expect(await eMP.balanceOf(manager.address)).to.be.equal(0);
-
-					// Expect that the owner address received something
-					expect(await eMP.balanceOf(owner.address)).to.be.greaterThan(0);
-
-					// Calculate the EMP tokens that the owner should receive
-					const EXPECTED_EMP_AMOUNT_OWNER = DEPOSIT_ETH_VALUE.mul(ethers.utils.parseUnits(".98", 18)).div(
-						ethers.utils.parseUnits("1", 18)
-					);
-
-					// Expect that the owner recieved 98% of the deposit value
-					expect(await eMP.balanceOf(owner.address)).to.be.equal(EXPECTED_EMP_AMOUNT_OWNER);
-
-					// Expect that the treasury address received something
-					expect(await eMP.balanceOf(treasury.address)).to.be.greaterThan(0);
-
-					// Calculate the EMP tokens that the treasury should receive
-					const EXPECTED_EMP_AMOUNT_TREASURY = DEPOSIT_ETH_VALUE.mul(ethers.utils.parseUnits(".02", 18)).div(
-						ethers.utils.parseUnits("1", 18)
-					);
-
-					// Expect that the owner recieved 2% of the deposit value
-					expect(await eMP.balanceOf(treasury.address)).to.be.equal(EXPECTED_EMP_AMOUNT_TREASURY);
-				});
-
-				it("Manager & Governance should receive correct amounts of ERC20 if fees are set to greater than 0..", async () => {
-					// Set manager fee to 2%
-					await eMP.feeRateManagerUpdate(ethers.utils.parseUnits(".02", 18));
-
-					// Set YS Gov fee to 2%
-					await eMP.feeRateGovernanceUpdate(ethers.utils.parseUnits(".02", 18));
-
-					// Deposit
-					await eMP.utilizedERC20Deposit(eMPDepositAmounts);
-
-					// Expect that the manager address received something
-					expect(await eMP.balanceOf(manager.address)).to.be.greaterThan(0);
-
-					// Calculate the EMP tokens that the manager should receive
-					const EXPECTED_EMP_AMOUNT_MANAGER = DEPOSIT_ETH_VALUE.mul(ethers.utils.parseUnits(".02", 18)).div(
-						ethers.utils.parseUnits("1", 18)
-					);
-
-					// Expect that the manager recieved 2% of the deposit value
-					expect(await eMP.balanceOf(manager.address)).to.be.equal(EXPECTED_EMP_AMOUNT_MANAGER);
-
-
-					// Expect that the treasury address received something
-					expect(await eMP.balanceOf(treasury.address)).to.be.greaterThan(0);
-
-					// Calculate the EMP tokens that the treasury should receive
-					const EXPECTED_EMP_AMOUNT_TREASURY = DEPOSIT_ETH_VALUE.mul(ethers.utils.parseUnits(".02", 18)).div(
-						ethers.utils.parseUnits("1", 18)
-					);
-
-					// Expect that the owner recieved 2% of the deposit value
-					expect(await eMP.balanceOf(treasury.address)).to.be.equal(EXPECTED_EMP_AMOUNT_TREASURY);
-
-
-					// Expect that the owner address received something
-					expect(await eMP.balanceOf(owner.address)).to.be.greaterThan(0);
-
-					// Calculate the EMP tokens that the owner should receive
-					const EXPECTED_EMP_AMOUNT_OWNER = DEPOSIT_ETH_VALUE.mul(ethers.utils.parseUnits(".96", 18)).div(
-						ethers.utils.parseUnits("1", 18)
-					);
-
-					// Expect that the owner recieved 98% of the deposit value
-					expect(await eMP.balanceOf(owner.address)).to.be.equal(EXPECTED_EMP_AMOUNT_OWNER);
-				});
+						// Expect that the owner recieved 2% of the deposit value
+						expect(await eMP.balanceOf(treasury.address)).to.be.equal(feeRateTests[i].expectedAmountGovernance);
+					});
+				}
 			});
 
 			describe("[indirect-call] function utilizedERC20Update() - Utilized ERC20 tokens changed..", async () => {
@@ -472,8 +425,8 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 	describe("function utilizedERC20TotalBalance() (1/2)", async () => {
 		let eTHValueEMPDepositAmount: BigNumber = ethers.utils.parseUnits("2", 18);
 		let eMPDepositAmounts: UtilizedERC20Amount;
-		
-		
+
+
 		beforeEach(async () => {
 			/**
 			* @notice
@@ -499,7 +452,7 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 
 		it("Should return the holdings of the EMP..", async () => {
 			const EMP_ERC20_BALANCES = await eMP.utilizedERC20TotalBalance();
-			
+
 			for (let i = 0; i < eMPUtilizedERC20.length; i++)
 			{
 				expect(EMP_ERC20_BALANCES[i]).to.equal(eMPDepositAmounts[i]);
@@ -646,8 +599,8 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 		let eTHValueEMPDepositAmount: BigNumber = ethers.utils.parseUnits("2", 18);
 		let eMPDepositAmounts: UtilizedERC20Amount;
 		let depositAmount: BigNumber[][] = [];
-		
-		
+
+
 		beforeEach(async () => {
 			/**
 			* @notice
@@ -686,7 +639,7 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 
 		it("Should return the holdings of the EMP..", async () => {
 			const EMP_ERC20_BALANCES = await eMP.utilizedERC20TotalBalance();
-			
+
 			for (let i = 0; i < eMPUtilizedERC20.length; i++)
 			{
 				expect(EMP_ERC20_BALANCES[i]).to.equal(eMPDepositAmounts[i]);
