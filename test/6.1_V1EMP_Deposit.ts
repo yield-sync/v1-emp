@@ -646,4 +646,118 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 			}
 		});
 	});
+
+	describe("Multiple EMPs using single Strategy", async () => {
+		let secondEMP: Contract;
+		let secondEMPTransferUtil: EMPTransferUtil;
+		let secondEMPUtilizedERC20;
+
+		beforeEach(async () => {
+			const V1EMP: ContractFactory = await ethers.getContractFactory("V1EMP");
+
+			// Deploy an EMP
+			await eMPDeployer.deployV1EMP(false, "EMP Name", "EMP");
+
+			// Attach the deployed EMP address to a variable
+			secondEMP = await V1EMP.attach(String(await registry.v1EMPId_v1EMP(2)));
+
+			// Set the Manager
+			await secondEMP.managerUpdate(manager.address);
+
+			// Set the utilzation to 2 different strategies
+			await secondEMP.utilizedV1EMPStrategyUpdate(
+				[strategies[0].contract.address, strategies[1].contract.address] as UtilizedEMPStrategyUpdate,
+				[PERCENT.SEVENTY_FIVE, PERCENT.TWENTY_FIVE] as UtilizedEMPStrategyAllocationUpdate
+			);
+
+			await secondEMP.utilizedERC20DepositOpenToggle();
+
+			secondEMPTransferUtil = new EMPTransferUtil(secondEMP, registry);
+
+			secondEMPUtilizedERC20 = await secondEMP.utilizedERC20();
+		});
+
+
+		describe("Expected Success", async () => {
+			let eMPDepositAmounts: UtilizedERC20Amount;
+			let secondEMPDepositAmounts: UtilizedERC20Amount;
+			let eTHValueEMPDepositAmount: BigNumber = ethers.utils.parseUnits("2", 18);
+			let depositAmountEMP: BigNumber[][] = [];
+			let depositAmountSecondEMP: BigNumber[][] = [];
+
+
+			beforeEach(async () => {
+				eMPDepositAmounts = await eMPTransferUtil.calculateERC20Required(eTHValueEMPDepositAmount);
+				secondEMPDepositAmounts = await secondEMPTransferUtil.calculateERC20Required(eTHValueEMPDepositAmount);
+
+				for (let i: number = 0; i < eMPUtilizedERC20.length; i++)
+				{
+					await (await ethers.getContractAt(LOCATION_MOCKERC20, eMPUtilizedERC20[i])).approve(
+						eMP.address,
+						eMPDepositAmounts[i]
+					);
+				}
+
+				for (let i: number = 0; i < secondEMPUtilizedERC20.length; i++)
+				{
+					await (await ethers.getContractAt(LOCATION_MOCKERC20, eMPUtilizedERC20[i])).approve(
+						secondEMP.address,
+						secondEMPDepositAmounts[i]
+					);
+				}
+
+				await eMP.utilizedERC20Deposit(eMPDepositAmounts);
+				await secondEMP.utilizedERC20Deposit(secondEMPDepositAmounts);
+
+				depositAmountEMP[0] = await strategies[0].strategyTransferUtil.calculateERC20Required(
+					eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(D_18)
+				);
+
+				depositAmountEMP[1] = await strategies[1].strategyTransferUtil.calculateERC20Required(
+					eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(D_18)
+				);
+
+				depositAmountSecondEMP[0] = await strategies[0].strategyTransferUtil.calculateERC20Required(
+					eTHValueEMPDepositAmount.mul(PERCENT.SEVENTY_FIVE).div(D_18)
+				);
+
+				depositAmountSecondEMP[1] = await strategies[1].strategyTransferUtil.calculateERC20Required(
+					eTHValueEMPDepositAmount.mul(PERCENT.TWENTY_FIVE).div(D_18)
+				);
+
+				await eMP.utilizedV1EMPStrategyDeposit([depositAmountEMP[0], depositAmountEMP[1]]);
+				await secondEMP.utilizedV1EMPStrategyDeposit([depositAmountSecondEMP[0], depositAmountSecondEMP[1]]);
+			});
+
+
+			it("Expect strategy token supply to add up to what was deposited..", async () => {
+
+				expect(await strategies[0].contract.totalSupply()).to.be.equal(
+					eTHValueEMPDepositAmount.mul(PERCENT.SEVENTY_FIVE).div(D_18).add(
+						eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(D_18)
+					)
+				);
+
+				expect(await strategies[1].contract.totalSupply()).to.be.equal(
+					eTHValueEMPDepositAmount.mul(PERCENT.TWENTY_FIVE).div(D_18).add(
+						eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(D_18)
+					)
+				);
+			});
+
+			it("Should distribute the strategy tokens fairely to multiple EMP depositing into it..", async () => {
+				const TOTAL_STRATEGY_TOKENS = eTHValueEMPDepositAmount.mul(2).sub(
+					await strategies[0].contract.balanceOf(eMP.address)
+				).sub(
+					await strategies[1].contract.balanceOf(eMP.address)
+				).sub(
+					await strategies[0].contract.balanceOf(secondEMP.address)
+				).sub(
+					await strategies[1].contract.balanceOf(secondEMP.address)
+				);
+
+				expect(TOTAL_STRATEGY_TOKENS).to.be.equal(ethers.utils.parseUnits("0", 18));
+			});
+		});
+	});
 });
