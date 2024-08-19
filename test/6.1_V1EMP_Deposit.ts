@@ -732,18 +732,21 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 
 
 			it("Expect strategy token supply to add up to what was deposited..", async () => {
-
-				expect(await strategies[0].contract.totalSupply()).to.be.equal(
-					eTHValueEMPDepositAmount.mul(PERCENT.SEVENTY_FIVE).div(D_18).add(
-						eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(D_18)
-					)
+				const STRATEGY_1_DEPOSIT_AMOUNT: BigNumber = eTHValueEMPDepositAmount.mul(PERCENT.SEVENTY_FIVE).div(
+					D_18
+				).add(
+					eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(D_18)
 				);
 
-				expect(await strategies[1].contract.totalSupply()).to.be.equal(
-					eTHValueEMPDepositAmount.mul(PERCENT.TWENTY_FIVE).div(D_18).add(
-						eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(D_18)
-					)
+				const STRATEGY_2_DEPOSIT_AMOUNT: BigNumber = eTHValueEMPDepositAmount.mul(PERCENT.TWENTY_FIVE).div(
+					D_18
+				).add(
+					eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(D_18)
 				);
+
+				expect(await strategies[0].contract.totalSupply()).to.be.equal(STRATEGY_1_DEPOSIT_AMOUNT);
+
+				expect(await strategies[1].contract.totalSupply()).to.be.equal(STRATEGY_2_DEPOSIT_AMOUNT);
 			});
 
 			it("Should distribute the strategy tokens fairely to multiple EMP depositing into it..", async () => {
