@@ -650,7 +650,8 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 	describe("Multiple EMPs using single Strategy", async () => {
 		let secondEMP: Contract;
 		let secondEMPTransferUtil: EMPTransferUtil;
-		let secondEMPUtilizedERC20;
+		let secondEMPUtilizedERC20: string[];
+
 
 		beforeEach(async () => {
 			const V1EMP: ContractFactory = await ethers.getContractFactory("V1EMP");
