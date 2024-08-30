@@ -114,43 +114,6 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 
 
 		/**
-		* EMP (Part 1)
-		*/
-		const deployEMPs = [
-			{
-				name: "EMP 1",
-				ticker: "EMP1",
-			},
-			{
-				name: "EMP 2",
-				ticker: "EMP2",
-			},
-		];
-
-		for (let i: number = 0; i < deployEMPs.length; i++)
-		{
-			// Deploy EMPs
-			await eMPDeployer.deployV1EMP(false, deployEMPs[i].name, deployEMPs[i].ticker);
-
-			// Get address from registry
-			let registryResults = await registry.v1EMPId_v1EMP(i + 1);
-
-			// Verify that a EMP has been registered
-			expect(String(registryResults)).to.be.not.equal(ethers.constants.AddressZero);
-
-			const eMPContract = await V1EMP.attach(String(registryResults));
-
-			eMPs[i] = ({
-				contract: eMPContract,
-				eMPTransferUtil: new EMPTransferUtil(eMPContract, registry),
-			});
-
-			// Set the Manager
-			await eMPs[i].contract.managerUpdate(manager.address);
-		}
-
-
-		/**
 		* EMP Strategies
 		*/
 		const deployStrategies = [
@@ -199,26 +162,45 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 			};
 		}
 
+
 		/**
-		* EMP (Part 2)
+		* EMP
 		*/
-		const eMPStrategyUtilizations: {
-			utilizedEMPStrategyUpdate: UtilizedEMPStrategyUpdate,
-			utilizedEMPStrategyAllocationUpdate: UtilizedEMPStrategyAllocationUpdate,
-		}[] = [
+		const deployEMPs = [
 			{
+				name: "EMP 1",
+				ticker: "EMP1",
 				utilizedEMPStrategyUpdate: [strategies[0].contract.address, strategies[1].contract.address],
 				utilizedEMPStrategyAllocationUpdate: [PERCENT.FIFTY, PERCENT.FIFTY],
 			},
 			{
+				name: "EMP 2",
+				ticker: "EMP2",
 				utilizedEMPStrategyUpdate: [strategies[0].contract.address, strategies[1].contract.address],
 				utilizedEMPStrategyAllocationUpdate: [PERCENT.SEVENTY_FIVE, PERCENT.TWENTY_FIVE],
 			},
 		];
 
-		for (let i = 0; i < eMPStrategyUtilizations.length; i++)
+		for (let i: number = 0; i < deployEMPs.length; i++)
 		{
-			const dESU = eMPStrategyUtilizations[i];
+			// Deploy EMPs
+			await eMPDeployer.deployV1EMP(false, deployEMPs[i].name, deployEMPs[i].ticker);
+
+			// Get address from registry
+			let registryResults = await registry.v1EMPId_v1EMP(i + 1);
+
+			// Verify that a EMP has been registered
+			expect(String(registryResults)).to.be.not.equal(ethers.constants.AddressZero);
+
+			const eMPContract = await V1EMP.attach(String(registryResults));
+
+			eMPs[i] = ({
+				contract: eMPContract,
+				eMPTransferUtil: new EMPTransferUtil(eMPContract, registry),
+			});
+
+			// Set the Manager
+			await eMPs[i].contract.managerUpdate(manager.address);
 
 			expect(await eMPs[i].contract.utilizedERC20DepositOpen()).to.be.false;
 
@@ -226,8 +208,8 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 
 			// Set the utilzation to 2 different strategies
 			await eMPs[i].contract.utilizedV1EMPStrategyUpdate(
-				dESU.utilizedEMPStrategyUpdate,
-				dESU.utilizedEMPStrategyAllocationUpdate
+				deployEMPs[i].utilizedEMPStrategyUpdate,
+				deployEMPs[i].utilizedEMPStrategyAllocationUpdate
 			);
 
 			// Open deposits
