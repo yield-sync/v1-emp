@@ -13,14 +13,11 @@ const LOCATION_MOCKERC20: string = "MockERC20";
 
 
 describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
-	let eMPUtilizedERC20: string[];
-
 	let eTHValueEMPDepositAmount: BigNumber = ethers.utils.parseUnits("2", 18);
 
 	let arrayUtility: Contract;
 	let governance: Contract;
 	let eTHValueFeed: Contract;
-	let eMP: Contract;
 	let eMPDeployer: Contract;
 	let eMPUtility: Contract;
 	let registry: Contract;
@@ -29,21 +26,24 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 	let mockERC20B: Contract;
 	let mockERC20C: Contract;
 
-	let eMPTransferUtil: EMPTransferUtil;
-
 	let owner: VoidSigner;
 	let manager: VoidSigner;
 	let treasury: VoidSigner;
 	let badActor: VoidSigner;
 
-	let eMPDepositAmounts: UtilizedERC20Amount;
+	let eMPs: {
+		contract: Contract,
+		eMPTransferUtil: EMPTransferUtil
+	}[] = [];
+
 
 	let strategies: {
 		contract: Contract,
 		strategyTransferUtil: StrategyTransferUtil
 	}[] = [];
 
-	let depositAmount: BigNumber[][] = [];
+	let eMPDepositAmounts: UtilizedERC20Amount;
+	let depositAmount: UtilizedERC20Amount = [];
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
@@ -127,25 +127,6 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 
 
 		/**
-		* EMP
-		*/
-		// Deploy an EMP
-		await eMPDeployer.deployV1EMP(false, "EMP Name", "EMP");
-
-		// Verify that a EMP has been registered
-		expect(await registry.v1EMPId_v1EMP(1)).to.be.not.equal(ethers.constants.AddressZero);
-
-		// Attach the deployed EMP address to a variable
-		eMP = await V1EMP.attach(String(await registry.v1EMPId_v1EMP(1)));
-
-		// Set the Manager
-		await eMP.managerUpdate(manager.address);
-
-		// Update the EMP transfer Util
-		eMPTransferUtil = new EMPTransferUtil(eMP, registry);
-
-
-		/**
 		* EMP Strategies
 		*/
 		const deployStrategies = [
@@ -194,30 +175,81 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 			};
 		}
 
-		// Set the utilzation to 2 different strategies
-		await eMP.utilizedV1EMPStrategyUpdate(
-			[strategies[0].contract.address, strategies[1].contract.address] as UtilizedEMPStrategyUpdate,
-			[PERCENT.FIFTY, PERCENT.FIFTY] as UtilizedEMPStrategyAllocationUpdate
-		);
+		/**
+		* EMP
+		*/
+		const deployEMPs: {
+			name: string,
+			ticker: string,
+			utilizedEMPStrategyUpdate: UtilizedEMPStrategyUpdate,
+			utilizedEMPStrategyAllocationUpdate: UtilizedEMPStrategyAllocationUpdate
+		}[] = [
+			{
+				name: "EMP 1",
+				ticker: "EMP1",
+				utilizedEMPStrategyUpdate: [strategies[0].contract.address, strategies[1].contract.address],
+				utilizedEMPStrategyAllocationUpdate: [PERCENT.FIFTY, PERCENT.FIFTY],
+			},
+		];
 
-		// Turn on deposits
-		await eMP.utilizedERC20DepositOpenToggle();
+		for (let i: number = 0; i < deployEMPs.length; i++)
+		{
+			// Deploy EMPs
+			await eMPDeployer.deployV1EMP(false, deployEMPs[i].name, deployEMPs[i].ticker);
 
-		eMPDepositAmounts = await eMPTransferUtil.calculateERC20Required(eTHValueEMPDepositAmount);
+			// Get address from registry
+			let registryResults = await registry.v1EMPId_v1EMP(i + 1);
 
-		eMPUtilizedERC20 = await eMP.utilizedERC20();
+			// Verify that a EMP has been registered
+			expect(String(registryResults)).to.be.not.equal(ethers.constants.AddressZero);
+
+			const eMPContract = await V1EMP.attach(String(registryResults));
+
+			eMPs[i] = ({
+				contract: eMPContract,
+				eMPTransferUtil: new EMPTransferUtil(eMPContract, registry),
+			});
+
+			// Set the Manager
+			await eMPs[i].contract.managerUpdate(manager.address);
+
+			expect(await eMPs[i].contract.utilizedERC20DepositOpen()).to.be.false;
+
+			expect(await eMPs[i].contract.utilizedERC20WithdrawOpen()).to.be.false;
+
+			// Set the utilzation to 2 different strategies
+			await eMPs[i].contract.utilizedV1EMPStrategyUpdate(
+				deployEMPs[i].utilizedEMPStrategyUpdate,
+				deployEMPs[i].utilizedEMPStrategyAllocationUpdate
+			);
+
+			// Open deposits
+			await eMPs[i].contract.utilizedERC20DepositOpenToggle();
+
+			// Open withdrawals
+			await eMPs[i].contract.utilizedERC20WithdrawOpenToggle();
+
+			expect(await eMPs[i].contract.utilizedERC20DepositOpen()).to.be.true;
+
+			expect(await eMPs[i].contract.utilizedERC20WithdrawOpen()).to.be.true;
+		}
+
+
+		eMPDepositAmounts = await eMPs[0].eMPTransferUtil.calculateERC20Required(eTHValueEMPDepositAmount);
 
 		// Approve the ERC20 tokens for the strategy interactor
-		for (let i: number = 0; i < eMPUtilizedERC20.length; i++)
+		for (let i: number = 0; i < (await eMPs[0].contract.utilizedERC20()).length; i++)
 		{
-			await (await ethers.getContractAt(LOCATION_MOCKERC20, eMPUtilizedERC20[i])).approve(
-				eMP.address,
+			let eMPUtilizedERC20 = (await eMPs[0].contract.utilizedERC20())[i];
+
+			await (await ethers.getContractAt(LOCATION_MOCKERC20, eMPUtilizedERC20)).approve(
+				eMPs[0].contract.address,
 				eMPDepositAmounts[i]
 			);
 		}
 
 		// Deposit the utilized ERC20 tokens into EMP
-		await eMP.utilizedERC20Deposit(eMPDepositAmounts);
+		await eMPs[0].contract.utilizedERC20Deposit(eMPDepositAmounts);
 
 		depositAmount[0] = await strategies[0].strategyTransferUtil.calculateERC20Required(
 			eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(D_18)
@@ -227,52 +259,47 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 			eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(D_18)
 		);
 
-		// Pass incorrect length of deposit amounts
-		await eMP.utilizedV1EMPStrategyDeposit([depositAmount[0], depositAmount[1]]);
+		await eMPs[0].contract.utilizedV1EMPStrategyDeposit([depositAmount[0], depositAmount[1]]);
 
 		// Expect that the owner address received something
-		expect(await eMP.balanceOf(owner.address)).to.be.greaterThan(0);
-
-		await eMP.utilizedERC20WithdrawOpenToggle();
-
-		expect(await eMP.utilizedERC20WithdrawOpen()).to.be.true;
+		expect(await eMPs[0].contract.balanceOf(owner.address)).to.be.greaterThan(0);
 	});
 
 
 	describe("function utilizedV1EMPStrategyWithdraw()", async () => {
 		describe("Modifier", async () => {
 			it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
-				await expect(eMP.connect(badActor).utilizedV1EMPStrategyWithdraw([])).to.be.rejectedWith(
+				await expect(eMPs[0].contract.connect(badActor).utilizedV1EMPStrategyWithdraw([])).to.be.rejectedWith(
 					ERROR.NOT_AUTHORIZED
 				);
 			});
 		});
 
 		it("Should revert invalid lengthed _v1EMPStrategyERC20Amount param passed..", async () => {
-			await expect(eMP.utilizedV1EMPStrategyWithdraw([])).to.be.rejectedWith(
+			await expect(eMPs[0].contract.utilizedV1EMPStrategyWithdraw([])).to.be.rejectedWith(
 				ERROR.EMP.INVALID_STRATEGY_ERC20_AMOUNTS_LENGTH
 			);
 		});
 
 		it("Should be able to withdraw ERC20 tokens from Strategy to EMP..", async () => {
-			expect(await mockERC20A.balanceOf(eMP.address)).to.be.equal(ethers.utils.parseUnits('0', 18));
+			expect(await mockERC20A.balanceOf(eMPs[0].contract.address)).to.be.equal(ethers.utils.parseUnits('0', 18));
 
-			expect(await mockERC20B.balanceOf(eMP.address)).to.be.equal(ethers.utils.parseUnits('0', 18));
+			expect(await mockERC20B.balanceOf(eMPs[0].contract.address)).to.be.equal(ethers.utils.parseUnits('0', 18));
 
-			expect(await mockERC20C.balanceOf(eMP.address)).to.be.equal(ethers.utils.parseUnits('0', 18));
+			expect(await mockERC20C.balanceOf(eMPs[0].contract.address)).to.be.equal(ethers.utils.parseUnits('0', 18));
 
 			await expect(
-				eMP.utilizedV1EMPStrategyWithdraw([
-					await strategies[0].contract.balanceOf(eMP.address),
-					await strategies[1].contract.balanceOf(eMP.address),
+				eMPs[0].contract.utilizedV1EMPStrategyWithdraw([
+					await strategies[0].contract.balanceOf(eMPs[0].contract.address),
+					await strategies[1].contract.balanceOf(eMPs[0].contract.address),
 				])
 			).to.not.be.reverted;
 
-			expect(await mockERC20A.balanceOf(eMP.address)).to.be.greaterThan(ethers.utils.parseUnits('0', 18));
+			expect(await mockERC20A.balanceOf(eMPs[0].contract.address)).to.be.greaterThan(ethers.utils.parseUnits('0', 18));
 
-			expect(await mockERC20B.balanceOf(eMP.address)).to.be.greaterThan(ethers.utils.parseUnits('0', 18));
+			expect(await mockERC20B.balanceOf(eMPs[0].contract.address)).to.be.greaterThan(ethers.utils.parseUnits('0', 18));
 
-			expect(await mockERC20C.balanceOf(eMP.address)).to.be.greaterThan(ethers.utils.parseUnits('0', 18));
+			expect(await mockERC20C.balanceOf(eMPs[0].contract.address)).to.be.greaterThan(ethers.utils.parseUnits('0', 18));
 		});
 
 		describe("[indirect-call] function utilizedERC20Updated() - Utilized ERC20 tokens changed..", async () => {
@@ -280,7 +307,7 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 
 
 			beforeEach(async () => {
-				eMPUtilizedERC20 = await eMP.utilizedERC20();
+				eMPUtilizedERC20 = await eMPs[0].contract.utilizedERC20();
 
 				expect(eMPUtilizedERC20.length).to.be.equal(3);
 
@@ -304,12 +331,12 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 
 
 			it("Should update EMP's utilizedERC20 array to be a union of the strategy's utilizedERC20s..", async () => {
-				await eMP.utilizedV1EMPStrategyWithdraw([
-					await strategies[0].contract.balanceOf(eMP.address),
-					await strategies[1].contract.balanceOf(eMP.address),
+				await eMPs[0].contract.utilizedV1EMPStrategyWithdraw([
+					await strategies[0].contract.balanceOf(eMPs[0].contract.address),
+					await strategies[1].contract.balanceOf(eMPs[0].contract.address),
 				]);
 
-				eMPUtilizedERC20 = await eMP.utilizedERC20();
+				eMPUtilizedERC20 = await eMPs[0].contract.utilizedERC20();
 
 				expect(eMPUtilizedERC20.length).to.be.equal(2);
 			});
@@ -319,9 +346,9 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 	describe("function utilizedERC20Withdraw() (1/3) - utilizedV1EMPStrategyWithdraw() NOT called before", async () => {
 		describe("Expected Failure", async () => {
 			it("Should fail to withdraw tokens from Strategy if not enough tokens available on EMP..", async () => {
-				const OWNER_EMP_BALANCE = await eMP.balanceOf(owner.address);
+				const OWNER_EMP_BALANCE = await eMPs[0].contract.balanceOf(owner.address);
 
-				await expect(eMP.utilizedERC20Withdraw(OWNER_EMP_BALANCE)).to.be.revertedWith(
+				await expect(eMPs[0].contract.utilizedERC20Withdraw(OWNER_EMP_BALANCE)).to.be.revertedWith(
 					ERROR.EMP.UTILIZED_ERC20_NOT_AVAILABLE
 				);
 			});
@@ -330,12 +357,12 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 
 	describe("function utilizedERC20Withdraw() (2/3) - Full Withdrawals Disabled", async () => {
 		beforeEach(async () => {
-			await eMP.utilizedV1EMPStrategyWithdraw([
-				await strategies[0].contract.balanceOf(eMP.address),
-				await strategies[1].contract.balanceOf(eMP.address),
+			await eMPs[0].contract.utilizedV1EMPStrategyWithdraw([
+				await strategies[0].contract.balanceOf(eMPs[0].contract.address),
+				await strategies[1].contract.balanceOf(eMPs[0].contract.address),
 			])
 
-			expect(await eMP.utilizedERC20WithdrawFull()).to.be.false;
+			expect(await eMPs[0].contract.utilizedERC20WithdrawFull()).to.be.false;
 		});
 
 
@@ -345,12 +372,12 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 				* @notice This test is to check that depositing must be toggled on in order to call the function properly.
 				*/
 
-				await eMP.utilizedERC20WithdrawOpenToggle();
+				await eMPs[0].contract.utilizedERC20WithdrawOpenToggle();
 
-				expect(await eMP.utilizedERC20WithdrawOpen()).to.be.false;
+				expect(await eMPs[0].contract.utilizedERC20WithdrawOpen()).to.be.false;
 
 				// Even if utilizedERC20Amounts, the function should revert with reason that deposits are NOT open
-				await expect(eMP.utilizedERC20Withdraw(0)).to.be.rejectedWith(
+				await expect(eMPs[0].contract.utilizedERC20Withdraw(0)).to.be.rejectedWith(
 					ERROR.EMP.WITHDRAW_NOT_OPEN
 				);
 			});
@@ -360,9 +387,9 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 				* @notice This test should test that msg.sender cannot withdraw more than what they have.
 				*/
 
-				const INVALID_BALANCE = (await eMP.balanceOf(owner.address)).add(1);
+				const INVALID_BALANCE = (await eMPs[0].contract.balanceOf(owner.address)).add(1);
 
-				await expect(eMP.utilizedERC20Withdraw(INVALID_BALANCE)).to.be.rejectedWith(
+				await expect(eMPs[0].contract.utilizedERC20Withdraw(INVALID_BALANCE)).to.be.rejectedWith(
 					ERROR.EMP.INVALID_BALANCE
 				);
 			});
@@ -374,15 +401,15 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 				* @notice This test should test that msg.sender cannot withdraw more than what they have.
 				*/
 
-				const OWNER_EMP_BALANCE = await eMP.balanceOf(owner.address);
+				const OWNER_EMP_BALANCE = await eMPs[0].contract.balanceOf(owner.address);
 
-				await eMP.utilizedERC20Withdraw(OWNER_EMP_BALANCE);
+				await eMPs[0].contract.utilizedERC20Withdraw(OWNER_EMP_BALANCE);
 
-				expect(await eMP.balanceOf(owner.address)).to.be.equal(0);
+				expect(await eMPs[0].contract.balanceOf(owner.address)).to.be.equal(0);
 
 				// Expect that the strategy tokens are burnt after withdrawing
-				expect(await strategies[0].contract.balanceOf(eMP.address)).to.be.equal(0);
-				expect(await strategies[1].contract.balanceOf(eMP.address)).to.be.equal(0);
+				expect(await strategies[0].contract.balanceOf(eMPs[0].contract.address)).to.be.equal(0);
+				expect(await strategies[1].contract.balanceOf(eMPs[0].contract.address)).to.be.equal(0);
 			});
 		});
 
@@ -392,7 +419,7 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 
 
 			beforeEach(async () => {
-				eMPUtilizedERC20 = await eMP.utilizedERC20();
+				eMPUtilizedERC20 = await eMPs[0].contract.utilizedERC20();
 
 				expect(eMPUtilizedERC20.length).to.be.equal(3);
 
@@ -416,11 +443,11 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 
 
 			it("Should update EMP's utilizedERC20 array to be a union of the strategy's utilizedERC20s..", async () => {
-				const VALID_BALANCE = await eMP.balanceOf(owner.address);
+				const VALID_BALANCE = await eMPs[0].contract.balanceOf(owner.address);
 
-				await eMP.utilizedERC20Withdraw(VALID_BALANCE);
+				await eMPs[0].contract.utilizedERC20Withdraw(VALID_BALANCE);
 
-				eMPUtilizedERC20 = await eMP.utilizedERC20();
+				eMPUtilizedERC20 = await eMPs[0].contract.utilizedERC20();
 
 				expect(eMPUtilizedERC20.length).to.be.equal(2);
 			});
@@ -429,58 +456,60 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 
 	describe("function utilizedERC20WithdrawFullToggle()", async () => {
 		it("[modifier][auth] Should revert when unauthorized msg.sender calls..", async () => {
-			await expect(eMP.connect(badActor).utilizedERC20WithdrawFullToggle()).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
+			await expect(eMPs[0].contract.connect(badActor).utilizedERC20WithdrawFullToggle()).to.be.rejectedWith(
+				ERROR.NOT_AUTHORIZED
+			);
 		});
 
 		it("Should toggle utilizedERC20WithdrawOpen..", async () => {
 
-			expect(await eMP.utilizedERC20WithdrawFull()).to.be.false;
+			expect(await eMPs[0].contract.utilizedERC20WithdrawFull()).to.be.false;
 
-			await expect(eMP.utilizedERC20WithdrawFullToggle()).to.be.not.rejected;
+			await expect(eMPs[0].contract.utilizedERC20WithdrawFullToggle()).to.be.not.rejected;
 
-			expect(await eMP.utilizedERC20WithdrawFull()).to.be.true;
+			expect(await eMPs[0].contract.utilizedERC20WithdrawFull()).to.be.true;
 		});
 	});
 
 	describe("function utilizedERC20Withdraw() (2/2) - Full Withdrawals Enabled", async () => {
 		describe("Expected Success", async () => {
 			beforeEach(async () => {
-				expect(await eMP.utilizedERC20WithdrawFull()).to.be.false;
+				expect(await eMPs[0].contract.utilizedERC20WithdrawFull()).to.be.false;
 
-				await eMP.utilizedERC20WithdrawFullToggle();
+				await eMPs[0].contract.utilizedERC20WithdrawFullToggle();
 
-				expect(await eMP.utilizedERC20WithdrawFull()).to.be.true;
+				expect(await eMPs[0].contract.utilizedERC20WithdrawFull()).to.be.true;
 			});
 
 
 			it("Should allow withdrawing tokens from Strategy even if not prewithdrawn from stratgies..", async () => {
-				const OWNER_EMP_BALANCE = await eMP.balanceOf(owner.address);
+				const OWNER_EMP_BALANCE = await eMPs[0].contract.balanceOf(owner.address);
 
-				await eMP.utilizedERC20Withdraw(OWNER_EMP_BALANCE);
+				await eMPs[0].contract.utilizedERC20Withdraw(OWNER_EMP_BALANCE);
 
-				expect(await eMP.balanceOf(owner.address)).to.be.equal(0);
+				expect(await eMPs[0].contract.balanceOf(owner.address)).to.be.equal(0);
 
 				// Expect that the strategy tokens are burnt after withdrawing
-				expect(await strategies[0].contract.balanceOf(eMP.address)).to.be.equal(0);
-				expect(await strategies[1].contract.balanceOf(eMP.address)).to.be.equal(0);
+				expect(await strategies[0].contract.balanceOf(eMPs[0].contract.address)).to.be.equal(0);
+				expect(await strategies[1].contract.balanceOf(eMPs[0].contract.address)).to.be.equal(0);
 			});
 
 			it("Should allow withdrawing tokens from Strategy even if only partially prewithdrawn from stratgies..", async () => {
-				const s1Balance = await strategies[0].contract.balanceOf(eMP.address);
-				const s2Balance = await strategies[1].contract.balanceOf(eMP.address);
+				const s1Balance = await strategies[0].contract.balanceOf(eMPs[0].contract.address);
+				const s2Balance = await strategies[1].contract.balanceOf(eMPs[0].contract.address);
 
 				// Withdraw only partial balanceOf EMP
-				await eMP.utilizedV1EMPStrategyWithdraw([s1Balance.div(24), s2Balance.div(13)])
+				await eMPs[0].contract.utilizedV1EMPStrategyWithdraw([s1Balance.div(24), s2Balance.div(13)])
 
-				const VALID_BALANCE = await eMP.balanceOf(owner.address);
+				const VALID_BALANCE = await eMPs[0].contract.balanceOf(owner.address);
 
-				await eMP.utilizedERC20Withdraw(VALID_BALANCE);
+				await eMPs[0].contract.utilizedERC20Withdraw(VALID_BALANCE);
 
-				expect(await eMP.balanceOf(owner.address)).to.be.equal(0);
+				expect(await eMPs[0].contract.balanceOf(owner.address)).to.be.equal(0);
 
 				// Expect that the strategy tokens are burnt after withdrawing
-				expect(await strategies[0].contract.balanceOf(eMP.address)).to.be.equal(0);
-				expect(await strategies[1].contract.balanceOf(eMP.address)).to.be.equal(0);
+				expect(await strategies[0].contract.balanceOf(eMPs[0].contract.address)).to.be.equal(0);
+				expect(await strategies[1].contract.balanceOf(eMPs[0].contract.address)).to.be.equal(0);
 			});
 		});
 	});
