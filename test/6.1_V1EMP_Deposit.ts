@@ -260,7 +260,9 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 				// Pass in value for 0 strategies
 				const INVALID: UtilizedERC20Amount = [];
 
-				await expect(eMPs[0].contract.utilizedERC20Deposit(INVALID)).to.be.rejectedWith(ERROR.EMP.INVALID_UTILIZED_ERC20_LENGTH);
+				await expect(eMPs[0].contract.utilizedERC20Deposit(INVALID)).to.be.rejectedWith(
+					ERROR.EMP.INVALID_UTILIZED_ERC20_LENGTH
+				);
 			});
 
 			it("Should revert if invalid _utilizedERC20Amount passed..", async () => {
@@ -283,7 +285,9 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 				// Make invalid for expected failure
 				eMPDepositAmounts[0] = eMPDepositAmounts[0].sub(eMPDepositAmounts[0]);
 
-				await expect(eMPs[0].contract.utilizedERC20Deposit(eMPDepositAmounts)).to.be.revertedWith(ERROR.EMP.INVALID);
+				await expect(eMPs[0].contract.utilizedERC20Deposit(eMPDepositAmounts)).to.be.revertedWith(
+					ERROR.EMP.INVALID
+				);
 			});
 		});
 
@@ -343,7 +347,7 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 
 				it("Should receive correct amount of ERC20 tokens upon depositing..", async () => {
 					/**
-					* @notice This test should test that depositing correct amounts should work and the msg.sender receives the
+					* @notice This test should test that depositing correct amounts should work and the msg.sender receives
 					* the tokens accordingly.
 					*/
 
@@ -423,13 +427,19 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 						await eMPs[0].contract.utilizedERC20Deposit(eMPDepositAmounts);
 
 						// Expect that the owner recieved 98% of the deposit value
-						expect(await eMPs[0].contract.balanceOf(owner.address)).to.be.equal(feeRateTests[i].expectedOwnerAmount);
+						expect(await eMPs[0].contract.balanceOf(owner.address)).to.be.equal(
+							feeRateTests[i].expectedOwnerAmount
+						);
 
 						// Expect that the owner recieved 2% of the deposit value
-						expect(await eMPs[0].contract.balanceOf(manager.address)).to.be.equal(feeRateTests[i].expectedAmountManager);
+						expect(await eMPs[0].contract.balanceOf(manager.address)).to.be.equal(
+							feeRateTests[i].expectedAmountManager
+						);
 
 						// Expect that the owner recieved 2% of the deposit value
-						expect(await eMPs[0].contract.balanceOf(treasury.address)).to.be.equal(feeRateTests[i].expectedAmountGovernance);
+						expect(await eMPs[0].contract.balanceOf(treasury.address)).to.be.equal(
+							feeRateTests[i].expectedAmountGovernance
+						);
 					});
 				}
 			});
@@ -465,7 +475,9 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 
 				it("Should update EMP's utilizedERC20 array to be a union of the strategy's utilizedERC20s..", async () => {
 					await expect(
-						eMPs[0].contract.utilizedERC20Deposit([ethers.utils.parseUnits(".5", 18), ethers.utils.parseUnits(".5", 18)])
+						eMPs[0].contract.utilizedERC20Deposit(
+							[ethers.utils.parseUnits(".5", 18), ethers.utils.parseUnits(".5", 18)]
+						)
 					).to.be.not.reverted;
 
 					utilizedERC20 = await eMPs[0].contract.utilizedERC20();
@@ -558,7 +570,9 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 				expect(await eMPs[0].contract.utilizedERC20DepositOpen()).to.be.false;
 
 				// Attempt to deposit the tokens
-				await expect(eMPs[0].contract.utilizedV1EMPStrategyDeposit([])).to.be.rejectedWith(ERROR.EMP.DEPOSIT_NOT_OPEN);
+				await expect(eMPs[0].contract.utilizedV1EMPStrategyDeposit([])).to.be.rejectedWith(
+					ERROR.EMP.DEPOSIT_NOT_OPEN
+				);
 			});
 
 			it("Should revert if invalid lengthed _v1EMPStrategyUtilizedERC20Amount passed..", async () => {
@@ -582,7 +596,9 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 				// Make value invalid
 				depositAmount[0][0] = depositAmount[0][0].add(ethers.utils.parseUnits("1", 18)),
 
-				await expect(eMPs[0].contract.utilizedV1EMPStrategyDeposit([depositAmount[0], depositAmount[1]])).to.be.revertedWith(
+				await expect(
+					eMPs[0].contract.utilizedV1EMPStrategyDeposit([depositAmount[0], depositAmount[1]])
+				).to.be.revertedWith(
 					ERROR.EMP.AMOUNTS_VALIDATOR_FAILURE
 				);
 			});
@@ -734,7 +750,9 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 
 				for (let i: number = 0; i < (await eMPs[1].contract.utilizedERC20()).length; i++)
 				{
-					await (await ethers.getContractAt(LOCATION_MOCKERC20, (await eMPs[1].contract.utilizedERC20())[i])).approve(
+					await (
+						await ethers.getContractAt(LOCATION_MOCKERC20, (await eMPs[1].contract.utilizedERC20())[i])
+					).approve(
 						eMPs[1].contract.address,
 						eMP2DepositAmounts[i]
 					);
