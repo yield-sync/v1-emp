@@ -116,12 +116,21 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 		/**
 		* EMP Strategies
 		*/
-		const deployStrategies = [
+		const deployStrategies: {
+			name: string,
+			ticker: string,
+			strategyUtilizedERC20: StrategyUtiliziedERC20,
+			strategyUtilization: StrategyUtilization,
+		}[] = [
 			{
+				name: `EMP Strategy 1`,
+				ticker: `EMPS1`,
 				strategyUtilizedERC20: [mockERC20A.address, mockERC20B.address],
 				strategyUtilization: [[true, true, PERCENT.FIFTY], [true, true, PERCENT.FIFTY]]
 			},
 			{
+				name: `EMP Strategy 2`,
+				ticker: `EMPS2`,
 				strategyUtilizedERC20: [mockERC20C.address],
 				strategyUtilization: [[true, true, PERCENT.HUNDRED]],
 			},
@@ -132,7 +141,7 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 			let strategyInteractor: Contract = await (await StrategyInteractorDummy.deploy()).deployed();
 
 			// Deploy EMP Strategy
-			await strategyDeployer.deployV1EMPStrategy(`EMP Strategy ${i}`, `EMPS${i}`);
+			await strategyDeployer.deployV1EMPStrategy(deployStrategies[i].name, deployStrategies[i].ticker);
 
 			// Attach the deployed V1EMPStrategy address to variable
 			let deployedV1EMPStrategy = await V1EMPStrategy.attach(
@@ -166,7 +175,12 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 		/**
 		* EMP
 		*/
-		const deployEMPs = [
+		const deployEMPs: {
+			name: string,
+			ticker: string,
+			utilizedEMPStrategyUpdate: UtilizedEMPStrategyUpdate,
+			utilizedEMPStrategyAllocationUpdate: UtilizedEMPStrategyAllocationUpdate
+		}[] = [
 			{
 				name: "EMP 1",
 				ticker: "EMP1",
