@@ -359,7 +359,14 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 			});
 
 			describe("Fee Rate", async () => {
-				const feeRateTests = [
+				const feeRateTests: {
+					description: string,
+					managerFee: BigNumber,
+					governanceFee: BigNumber,
+					expectedOwnerAmount: BigNumber,
+					expectedAmountManager: BigNumber,
+					expectedAmountGovernance: BigNumber,
+				}[] = [
 					{
 						description: "Manager should receive correct fee if fee greater than 0..",
 						managerFee: ethers.utils.parseUnits(".02", 18),
