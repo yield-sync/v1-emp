@@ -34,15 +34,6 @@ describe("[4.3] V1EMPStrategy.sol - Edgecases", async () => {
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
 		/**
-		* This beforeEach process does the following:
-		* 1) Deploy a Governance contract
-		* 2) Set the treasury on the Governance contract
-		* 3) Deploy an Array Utility contract
-		* 4) Deploy a Registry contract
-		* 5) Register the Array Utility contract on the Registry contract
-		* 6) Deploy a Strategy Utility contract
-		* 7) Register the Strategy Utility contract on the Registry contract
-		*
 		* @dev It is important to utilize the strategyTransferUtil for multiple ERC20 based strategies because they get
 		* reordred when setup. The strategyUtil will return the deposit amounts in the order of the what the conctract
 		* returns for the Utilized ERC20s
@@ -147,9 +138,11 @@ describe("[4.3] V1EMPStrategy.sol - Edgecases", async () => {
 
 
 		describe("function utilizedERC20Deposit()", async () => {
-			it("Should receive strategy tokens based on what market value is (denominated in ETH)..", async () => {
-				const DEPOSIT_AMOUNT: BigNumber = ethers.utils.parseUnits("1", 18);
+			const DEPOSIT_AMOUNT: BigNumber = ethers.utils.parseUnits("1", 18);
+			const DEPOSIT_AMOUNT_2: BigNumber = ethers.utils.parseUnits("1", 18);
 
+
+			it("Should receive strategy tokens based on what market value is (denominated in ETH)..", async () => {
 				// Approve the SI to spend Mock A on behalf of owner
 				await mockERC20A.approve(strategyInteractor.address, DEPOSIT_AMOUNT);
 
@@ -175,8 +168,6 @@ describe("[4.3] V1EMPStrategy.sol - Edgecases", async () => {
 				// [PRICE-UPDATE] Update Ether value of MockERC20A
 				await eTHValueFeed.updateETHValue(ethers.utils.parseUnits("2", 18));
 
-				const DEPOSIT_AMOUNT_2: BigNumber = ethers.utils.parseUnits("1", 18);
-
 				// APPROVE - SI contract to spend tokens on behalf of owner
 				await mockERC20A.approve(strategyInteractor.address, DEPOSIT_AMOUNT_2);
 
@@ -200,16 +191,13 @@ describe("[4.3] V1EMPStrategy.sol - Edgecases", async () => {
 		});
 
 		describe("function utilizedERC20Withdraw()", async () => {
+			const B4_TOTAL_SUPPLY_STRATEGY: BigNumber = await strategy.totalSupply();
+			const B4_BALANCE_MOCK_A_SI: BigNumber = await mockERC20A.balanceOf(strategyInteractor.address);
+			const B4_BALANCE_MOCK_A_OWNER: BigNumber = await mockERC20A.balanceOf(owner.address);
+			const DEPOSIT_AMOUNT_A: BigNumber = ethers.utils.parseUnits("1", 18);
+
+
 			it("Should return same amount of ERC20 even if value of ERC20 changes..", async () => {
-				// Capture
-				const B4_TOTAL_SUPPLY_STRATEGY: BigNumber = await strategy.totalSupply();
-
-				const B4_BALANCE_MOCK_A_SI: BigNumber = await mockERC20A.balanceOf(strategyInteractor.address);
-
-				const B4_BALANCE_MOCK_A_OWNER: BigNumber = await mockERC20A.balanceOf(owner.address);
-
-				const DEPOSIT_AMOUNT_A: BigNumber = ethers.utils.parseUnits("1", 18);
-
 				// APPROVE - SI contract to spend tokens on behalf of owner
 				await mockERC20A.approve(strategyInteractor.address, DEPOSIT_AMOUNT_A);
 

@@ -47,33 +47,6 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
-		/**
-		* @notice
-		* This beforeEach process does the following:
-		* 1) Deploy a registry
-		* 2) SEt the utilized tokens for the strats
-		* 3) Deploys an EMP Deployer and registers it on the registry
-		* 4) Attach the deployed EMP to a local variable (for accessing fn.)
-		* 5) Set the manager
-		* 6) Update the EMP Transfer Util
-		* 7) Deploy 2 strategies and make them fully operational by doing the following:
-		* 	a) Attach the deployed EMP Strategy to a local variable
-		* 	b) Set the ETH Value feed
-		* 	c) Set the strategy interactor
-		* 	d) Set the tokens for the strategy
-		* 	e) Toggle on the withdrawals and depositing of tokens
-		* 	f) Set the strategies[0].strategyTransferUtil for strategy
-		* 8) Set the stratgies on the EMP
-		* 9) Enable deposting into EMP
-		* 10) Calculate EMP Deposit Amounts
-		* 11) Store the utilized ERC20 tokens
-		* 12) Approve the tokens
-		* 13) Deposit the tokens into the EMP
-		* 14) calcualte the Strategy deposit amounts
-		* 15) Deposit the tokens in the stratgies from the EMP
-		* 16) Open the withdrawals
-		*/
-
 		[owner, manager, treasury, badActor] = await ethers.getSigners();
 
 		const YieldSyncGovernance: ContractFactory = await ethers.getContractFactory("YieldSyncGovernance");
