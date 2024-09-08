@@ -45,11 +45,13 @@ contract V1EMP is
 	IV1EMPRegistry public override immutable I_V1_EMP_REGISTRY;
 
 
-	mapping (address utilizedV1EMPStrategy => uint256 allocation) public override utilizedV1EMPStrategy_allocation;
-
 	mapping (address utilizedERC20 => UtilizationERC20 utilizationERC20) internal _utilizedERC20_utilizationERC20;
 
-	mapping (address v1EMPStrategy => uint256 utilizedERC20UpdateTracker) public v1EMPStrategy_utilizedERC20UpdateTracker;
+	mapping (address utilizedV1EMPStrategy => uint256 allocation) public override utilizedV1EMPStrategy_allocation;
+
+	mapping (
+		address v1EMPStrategy => uint256 utilizedERC20UpdateTracker
+	) public override v1EMPStrategy_utilizedERC20UpdateTracker;
 
 
 	receive ()
