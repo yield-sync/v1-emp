@@ -1,12 +1,10 @@
+require("dotenv").config();
+
+import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-chai-matchers";
 import "@nomicfoundation/hardhat-toolbox";
 import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-solhint";
-
-require("dotenv").config();
-require("@nomiclabs/hardhat-ethers");
-require("@eth-optimism/plugins/hardhat/compiler");
-require("hardhat-contract-sizer");
 
 
 export default {
@@ -17,7 +15,18 @@ export default {
 			optimisticEthereum: process.env.OPTIMISTIC_ETHERSCAN_API_KEY,
 			optimisticGoerli: process.env.OPTIMISTIC_ETHERSCAN_API_KEY,
 			sepolia: process.env.ETHERSCAN_API_KEY,
-		}
+			"base-sepolia": process.env.SEPOLIA_BASE_API_KEY
+		},
+		customChains: [
+			{
+				network: "base-sepolia",
+				chainId: 84532,
+				urls: {
+					apiURL: "https://api-sepolia.basescan.org/api",
+					browserURL: "https://basescan.org",
+				},
+			},
+		],
 	},
 	networks: {
 		goerli: {
@@ -47,27 +56,20 @@ export default {
 			url: `https://sepolia.infura.io/v3/${process.env.INFURA_API_KEY}`,
 			accounts: [`0x${process.env.PRIVATE_KEY}` as string]
 		},
-		"base-mainnet": {
-			url: "https://mainnet.base.org",
+		'base-mainnet': {
+			url: 'https://mainnet.base.org',
 			accounts: [`0x${process.env.PRIVATE_KEY}` as string],
 			gasPrice: 1000000000,
 		},
-		"base-goerli": {
-			url: "https://goerli.base.org",
+		'base-sepolia': {
+			url: 'https://sepolia.base.org',
 			accounts: [`0x${process.env.PRIVATE_KEY}` as string],
 			gasPrice: 1000000000,
-		},
-		"base-local": {
-			url: "http://localhost:8545",
-			accounts: [`0x${process.env.PRIVATE_KEY}` as string],
-			gasPrice: 1000000000,
-		},
-		hardhat: {
-			allowUnlimitedContractSize: true,
-		},
+			chainId: 84532,
+		}
 	},
 	paths: {
 		sources: "./contracts",
 	},
-	solidity: "0.8.19"
-} as import("hardhat/config").HardhatUserConfig;
+	solidity: "0.8.19",
+} as HardhatUserConfig;

@@ -3,7 +3,9 @@
 	"version": "0.0.1",
 	"description": "",
 	"main": "scripts/deploy.js",
-	"scripts": {},
+	"scripts": {
+		"deploy-to-base-sepolia": "npx hardhat run scripts/deploy/V1EMP.ts --network base-sepolia"
+	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/yield-sync/v1-vaults.git"
