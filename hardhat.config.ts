@@ -5,6 +5,7 @@ import "@nomicfoundation/hardhat-chai-matchers";
 import "@nomicfoundation/hardhat-toolbox";
 import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-solhint";
+import "hardhat-contract-sizer";
 
 
 export default {
@@ -75,4 +76,11 @@ export default {
 		sources: "./contracts",
 	},
 	solidity: "0.8.19",
+
+	settings: {
+		optimizer: {
+			enabled: true,
+			runs: 500,
+		},
+	}
 } as HardhatUserConfig;

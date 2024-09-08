@@ -5,7 +5,6 @@ pragma solidity ^0.8.18;
 import { IAccessControlEnumerable } from "@openzeppelin/contracts/access/IAccessControlEnumerable.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import { ERC20, IERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 import {
 	IV1EMP,
@@ -22,9 +21,6 @@ contract V1EMP is
 	ERC20,
 	IV1EMP
 {
-	using SafeMath for uint256;
-
-
 	address public override manager;
 
 	address[] internal _utilizedERC20;
@@ -106,16 +102,6 @@ contract V1EMP is
 	modifier utilizedERC20DepositOpenRequired()
 	{
 		require(utilizedERC20DepositOpen, "!utilizedERC20DepositOpen");
-
-		_;
-	}
-
-	modifier utilizedV1EMPStrategyTransferClosed()
-	{
-		require(
-			!utilizedERC20DepositOpen && !utilizedERC20WithdrawOpen,
-			"!(!utilizedERC20DepositOpen && !utilizedERC20WithdrawOpen)"
-		);
 
 		_;
 	}
@@ -241,9 +227,9 @@ contract V1EMP is
 			IERC20(_utilizedERC20[i]).transferFrom(msg.sender, address(this), _utilizedERC20Amount[i]);
 		}
 
-		uint256 mintAmountManager = utilizedERC20AmountTotalETHValue.mul(feeRateManager).div(ONE_HUNDRED_PERCENT);
+		uint256 mintAmountManager = utilizedERC20AmountTotalETHValue * feeRateManager / ONE_HUNDRED_PERCENT;
 
-		uint256 mintAmountGovernancePayTo = utilizedERC20AmountTotalETHValue.mul(feeRateGovernance).div(ONE_HUNDRED_PERCENT);
+		uint256 mintAmountGovernancePayTo = utilizedERC20AmountTotalETHValue * feeRateGovernance / ONE_HUNDRED_PERCENT;
 
 		_mint(manager, mintAmountManager);
 		_mint(I_V1_EMP_REGISTRY.governancePayTo(), mintAmountGovernancePayTo);
@@ -322,11 +308,9 @@ contract V1EMP is
 				{
 					utilizationERC20[ii].deposit = true;
 
-					uint256 utilizationERC20Allocation = utilizationERC20_.allocation.mul(
-						utilizedV1EMPStrategy_allocation[_utilizedV1EMPStrategy[i]]
-					).div(
-						1e18
-					);
+					uint256 utilizationERC20Allocation = utilizationERC20_.allocation * utilizedV1EMPStrategy_allocation[
+						_utilizedV1EMPStrategy[i]
+					] / 1e18;
 
 					utilizationERC20[ii].allocation += utilizationERC20Allocation;
 
@@ -377,9 +361,9 @@ contract V1EMP is
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
-			transferAmount[i] = _utilizedERC20TotalAmount[i].mul(1e18).div(totalSupply(), "!computed").mul(_eRC20Amount).div(
-				1e18
-			);
+			require(totalSupply() != 0, "!(totalSupply() != 0)");
+
+			transferAmount[i] = _utilizedERC20TotalAmount[i] * 1e18 / totalSupply() * _eRC20Amount / 1e18;
 
 			if (IERC20(_utilizedERC20[i]).balanceOf(address(this)) < transferAmount[i])
 			{
@@ -400,15 +384,13 @@ contract V1EMP is
 			{
 				uint256[] memory v1EMPStrategyERC20Amount = new uint256[](_utilizedV1EMPStrategy.length);
 
-				uint256 _eRC20AmountPercentOfTotalSupply = _eRC20Amount.mul(1e18).div(totalSupply());
+				uint256 _eRC20AmountPercentOfTotalSupply = _eRC20Amount * 1e18 / totalSupply();
 
 				for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
 				{
-					v1EMPStrategyERC20Amount[i] = _eRC20AmountPercentOfTotalSupply.mul(
-						IERC20(_utilizedV1EMPStrategy[i]).balanceOf(address(this))
-					).div(
-						1e18
-					);
+					v1EMPStrategyERC20Amount[i] = _eRC20AmountPercentOfTotalSupply * IERC20(
+						_utilizedV1EMPStrategy[i]).balanceOf(address(this)
+					) / 1e18;
 				}
 
 				utilizedV1EMPStrategyWithdraw(v1EMPStrategyERC20Amount);
@@ -467,8 +449,12 @@ contract V1EMP is
 		public
 		override
 		authGovernanceOrManager()
-		utilizedV1EMPStrategyTransferClosed()
 	{
+		require(
+			!utilizedERC20DepositOpen && !utilizedERC20WithdrawOpen,
+			"!(!utilizedERC20DepositOpen && !utilizedERC20WithdrawOpen)"
+		);
+
 		require(_v1EMPStrategy.length == _allocation.length, "!(_v1EMPStrategy.length == _allocation.length)");
 
 		uint256 utilizedV1EMPStrategyAllocationTotal;
