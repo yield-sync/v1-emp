@@ -228,7 +228,7 @@ describe("[4.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 		describe("[SINGLE ERC20]", async () => {
 			beforeEach(async () => {
 				// Snapshot Total Supply
-				b4TotalSupplyStrategy = await strategy.totalSupply();
+				b4TotalSupplyStrategy = await strategy.equityTotal();
 
 				// Set strategy ERC20 tokens
 				await strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
@@ -278,7 +278,7 @@ describe("[4.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 					await strategy.utilizedERC20Deposit(owner.address, DEPOSIT_AMOUNTS)
 
 					// Get current supply
-					const TOTAL_SUPPLY_STRATEGY: BigNumber = await strategy.totalSupply();
+					const TOTAL_SUPPLY_STRATEGY: BigNumber = await strategy.equityTotal();
 
 					// Calculate minted amount
 					const MINTED_STRATEGY_TOKENS: BigNumber = TOTAL_SUPPLY_STRATEGY.sub(b4TotalSupplyStrategy);
@@ -287,10 +287,10 @@ describe("[4.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 					const { totalEthValue } = await strategyTransferUtil.valueOfERC20Deposits(DEPOSIT_AMOUNTS);
 
 					// Expect that the owner received the strategy tokens
-					expect(await strategy.balanceOf(owner.address)).to.be.equal(MINTED_STRATEGY_TOKENS);
+					expect(await strategy.eMP_equity(owner.address)).to.be.equal(MINTED_STRATEGY_TOKENS);
 
 					// Expect that the strategy token amount issued is equal to the ETH value of the deposits
-					expect(await strategy.balanceOf(owner.address)).to.be.equal(totalEthValue);
+					expect(await strategy.eMP_equity(owner.address)).to.be.equal(totalEthValue);
 				});
 			});
 		});
@@ -298,7 +298,7 @@ describe("[4.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 		describe("[MULTIPLE ERC20] - A 40%, B 25%, C 25%, D 10%", async () => {
 			beforeEach(async () => {
 				// Set strategy ERC20 tokens
-				b4TotalSupplyStrategy = await strategy.totalSupply();
+				b4TotalSupplyStrategy = await strategy.equityTotal();
 
 				// Snapshot Total Supply
 				await strategy.utilizedERC20Update(
@@ -390,7 +390,7 @@ describe("[4.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 					const { totalEthValue } = await strategyTransferUtil.valueOfERC20Deposits(depositAmounts);
 
 					// [main-test]
-					expect(await strategy.balanceOf(owner.address)).to.be.equal(totalEthValue);
+					expect(await strategy.eMP_equity(owner.address)).to.be.equal(totalEthValue);
 				});
 			});
 		});

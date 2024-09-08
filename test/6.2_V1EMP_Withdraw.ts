@@ -263,8 +263,8 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 
 			await expect(
 				eMPs[0].contract.utilizedV1EMPStrategyWithdraw([
-					await strategies[0].contract.balanceOf(eMPs[0].contract.address),
-					await strategies[1].contract.balanceOf(eMPs[0].contract.address),
+					await strategies[0].contract.eMP_equity(eMPs[0].contract.address),
+					await strategies[1].contract.eMP_equity(eMPs[0].contract.address),
 				])
 			).to.not.be.reverted;
 
@@ -305,8 +305,8 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 
 			it("Should update EMP's utilizedERC20 array to be a union of the strategy's utilizedERC20s..", async () => {
 				await eMPs[0].contract.utilizedV1EMPStrategyWithdraw([
-					await strategies[0].contract.balanceOf(eMPs[0].contract.address),
-					await strategies[1].contract.balanceOf(eMPs[0].contract.address),
+					await strategies[0].contract.eMP_equity(eMPs[0].contract.address),
+					await strategies[1].contract.eMP_equity(eMPs[0].contract.address),
 				]);
 
 				eMPUtilizedERC20 = await eMPs[0].contract.utilizedERC20();
@@ -331,8 +331,8 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 	describe("function utilizedERC20Withdraw() (2/3) - Full Withdrawals Disabled", async () => {
 		beforeEach(async () => {
 			await eMPs[0].contract.utilizedV1EMPStrategyWithdraw([
-				await strategies[0].contract.balanceOf(eMPs[0].contract.address),
-				await strategies[1].contract.balanceOf(eMPs[0].contract.address),
+				await strategies[0].contract.eMP_equity(eMPs[0].contract.address),
+				await strategies[1].contract.eMP_equity(eMPs[0].contract.address),
 			])
 
 			expect(await eMPs[0].contract.utilizedERC20WithdrawFull()).to.be.false;
@@ -381,8 +381,8 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 				expect(await eMPs[0].contract.balanceOf(owner.address)).to.be.equal(0);
 
 				// Expect that the strategy tokens are burnt after withdrawing
-				expect(await strategies[0].contract.balanceOf(eMPs[0].contract.address)).to.be.equal(0);
-				expect(await strategies[1].contract.balanceOf(eMPs[0].contract.address)).to.be.equal(0);
+				expect(await strategies[0].contract.eMP_equity(eMPs[0].contract.address)).to.be.equal(0);
+				expect(await strategies[1].contract.eMP_equity(eMPs[0].contract.address)).to.be.equal(0);
 			});
 		});
 
@@ -463,13 +463,13 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 				expect(await eMPs[0].contract.balanceOf(owner.address)).to.be.equal(0);
 
 				// Expect that the strategy tokens are burnt after withdrawing
-				expect(await strategies[0].contract.balanceOf(eMPs[0].contract.address)).to.be.equal(0);
-				expect(await strategies[1].contract.balanceOf(eMPs[0].contract.address)).to.be.equal(0);
+				expect(await strategies[0].contract.eMP_equity(eMPs[0].contract.address)).to.be.equal(0);
+				expect(await strategies[1].contract.eMP_equity(eMPs[0].contract.address)).to.be.equal(0);
 			});
 
 			it("Should allow withdrawing tokens from Strategy even if only partially prewithdrawn from stratgies..", async () => {
-				const s1Balance = await strategies[0].contract.balanceOf(eMPs[0].contract.address);
-				const s2Balance = await strategies[1].contract.balanceOf(eMPs[0].contract.address);
+				const s1Balance = await strategies[0].contract.eMP_equity(eMPs[0].contract.address);
+				const s2Balance = await strategies[1].contract.eMP_equity(eMPs[0].contract.address);
 
 				// Withdraw only partial balanceOf EMP
 				await eMPs[0].contract.utilizedV1EMPStrategyWithdraw([s1Balance.div(24), s2Balance.div(13)])
@@ -481,8 +481,8 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 				expect(await eMPs[0].contract.balanceOf(owner.address)).to.be.equal(0);
 
 				// Expect that the strategy tokens are burnt after withdrawing
-				expect(await strategies[0].contract.balanceOf(eMPs[0].contract.address)).to.be.equal(0);
-				expect(await strategies[1].contract.balanceOf(eMPs[0].contract.address)).to.be.equal(0);
+				expect(await strategies[0].contract.eMP_equity(eMPs[0].contract.address)).to.be.equal(0);
+				expect(await strategies[1].contract.eMP_equity(eMPs[0].contract.address)).to.be.equal(0);
 			});
 		});
 	});

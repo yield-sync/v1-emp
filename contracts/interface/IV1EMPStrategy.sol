@@ -2,16 +2,13 @@
 pragma solidity ^0.8.18;
 
 
-import { IERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-
 import { IV1EMPArrayUtility } from "./IV1EMPArrayUtility.sol";
 import { IV1EMPRegistry } from "./IV1EMPRegistry.sol";
 import { IV1EMPStrategyInteractor } from "./IV1EMPStrategyInteractor.sol";
 import { UtilizationERC20 } from "../struct/UtilizationERC20.sol";
 
 
-interface IV1EMPStrategy is
-	IERC20
+interface IV1EMPStrategy
 {
 	/**
 	* @dev [view-address]
@@ -44,6 +41,39 @@ interface IV1EMPStrategy is
 		external
 		view
 		returns (bool)
+	;
+
+	/**
+	* @dev [view-string]
+	* @notice Name
+	* @return {string}
+	*/
+	function name()
+		external
+		view
+		returns (string memory)
+	;
+
+	/**
+	* @dev [view-string]
+	* @notice SYMBOL
+	* @return {string}
+	*/
+	function symbol()
+		external
+		view
+		returns (string memory)
+	;
+
+	/**
+	* @dev [view-uint256]
+	* @notice Equity Total
+	* @return {uint256}
+	*/
+	function equityTotal()
+		external
+		view
+		returns (uint256)
 	;
 
 	/**
@@ -117,13 +147,25 @@ interface IV1EMPStrategy is
 	;
 
 	/**
-	 * @notice
-	 * @param _utilizedERC20 {address}
-	 */
+	* @notice
+	* @param _utilizedERC20 {address}
+	* @return {UtilizationERC20[]}
+	*/
 	function utilizedERC20_utilizationERC20(address __utilizedERC20)
 		external
 		view
 		returns (UtilizationERC20 memory)
+	;
+
+	/**
+	* @notice
+	* @param _eMP {address}
+	* @return {uint256}
+	*/
+	function eMP_equity(address _eMP)
+		external
+		view
+		returns (uint256)
 	;
 
 	/**

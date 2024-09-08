@@ -10,7 +10,7 @@ import { IV1EMPRegistry } from "./interface/IV1EMPRegistry.sol";
 contract V1EMPRegistry is
 	IV1EMPRegistry
 {
-	address public override immutable GOVERNANCE;
+	address public immutable override GOVERNANCE;
 
 	address public override v1EMPAmountsValidator;
 	address public override v1EMPArrayUtility;

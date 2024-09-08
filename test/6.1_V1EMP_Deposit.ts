@@ -613,7 +613,7 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 				{
 					const strategy = strategies[i].contract;
 
-					expect(await strategy.balanceOf(eMPs[0].contract.address)).to.be.equal(
+					expect(await strategy.eMP_equity(eMPs[0].contract.address)).to.be.equal(
 						eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(D_18)
 					);
 				}
@@ -775,20 +775,20 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 					eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(D_18)
 				);
 
-				expect(await strategies[0].contract.totalSupply()).to.be.equal(STRATEGY_1_DEPOSIT_AMOUNT);
+				expect(await strategies[0].contract.equityTotal()).to.be.equal(STRATEGY_1_DEPOSIT_AMOUNT);
 
-				expect(await strategies[1].contract.totalSupply()).to.be.equal(STRATEGY_2_DEPOSIT_AMOUNT);
+				expect(await strategies[1].contract.equityTotal()).to.be.equal(STRATEGY_2_DEPOSIT_AMOUNT);
 			});
 
 			it("Should distribute the strategy tokens fairely to multiple EMP depositing into it..", async () => {
 				const TOTAL_STRATEGY_TOKENS = eTHValueEMPDepositAmount.mul(2).sub(
-					await strategies[0].contract.balanceOf(eMPs[0].contract.address)
+					await strategies[0].contract.eMP_equity(eMPs[0].contract.address)
 				).sub(
-					await strategies[1].contract.balanceOf(eMPs[0].contract.address)
+					await strategies[1].contract.eMP_equity(eMPs[0].contract.address)
 				).sub(
-					await strategies[0].contract.balanceOf(eMPs[1].contract.address)
+					await strategies[0].contract.eMP_equity(eMPs[1].contract.address)
 				).sub(
-					await strategies[1].contract.balanceOf(eMPs[1].contract.address)
+					await strategies[1].contract.eMP_equity(eMPs[1].contract.address)
 				);
 
 				expect(TOTAL_STRATEGY_TOKENS).to.be.equal(ethers.utils.parseUnits("0", 18));

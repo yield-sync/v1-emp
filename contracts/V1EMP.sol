@@ -36,9 +36,9 @@ contract V1EMP is
 	uint256 public override feeRateGovernance;
 	uint256 public override feeRateManager;
 
-	IV1EMPAmountsValidator public override immutable I_V1_EMP_AMOUNTS_VALIDATOR;
-	IV1EMPArrayUtility public override immutable I_V1_EMP_ARRAY_UTILITY;
-	IV1EMPRegistry public override immutable I_V1_EMP_REGISTRY;
+	IV1EMPAmountsValidator public immutable override I_V1_EMP_AMOUNTS_VALIDATOR;
+	IV1EMPArrayUtility public immutable override I_V1_EMP_ARRAY_UTILITY;
+	IV1EMPRegistry public immutable override I_V1_EMP_REGISTRY;
 
 
 	mapping (address utilizedERC20 => UtilizationERC20 utilizationERC20) internal _utilizedERC20_utilizationERC20;
@@ -388,8 +388,10 @@ contract V1EMP is
 
 				for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
 				{
-					v1EMPStrategyERC20Amount[i] = _eRC20AmountPercentOfTotalSupply * IERC20(
-						_utilizedV1EMPStrategy[i]).balanceOf(address(this)
+					v1EMPStrategyERC20Amount[i] = _eRC20AmountPercentOfTotalSupply * IV1EMPStrategy(
+						_utilizedV1EMPStrategy[i]
+					).eMP_equity(
+						address(this)
 					) / 1e18;
 				}
 

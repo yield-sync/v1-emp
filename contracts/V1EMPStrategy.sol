@@ -4,7 +4,6 @@ pragma solidity ^0.8.18;
 
 
 import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 import { IV1EMPETHValueFeed } from "./interface/IV1EMPETHValueFeed.sol";
@@ -19,7 +18,6 @@ import {
 
 contract V1EMPStrategy is
 	ReentrancyGuard,
-	ERC20,
 	IV1EMPStrategy
 {
 	using SafeMath for uint256;
@@ -32,16 +30,22 @@ contract V1EMPStrategy is
 	bool public override utilizedERC20DepositOpen;
 	bool public override utilizedERC20WithdrawOpen;
 
+	string public override name;
+	string public override symbol;
+
 	uint256 public constant override ONE_HUNDRED_PERCENT = 1e18;
 
+	uint256 public override equityTotal;
 	uint256 public override utilizedERC20UpdateTracker;
 
-	IV1EMPArrayUtility public override immutable I_V1_EMP_ARRAY_UTILITY;
-	IV1EMPRegistry public override immutable I_V1_EMP_REGISTRY;
+	IV1EMPArrayUtility public immutable override I_V1_EMP_ARRAY_UTILITY;
+	IV1EMPRegistry public immutable override I_V1_EMP_REGISTRY;
 
 	IV1EMPStrategyInteractor public override iV1EMPStrategyInteractor;
 
 	mapping (address utilizedERC20 => UtilizationERC20 utilizationERC20) internal _utilizedERC20_utilizationERC20;
+
+	mapping (address eMP => uint256 equity) public override eMP_equity;
 
 
 	receive ()
@@ -57,12 +61,14 @@ contract V1EMPStrategy is
 
 
 	constructor (address _manager, address _v1EMPRegistry, string memory _name, string memory _symbol)
-		ERC20(_name, _symbol)
 	{
 		utilizedERC20DepositOpen = false;
 		utilizedERC20WithdrawOpen = false;
 
 		manager = _manager;
+
+		name = _name;
+		symbol = _symbol;
 
 		utilizedERC20UpdateTracker = 0;
 
@@ -260,7 +266,9 @@ contract V1EMPStrategy is
 			iV1EMPStrategyInteractor.utilizedERC20Deposit(_from, _utilizedERC20[i], _utilizedERC20Amount[i]);
 		}
 
-		_mint(_from, utilizedERC20AmountETHValueTotal_);
+		equityTotal += utilizedERC20AmountETHValueTotal_;
+
+		eMP_equity[_from] += utilizedERC20AmountETHValueTotal_;
 	}
 
 	/// @inheritdoc IV1EMPStrategy
@@ -283,7 +291,7 @@ contract V1EMPStrategy is
 	{
 		require(utilizedERC20WithdrawOpen, "!utilizedERC20WithdrawOpen");
 
-		require(balanceOf(msg.sender) >= _eRC20Amount, "!(balanceOf(msg.sender) >= _eRC20Amount)");
+		require(eMP_equity[msg.sender] >= _eRC20Amount, "!(balanceOf(msg.sender) >= _eRC20Amount)");
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
@@ -292,7 +300,7 @@ contract V1EMPStrategy is
 				uint256 utilizedERC20AmountPerToken = iV1EMPStrategyInteractor.utilizedERC20TotalBalance(_utilizedERC20[i]).mul(
 					1e18
 				).div(
-					totalSupply(),
+					equityTotal,
 					"!computed"
 				);
 
@@ -304,7 +312,9 @@ contract V1EMPStrategy is
 			}
 		}
 
-		_burn(msg.sender, _eRC20Amount);
+		equityTotal -= _eRC20Amount;
+
+		eMP_equity[msg.sender] -= _eRC20Amount;
 	}
 
 	/// @inheritdoc IV1EMPStrategy

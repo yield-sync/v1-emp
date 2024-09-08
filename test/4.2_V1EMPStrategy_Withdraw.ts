@@ -119,7 +119,7 @@ describe("[4.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 
 		beforeEach(async () => {
 			// Snapshot Total Supply
-			b4TotalSupplyStrategy = await strategy.totalSupply();
+			b4TotalSupplyStrategy = await strategy.equityTotal();
 
 			// Snapshot Balances
 			b4BalanceMockAOwner = await mockERC20A.balanceOf(owner.address);
@@ -174,8 +174,8 @@ describe("[4.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 				await strategy.utilizedERC20Deposit(owner.address, [DEPOSIT_AMOUNT]);
 
 				// Expect that owner balance is the difference of the strategy total supply increased
-				expect(await strategy.balanceOf(owner.address)).to.be.equal(
-					(await strategy.totalSupply()).sub(b4TotalSupplyStrategy)
+				expect(await strategy.eMP_equity(owner.address)).to.be.equal(
+					(await strategy.equityTotal()).sub(b4TotalSupplyStrategy)
 				);
 
 				// [main-test] WITHDRAW - ERC20 tokens into the strategy
@@ -226,7 +226,7 @@ describe("[4.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 					expect(await mockERC20A.balanceOf(strategyInteractor.address)).to.be.equal(depositAmount);
 
 					// Get current Strategy ERC20 total supply
-					totalSupplyStrategy = await strategy.totalSupply();
+					totalSupplyStrategy = await strategy.equityTotal();
 
 					// Expect that strategy total supply has increased
 					expect(totalSupplyStrategy).to.be.greaterThan(b4TotalSupplyStrategy);
@@ -234,7 +234,7 @@ describe("[4.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 
 
 				it("Should fail to process withdrawal if Strategy token balance is greater than owned..", async () => {
-					const BALANCE_STRATEGY_OWNER: BigNumber = await strategy.balanceOf(owner.address);
+					const BALANCE_STRATEGY_OWNER: BigNumber = await strategy.eMP_equity(owner.address);
 
 					// Expect that owner balance is the difference of the Strat supply increase
 					expect(BALANCE_STRATEGY_OWNER).to.be.equal(totalSupplyStrategy.sub(b4TotalSupplyStrategy));
@@ -253,7 +253,7 @@ describe("[4.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 					const AFTER_DEPOSIT_BALANCE_MOCK_A_OWNER = await mockERC20A.balanceOf(owner.address);
 
 					// Expect that owner balance is the difference of the Strat supply increase
-					expect(await strategy.balanceOf(owner.address)).to.be.equal(
+					expect(await strategy.eMP_equity(owner.address)).to.be.equal(
 						totalSupplyStrategy.sub(b4TotalSupplyStrategy)
 					);
 
@@ -269,16 +269,16 @@ describe("[4.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 					await strategy.utilizedERC20WithdrawOpenToggle();
 
 					// [main-test] Withdraw ERC20 tokens into the strategy
-					await expect(strategy.utilizedERC20Withdraw(await strategy.balanceOf(owner.address))).to.be.not.rejected;
+					await expect(strategy.utilizedERC20Withdraw(await strategy.eMP_equity(owner.address))).to.be.not.rejected;
 
 					// Expect that the SI MockERC20A balance has not changed
 					expect(await mockERC20A.balanceOf(strategyInteractor.address)).to.be.equal(depositAmount);
 
 					// Expect that the Strategy tokens have been burned
-					expect(await strategy.balanceOf(owner.address)).to.be.equal(0);
+					expect(await strategy.eMP_equity(owner.address)).to.be.equal(0);
 
 					// Expect that the Strategy total supply is not what it was before the deposit
-					expect(await strategy.totalSupply()).to.be.equal(b4TotalSupplyStrategy);
+					expect(await strategy.equityTotal()).to.be.equal(b4TotalSupplyStrategy);
 
 					// Expect that owner MockERC20A balance is equal to what it was after depositing
 					expect(await mockERC20A.balanceOf(owner.address)).to.be.greaterThanOrEqual(
@@ -307,21 +307,21 @@ describe("[4.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 					expect(AFTER_BALANCE_MOCK_A_SI).to.be.equal(b4BalanceMockASI.add(DEPOSIT_AMOUNT));
 
 					// Expect that strategy total supply has increased
-					expect(await strategy.totalSupply()).to.be.greaterThan(b4TotalSupplyStrategy);
+					expect(await strategy.equityTotal()).to.be.greaterThan(b4TotalSupplyStrategy);
 
 					// Expect that owner balance is the difference of the Strat supply increase
-					expect(await strategy.balanceOf(owner.address)).to.be.equal(
-						(await strategy.totalSupply()).sub(b4TotalSupplyStrategy)
+					expect(await strategy.eMP_equity(owner.address)).to.be.equal(
+						(await strategy.equityTotal()).sub(b4TotalSupplyStrategy)
 					);
 
 					// [main-test] Withdraw ERC20 tokens into the strategy
 					await expect(strategy.utilizedERC20Withdraw(DEPOSIT_AMOUNT)).to.be.not.rejected;
 
 					// Strategy token burned
-					expect(await strategy.balanceOf(owner.address)).to.be.equal(b4BalanceMockASI);
+					expect(await strategy.eMP_equity(owner.address)).to.be.equal(b4BalanceMockASI);
 
 					// Supply put back to original
-					expect(await strategy.totalSupply()).to.be.equal(b4TotalSupplyStrategy);
+					expect(await strategy.equityTotal()).to.be.equal(b4TotalSupplyStrategy);
 
 					// Expect that the balance been returned to original or greater
 					expect(await mockERC20A.balanceOf(owner.address)).to.be.greaterThanOrEqual(b4BalanceMockAOwner);
@@ -398,23 +398,23 @@ describe("[4.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 						);
 					}
 
-					const TOTAL_SUPPLY_STRATEGY: BigNumber = await strategy.totalSupply();
+					const TOTAL_SUPPLY_STRATEGY: BigNumber = await strategy.equityTotal();
 
 					// Expect that strategy total supply has increased
 					expect(TOTAL_SUPPLY_STRATEGY).to.be.greaterThan(b4TotalSupplyStrategy);
 
 					// Expect that the Strat balance of owner is correct
-					expect(await strategy.balanceOf(owner.address)).to.be.equal(
+					expect(await strategy.eMP_equity(owner.address)).to.be.equal(
 						TOTAL_SUPPLY_STRATEGY.sub(b4TotalSupplyStrategy)
 					);
 
 					// [main-test] Withdraw ERC20 tokens into the strategy
 					await expect(
-						strategy.utilizedERC20Withdraw(await strategy.balanceOf(owner.address))
+						strategy.utilizedERC20Withdraw(await strategy.eMP_equity(owner.address))
 					).to.be.not.rejected;
 
 					// Supply put back to original
-					expect(await strategy.totalSupply()).to.be.equal(b4TotalSupplyStrategy);
+					expect(await strategy.equityTotal()).to.be.equal(b4TotalSupplyStrategy);
 
 					// Expect that the balance been returned to original or greater
 					expect(await mockERC20A.balanceOf(owner.address)).to.be.greaterThanOrEqual(b4BalanceMockAOwner);
