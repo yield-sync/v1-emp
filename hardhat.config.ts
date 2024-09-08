@@ -66,7 +66,10 @@ export default {
 			accounts: [`0x${process.env.PRIVATE_KEY}` as string],
 			gasPrice: 1000000000,
 			chainId: 84532,
-		}
+		},
+		hardhat: {
+			allowUnlimitedContractSize: true,
+		},
 	},
 	paths: {
 		sources: "./contracts",
