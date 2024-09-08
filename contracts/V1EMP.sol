@@ -106,13 +106,6 @@ contract V1EMP is
 		_;
 	}
 
-	modifier utilizedERC20UpdateBefore()
-	{
-		utilizedERC20Update();
-
-		_;
-	}
-
 
 	/// @notice view
 
@@ -211,8 +204,9 @@ contract V1EMP is
 		override
 		nonReentrant()
 		utilizedERC20DepositOpenRequired()
-		utilizedERC20UpdateBefore()
 	{
+		utilizedERC20Update();
+
 		require(_utilizedERC20Amount.length == _utilizedERC20.length, "!(_utilizedERC20Amount.length == _utilizedERC20.length)");
 
 		(bool valid, uint256 utilizedERC20AmountTotalETHValue) = I_V1_EMP_AMOUNTS_VALIDATOR.utilizedERC20AmountValid(
@@ -347,8 +341,9 @@ contract V1EMP is
 		public
 		override
 		nonReentrant()
-		utilizedERC20UpdateBefore()
 	{
+		utilizedERC20Update();
+
 		require(utilizedERC20WithdrawOpen, "!utilizedERC20WithdrawOpen");
 
 		require(balanceOf(msg.sender) >= _eRC20Amount, "!(balanceOf(msg.sender) >= _eRC20Amount)");
@@ -488,8 +483,9 @@ contract V1EMP is
 		public
 		override
 		authGovernanceOrManager()
-		utilizedERC20UpdateBefore()
 	{
+		utilizedERC20Update();
+
 		require(
 			_v1EMPStrategyERC20Amount.length == _utilizedV1EMPStrategy.length,
 			"!(_v1EMPStrategyERC20Amount.length == _utilizedV1EMPStrategy.length)"
