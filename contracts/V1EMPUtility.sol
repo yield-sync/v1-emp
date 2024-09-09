@@ -19,9 +19,6 @@ contract V1EMPUtility
 
 	bool public duplicateFound;
 
-	/// TODO: This needs to be moved. Refer to it from the EMP or move it to the registry
-	uint256 public constant ONE_HUNDRED_PERCENT = 1e18;
-
 	IV1EMPAmountsValidator public immutable I_V1_EMP_AMOUNTS_VALIDATOR;
 	IV1EMPArrayUtility public immutable I_V1_EMP_ARRAY_UTILITY;
 	IV1EMPRegistry public immutable I_V1_EMP_REGISTRY;
@@ -131,7 +128,10 @@ contract V1EMPUtility
 			}
 		}
 
-		require(utilizedERC20AllocationTotal == ONE_HUNDRED_PERCENT, "!(utilizedERC20AllocationTotal == ONE_HUNDRED_PERCENT)");
+		require(
+			utilizedERC20AllocationTotal == IV1EMP(msg.sender).ONE_HUNDRED_PERCENT(),
+			"!(utilizedERC20AllocationTotal == IV1EMP(msg.sender).ONE_HUNDRED_PERCENT())"
+		);
 
 		return (updated_required_, utilizedERC20_, utilizationERC20_);
 	}
