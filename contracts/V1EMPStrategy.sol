@@ -291,7 +291,7 @@ contract V1EMPStrategy is
 	{
 		require(utilizedERC20WithdrawOpen, "!utilizedERC20WithdrawOpen");
 
-		require(eMP_equity[msg.sender] >= _eRC20Amount, "!(balanceOf(msg.sender) >= _eRC20Amount)");
+		require(eMP_equity[msg.sender] >= _eRC20Amount, "!(eMP_equity[msg.sender] >= _eRC20Amount)");
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
