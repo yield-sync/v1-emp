@@ -178,6 +178,16 @@ interface IV1EMPStrategy
 		returns (uint256 utilizedERC20AmountETHValueTotal_, uint256[] memory utilizedERC20AmountETHValue_)
 	;
 
+	/**
+	* @notice Utilized ERC20 Total Balance
+	* @param __utilizedERC20 {address}
+	*/
+	function utilizedERC20TotalBalance(address __utilizedERC20)
+		external
+		view
+		returns (uint256 utilizedERC20TotalAmount_)
+	;
+
 
 	/// @notice mutative
 

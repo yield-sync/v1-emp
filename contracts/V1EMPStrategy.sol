@@ -158,6 +158,16 @@ contract V1EMPStrategy is
 		}
 	}
 
+	/// @inheritdoc IV1EMPStrategy
+	function utilizedERC20TotalBalance(address __utilizedERC20)
+		public
+		view
+		override
+		returns (uint256 utilizedERC20TotalAmount_)
+	{
+		return iV1EMPStrategyInteractor.utilizedERC20TotalBalance(__utilizedERC20);
+	}
+
 
 	/// @notice mutative
 

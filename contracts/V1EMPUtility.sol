@@ -77,8 +77,7 @@ contract V1EMPUtility is
 
 			for (uint256 ii = 0; ii < _utilizedV1EMPStrategy.length; ii++)
 			{
-				utilizedERC20TotalAmount_[i] += IV1EMPStrategy(_utilizedV1EMPStrategy[ii]).iV1EMPStrategyInteractor(
-				).utilizedERC20TotalBalance(
+				utilizedERC20TotalAmount_[i] += IV1EMPStrategy(_utilizedV1EMPStrategy[ii]).utilizedERC20TotalBalance(
 					_utilizedERC20[i]
 				);
 			}
