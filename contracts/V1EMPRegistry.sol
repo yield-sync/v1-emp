@@ -12,7 +12,7 @@ contract V1EMPRegistry is
 {
 	address public immutable override GOVERNANCE;
 
-	address public override v1EMPAmountsValidator;
+	address public override v1EMPUtility;
 	address public override v1EMPArrayUtility;
 	address public override v1EMPDeployer;
 	address public override v1EMPStrategyDeployer;
@@ -107,7 +107,7 @@ contract V1EMPRegistry is
 		override
 		authGovernance()
 	{
-		require(v1EMPAmountsValidator != address(0), "!(v1EMPAmountsValidator != address(0))");
+		require(v1EMPUtility != address(0), "!(v1EMPUtility != address(0))");
 
 		require(v1EMPDeployer == address(0), "!(v1EMPDeployer == address(0))");
 
@@ -152,15 +152,15 @@ contract V1EMPRegistry is
 	}
 
 	/// @inheritdoc IV1EMPRegistry
-	function v1EMPAmountsValidatorUpdate(address _v1EMPAmountsValidator)
+	function v1EMPUtilityUpdate(address _v1EMPUtility)
 		public
 		override
 		authGovernance()
 	{
 		require(v1EMPArrayUtility != address(0), "!(v1EMPArrayUtility != address(0))");
 
-		require(v1EMPAmountsValidator == address(0), "!(v1EMPAmountsValidator == address(0))");
+		require(v1EMPUtility == address(0), "!(v1EMPUtility == address(0))");
 
-		v1EMPAmountsValidator = _v1EMPAmountsValidator;
+		v1EMPUtility = _v1EMPUtility;
 	}
 }

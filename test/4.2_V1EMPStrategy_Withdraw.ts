@@ -92,7 +92,7 @@ describe("[4.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 		* @notice The owner has to be registered as the EMP deployer so that it can authorize itself as an EMP to access the
 		* functions available on the strategy.
 		*/
-		await registry.v1EMPAmountsValidatorUpdate(owner.address);
+		await registry.v1EMPUtilityUpdate(owner.address);
 		await registry.v1EMPDeployerUpdate(owner.address);
 		await registry.v1EMPRegister(owner.address);
 

@@ -50,15 +50,15 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 		});
 	});
 
-	describe("function v1EMPAmountsValidatorUpdate()", async () => {
+	describe("function v1EMPUtilityUpdate()", async () => {
 		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
-			await expect(registry.connect(manager).v1EMPAmountsValidatorUpdate(manager.address)).to.be.rejectedWith(
+			await expect(registry.connect(manager).v1EMPUtilityUpdate(manager.address)).to.be.rejectedWith(
 				ERROR.NOT_AUTHORIZED
 			);
 		});
 
 		it("Should not allow to set the EMP Utility until the Array Utility is set..", async () => {
-			await expect(registry.v1EMPAmountsValidatorUpdate(owner.address)).to.be.rejectedWith(
+			await expect(registry.v1EMPUtilityUpdate(owner.address)).to.be.rejectedWith(
 				ERROR.REGISTRY.ARRAY_UTILITY_NOT_SET
 			);
 		});
@@ -66,9 +66,9 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 		it("Should allow authorized caller to update EMP Utility..", async () => {
 			await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
 
-			await expect(registry.v1EMPAmountsValidatorUpdate(owner.address)).to.be.not.rejected;
+			await expect(registry.v1EMPUtilityUpdate(owner.address)).to.be.not.rejected;
 
-			expect(await registry.v1EMPAmountsValidator()).to.be.equal(owner.address);
+			expect(await registry.v1EMPUtility()).to.be.equal(owner.address);
 		});
 	});
 
@@ -76,7 +76,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
 			await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
 
-			await registry.v1EMPAmountsValidatorUpdate(owner.address);
+			await registry.v1EMPUtilityUpdate(owner.address);
 
 			await expect(registry.connect(manager).v1EMPDeployerUpdate(owner.address)).to.be.rejectedWith(
 				ERROR.NOT_AUTHORIZED
@@ -94,7 +94,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 		it("Should allow authorized caller to update EMP Deployer..", async () => {
 			await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
 
-			await registry.v1EMPAmountsValidatorUpdate(owner.address);
+			await registry.v1EMPUtilityUpdate(owner.address);
 
 			await expect(registry.v1EMPDeployerUpdate(owner.address)).to.be.not.rejected;
 
@@ -106,7 +106,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 		beforeEach(async () => {
 			await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
 
-			await registry.v1EMPAmountsValidatorUpdate(owner.address);
+			await registry.v1EMPUtilityUpdate(owner.address);
 
 			await registry.v1EMPDeployerUpdate(owner.address);
 		});

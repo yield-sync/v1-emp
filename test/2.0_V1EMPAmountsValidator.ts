@@ -6,11 +6,11 @@ import { Contract, ContractFactory, VoidSigner } from "ethers";
 import { ERROR } from "../const";
 
 
-describe("[2.0] V1EMPAmountsValidator.sol", async () => {
+describe("[2.0] V1EMPUtility.sol", async () => {
 	let arrayUtility: Contract;
 	let governance: Contract;
 	let registry: Contract;
-	let amountsValidator: Contract;
+	let utility: Contract;
 
 	let treasury: VoidSigner;
 
@@ -32,7 +32,7 @@ describe("[2.0] V1EMPAmountsValidator.sol", async () => {
 		const YieldSyncGovernance: ContractFactory = await ethers.getContractFactory("YieldSyncGovernance");
 		const V1EMPArrayUtility: ContractFactory = await ethers.getContractFactory("V1EMPArrayUtility");
 		const V1EMPRegistry: ContractFactory = await ethers.getContractFactory("V1EMPRegistry");
-		const V1EMPAmountsValidator: ContractFactory= await ethers.getContractFactory("V1EMPAmountsValidator");
+		const V1EMPUtility: ContractFactory= await ethers.getContractFactory("V1EMPUtility");
 
 
 		governance = await (await YieldSyncGovernance.deploy()).deployed();
@@ -45,21 +45,21 @@ describe("[2.0] V1EMPAmountsValidator.sol", async () => {
 
 		await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
 
-		amountsValidator = await (await V1EMPAmountsValidator.deploy(registry.address)).deployed();
+		utility = await (await V1EMPUtility.deploy(registry.address)).deployed();
 
 		// Set the Strategy Deployer
-		await registry.v1EMPStrategyDeployerUpdate(amountsValidator.address);
+		await registry.v1EMPStrategyDeployerUpdate(utility.address);
 	});
 
 	describe("function utilizedERC20AmountValid()", async () => {
 		it("[modifier][auth] Should only be able to called by EMP..", async () => {
-			await expect(amountsValidator.utilizedERC20AmountValid([])).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
+			await expect(utility.utilizedERC20AmountValid([])).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
 		});
 	});
 
 	describe("function v1EMPStrategyUtilizedERC20AmountValid()", async () => {
 		it("[modifier][auth] Should only be able to called by EMP..", async () => {
-			await expect(amountsValidator.v1EMPStrategyUtilizedERC20AmountValid([])).to.be.rejectedWith(
+			await expect(utility.v1EMPStrategyUtilizedERC20AmountValid([])).to.be.rejectedWith(
 				ERROR.NOT_AUTHORIZED
 			);
 		});

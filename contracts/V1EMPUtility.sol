@@ -5,19 +5,14 @@ pragma solidity ^0.8.18;
 import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 import { IV1EMP } from "./interface/IV1EMP.sol";
-import {
-	IV1EMPAmountsValidator,
-	IV1EMPArrayUtility,
-	IV1EMPRegistry,
-	UtilizationERC20
-} from "./interface/IV1EMPAmountsValidator.sol";
+import { IV1EMPUtility, IV1EMPArrayUtility, IV1EMPRegistry, UtilizationERC20 } from "./interface/IV1EMPUtility.sol";
 import { IV1EMPETHValueFeed } from "./interface/IV1EMPETHValueFeed.sol";
 import { IV1EMPRegistry } from "./interface/IV1EMPRegistry.sol";
 import { IV1EMPStrategy } from "./interface/IV1EMPStrategy.sol";
 
 
-contract V1EMPAmountsValidator is
-	IV1EMPAmountsValidator
+contract V1EMPUtility is
+	IV1EMPUtility
 {
 	using SafeMath for uint256;
 
@@ -60,7 +55,7 @@ contract V1EMPAmountsValidator is
 	}
 
 
-	/// @inheritdoc IV1EMPAmountsValidator
+	/// @inheritdoc IV1EMPUtility
 	function utilizedERC20AmountValid(uint256[] memory _utilizedERC20Amount)
 		public
 		view
@@ -109,7 +104,7 @@ contract V1EMPAmountsValidator is
 		return (valid_, utilizedERC20AmountTotalETHValue_);
 	}
 
-	/// @inheritdoc IV1EMPAmountsValidator
+	/// @inheritdoc IV1EMPUtility
 	function v1EMPStrategyUtilizedERC20AmountValid(uint256[][] memory _v1EMPStrategyUtilizedERC20Amount)
 		public
 		override
@@ -158,7 +153,7 @@ contract V1EMPAmountsValidator is
 		return valid_;
 	}
 
-	/// @inheritdoc IV1EMPAmountsValidator
+	/// @inheritdoc IV1EMPUtility
 	function utilizedERC20Update(address[] memory _utilizedV1EMPStrategy)
 		public
 		override

@@ -7,7 +7,7 @@ import { IV1EMPRegistry } from "./IV1EMPRegistry.sol";
 import { UtilizationERC20 } from "../struct/UtilizationERC20.sol";
 
 
-interface IV1EMPAmountsValidator
+interface IV1EMPUtility
 {
 	/**
 	* @dev [view-IV1EMPArrayUtility]

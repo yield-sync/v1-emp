@@ -9,7 +9,7 @@ export const ERROR = {
 			"!(v1EMPArrayUtility != address(0))"
 		,
 		EMP_UTILITY_NOT_SET:
-			"!(v1EMPAmountsValidator != address(0))"
+			"!(v1EMPUtility != address(0))"
 		,
 		NOT_EMP_DEPLOYER:
 			"!(v1EMPDeployer == msg.sender)"

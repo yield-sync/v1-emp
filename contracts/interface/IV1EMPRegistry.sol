@@ -44,7 +44,7 @@ interface IV1EMPRegistry
 	* @dev [view-address]
 	* @return {address}
 	*/
-	function v1EMPAmountsValidator()
+	function v1EMPUtility()
 		external
 		returns (address)
 	;
@@ -163,9 +163,9 @@ interface IV1EMPRegistry
 	;
 
 	/**
-	* @param _v1EMPAmountsValidator {address}
+	* @param _v1EMPUtility {address}
 	*/
-	function v1EMPAmountsValidatorUpdate(address _v1EMPAmountsValidator)
+	function v1EMPUtilityUpdate(address _v1EMPUtility)
 		external
 	;
 }

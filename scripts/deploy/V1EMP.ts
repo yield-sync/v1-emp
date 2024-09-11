@@ -51,7 +51,7 @@ async function main() {
 	const V1EMPDeployer: ContractFactory = await ethers.getContractFactory("V1EMPDeployer");
 	const V1EMPRegistry: ContractFactory = await ethers.getContractFactory("V1EMPRegistry");
 	const V1EMPStrategyDeployer: ContractFactory = await ethers.getContractFactory("V1EMPStrategyDeployer");
-	const V1EMPAmountsValidator: ContractFactory= await ethers.getContractFactory("V1EMPAmountsValidator");
+	const V1EMPUtility: ContractFactory= await ethers.getContractFactory("V1EMPUtility");
 
 	let arrayUtility: Contract = await (await V1EMPArrayUtility.deploy()).deployed();
 
@@ -69,11 +69,11 @@ async function main() {
 
 	await registry.v1EMPStrategyDeployerUpdate(strategyDeployer.address);
 
-	let eMPUtility = await (await V1EMPAmountsValidator.deploy(registry.address)).deployed();
+	let eMPUtility = await (await V1EMPUtility.deploy(registry.address)).deployed();
 
 	console.log("eMPUtility Contract address:", eMPUtility.address);
 
-	await registry.v1EMPAmountsValidatorUpdate(eMPUtility.address);
+	await registry.v1EMPUtilityUpdate(eMPUtility.address);
 
 	let eMPDeployer = await (await V1EMPDeployer.deploy(registry.address)).deployed();
 

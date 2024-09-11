@@ -40,7 +40,7 @@ describe("[5.0] V1EMPDeployer.sol - Setup", async () => {
 		// Set Treasury
 		await expect(governance.payToUpdate(treasury.address)).to.be.not.rejected;
 
-		await registry.v1EMPAmountsValidatorUpdate(arrayUtility.address);
+		await registry.v1EMPUtilityUpdate(arrayUtility.address);
 
 		// Set the EMP Deployer on registry
 		await registry.v1EMPDeployerUpdate(empDeployer.address);

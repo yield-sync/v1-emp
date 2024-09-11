@@ -8,9 +8,9 @@ import { ERC20, IERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 import {
 	IV1EMP,
-	IV1EMPAmountsValidator,
 	IV1EMPArrayUtility,
 	IV1EMPRegistry,
+	IV1EMPUtility,
 	UtilizationERC20
 } from "./interface/IV1EMP.sol";
 import { IV1EMPStrategy } from "./interface/IV1EMPStrategy.sol";
@@ -36,9 +36,9 @@ contract V1EMP is
 	uint256 public override feeRateGovernance;
 	uint256 public override feeRateManager;
 
-	IV1EMPAmountsValidator public immutable override I_V1_EMP_AMOUNTS_VALIDATOR;
 	IV1EMPArrayUtility public immutable override I_V1_EMP_ARRAY_UTILITY;
 	IV1EMPRegistry public immutable override I_V1_EMP_REGISTRY;
+	IV1EMPUtility public immutable override I_V1_EMP_AMOUNTS_VALIDATOR;
 
 
 	mapping (address utilizedERC20 => UtilizationERC20 utilizationERC20) internal _utilizedERC20_utilizationERC20;
@@ -82,7 +82,7 @@ contract V1EMP is
 
 		I_V1_EMP_REGISTRY = IV1EMPRegistry(_v1EMPRegistry);
 		I_V1_EMP_ARRAY_UTILITY = IV1EMPArrayUtility(I_V1_EMP_REGISTRY.v1EMPArrayUtility());
-		I_V1_EMP_AMOUNTS_VALIDATOR = IV1EMPAmountsValidator(I_V1_EMP_REGISTRY.v1EMPAmountsValidator());
+		I_V1_EMP_AMOUNTS_VALIDATOR = IV1EMPUtility(I_V1_EMP_REGISTRY.v1EMPUtility());
 	}
 
 

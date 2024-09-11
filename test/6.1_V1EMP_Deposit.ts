@@ -50,7 +50,7 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 		const V1EMPRegistry: ContractFactory = await ethers.getContractFactory("V1EMPRegistry");
 		const V1EMPStrategy: ContractFactory = await ethers.getContractFactory("V1EMPStrategy");
 		const V1EMPStrategyDeployer: ContractFactory = await ethers.getContractFactory("V1EMPStrategyDeployer");
-		const V1EMPAmountsValidator: ContractFactory= await ethers.getContractFactory("V1EMPAmountsValidator");
+		const V1EMPUtility: ContractFactory= await ethers.getContractFactory("V1EMPUtility");
 
 		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
 		const ETHValueFeedDummy: ContractFactory = await ethers.getContractFactory("ETHValueFeedDummy");
@@ -72,9 +72,9 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 
 		await registry.v1EMPStrategyDeployerUpdate(strategyDeployer.address);
 
-		eMPUtility = await (await V1EMPAmountsValidator.deploy(registry.address)).deployed();
+		eMPUtility = await (await V1EMPUtility.deploy(registry.address)).deployed();
 
-		await registry.v1EMPAmountsValidatorUpdate(eMPUtility.address);
+		await registry.v1EMPUtilityUpdate(eMPUtility.address);
 
 		eMPDeployer = await (await V1EMPDeployer.deploy(registry.address)).deployed();
 
