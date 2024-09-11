@@ -133,17 +133,6 @@ interface IV1EMP is
 		returns (uint256)
 	;
 
-	/**
-	* @dev [view-mapping]
-	* @notice UtilizedV1EMPStrategy -> UtilizedERC20UpdateTracker
-	* @param _utilizedV1EMPStrategy {address}
-	* @return {uin256}
-	*/
-	function v1EMPStrategy_utilizedERC20UpdateTracker(address _utilizedV1EMPStrategy)
-		external
-		returns (uint256)
-	;
-
 
 	/// @notice view
 

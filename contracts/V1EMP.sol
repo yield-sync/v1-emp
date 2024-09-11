@@ -38,10 +38,6 @@ contract V1EMP is
 
 	mapping (address utilizedV1EMPStrategy => uint256 allocation) public override utilizedV1EMPStrategy_allocation;
 
-	mapping (
-		address v1EMPStrategy => uint256 utilizedERC20UpdateTracker
-	) public override v1EMPStrategy_utilizedERC20UpdateTracker;
-
 
 	receive ()
 		external

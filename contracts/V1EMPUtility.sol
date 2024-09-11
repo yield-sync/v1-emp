@@ -17,8 +17,6 @@ contract V1EMPUtility is
 	using SafeMath for uint256;
 
 
-	uint256 public constant ONE_HUNDRED_PERCENT = 1e18;
-
 	IV1EMPArrayUtility public immutable override I_V1_EMP_ARRAY_UTILITY;
 	IV1EMPRegistry public immutable override I_V1_EMP_REGISTRY;
 
