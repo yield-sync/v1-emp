@@ -4,7 +4,6 @@ pragma solidity ^0.8.18;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-import { IV1EMPArrayUtility } from "./IV1EMPArrayUtility.sol";
 import { IV1EMPRegistry } from "./IV1EMPRegistry.sol";
 import { IV1EMPUtility } from "./IV1EMPUtility.sol";
 import { UtilizationERC20 } from "../struct/UtilizationERC20.sol";
@@ -84,21 +83,10 @@ interface IV1EMP is
 	* @notice Implemented IV1EMPUtility
 	* @return {IV1EMPUtility}
 	*/
-	function I_V1_EMP_AMOUNTS_VALIDATOR()
+	function I_V1_EMP_UTILITY()
 		external
 		view
 		returns (IV1EMPUtility)
-	;
-
-	/**
-	* @dev [view-IV1EMPArrayUtility]
-	* @notice Implemented IV1EMPArrayUtility
-	* @return {IV1EMPArrayUtility}
-	*/
-	function I_V1_EMP_ARRAY_UTILITY()
-		external
-		view
-		returns (IV1EMPArrayUtility)
 	;
 
 	/**

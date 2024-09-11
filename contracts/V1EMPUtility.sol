@@ -63,7 +63,9 @@ contract V1EMPUtility is
 		authEMP()
 		returns (bool valid_, uint256 utilizedERC20AmountTotalETHValue_)
 	{
-		address[] memory utilizedERC20 = IV1EMP(msg.sender).utilizedERC20();
+		IV1EMP iV1EMP = IV1EMP(msg.sender);
+
+		address[] memory utilizedERC20 = iV1EMP.utilizedERC20();
 
 		require(_utilizedERC20Amount.length == utilizedERC20.length, "!(_utilizedERC20Amount.length == utilizedERC20.length)");
 
@@ -93,7 +95,7 @@ contract V1EMPUtility is
 				"!computed"
 			);
 
-			if (utilizedERC20AllocationActual != IV1EMP(msg.sender).utilizedERC20_utilizationERC20(utilizedERC20[i]).allocation)
+			if (utilizedERC20AllocationActual != iV1EMP.utilizedERC20_utilizationERC20(utilizedERC20[i]).allocation)
 			{
 				valid_ = false;
 
@@ -111,7 +113,9 @@ contract V1EMPUtility is
 		authEMP()
 		returns (bool valid_)
 	{
-		address[] memory utilizedV1EMPStrategy = IV1EMP(msg.sender).utilizedV1EMPStrategy();
+		IV1EMP iV1EMP = IV1EMP(msg.sender);
+
+		address[] memory utilizedV1EMPStrategy = iV1EMP.utilizedV1EMPStrategy();
 
 		require(
 			utilizedV1EMPStrategy.length == _v1EMPStrategyUtilizedERC20Amount.length,
@@ -142,7 +146,7 @@ contract V1EMPUtility is
 				"!computed"
 			);
 
-			if (utilizedERC20AmountAllocationActual != IV1EMP(msg.sender).utilizedV1EMPStrategy_allocation(utilizedV1EMPStrategy[i]))
+			if (utilizedERC20AmountAllocationActual != iV1EMP.utilizedV1EMPStrategy_allocation(utilizedV1EMPStrategy[i]))
 			{
 				valid_ = false;
 
@@ -154,13 +158,17 @@ contract V1EMPUtility is
 	}
 
 	/// @inheritdoc IV1EMPUtility
-	function utilizedERC20Update(address[] memory _utilizedV1EMPStrategy)
+	function utilizedERC20Generator()
 		public
 		override
 		authEMP()
 		returns (bool updatedRequired_, address[] memory utilizedERC20_, UtilizationERC20[] memory utilizationERC20_)
 	{
 		updatedRequired_ = false;
+
+		IV1EMP iV1EMP = IV1EMP(msg.sender);
+
+		address[] memory _utilizedV1EMPStrategy =  iV1EMP.utilizedV1EMPStrategy();
 
 		uint256 utilizedERC20MaxLength = 0;
 
@@ -183,7 +191,7 @@ contract V1EMPUtility is
 			return (updatedRequired_, utilizedERC20_, utilizationERC20_);
 		}
 
-		address[] memory tempUtilizedERC20 = new address[](utilizedERC20MaxLength);
+		utilizedERC20_ = new address[](utilizedERC20MaxLength);
 
 		uint256 utilizedERC20I = 0;
 
@@ -193,32 +201,30 @@ contract V1EMPUtility is
 
 			for (uint256 ii = 0; ii < strategyUtilizedERC20.length; ii++)
 			{
-				tempUtilizedERC20[utilizedERC20I++] = strategyUtilizedERC20[ii];
+				utilizedERC20_[utilizedERC20I++] = strategyUtilizedERC20[ii];
 			}
 		}
 
-		tempUtilizedERC20 = I_V1_EMP_ARRAY_UTILITY.removeDuplicates(tempUtilizedERC20);
-		tempUtilizedERC20 = I_V1_EMP_ARRAY_UTILITY.sort(tempUtilizedERC20);
+		utilizedERC20_ = I_V1_EMP_ARRAY_UTILITY.removeDuplicates(utilizedERC20_);
+		utilizedERC20_ = I_V1_EMP_ARRAY_UTILITY.sort(utilizedERC20_);
 
 		uint256 utilizedERC20AllocationTotal;
 
-		utilizationERC20_ = new UtilizationERC20[](tempUtilizedERC20.length);
+		utilizationERC20_ = new UtilizationERC20[](utilizedERC20_.length);
 
 		for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
 		{
 			IV1EMPStrategy iV1EMPStrategy = IV1EMPStrategy(_utilizedV1EMPStrategy[i]);
 
-			for (uint256 ii = 0; ii < tempUtilizedERC20.length; ii++)
+			for (uint256 ii = 0; ii < utilizedERC20_.length; ii++)
 			{
-				UtilizationERC20 memory utilizationERC20 = iV1EMPStrategy.utilizedERC20_utilizationERC20(tempUtilizedERC20[ii]);
+				UtilizationERC20 memory utilizationERC20 = iV1EMPStrategy.utilizedERC20_utilizationERC20(utilizedERC20_[ii]);
 
 				if (utilizationERC20.deposit)
 				{
 					utilizationERC20_[ii].deposit = true;
 
-					uint256 utilizationERC20Allocation = utilizationERC20.allocation * IV1EMP(
-						msg.sender
-					).utilizedV1EMPStrategy_allocation(
+					uint256 utilizationERC20Allocation = utilizationERC20.allocation * iV1EMP.utilizedV1EMPStrategy_allocation(
 						_utilizedV1EMPStrategy[i]
 					) / 1e18;
 
@@ -235,8 +241,8 @@ contract V1EMPUtility is
 		}
 
 		require(
-			utilizedERC20AllocationTotal == IV1EMP(msg.sender).ONE_HUNDRED_PERCENT(),
-			"!(utilizedERC20AllocationTotal == IV1EMP(msg.sender).ONE_HUNDRED_PERCENT())"
+			utilizedERC20AllocationTotal == iV1EMP.ONE_HUNDRED_PERCENT(),
+			"!(utilizedERC20AllocationTotal == iV1EMP.ONE_HUNDRED_PERCENT())"
 		);
 
 		return (updatedRequired_, utilizedERC20_, utilizationERC20_);

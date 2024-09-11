@@ -44,13 +44,12 @@ interface IV1EMPUtility
 	;
 
 	/**
-	* @notice
-	* @return _utilizedV1EMPStrategy {address[]}
+	* @notice Utilized ERC20 Generator
 	* @return updatedRequired_ {bool}
 	* @return utilizedERC20_ {address[]}
 	* @return utilizationERC20_ {UtilizationERC20[]}
 	*/
-	function utilizedERC20Update(address[] memory _utilizedV1EMPStrategy)
+	function utilizedERC20Generator()
 		external
 		returns (bool updatedRequired_, address[] memory utilizedERC20_, UtilizationERC20[] memory utilizationERC20_)
 	;

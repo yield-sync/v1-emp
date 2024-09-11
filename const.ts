@@ -56,7 +56,7 @@ export const ERROR = {
 			"!utilizedERC20WithdrawOpen"
 		,
 		AMOUNTS_VALIDATOR_FAILURE:
-			"!I_V1_EMP_AMOUNTS_VALIDATOR.v1EMPStrategyUtilizedERC20AmountValid(_v1EMPStrategyUtilizedERC20Amount)"
+			"!I_V1_EMP_UTILITY.v1EMPStrategyUtilizedERC20AmountValid(_v1EMPStrategyUtilizedERC20Amount)"
 		,
 		INVALID:
 			"!valid"

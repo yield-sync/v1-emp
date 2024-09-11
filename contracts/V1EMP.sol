@@ -6,13 +6,7 @@ import { IAccessControlEnumerable } from "@openzeppelin/contracts/access/IAccess
 import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import { ERC20, IERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-import {
-	IV1EMP,
-	IV1EMPArrayUtility,
-	IV1EMPRegistry,
-	IV1EMPUtility,
-	UtilizationERC20
-} from "./interface/IV1EMP.sol";
+import { IV1EMP, IV1EMPRegistry, IV1EMPUtility, UtilizationERC20 } from "./interface/IV1EMP.sol";
 import { IV1EMPStrategy } from "./interface/IV1EMPStrategy.sol";
 
 
@@ -36,9 +30,8 @@ contract V1EMP is
 	uint256 public override feeRateGovernance;
 	uint256 public override feeRateManager;
 
-	IV1EMPArrayUtility public immutable override I_V1_EMP_ARRAY_UTILITY;
 	IV1EMPRegistry public immutable override I_V1_EMP_REGISTRY;
-	IV1EMPUtility public immutable override I_V1_EMP_AMOUNTS_VALIDATOR;
+	IV1EMPUtility public immutable override I_V1_EMP_UTILITY;
 
 
 	mapping (address utilizedERC20 => UtilizationERC20 utilizationERC20) internal _utilizedERC20_utilizationERC20;
@@ -81,8 +74,7 @@ contract V1EMP is
 		utilizedERC20WithdrawFull = _utilizedERC20WithdrawFull;
 
 		I_V1_EMP_REGISTRY = IV1EMPRegistry(_v1EMPRegistry);
-		I_V1_EMP_ARRAY_UTILITY = IV1EMPArrayUtility(I_V1_EMP_REGISTRY.v1EMPArrayUtility());
-		I_V1_EMP_AMOUNTS_VALIDATOR = IV1EMPUtility(I_V1_EMP_REGISTRY.v1EMPUtility());
+		I_V1_EMP_UTILITY = IV1EMPUtility(I_V1_EMP_REGISTRY.v1EMPUtility());
 	}
 
 
@@ -209,7 +201,7 @@ contract V1EMP is
 
 		require(_utilizedERC20Amount.length == _utilizedERC20.length, "!(_utilizedERC20Amount.length == _utilizedERC20.length)");
 
-		(bool valid, uint256 utilizedERC20AmountTotalETHValue) = I_V1_EMP_AMOUNTS_VALIDATOR.utilizedERC20AmountValid(
+		(bool valid, uint256 utilizedERC20AmountTotalETHValue) = I_V1_EMP_UTILITY.utilizedERC20AmountValid(
 			_utilizedERC20Amount
 		);
 
@@ -244,87 +236,22 @@ contract V1EMP is
 		public
 		override
 	{
-		bool updateRequired = false;
+		(
+			bool updatedRequired_,
+			address[] memory utilizedERC20_,
+			UtilizationERC20[] memory utilizationERC20_
+		) = I_V1_EMP_UTILITY.utilizedERC20Generator();
 
-		uint256 utilizedERC20MaxLength = 0;
-
-		for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
-		{
-			uint256 utilizedERC20UpdateTracker = IV1EMPStrategy(_utilizedV1EMPStrategy[i]).utilizedERC20UpdateTracker();
-
-			if (v1EMPStrategy_utilizedERC20UpdateTracker[_utilizedV1EMPStrategy[i]] != utilizedERC20UpdateTracker)
-			{
-				updateRequired = true;
-
-				v1EMPStrategy_utilizedERC20UpdateTracker[_utilizedV1EMPStrategy[i]] = utilizedERC20UpdateTracker;
-			}
-
-			utilizedERC20MaxLength += IV1EMPStrategy(_utilizedV1EMPStrategy[i]).utilizedERC20().length;
-		}
-
-		if (!updateRequired)
+		if (!updatedRequired_)
 		{
 			return;
 		}
 
-		delete _utilizedERC20;
-
-		address[] memory tempUtilizedERC20 = new address[](utilizedERC20MaxLength);
-
-		uint256 utilizedERC20I = 0;
-
-		for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
-		{
-			address[] memory strategyUtilizedERC20 = IV1EMPStrategy(_utilizedV1EMPStrategy[i]).utilizedERC20();
-
-			for (uint256 ii = 0; ii < strategyUtilizedERC20.length; ii++)
-			{
-				tempUtilizedERC20[utilizedERC20I++] = strategyUtilizedERC20[ii];
-			}
-		}
-
-		tempUtilizedERC20 = I_V1_EMP_ARRAY_UTILITY.removeDuplicates(tempUtilizedERC20);
-		tempUtilizedERC20 = I_V1_EMP_ARRAY_UTILITY.sort(tempUtilizedERC20);
-
-		uint256 utilizedERC20AllocationTotal;
-
-		UtilizationERC20[] memory utilizationERC20 = new UtilizationERC20[](tempUtilizedERC20.length);
-
-		for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
-		{
-			IV1EMPStrategy iV1EMPStrategy = IV1EMPStrategy(_utilizedV1EMPStrategy[i]);
-
-			for (uint256 ii = 0; ii < tempUtilizedERC20.length; ii++)
-			{
-				UtilizationERC20 memory utilizationERC20_ = iV1EMPStrategy.utilizedERC20_utilizationERC20(tempUtilizedERC20[ii]);
-
-				if (utilizationERC20_.deposit)
-				{
-					utilizationERC20[ii].deposit = true;
-
-					uint256 utilizationERC20Allocation = utilizationERC20_.allocation * utilizedV1EMPStrategy_allocation[
-						_utilizedV1EMPStrategy[i]
-					] / 1e18;
-
-					utilizationERC20[ii].allocation += utilizationERC20Allocation;
-
-					utilizedERC20AllocationTotal += utilizationERC20Allocation;
-				}
-
-				if (utilizationERC20_.withdraw)
-				{
-					utilizationERC20[ii].withdraw = true;
-				}
-			}
-		}
-
-		require(utilizedERC20AllocationTotal == ONE_HUNDRED_PERCENT, "!(utilizedERC20AllocationTotal == ONE_HUNDRED_PERCENT)");
-
-		_utilizedERC20 = tempUtilizedERC20;
+		_utilizedERC20 = utilizedERC20_;
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
-			_utilizedERC20_utilizationERC20[_utilizedERC20[i]] = utilizationERC20[i];
+			_utilizedERC20_utilizationERC20[_utilizedERC20[i]] = utilizationERC20_[i];
 
 			for (uint256 ii = 0; ii < _utilizedV1EMPStrategy.length; ii++)
 			{
@@ -431,8 +358,8 @@ contract V1EMP is
 		);
 
 		require(
-			I_V1_EMP_AMOUNTS_VALIDATOR.v1EMPStrategyUtilizedERC20AmountValid(_v1EMPStrategyUtilizedERC20Amount),
-			"!I_V1_EMP_AMOUNTS_VALIDATOR.v1EMPStrategyUtilizedERC20AmountValid(_v1EMPStrategyUtilizedERC20Amount)"
+			I_V1_EMP_UTILITY.v1EMPStrategyUtilizedERC20AmountValid(_v1EMPStrategyUtilizedERC20Amount),
+			"!I_V1_EMP_UTILITY.v1EMPStrategyUtilizedERC20AmountValid(_v1EMPStrategyUtilizedERC20Amount)"
 		);
 
 		for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
