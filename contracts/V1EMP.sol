@@ -77,10 +77,7 @@ contract V1EMP is
 	modifier authGovernanceOrManager()
 	{
 		require(
-			msg.sender == manager || IAccessControlEnumerable(I_V1_EMP_REGISTRY.GOVERNANCE()).hasRole(
-				bytes32(0),
-				msg.sender
-			),
+			msg.sender == manager || IAccessControlEnumerable(I_V1_EMP_REGISTRY.GOVERNANCE()).hasRole(bytes32(0), msg.sender),
 			"!authorized"
 		);
 
@@ -197,9 +194,7 @@ contract V1EMP is
 
 		require(_utilizedERC20Amount.length == _utilizedERC20.length, "!(_utilizedERC20Amount.length == _utilizedERC20.length)");
 
-		(bool valid, uint256 utilizedERC20AmountTotalETHValue) = I_V1_EMP_UTILITY.utilizedERC20AmountValid(
-			_utilizedERC20Amount
-		);
+		(bool valid, uint256 utilizedERC20AmountTotalETHValue) = I_V1_EMP_UTILITY.utilizedERC20AmountValid(_utilizedERC20Amount);
 
 		require(valid, "!valid");
 
