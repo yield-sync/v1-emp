@@ -31,6 +31,20 @@ interface IV1EMPUtility
 		returns (IV1EMPRegistry)
 	;
 
+
+	/// @notice view
+
+
+	/**
+	* @notice
+	* @return utilizedERC20TotalAmount_ {uint256[]}
+	*/
+	function utilizedERC20TotalBalance()
+		external
+		view
+		returns (uint256[] memory utilizedERC20TotalAmount_)
+	;
+
 	/**
 	* @notice Utilized ERC20 Amount Valid
 	* @param _utilizedERC20Amount {uint256}
@@ -42,6 +56,10 @@ interface IV1EMPUtility
 		view
 		returns (bool valid_, uint256 utilizedERC20AmountTotalETHValue_)
 	;
+
+
+	/// @notice mutative
+
 
 	/**
 	* @notice Utilized ERC20 Generator

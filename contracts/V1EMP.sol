@@ -122,20 +122,7 @@ contract V1EMP is
 		override
 		returns (uint256[] memory utilizedERC20TotalAmount_)
 	{
-		utilizedERC20TotalAmount_ = new uint256[](_utilizedERC20.length);
-
-		for (uint256 i = 0; i < _utilizedERC20.length; i++)
-		{
-			utilizedERC20TotalAmount_[i] += IERC20(_utilizedERC20[i]).balanceOf(address(this));
-
-			for (uint256 ii = 0; ii < _utilizedV1EMPStrategy.length; ii++)
-			{
-				utilizedERC20TotalAmount_[i] += IV1EMPStrategy(_utilizedV1EMPStrategy[ii]).iV1EMPStrategyInteractor(
-				).utilizedERC20TotalBalance(
-					_utilizedERC20[i]
-				);
-			}
-		}
+		return I_V1_EMP_UTILITY.utilizedERC20TotalBalance();
 	}
 
 	/// @inheritdoc IV1EMP

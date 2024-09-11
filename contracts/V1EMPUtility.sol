@@ -3,6 +3,7 @@ pragma solidity ^0.8.18;
 
 
 import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 import { IV1EMP } from "./interface/IV1EMP.sol";
 import { IV1EMPUtility, IV1EMPArrayUtility, IV1EMPRegistry, UtilizationERC20 } from "./interface/IV1EMPUtility.sol";
@@ -51,6 +52,41 @@ contract V1EMPUtility is
 
 		_;
 	}
+
+
+	/// @notice view
+
+
+	/// @inheritdoc IV1EMPUtility
+	function utilizedERC20TotalBalance()
+		public
+		view
+		authEMP()
+		returns (uint256[] memory utilizedERC20TotalAmount_)
+	{
+		IV1EMP iV1EMP = IV1EMP(msg.sender);
+
+		address[] memory _utilizedERC20 =  iV1EMP.utilizedERC20();
+		address[] memory _utilizedV1EMPStrategy =  iV1EMP.utilizedV1EMPStrategy();
+
+		utilizedERC20TotalAmount_ = new uint256[](_utilizedERC20.length);
+
+		for (uint256 i = 0; i < _utilizedERC20.length; i++)
+		{
+			utilizedERC20TotalAmount_[i] += IERC20(_utilizedERC20[i]).balanceOf(msg.sender);
+
+			for (uint256 ii = 0; ii < _utilizedV1EMPStrategy.length; ii++)
+			{
+				utilizedERC20TotalAmount_[i] += IV1EMPStrategy(_utilizedV1EMPStrategy[ii]).iV1EMPStrategyInteractor(
+				).utilizedERC20TotalBalance(
+					_utilizedERC20[i]
+				);
+			}
+		}
+	}
+
+
+	/// @notice mutative
 
 
 	/// @inheritdoc IV1EMPUtility
