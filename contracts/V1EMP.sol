@@ -4,9 +4,9 @@ pragma solidity ^0.8.18;
 
 import { IAccessControlEnumerable } from "@openzeppelin/contracts/access/IAccessControlEnumerable.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import { ERC20, IERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-import { IV1EMP, IV1EMPRegistry, IV1EMPUtility, UtilizationERC20 } from "./interface/IV1EMP.sol";
+import { IERC20, IV1EMP, IV1EMPRegistry, IV1EMPUtility, UtilizationERC20 } from "./interface/IV1EMP.sol";
 import { IV1EMPStrategy } from "./interface/IV1EMPStrategy.sol";
 
 
