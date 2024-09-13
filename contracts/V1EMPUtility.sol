@@ -8,7 +8,6 @@ import { IERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { IV1EMP } from "./interface/IV1EMP.sol";
 import { IV1EMPUtility, IV1EMPArrayUtility, IV1EMPRegistry, UtilizationERC20 } from "./interface/IV1EMPUtility.sol";
 import { IV1EMPETHValueFeed } from "./interface/IV1EMPETHValueFeed.sol";
-import { IV1EMPRegistry } from "./interface/IV1EMPRegistry.sol";
 import { IV1EMPStrategy } from "./interface/IV1EMPStrategy.sol";
 
 
