@@ -8,7 +8,6 @@ import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import { IV1EMPStrategy } from "./interface/IV1EMPStrategy.sol";
 import {
 	IV1EMPArrayUtility,
-	IV1EMPETHValueFeed,
 	IV1EMPRegistry,
 	IV1EMPStrategyUtility,
 	UtilizationERC20
@@ -80,6 +79,7 @@ contract V1EMPStrategyUtility is
 	function utilizedERC20Sort(address[] memory _utilizedERC20)
 		public
 		view
+		authEMPStrategy()
 		returns (address[] memory)
 	{
 		return I_V1_EMP_ARRAY_UTILITY.sort(_utilizedERC20);
@@ -87,6 +87,7 @@ contract V1EMPStrategyUtility is
 
 	function utilizedERC20UpdateValidator(address[] memory _utilizedERC20, UtilizationERC20[] memory _utilizationERC20)
 		public
+		authEMPStrategy()
 	{
 		require(_utilizedERC20.length == _utilizationERC20.length, "!(__utilizedERC20.length == _utilizationERC20.length)");
 
