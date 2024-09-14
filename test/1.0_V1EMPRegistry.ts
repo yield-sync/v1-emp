@@ -72,6 +72,28 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 		});
 	});
 
+	describe("function v1EMPStrategyUtilityUpdate()", async () => {
+		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
+			await expect(registry.connect(manager).v1EMPStrategyUtilityUpdate(manager.address)).to.be.rejectedWith(
+				ERROR.NOT_AUTHORIZED
+			);
+		});
+
+		it("Should not allow to set the EMP Strategy Utility until the Array Utility is set..", async () => {
+			await expect(registry.v1EMPStrategyUtilityUpdate(owner.address)).to.be.rejectedWith(
+				ERROR.REGISTRY.ARRAY_UTILITY_NOT_SET
+			);
+		});
+
+		it("Should allow authorized caller to update EMP Strategy Utility..", async () => {
+			await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
+
+			await expect(registry.v1EMPStrategyUtilityUpdate(owner.address)).to.be.not.rejected;
+
+			expect(await registry.v1EMPStrategyUtility()).to.be.equal(owner.address);
+		});
+	});
+
 	describe("function v1EMPDeployerUpdate()", async () => {
 		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
 			await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);

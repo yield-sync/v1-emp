@@ -8,4 +8,10 @@ import { UtilizationERC20 } from "../struct/UtilizationERC20.sol";
 
 
 interface IV1EMPStrategyUtility
-{}
+{
+	function utilizedERC20Sort(address[] memory _utilizedERC20)
+		external
+		view
+		returns (address[] memory)
+	;
+}
