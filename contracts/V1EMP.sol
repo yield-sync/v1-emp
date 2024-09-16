@@ -17,6 +17,7 @@ contract V1EMP is
 {
 	address public override manager;
 
+	// Consider moving this to the EMP utility to reduce size of contract
 	address[] internal _utilizedERC20;
 	address[] internal _utilizedV1EMPStrategy;
 
