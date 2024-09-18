@@ -88,7 +88,7 @@ export const ERROR = {
 			"!(__utilizedERC20.length == _utilizationERC20.length)"
 		,
 		INVALID_PARAMS_UPDATE_CONTAINS_DUPLCIATES:
-			"I_V1_EMP_ARRAY_UTILITY.containsDuplicates(__utilizedERC20)"
+			"I_V1_EMP_STRATEGY_UTILITY.utilizedERC20ContainsDuplicates(__utilizedERC20)"
 		,
 		UTILIZED_ERC20_AMOUNT_NOT_ZERO:
 			"!(_utilizedERC20Amount[i] == 0)"

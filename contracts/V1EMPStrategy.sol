@@ -202,7 +202,7 @@ contract V1EMPStrategy is
 
 		require(
 			!I_V1_EMP_STRATEGY_UTILITY.utilizedERC20ContainsDuplicates(__utilizedERC20),
-			"I_V1_EMP_ARRAY_UTILITY.containsDuplicates(__utilizedERC20)"
+			"I_V1_EMP_STRATEGY_UTILITY.utilizedERC20ContainsDuplicates(__utilizedERC20)"
 		);
 
 		uint256 utilizedERC20AllocationTotal;
