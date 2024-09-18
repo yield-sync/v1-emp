@@ -76,13 +76,26 @@ contract V1EMPStrategyUtility is
 		return;
 	}
 
+	/// @inheritdoc IV1EMPStrategyUtility
 	function utilizedERC20Sort(address[] memory _utilizedERC20)
 		public
 		view
+		override
 		authEMPStrategy()
 		returns (address[] memory)
 	{
 		return I_V1_EMP_ARRAY_UTILITY.sort(_utilizedERC20);
+	}
+
+
+	/// @inheritdoc IV1EMPStrategyUtility
+	function utilizedERC20ContainsDuplicates(address[] memory _utilizedERC20)
+		public
+		override
+		authEMPStrategy()
+		returns (bool)
+	{
+		return I_V1_EMP_ARRAY_UTILITY.containsDuplicates(_utilizedERC20);
 	}
 
 	function utilizedERC20UpdateValidator(address[] memory _utilizedERC20, UtilizationERC20[] memory _utilizationERC20)

@@ -2,9 +2,9 @@
 pragma solidity ^0.8.18;
 
 
-import { IV1EMPArrayUtility } from "./IV1EMPArrayUtility.sol";
 import { IV1EMPRegistry } from "./IV1EMPRegistry.sol";
 import { IV1EMPStrategyInteractor } from "./IV1EMPStrategyInteractor.sol";
+import { IV1EMPStrategyUtility } from "./IV1EMPStrategyUtility.sol";
 import { UtilizationERC20 } from "../struct/UtilizationERC20.sol";
 
 
@@ -110,14 +110,14 @@ interface IV1EMPStrategy
 	;
 
 	/**
-	* @dev [view-IV1EMPArrayUtility]
-	* @notice Implemented IV1EMPArrayUtility
-	* @return {IV1EMPArrayUtility}
+	* @dev [view-IV1EMPStrategyUtility]
+	* @notice Implemented IV1EMPStrategyUtility
+	* @return {IV1EMPStrategyUtility}
 	*/
-	function I_V1_EMP_ARRAY_UTILITY()
+	function I_V1_EMP_STRATEGY_UTILITY()
 		external
 		view
-		returns (IV1EMPArrayUtility)
+		returns (IV1EMPStrategyUtility)
 	;
 
 	/**

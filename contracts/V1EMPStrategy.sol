@@ -8,10 +8,10 @@ import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 // SHOULD REMOVE ONCE STRATEGY UTILITY INTEGRATED
 import { IV1EMPETHValueFeed } from "./interface/IV1EMPETHValueFeed.sol";
 import {
-	IV1EMPArrayUtility,
 	IV1EMPRegistry,
 	IV1EMPStrategy,
 	IV1EMPStrategyInteractor,
+	IV1EMPStrategyUtility,
 	UtilizationERC20
 } from "./interface/IV1EMPStrategy.sol";
 
@@ -38,7 +38,7 @@ contract V1EMPStrategy is
 	uint256 public override equityTotal;
 	uint256 public override utilizedERC20UpdateTracker;
 
-	IV1EMPArrayUtility public immutable override I_V1_EMP_ARRAY_UTILITY;
+	IV1EMPStrategyUtility public immutable override I_V1_EMP_STRATEGY_UTILITY;
 	IV1EMPRegistry public immutable override I_V1_EMP_REGISTRY;
 
 	IV1EMPStrategyInteractor public override iV1EMPStrategyInteractor;
@@ -73,7 +73,7 @@ contract V1EMPStrategy is
 		utilizedERC20UpdateTracker = 0;
 
 		I_V1_EMP_REGISTRY = IV1EMPRegistry(_v1EMPRegistry);
-		I_V1_EMP_ARRAY_UTILITY = IV1EMPArrayUtility(I_V1_EMP_REGISTRY.v1EMPArrayUtility());
+		I_V1_EMP_STRATEGY_UTILITY = IV1EMPStrategyUtility(I_V1_EMP_REGISTRY.v1EMPStrategyUtility());
 	}
 
 
@@ -201,7 +201,7 @@ contract V1EMPStrategy is
 		require(__utilizedERC20.length == _utilizationERC20.length, "!(__utilizedERC20.length == _utilizationERC20.length)");
 
 		require(
-			!I_V1_EMP_ARRAY_UTILITY.containsDuplicates(__utilizedERC20),
+			!I_V1_EMP_STRATEGY_UTILITY.utilizedERC20ContainsDuplicates(__utilizedERC20),
 			"I_V1_EMP_ARRAY_UTILITY.containsDuplicates(__utilizedERC20)"
 		);
 
@@ -231,7 +231,7 @@ contract V1EMPStrategy is
 			_utilizedERC20_utilizationERC20[_utilizedERC20[i]] = _utilizationERC20[i];
 		}
 
-		_utilizedERC20 = I_V1_EMP_ARRAY_UTILITY.sort(_utilizedERC20);
+		_utilizedERC20 = I_V1_EMP_STRATEGY_UTILITY.utilizedERC20Sort(_utilizedERC20);
 
 		utilizedERC20UpdateTracker++;
 	}

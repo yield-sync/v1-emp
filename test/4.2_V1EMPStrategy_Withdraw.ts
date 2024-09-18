@@ -19,6 +19,7 @@ describe("[4.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 	let registry: Contract;
 	let strategy: Contract;
 	let strategyDeployer: Contract;
+	let strategyUtility: Contract;
 
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;
@@ -56,6 +57,7 @@ describe("[4.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 		const V1EMPRegistry: ContractFactory = await ethers.getContractFactory("V1EMPRegistry");
 		const V1EMPStrategy: ContractFactory = await ethers.getContractFactory("V1EMPStrategy");
 		const V1EMPStrategyDeployer: ContractFactory = await ethers.getContractFactory("V1EMPStrategyDeployer");
+		const V1EMPStrategyUtility: ContractFactory = await ethers.getContractFactory("V1EMPStrategyUtility");
 
 		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
 		const ETHValueFeedDummy: ContractFactory = await ethers.getContractFactory("ETHValueFeedDummy");
@@ -71,6 +73,10 @@ describe("[4.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 		registry = await (await V1EMPRegistry.deploy(governance.address)).deployed();
 
 		await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
+
+		strategyUtility = await (await V1EMPStrategyUtility.deploy(registry.address)).deployed();
+
+		await registry.v1EMPStrategyUtilityUpdate(strategyUtility.address);
 
 		strategyDeployer = await (await V1EMPStrategyDeployer.deploy(registry.address)).deployed();
 

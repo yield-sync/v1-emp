@@ -15,6 +15,7 @@ describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
 	let registry: Contract;
 	let strategy: Contract;
 	let strategyDeployer: Contract;
+	let strategyUtility: Contract;
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;
 	let mockERC20C: Contract;
@@ -41,6 +42,7 @@ describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
 
 		const YieldSyncGovernance: ContractFactory = await ethers.getContractFactory("YieldSyncGovernance");
 		const V1EMPArrayUtility: ContractFactory = await ethers.getContractFactory("V1EMPArrayUtility");
+		const V1EMPStrategyUtility: ContractFactory = await ethers.getContractFactory("V1EMPStrategyUtility");
 		const V1EMPRegistry: ContractFactory = await ethers.getContractFactory("V1EMPRegistry");
 		const V1EMPStrategyDeployer: ContractFactory = await ethers.getContractFactory("V1EMPStrategyDeployer");
 
@@ -60,6 +62,10 @@ describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
 		registry = await (await V1EMPRegistry.deploy(governance.address)).deployed();
 
 		await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
+
+		strategyUtility = await (await V1EMPStrategyUtility.deploy(registry.address)).deployed();
+
+		await registry.v1EMPStrategyUtilityUpdate(strategyUtility.address);
 
 		strategyDeployer = await (await V1EMPStrategyDeployer.deploy(registry.address)).deployed();
 
@@ -183,14 +189,11 @@ describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
 				for (let i: number = 0; i < INVALID_ALLOCATION.length; i++)
 				{
 					// Deploy a temporary contract
-					const _YSS = await (
-						await (await ethers.getContractFactory("V1EMPStrategy")).deploy(
-							owner.address,
-							registry.address,
-							"Exampe",
-							"EX"
-						)
-					).deployed();
+					const V1EMPStrategy: ContractFactory = await ethers.getContractFactory("V1EMPStrategy");
+
+					const _YSS = await V1EMPStrategy.attach(
+						String(await registry.v1EMPStrategyId_v1EMPStrategy(await registry.eMPStrategyIdTracker()))
+					);
 
 					await expect(
 						_YSS.utilizedERC20Update(INVALID_ALLOCATION[i].utilizedERC20, INVALID_ALLOCATION[i].utilization)
@@ -227,14 +230,12 @@ describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
 				{
 					const INPUT = VALID_INPUTS[i];
 
-					const _YSS = await (
-						await (await ethers.getContractFactory("V1EMPStrategy")).deploy(
-							owner.address,
-							registry.address,
-							"Exampe",
-							"EX"
-						)
-					).deployed();
+					// Deploy a temporary contract
+					const V1EMPStrategy: ContractFactory = await ethers.getContractFactory("V1EMPStrategy");
+
+					const _YSS = await V1EMPStrategy.attach(
+						String(await registry.v1EMPStrategyId_v1EMPStrategy(await registry.eMPStrategyIdTracker()))
+					);
 
 					await expect(_YSS.utilizedERC20Update(INPUT.utilizedERC20, INPUT.utilization)).to.be.not.rejected;
 
