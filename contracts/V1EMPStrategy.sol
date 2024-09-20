@@ -246,39 +246,16 @@ contract V1EMPStrategy is
 	{
 		require(utilizedERC20DepositOpen, "!utilizedERC20DepositOpen");
 
-		require(_utilizedERC20.length == _utilizedERC20Amount.length, "!(_utilizedERC20.length == _utilizedERC20Amount.length)");
-
-		(
-			uint256 utilizedERC20AmountETHValueTotal_,
-			uint256[] memory utilizedERC20AmountETHValue_
-		) = utilizedERC20AmountETHValue(_utilizedERC20Amount);
-
-		for (uint256 i = 0; i < _utilizedERC20.length; i++)
-		{
-			if (!_utilizedERC20_utilizationERC20[_utilizedERC20[i]].deposit)
-			{
-				require(_utilizedERC20Amount[i] == 0, "!(_utilizedERC20Amount[i] == 0)");
-			}
-
-			uint256 utilizedERC20AmountAllocationActual = utilizedERC20AmountETHValue_[i].mul(1e18).div(
-				utilizedERC20AmountETHValueTotal_,
-				"!computed"
-			);
-
-			require(
-				_utilizedERC20_utilizationERC20[_utilizedERC20[i]].allocation == utilizedERC20AmountAllocationActual,
-				"!(_utilizedERC20_utilizationERC20[_utilizedERC20[i]].allocation == utilizedERC20AmountAllocationActual)"
-			);
-		}
+		uint256 utilizedERC20AmountETHValueTotal = I_V1_EMP_STRATEGY_UTILITY.depositAmountsValidate(_utilizedERC20Amount);
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
 			iV1EMPStrategyInteractor.utilizedERC20Deposit(_from, _utilizedERC20[i], _utilizedERC20Amount[i]);
 		}
 
-		equityTotal += utilizedERC20AmountETHValueTotal_;
+		equityTotal += utilizedERC20AmountETHValueTotal;
 
-		eMP_equity[_from] += utilizedERC20AmountETHValueTotal_;
+		eMP_equity[_from] += utilizedERC20AmountETHValueTotal;
 	}
 
 	/// @inheritdoc IV1EMPStrategy

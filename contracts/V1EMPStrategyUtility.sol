@@ -39,25 +39,29 @@ contract V1EMPStrategyUtility is
 	}
 
 
-	function depositAmountsValidator(uint256[] memory _utilizedERC20Amount)
+	/// @inheritdoc IV1EMPStrategyUtility
+	function depositAmountsValidate(uint256[] memory _utilizedERC20Amount)
 		public
 		view
+		override
 		authEMPStrategy()
+		returns (uint256 utilizedERC20AmountETHValueTotal_)
 	{
 		IV1EMPStrategy iV1EMPStrategy = IV1EMPStrategy(msg.sender);
 
-		address[] memory _utilizedERC20 =  iV1EMPStrategy.utilizedERC20();
+		address[] memory utilizedERC20 =  iV1EMPStrategy.utilizedERC20();
 
-		require(_utilizedERC20.length == _utilizedERC20Amount.length, "!(_utilizedERC20.length == _utilizedERC20Amount.length)");
+		require(utilizedERC20.length == _utilizedERC20Amount.length, "!(utilizedERC20.length == _utilizedERC20Amount.length)");
 
-		(
-			uint256 utilizedERC20AmountETHValueTotal_,
-			uint256[] memory utilizedERC20AmountETHValue_
-		) = iV1EMPStrategy.utilizedERC20AmountETHValue(_utilizedERC20Amount);
+		uint256[] memory utilizedERC20AmountETHValue_;
 
-		for (uint256 i = 0; i < _utilizedERC20.length; i++)
+		(utilizedERC20AmountETHValueTotal_, utilizedERC20AmountETHValue_) = iV1EMPStrategy.utilizedERC20AmountETHValue(
+			_utilizedERC20Amount
+		);
+
+		for (uint256 i = 0; i < utilizedERC20.length; i++)
 		{
-			if (!iV1EMPStrategy.utilizedERC20_utilizationERC20(_utilizedERC20[i]).deposit)
+			if (!iV1EMPStrategy.utilizedERC20_utilizationERC20(utilizedERC20[i]).deposit)
 			{
 				require(_utilizedERC20Amount[i] == 0, "!(_utilizedERC20Amount[i] == 0)");
 			}
@@ -68,12 +72,10 @@ contract V1EMPStrategyUtility is
 			);
 
 			require(
-				iV1EMPStrategy.utilizedERC20_utilizationERC20(_utilizedERC20[i]).allocation == utilizedERC20AmountAllocationActual,
-				"!(_utilizedERC20_utilizationERC20[_utilizedERC20[i]].allocation == utilizedERC20AmountAllocationActual)"
+				iV1EMPStrategy.utilizedERC20_utilizationERC20(utilizedERC20[i]).allocation == utilizedERC20AmountAllocationActual,
+				"!(iV1EMPStrategy.utilizedERC20_utilizationERC20(utilizedERC20[i]).allocation == utilizedERC20AmountAllocationActual)"
 			);
 		}
-
-		return;
 	}
 
 	/// @inheritdoc IV1EMPStrategyUtility

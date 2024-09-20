@@ -10,6 +10,16 @@ import { UtilizationERC20 } from "../struct/UtilizationERC20.sol";
 interface IV1EMPStrategyUtility
 {
 	/**
+	* @notice Deposit Amounts Validate
+	* @param _utilizedERC20Amount {address[]}
+	*/
+	function depositAmountsValidate(uint256[] memory _utilizedERC20Amount)
+		external
+		view
+		returns (uint256 utilizedERC20AmountETHValueTotal_)
+	;
+
+	/**
 	* @notice Utilized ERC20 Sort
 	* @param _utilizedERC20 {addrss[]}
 	*/
@@ -18,7 +28,6 @@ interface IV1EMPStrategyUtility
 		view
 		returns (address[] memory)
 	;
-
 
 	/**
 	* @notice Utilized ERC20 Contains Duplicates

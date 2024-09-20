@@ -79,10 +79,10 @@ export const ERROR = {
 			"!(eMP_equity[msg.sender] >= _eRC20Amount)"
 		,
 		INVALID_UTILIZED_ERC20_AMOUNT:
-			"!(_utilizedERC20_utilizationERC20[_utilizedERC20[i]].allocation == utilizedERC20AmountAllocationActual)"
+			"!(iV1EMPStrategy.utilizedERC20_utilizationERC20(utilizedERC20[i]).allocation == utilizedERC20AmountAllocationActual)"
 		,
 		INVAILD_PARAMS_DEPOSIT_LENGTH:
-			"!(_utilizedERC20.length == _utilizedERC20Amount.length)"
+			"!(utilizedERC20.length == _utilizedERC20Amount.length)"
 		,
 		INVALID_PARAMS_UPDATE_LENGTHS:
 			"!(__utilizedERC20.length == _utilizationERC20.length)"
