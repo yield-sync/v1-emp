@@ -20,8 +20,8 @@ contract V1EMPStrategyUtility is
 	using SafeMath for uint256;
 
 
-	IV1EMPArrayUtility public immutable I_V1_EMP_ARRAY_UTILITY;
-	IV1EMPRegistry public immutable I_V1_EMP_REGISTRY;
+	IV1EMPArrayUtility public immutable override I_V1_EMP_ARRAY_UTILITY;
+	IV1EMPRegistry public immutable override I_V1_EMP_REGISTRY;
 
 
 	constructor (address _v1EMPRegistry)
@@ -100,11 +100,13 @@ contract V1EMPStrategyUtility is
 		return I_V1_EMP_ARRAY_UTILITY.containsDuplicates(_utilizedERC20);
 	}
 
-	function utilizedERC20UpdateValidator(address[] memory _utilizedERC20, UtilizationERC20[] memory _utilizationERC20)
+	/// @inheritdoc IV1EMPStrategyUtility
+	function utilizedERC20UpdateValidate(address[] memory _utilizedERC20, UtilizationERC20[] memory _utilizationERC20)
 		public
+		override
 		authEMPStrategy()
 	{
-		require(_utilizedERC20.length == _utilizationERC20.length, "!(__utilizedERC20.length == _utilizationERC20.length)");
+		require(_utilizedERC20.length == _utilizationERC20.length, "!(_utilizedERC20.length == _utilizationERC20.length)");
 
 		require(
 			!I_V1_EMP_ARRAY_UTILITY.containsDuplicates(_utilizedERC20),

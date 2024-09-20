@@ -198,29 +198,7 @@ contract V1EMPStrategy is
 		authManager()
 		utilizedERC20TransferClosed()
 	{
-		require(__utilizedERC20.length == _utilizationERC20.length, "!(__utilizedERC20.length == _utilizationERC20.length)");
-
-		require(
-			!I_V1_EMP_STRATEGY_UTILITY.utilizedERC20ContainsDuplicates(__utilizedERC20),
-			"I_V1_EMP_STRATEGY_UTILITY.utilizedERC20ContainsDuplicates(__utilizedERC20)"
-		);
-
-		uint256 utilizedERC20AllocationTotal;
-
-		for (uint256 i = 0; i < __utilizedERC20.length; i++)
-		{
-			require(
-				I_V1_EMP_REGISTRY.eRC20_v1EMPERC20ETHValueFeed(__utilizedERC20[i]) != address(0),
-				"!(I_V1_EMP_REGISTRY.eRC20_v1EMPERC20ETHValueFeed(__utilizedERC20[i]) != address(0))"
-			);
-
-			if (_utilizationERC20[i].deposit)
-			{
-				utilizedERC20AllocationTotal += _utilizationERC20[i].allocation;
-			}
-		}
-
-		require(utilizedERC20AllocationTotal == ONE_HUNDRED_PERCENT, "!(utilizedERC20AllocationTotal == ONE_HUNDRED_PERCENT)");
+		I_V1_EMP_STRATEGY_UTILITY.utilizedERC20UpdateValidate(__utilizedERC20, _utilizationERC20);
 
 		delete _utilizedERC20;
 

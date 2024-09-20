@@ -73,7 +73,7 @@ export const ERROR = {
 			"!(address(iV1EMPStrategyInteractor) != address(0))"
 		,
 		INVALID_ERC20_ALLOCATION_TOTAL:
-			"!(utilizedERC20AllocationTotal == ONE_HUNDRED_PERCENT)"
+			"!(utilizedERC20AllocationTotal == IV1EMPStrategy(msg.sender).ONE_HUNDRED_PERCENT())"
 		,
 		INVALID_BALANCE:
 			"!(eMP_equity[msg.sender] >= _eRC20Amount)"
@@ -85,10 +85,10 @@ export const ERROR = {
 			"!(utilizedERC20.length == _utilizedERC20Amount.length)"
 		,
 		INVALID_PARAMS_UPDATE_LENGTHS:
-			"!(__utilizedERC20.length == _utilizationERC20.length)"
+			"!(_utilizedERC20.length == _utilizationERC20.length)"
 		,
 		INVALID_PARAMS_UPDATE_CONTAINS_DUPLCIATES:
-			"I_V1_EMP_STRATEGY_UTILITY.utilizedERC20ContainsDuplicates(__utilizedERC20)"
+			"I_V1_EMP_ARRAY_UTILITY.containsDuplicates(_utilizedERC20)"
 		,
 		UTILIZED_ERC20_AMOUNT_NOT_ZERO:
 			"!(_utilizedERC20Amount[i] == 0)"
@@ -100,7 +100,7 @@ export const ERROR = {
 			"!utilizedERC20WithdrawOpen"
 		,
 		ERC20_NO_ETH_VALUE_FEED_AVAILABLE:
-			"!(I_V1_EMP_REGISTRY.eRC20_v1EMPERC20ETHValueFeed(__utilizedERC20[i]) != address(0))"
+			"!(I_V1_EMP_REGISTRY.eRC20_v1EMPERC20ETHValueFeed(_utilizedERC20[i]) != address(0))"
 		,
 	},
 	NOT_COMPUTED:
