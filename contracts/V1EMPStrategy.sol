@@ -5,8 +5,6 @@ pragma solidity ^0.8.18;
 import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-// SHOULD REMOVE ONCE STRATEGY UTILITY INTEGRATED
-import { IV1EMPETHValueFeed } from "./interface/IV1EMPETHValueFeed.sol";
 import {
 	IV1EMPRegistry,
 	IV1EMPStrategy,
@@ -139,23 +137,9 @@ contract V1EMPStrategy is
 		override
 		returns (uint256 utilizedERC20AmountETHValueTotal_, uint256[] memory utilizedERC20AmountETHValue_)
 	{
-		utilizedERC20AmountETHValue_ = new uint256[](_utilizedERC20Amount.length);
-
-		for (uint256 i = 0; i < _utilizedERC20.length; i++)
-		{
-			if (_utilizedERC20_utilizationERC20[_utilizedERC20[i]].deposit)
-			{
-				uint256 ethValue = _utilizedERC20Amount[i].mul(
-					IV1EMPETHValueFeed(I_V1_EMP_REGISTRY.eRC20_v1EMPERC20ETHValueFeed(_utilizedERC20[i])).utilizedERC20ETHValue()
-				).div(
-					1e18
-				);
-
-				utilizedERC20AmountETHValueTotal_ += ethValue;
-
-				utilizedERC20AmountETHValue_[i] = ethValue;
-			}
-		}
+		(utilizedERC20AmountETHValueTotal_, utilizedERC20AmountETHValue_) = I_V1_EMP_STRATEGY_UTILITY.utilizedERC20AmountETHValue(
+			_utilizedERC20Amount
+		);
 	}
 
 	/// @inheritdoc IV1EMPStrategy

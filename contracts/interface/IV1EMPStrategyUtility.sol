@@ -43,6 +43,18 @@ interface IV1EMPStrategyUtility
 	;
 
 	/**
+	* @notice Utilized ERC20 Amount ETH Value
+	* @param _utilizedERC20Amount {uint256[]}
+	* @return utilizedERC20AmountETHValueTotal_ {uint256}
+	* @return utilizedERC20AmountETHValue_ {uint256[]}
+	*/
+	function utilizedERC20AmountETHValue(uint256[] memory _utilizedERC20Amount)
+		external
+		view
+		returns (uint256 utilizedERC20AmountETHValueTotal_, uint256[] memory utilizedERC20AmountETHValue_)
+	;
+
+	/**
 	* @notice Utilized ERC20 Sort
 	* @param _utilizedERC20 {addrss[]}
 	*/
@@ -52,14 +64,6 @@ interface IV1EMPStrategyUtility
 		returns (address[] memory)
 	;
 
-	/**
-	* @notice Utilized ERC20 Contains Duplicates
-	* @param _utilizedERC20 {address[]}
-	*/
-	function utilizedERC20ContainsDuplicates(address[] memory _utilizedERC20)
-		external
-		returns (bool)
-	;
 
 	/**
 	* @notice Utilized ERC20 Update Validate

@@ -5,6 +5,7 @@ pragma solidity ^0.8.18;
 
 import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
+import { IV1EMPETHValueFeed } from "./interface/IV1EMPETHValueFeed.sol";
 import { IV1EMPStrategy } from "./interface/IV1EMPStrategy.sol";
 import {
 	IV1EMPArrayUtility,
@@ -79,6 +80,36 @@ contract V1EMPStrategyUtility is
 	}
 
 	/// @inheritdoc IV1EMPStrategyUtility
+	function utilizedERC20AmountETHValue(uint256[] memory _utilizedERC20Amount)
+		public
+		view
+		override
+		returns (uint256 utilizedERC20AmountETHValueTotal_, uint256[] memory utilizedERC20AmountETHValue_)
+	{
+		IV1EMPStrategy iV1EMPStrategy = IV1EMPStrategy(msg.sender);
+
+		address[] memory _utilizedERC20 =  iV1EMPStrategy.utilizedERC20();
+
+		utilizedERC20AmountETHValue_ = new uint256[](_utilizedERC20Amount.length);
+
+		for (uint256 i = 0; i < _utilizedERC20.length; i++)
+		{
+			if (iV1EMPStrategy.utilizedERC20_utilizationERC20(_utilizedERC20[i]).deposit)
+			{
+				uint256 ethValue = _utilizedERC20Amount[i].mul(
+					IV1EMPETHValueFeed(I_V1_EMP_REGISTRY.eRC20_v1EMPERC20ETHValueFeed(_utilizedERC20[i])).utilizedERC20ETHValue()
+				).div(
+					1e18
+				);
+
+				utilizedERC20AmountETHValueTotal_ += ethValue;
+
+				utilizedERC20AmountETHValue_[i] = ethValue;
+			}
+		}
+	}
+
+	/// @inheritdoc IV1EMPStrategyUtility
 	function utilizedERC20Sort(address[] memory _utilizedERC20)
 		public
 		view
@@ -89,16 +120,6 @@ contract V1EMPStrategyUtility is
 		return I_V1_EMP_ARRAY_UTILITY.sort(_utilizedERC20);
 	}
 
-
-	/// @inheritdoc IV1EMPStrategyUtility
-	function utilizedERC20ContainsDuplicates(address[] memory _utilizedERC20)
-		public
-		override
-		authEMPStrategy()
-		returns (bool)
-	{
-		return I_V1_EMP_ARRAY_UTILITY.containsDuplicates(_utilizedERC20);
-	}
 
 	/// @inheritdoc IV1EMPStrategyUtility
 	function utilizedERC20UpdateValidate(address[] memory _utilizedERC20, UtilizationERC20[] memory _utilizationERC20)
