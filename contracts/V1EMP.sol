@@ -215,6 +215,7 @@ contract V1EMP is
 		public
 		override
 	{
+		// Once this function is fully migrated to the Utility contract it should be removed from the interface and merged into the utility function
 		(
 			bool updatedRequired_,
 			address[] memory utilizedERC20_,

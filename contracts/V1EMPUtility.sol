@@ -21,9 +21,13 @@ contract V1EMPUtility is
 	IV1EMPRegistry public immutable override I_V1_EMP_REGISTRY;
 
 
+	mapping (address v1EMP => address[] utilizedERC20) public v1EMP_utilizedERC20;
 	mapping (
 		address v1EMP => mapping(address v1EMPStrategy => uint256 utilizedERC20UpdateTracker)
 	) public v1EMP_v1EMPStrategy_utilizedERC20UpdateTracker;
+	mapping (
+		address v1EMP =>  mapping(address utilizedERC20 => UtilizationERC20 utilizationERC20)
+	) internal _v1EMP_utilizedERC20_utilizationERC20;
 
 
 	receive ()
@@ -278,5 +282,43 @@ contract V1EMPUtility is
 		);
 
 		return (updatedRequired_, utilizedERC20_, utilizationERC20_);
+	}
+
+	// TODO
+	// @inheritdoc IV1EMPUtility
+	function utilizedERC20Update()
+		public
+		//override
+	{
+		// Should not be called locally but rather ingrained into this function
+		(
+			bool updatedRequired_,
+			address[] memory utilizedERC20_,
+			UtilizationERC20[] memory utilizationERC20_
+		) = utilizedERC20Generator();
+
+		if (!updatedRequired_)
+		{
+			return;
+		}
+
+		IV1EMP iV1EMP = IV1EMP(msg.sender);
+
+		address[] memory _utilizedV1EMPStrategy =  iV1EMP.utilizedV1EMPStrategy();
+
+		v1EMP_utilizedERC20[msg.sender] = utilizedERC20_;
+
+		for (uint256 i = 0; i < v1EMP_utilizedERC20[msg.sender].length; i++)
+		{
+			_v1EMP_utilizedERC20_utilizationERC20[msg.sender][v1EMP_utilizedERC20[msg.sender][i]] = utilizationERC20_[i];
+
+			for (uint256 ii = 0; ii < _utilizedV1EMPStrategy.length; ii++)
+			{
+				IERC20(v1EMP_utilizedERC20[msg.sender][i]).approve(
+					address(IV1EMPStrategy(_utilizedV1EMPStrategy[ii]).iV1EMPStrategyInteractor()),
+					type(uint256).max
+				);
+			}
+		}
 	}
 }
