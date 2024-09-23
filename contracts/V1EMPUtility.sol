@@ -290,21 +290,86 @@ contract V1EMPUtility is
 		public
 		//override
 	{
-		// Should not be called locally but rather ingrained into this function
-		(
-			bool updatedRequired_,
-			address[] memory utilizedERC20_,
-			UtilizationERC20[] memory utilizationERC20_
-		) = utilizedERC20Generator();
+		bool updatedRequired_ = false;
+
+		IV1EMP iV1EMP = IV1EMP(msg.sender);
+
+		address[] memory _utilizedV1EMPStrategy =  iV1EMP.utilizedV1EMPStrategy();
+
+		uint256 utilizedERC20MaxLength = 0;
+
+		for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
+		{
+			uint256 utilizedERC20UpdateTracker = IV1EMPStrategy(_utilizedV1EMPStrategy[i]).utilizedERC20UpdateTracker();
+
+			if (v1EMP_v1EMPStrategy_utilizedERC20UpdateTracker[msg.sender][_utilizedV1EMPStrategy[i]] != utilizedERC20UpdateTracker)
+			{
+				updatedRequired_ = true;
+
+				v1EMP_v1EMPStrategy_utilizedERC20UpdateTracker[msg.sender][_utilizedV1EMPStrategy[i]] = utilizedERC20UpdateTracker;
+			}
+
+			utilizedERC20MaxLength += IV1EMPStrategy(_utilizedV1EMPStrategy[i]).utilizedERC20().length;
+		}
 
 		if (!updatedRequired_)
 		{
 			return;
 		}
 
-		IV1EMP iV1EMP = IV1EMP(msg.sender);
+		address[] memory utilizedERC20_ = new address[](utilizedERC20MaxLength);
 
-		address[] memory _utilizedV1EMPStrategy =  iV1EMP.utilizedV1EMPStrategy();
+		uint256 utilizedERC20I = 0;
+
+		for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
+		{
+			address[] memory strategyUtilizedERC20 = IV1EMPStrategy(_utilizedV1EMPStrategy[i]).utilizedERC20();
+
+			for (uint256 ii = 0; ii < strategyUtilizedERC20.length; ii++)
+			{
+				utilizedERC20_[utilizedERC20I++] = strategyUtilizedERC20[ii];
+			}
+		}
+
+		utilizedERC20_ = I_V1_EMP_ARRAY_UTILITY.removeDuplicates(utilizedERC20_);
+		utilizedERC20_ = I_V1_EMP_ARRAY_UTILITY.sort(utilizedERC20_);
+
+		uint256 utilizedERC20AllocationTotal;
+
+		UtilizationERC20[] memory utilizationERC20_ = new UtilizationERC20[](utilizedERC20_.length);
+
+		for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
+		{
+			IV1EMPStrategy iV1EMPStrategy = IV1EMPStrategy(_utilizedV1EMPStrategy[i]);
+
+			for (uint256 ii = 0; ii < utilizedERC20_.length; ii++)
+			{
+				UtilizationERC20 memory utilizationERC20 = iV1EMPStrategy.utilizedERC20_utilizationERC20(utilizedERC20_[ii]);
+
+				if (utilizationERC20.deposit)
+				{
+					utilizationERC20_[ii].deposit = true;
+
+					uint256 utilizationERC20Allocation = utilizationERC20.allocation * iV1EMP.utilizedV1EMPStrategy_allocation(
+						_utilizedV1EMPStrategy[i]
+					) / 1e18;
+
+					utilizationERC20_[ii].allocation += utilizationERC20Allocation;
+
+					utilizedERC20AllocationTotal += utilizationERC20Allocation;
+				}
+
+				if (utilizationERC20.withdraw)
+				{
+					utilizationERC20_[ii].withdraw = true;
+				}
+			}
+		}
+
+		require(
+			utilizedERC20AllocationTotal == iV1EMP.ONE_HUNDRED_PERCENT(),
+			"!(utilizedERC20AllocationTotal == iV1EMP.ONE_HUNDRED_PERCENT())"
+		);
 
 		v1EMP_utilizedERC20[msg.sender] = utilizedERC20_;
 
