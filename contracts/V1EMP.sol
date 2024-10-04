@@ -103,7 +103,10 @@ contract V1EMP is
 		public
 		authGovernanceOrManager()
 	{
-		require(_feeRateManager <= ONE_HUNDRED_PERCENT, "!(_feeRateManager <= ONE_HUNDRED_PERCENT)");
+		require(
+			_feeRateManager + feeRateGovernance <= ONE_HUNDRED_PERCENT,
+			"!(_feeRateManager + feeRateGovernance <= ONE_HUNDRED_PERCENT)"
+		);
 
 		feeRateManager = _feeRateManager;
 	}
@@ -115,7 +118,10 @@ contract V1EMP is
 	{
 		require(IAccessControlEnumerable(I_V1_EMP_REGISTRY.GOVERNANCE()).hasRole(bytes32(0), msg.sender), "!authorized");
 
-		require(_feeRateGovernance <= ONE_HUNDRED_PERCENT, "!(_feeRateGovernance <= ONE_HUNDRED_PERCENT)");
+		require(
+			_feeRateGovernance + feeRateManager <= ONE_HUNDRED_PERCENT,
+			"!(_feeRateGovernance + feeRateManager <= ONE_HUNDRED_PERCENT)"
+		);
 
 		feeRateGovernance = _feeRateGovernance;
 	}

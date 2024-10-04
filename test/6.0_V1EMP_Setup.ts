@@ -167,7 +167,7 @@ describe("[6.0] V1EMP.sol - Setup", async () => {
 		});
 	});
 
-	describe("function feeRateManagerUpdate()", async () => {
+	describe("function feeRateManagerUpdate() (1/2)", async () => {
 		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
 			await expect(eMP.connect(outsider).feeRateManagerUpdate(outsider.address)).to.be.rejectedWith(
 				ERROR.NOT_AUTHORIZED
@@ -191,7 +191,7 @@ describe("[6.0] V1EMP.sol - Setup", async () => {
 		});
 	});
 
-	describe("function feeRateGovernanceUpdate()", async () => {
+	describe("function feeRateGovernanceUpdate() (1/2)", async () => {
 		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
 			await expect(eMP.connect(outsider).feeRateGovernanceUpdate(outsider.address)).to.be.rejectedWith(
 				ERROR.NOT_AUTHORIZED
@@ -212,6 +212,30 @@ describe("[6.0] V1EMP.sol - Setup", async () => {
 			await expect(eMP.feeRateGovernanceUpdate(1)).to.be.not.rejected;
 
 			expect(await eMP.feeRateGovernance()).to.be.equal(1);
+		});
+	});
+
+	describe("function feeRateManagerUpdate() (2/2)", async () => {
+		it("Should NOT allow combined fees to be greater than 100% fee rate..", async () => {
+			await eMP.feeRateGovernanceUpdate(ethers.utils.parseUnits(".5", 18));
+
+			await expect(
+				eMP.feeRateManagerUpdate(ethers.utils.parseUnits("1", 18))
+			).to.be.rejectedWith(
+				ERROR.EMP.FEE_RATE_MANAGER_GREATER_THAN_100_PERCENT
+			);
+		});
+	});
+
+	describe("function feeRateGovernanceUpdate() (2/2)", async () => {
+		it("Should NOT allow combined fees to be greater than 100% fee rate..", async () => {
+			await eMP.feeRateManagerUpdate(ethers.utils.parseUnits(".5", 18));
+
+			await expect(
+				eMP.feeRateGovernanceUpdate(ethers.utils.parseUnits("1", 18))
+			).to.be.rejectedWith(
+				ERROR.EMP.FEE_RATE_GOVERNANCE_GREATER_THAN_100_PERCENT
+			);
 		});
 	});
 
