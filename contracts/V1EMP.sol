@@ -226,8 +226,6 @@ contract V1EMP is
 			if (IERC20(_utilizedERC20[i]).balanceOf(address(this)) < transferAmount[i])
 			{
 				utilizedERC20Available = false;
-
-				break;
 			}
 		}
 
