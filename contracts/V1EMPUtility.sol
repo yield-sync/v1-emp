@@ -20,6 +20,8 @@ contract V1EMPUtility is
 	IV1EMPArrayUtility public immutable override I_V1_EMP_ARRAY_UTILITY;
 	IV1EMPRegistry public immutable override I_V1_EMP_REGISTRY;
 
+	uint256 internal constant ONE_HUNDRED_PERCENT = 1e18;
+
 
 	mapping (address v1EMP => address[] utilizedERC20) internal _v1EMP_utilizedERC20;
 
