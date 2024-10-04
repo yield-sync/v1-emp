@@ -187,7 +187,7 @@ describe("[4.3] V1EMPStrategy.sol - Edgecases", async () => {
 				// Get the ETH value of each tokens in ETH
 				ethValueMockA = await feed.utilizedERC20ETHValue();
 
-				let totalDeposited: BigNumber =  DEPOSIT_AMOUNT.add(DEPOSIT_AMOUNT_2);
+				let totalDeposited: BigNumber = DEPOSIT_AMOUNT.add(DEPOSIT_AMOUNT_2);
 
 				// [calculate] Deposit ETH Value
 				totalEthValue = totalDeposited.mul(ethValueMockA).div(D_18);

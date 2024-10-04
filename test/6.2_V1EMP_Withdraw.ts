@@ -186,7 +186,7 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 
 			eMPs[i] = ({
 				contract: eMPContract,
-				eMPTransferUtil: new EMPTransferUtil(eMPContract, registry),
+				eMPTransferUtil: new EMPTransferUtil(eMPContract, registry, eMPUtility),
 			});
 
 			// Set the Manager
@@ -217,9 +217,9 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 		eMPDepositAmounts = await eMPs[0].eMPTransferUtil.calculateERC20Required(eTHValueEMPDepositAmount);
 
 		// Approve the ERC20 tokens for the strategy interactor
-		for (let i: number = 0; i < (await eMPs[0].contract.utilizedERC20()).length; i++)
+		for (let i: number = 0; i < (await eMPUtility.v1EMP_utilizedERC20(eMPs[0].contract.address)).length; i++)
 		{
-			let eMPUtilizedERC20 = (await eMPs[0].contract.utilizedERC20())[i];
+			let eMPUtilizedERC20 = (await eMPUtility.v1EMP_utilizedERC20(eMPs[0].contract.address))[i];
 
 			await (await ethers.getContractAt(LOCATION_MOCKERC20, eMPUtilizedERC20)).approve(
 				eMPs[0].contract.address,
@@ -286,7 +286,7 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 
 
 			beforeEach(async () => {
-				eMPUtilizedERC20 = await eMPs[0].contract.utilizedERC20();
+				eMPUtilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMPs[0].contract.address);
 
 				expect(eMPUtilizedERC20.length).to.be.equal(3);
 
@@ -315,7 +315,7 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 					await strategies[1].contract.eMP_equity(eMPs[0].contract.address),
 				]);
 
-				eMPUtilizedERC20 = await eMPs[0].contract.utilizedERC20();
+				eMPUtilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMPs[0].contract.address);
 
 				expect(eMPUtilizedERC20.length).to.be.equal(2);
 			});
@@ -398,7 +398,7 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 
 
 			beforeEach(async () => {
-				eMPUtilizedERC20 = await eMPs[0].contract.utilizedERC20();
+				eMPUtilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMPs[0].contract.address);
 
 				expect(eMPUtilizedERC20.length).to.be.equal(3);
 
@@ -426,7 +426,7 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 
 				await eMPs[0].contract.utilizedERC20Withdraw(VALID_BALANCE);
 
-				eMPUtilizedERC20 = await eMPs[0].contract.utilizedERC20();
+				eMPUtilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMPs[0].contract.address);
 
 				expect(eMPUtilizedERC20.length).to.be.equal(2);
 			});
