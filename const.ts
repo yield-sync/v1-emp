@@ -47,7 +47,7 @@ export const ERROR = {
 			"!(_v1EMPStrategyERC20Amount.length == _utilizedV1EMPStrategy.length)"
 		,
 		INVALID_UTILIZED_ERC20_LENGTH:
-			"!(_utilizedERC20Amount.length == _utilizedERC20.length)"
+			"!(_utilizedERC20Amount.length == utilizedERC20.length)"
 		,
 		INVALID_STRATEGY_UTILIZED_ERC20_AMOUNT_LENGTH:
 			"!(_v1EMPStrategyUtilizedERC20Amount.length == _utilizedV1EMPStrategy.length)"
@@ -56,7 +56,7 @@ export const ERROR = {
 			"!utilizedERC20WithdrawOpen"
 		,
 		AMOUNTS_VALIDATOR_FAILURE:
-			"!I_V1_EMP_UTILITY.v1EMPStrategyUtilizedERC20AmountValid(_v1EMPStrategyUtilizedERC20Amount)"
+			"!I_V1_EMP_UTILITY.v1EMPStrategyUtilizedERC20AmountValid(address(this), _v1EMPStrategyUtilizedERC20Amount)"
 		,
 		INVALID:
 			"!valid"
@@ -64,6 +64,8 @@ export const ERROR = {
 		UTILIZED_ERC20_NOT_AVAILABLE:
 			"!(utilizedERC20Available)"
 		,
+		ADDRESS_NOT_EMP:
+			"!(I_V1_EMP_REGISTRY.v1EMP_v1EMPId(_v1EMP) > 0)"
 	},
 	STRATEGY: {
 		DEPOSIT_NOT_OPEN:

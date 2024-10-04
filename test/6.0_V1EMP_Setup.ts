@@ -310,7 +310,7 @@ describe("[6.0] V1EMP.sol - Setup", async () => {
 				[PERCENT.FIFTY, PERCENT.FIFTY] as UtilizedEMPStrategyAllocationUpdate
 			);
 
-			eMPUtilizedERC20 = await eMP.utilizedERC20();
+			eMPUtilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMP.address);
 
 			expect(eMPUtilizedERC20.length).to.be.equal(3);
 
@@ -333,7 +333,7 @@ describe("[6.0] V1EMP.sol - Setup", async () => {
 		it("Should update the utilized ERC20..", async () => {
 			await expect(eMP.utilizedERC20Update()).to.be.not.reverted;
 
-			eMPUtilizedERC20 = await eMP.utilizedERC20();
+			eMPUtilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMP.address);
 
 			expect(eMPUtilizedERC20.length).to.be.equal(2);
 		});
@@ -345,7 +345,7 @@ describe("[6.0] V1EMP.sol - Setup", async () => {
 
 
 			beforeEach(async () => {
-				eMPUtilizedERC20 = await eMP.utilizedERC20();
+				eMPUtilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMP.address);
 
 				// Expect that there are no utilized ERC20 tokens
 				expect(eMPUtilizedERC20.length).to.be.equal(0);
@@ -357,7 +357,7 @@ describe("[6.0] V1EMP.sol - Setup", async () => {
 				);
 
 				// Store the utilized ERC20 tokens
-				eMPUtilizedERC20 = await eMP.utilizedERC20();
+				eMPUtilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMP.address);
 			});
 
 

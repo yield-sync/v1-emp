@@ -50,7 +50,7 @@ contract V1EMPStrategyUtility is
 	{
 		IV1EMPStrategy iV1EMPStrategy = IV1EMPStrategy(msg.sender);
 
-		address[] memory utilizedERC20 =  iV1EMPStrategy.utilizedERC20();
+		address[] memory utilizedERC20 = iV1EMPStrategy.utilizedERC20();
 
 		require(utilizedERC20.length == _utilizedERC20Amount.length, "!(utilizedERC20.length == _utilizedERC20Amount.length)");
 
@@ -88,7 +88,7 @@ contract V1EMPStrategyUtility is
 	{
 		IV1EMPStrategy iV1EMPStrategy = IV1EMPStrategy(msg.sender);
 
-		address[] memory _utilizedERC20 =  iV1EMPStrategy.utilizedERC20();
+		address[] memory _utilizedERC20 = iV1EMPStrategy.utilizedERC20();
 
 		utilizedERC20AmountETHValue_ = new uint256[](_utilizedERC20Amount.length);
 

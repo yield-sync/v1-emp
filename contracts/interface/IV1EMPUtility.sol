@@ -14,6 +14,30 @@ interface IV1EMPUtility
 	* @notice Implemented IV1EMPArrayUtility
 	* @return {IV1EMPArrayUtility}
 	*/
+	function v1EMP_utilizedERC20(address _v1EMP)
+		external
+		view
+		returns (address[] memory)
+	;
+
+	/**
+	* @dev [view-mapping]
+	* @notice v1EMP -> utilizedERC20 -> utilizationERC20
+	* @param _v1EMP {address}
+	* @param _utilizedERC20 {address}
+	* @return {UtilizationERC20}
+	*/
+	function v1EMP_utilizedERC20_utilizationERC20(address _v1EMP, address _utilizedERC20)
+		external
+		view
+		returns (UtilizationERC20 memory)
+	;
+
+	/**
+	* @dev [view-IV1EMPArrayUtility]
+	* @notice Implemented IV1EMPArrayUtility
+	* @return {IV1EMPArrayUtility}
+	*/
 	function I_V1_EMP_ARRAY_UTILITY()
 		external
 		view
@@ -37,9 +61,10 @@ interface IV1EMPUtility
 
 	/**
 	* @notice
+	* @param _v1EMP {address}
 	* @return utilizedERC20TotalAmount_ {uint256[]}
 	*/
-	function utilizedERC20TotalBalance()
+	function utilizedERC20TotalBalance(address _v1EMP)
 		external
 		view
 		returns (uint256[] memory utilizedERC20TotalAmount_)
@@ -47,11 +72,12 @@ interface IV1EMPUtility
 
 	/**
 	* @notice Utilized ERC20 Amount Valid
+	* @param _v1EMP {address}
 	* @param _utilizedERC20Amount {uint256}
 	* @return valid_ {bool}
 	* @return utilizedERC20AmountTotalETHValue_ {uint256}
 	*/
-	function utilizedERC20AmountValid(uint256[] memory _utilizedERC20Amount)
+	function utilizedERC20AmountValid(address _v1EMP, uint256[] memory _utilizedERC20Amount)
 		external
 		view
 		returns (bool valid_, uint256 utilizedERC20AmountTotalETHValue_)
@@ -62,22 +88,19 @@ interface IV1EMPUtility
 
 
 	/**
-	* @notice Utilized ERC20 Generator
-	* @return updatedRequired_ {bool}
-	* @return utilizedERC20_ {address[]}
-	* @return utilizationERC20_ {UtilizationERC20[]}
+	* @notice Utilized ERC20 Update
 	*/
-	function utilizedERC20Generator()
+	function utilizedERC20Update()
 		external
-		returns (bool updatedRequired_, address[] memory utilizedERC20_, UtilizationERC20[] memory utilizationERC20_)
 	;
 
 	/**
 	* @notice V1 EMP Strategy Utilized ERC20 Amount Valid
+	* @param _v1EMP {address}
 	* @param _v1EMPStrategyUtilizedERC20Amount {uint256[][]}
 	* @return valid_ {bool}
 	*/
-	function v1EMPStrategyUtilizedERC20AmountValid(uint256[][] memory _v1EMPStrategyUtilizedERC20Amount)
+	function v1EMPStrategyUtilizedERC20AmountValid(address _v1EMP, uint256[][] memory _v1EMPStrategyUtilizedERC20Amount)
 		external
 		returns (bool valid_)
 	;

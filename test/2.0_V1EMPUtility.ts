@@ -51,16 +51,24 @@ describe("[2.0] V1EMPUtility.sol", async () => {
 		await registry.v1EMPStrategyDeployerUpdate(utility.address);
 	});
 
-	describe("function utilizedERC20AmountValid()", async () => {
+	describe("function utilizedERC20Update()", async () => {
 		it("[modifier][auth] Should only be able to called by EMP..", async () => {
-			await expect(utility.utilizedERC20AmountValid([])).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
+			await expect(utility.utilizedERC20Update()).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
+		});
+	});
+
+	describe("function utilizedERC20AmountValid()", async () => {
+		it("[modifier] Should only be able to pass a valid EMP address..", async () => {
+			await expect(utility.utilizedERC20AmountValid(ethers.constants.AddressZero, [])).to.be.rejectedWith(
+				ERROR.EMP.ADDRESS_NOT_EMP
+			);
 		});
 	});
 
 	describe("function v1EMPStrategyUtilizedERC20AmountValid()", async () => {
-		it("[modifier][auth] Should only be able to called by EMP..", async () => {
-			await expect(utility.v1EMPStrategyUtilizedERC20AmountValid([])).to.be.rejectedWith(
-				ERROR.NOT_AUTHORIZED
+		it("[modifier] Should only be able to pass a valid EMP address..", async () => {
+			await expect(utility.v1EMPStrategyUtilizedERC20AmountValid(ethers.constants.AddressZero, [])).to.be.rejectedWith(
+				ERROR.EMP.ADDRESS_NOT_EMP
 			);
 		});
 	});

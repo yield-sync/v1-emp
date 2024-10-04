@@ -9,12 +9,14 @@ export default class EMPTransferUtil
 {
 	private _registry: Contract;
 	private _eMP: Contract;
+	private _eMPUtility: Contract;
 
 
-	constructor (_eMP: Contract, _registry: Contract)
+	constructor (_eMP: Contract, _registry: Contract, _eMPUtility: Contract)
 	{
 		this._eMP = _eMP;
 		this._registry = _registry;
+		this._eMPUtility = _eMPUtility;
 	}
 
 
@@ -25,7 +27,7 @@ export default class EMPTransferUtil
 	 */
 	public async calculateERC20Required(ETHValue: BigNumber): Promise<BigNumber[]>
 	{
-		const UTILIZED_ERC20S = await this._eMP.utilizedERC20();
+		const UTILIZED_ERC20S = await this._eMPUtility.v1EMP_utilizedERC20(this._eMP.address);
 
 		let utilizedERC20Amount: BigNumber[] = [];
 
@@ -38,7 +40,10 @@ export default class EMPTransferUtil
 				)
 			).utilizedERC20ETHValue();
 
-			const UTILIZATION = await this._eMP.utilizedERC20_utilizationERC20(UTILIZED_ERC20S[i]);
+			const UTILIZATION = await this._eMPUtility.v1EMP_utilizedERC20_utilizationERC20(
+				this._eMP.address,
+				UTILIZED_ERC20S[i]
+			);
 
 			let tokenAmount: BigNumber = ethers.utils.parseUnits("0", 18);
 
@@ -62,7 +67,7 @@ export default class EMPTransferUtil
 		_utilizedERC20Deposits: BigNumber[]
 	): Promise<{totalEthValue: BigNumber, utilizedERC20DepositEthValue: BigNumber[]}>
 	{
-		const UTILIZED_ERC20S = await this._eMP.utilizedERC20();
+		const UTILIZED_ERC20S = await this._eMPUtility.v1EMP_utilizedERC20(this._eMP.address);
 
 		let totalEthValue: BigNumber = ethers.utils.parseUnits("0", 18);
 

@@ -6,7 +6,6 @@ import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import { IV1EMPRegistry } from "./IV1EMPRegistry.sol";
 import { IV1EMPUtility } from "./IV1EMPUtility.sol";
-import { UtilizationERC20 } from "../struct/UtilizationERC20.sol";
 
 
 interface IV1EMP is
@@ -54,17 +53,6 @@ interface IV1EMP is
 		external
 		view
 		returns (bool)
-	;
-
-	/**
-	* @notice Initial Mint Rate
-	* @dev [view-uint256]
-	* @return {uint256}
-	*/
-	function INITIAL_MINT_RATE()
-		external
-		view
-		returns (uint256)
 	;
 
 	/**
@@ -139,17 +127,6 @@ interface IV1EMP is
 
 	/**
 	* @dev [view-address[]]
-	* @notice Utilized ERC20
-	* @return {address[]}
-	*/
-	function utilizedERC20()
-		external
-		view
-		returns (address[] memory)
-	;
-
-	/**
-	* @dev [view-address[]]
 	* @notice Utilized V1 EMP Strategy
 	* @return {address[]}
 	*/
@@ -157,28 +134,6 @@ interface IV1EMP is
 		external
 		view
 		returns (address[] memory)
-	;
-
-	/**
-	* @notice Utilized ERC20 Total Amount
-	* @return utilizedERC20TotalAmount_ {uint256[]}
-	*/
-	function utilizedERC20TotalBalance()
-		external
-		view
-		returns (uint256[] memory utilizedERC20TotalAmount_)
-	;
-
-	/**
-	* @dev [view-mapping]
-	* @notice utilizedERC20 -> utilizationERC20
-	* @param __utilizedERC20 {address}
-	* @return {UtilizationERC20}
-	*/
-	function utilizedERC20_utilizationERC20(address __utilizedERC20)
-		external
-		view
-		returns (UtilizationERC20 memory)
 	;
 
 
@@ -226,7 +181,7 @@ interface IV1EMP is
 	;
 
 	/**
-	* @notice Utilzied ERC20 Update
+	* @notice Utilized ERC20 Update
 	*/
 	function utilizedERC20Update()
 		external
