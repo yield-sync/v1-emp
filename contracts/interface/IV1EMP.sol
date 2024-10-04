@@ -4,9 +4,6 @@ pragma solidity ^0.8.18;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-import { IV1EMPRegistry } from "./IV1EMPRegistry.sol";
-import { IV1EMPUtility } from "./IV1EMPUtility.sol";
-
 
 interface IV1EMP is
 	IERC20
@@ -67,17 +64,6 @@ interface IV1EMP is
 	;
 
 	/**
-	* @dev [view-IV1EMPUtility]
-	* @notice Implemented IV1EMPUtility
-	* @return {IV1EMPUtility}
-	*/
-	function I_V1_EMP_UTILITY()
-		external
-		view
-		returns (IV1EMPUtility)
-	;
-
-	/**
 	* @notice Fee Rate for Manager
 	* @dev [view-uint256]
 	* @return {uint256}
@@ -97,17 +83,6 @@ interface IV1EMP is
 		external
 		view
 		returns (uint256)
-	;
-
-	/**
-	* @dev [view-IV1EMPRegistry]
-	* @notice Implemented IV1EMPRegistry
-	* @return {IV1EMPRegistry}
-	*/
-	function I_V1_EMP_REGISTRY()
-		external
-		view
-		returns (IV1EMPRegistry)
 	;
 
 	/**
