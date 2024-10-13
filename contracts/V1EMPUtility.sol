@@ -282,7 +282,7 @@ contract V1EMPUtility is
 					uint256 utilizationERC20Allocation = utilizationERC20.allocation.mul(
 						iV1EMP.utilizedV1EMPStrategy_allocation(_utilizedV1EMPStrategy[i])
 					).div(
-						_I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT()
+						1e18
 					);
 
 					utilizationERC20_[ii].allocation += utilizationERC20Allocation;
