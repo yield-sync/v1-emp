@@ -5,13 +5,9 @@ pragma solidity ^0.8.18;
 import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
-import {
-	IV1EMPRegistry,
-	IV1EMPStrategy,
-	IV1EMPStrategyInteractor,
-	IV1EMPStrategyUtility,
-	UtilizationERC20
-} from "./interface/IV1EMPStrategy.sol";
+import { IV1EMPRegistry } from "./interface/IV1EMPRegistry.sol";
+import { IV1EMPStrategyUtility } from "./interface/IV1EMPStrategyUtility.sol";
+import { IV1EMPStrategy, IV1EMPStrategyInteractor, UtilizationERC20 } from "./interface/IV1EMPStrategy.sol";
 
 
 contract V1EMPStrategy is
@@ -28,56 +24,46 @@ contract V1EMPStrategy is
 	bool public override utilizedERC20DepositOpen;
 	bool public override utilizedERC20WithdrawOpen;
 
-	string public override name;
-	string public override symbol;
-
-	uint256 public constant override ONE_HUNDRED_PERCENT = 1e18;
-
 	uint256 public override equityTotal;
 	uint256 public override utilizedERC20UpdateTracker;
 
-	IV1EMPStrategyUtility public immutable override I_V1_EMP_STRATEGY_UTILITY;
-	IV1EMPRegistry public immutable override I_V1_EMP_REGISTRY;
+	IV1EMPRegistry internal immutable _I_V1_EMP_REGISTRY;
+	IV1EMPStrategyUtility internal immutable _I_V1_EMP_STRATEGY_UTILITY;
 
 	IV1EMPStrategyInteractor public override iV1EMPStrategyInteractor;
 
 	mapping (address utilizedERC20 => UtilizationERC20 utilizationERC20) internal _utilizedERC20_utilizationERC20;
 
+	/// @inheritdoc IV1EMPStrategy
+	function utilizedERC20_utilizationERC20(address __utilizedERC20)
+		public
+		view
+		override
+		returns (UtilizationERC20 memory)
+	{
+		return _utilizedERC20_utilizationERC20[__utilizedERC20];
+	}
+
 	mapping (address eMP => uint256 equity) public override eMP_equity;
 
 
-	receive ()
-		external
-		payable
-	{}
-
-
-	fallback ()
-		external
-		payable
-	{}
-
-
-	constructor (address _manager, address _v1EMPRegistry, string memory _name, string memory _symbol)
+	constructor (address _manager, address _v1EMPRegistry)
 	{
 		utilizedERC20DepositOpen = false;
 		utilizedERC20WithdrawOpen = false;
 
 		manager = _manager;
 
-		name = _name;
-		symbol = _symbol;
-
 		utilizedERC20UpdateTracker = 0;
 
-		I_V1_EMP_REGISTRY = IV1EMPRegistry(_v1EMPRegistry);
-		I_V1_EMP_STRATEGY_UTILITY = IV1EMPStrategyUtility(I_V1_EMP_REGISTRY.v1EMPStrategyUtility());
+		_I_V1_EMP_REGISTRY = IV1EMPRegistry(_v1EMPRegistry);
+		_I_V1_EMP_STRATEGY_UTILITY = IV1EMPStrategyUtility(_I_V1_EMP_REGISTRY.v1EMPStrategyUtility());
 	}
 
 
 	modifier authEMP()
 	{
-		require(I_V1_EMP_REGISTRY.v1EMP_v1EMPId(msg.sender) > 0, "!authorized");
+		require(_I_V1_EMP_REGISTRY.v1EMP_v1EMPId(msg.sender) > 0, "!authorized");
 
 		_;
 	}
@@ -121,23 +107,17 @@ contract V1EMPStrategy is
 	}
 
 	/// @inheritdoc IV1EMPStrategy
-	function utilizedERC20_utilizationERC20(address __utilizedERC20)
-		public
-		view
-		override
-		returns (UtilizationERC20 memory)
-	{
-		return _utilizedERC20_utilizationERC20[__utilizedERC20];
-	}
-
-	/// @inheritdoc IV1EMPStrategy
 	function utilizedERC20AmountETHValue(uint256[] memory _utilizedERC20Amount)
 		public
 		view
 		override
 		returns (uint256 utilizedERC20AmountETHValueTotal_, uint256[] memory utilizedERC20AmountETHValue_)
 	{
-		(utilizedERC20AmountETHValueTotal_, utilizedERC20AmountETHValue_) = I_V1_EMP_STRATEGY_UTILITY.utilizedERC20AmountETHValue(
+		(
+			utilizedERC20AmountETHValueTotal_,
+			utilizedERC20AmountETHValue_
+		) = _I_V1_EMP_STRATEGY_UTILITY.utilizedERC20AmountETHValue(
+			address(this),
 			_utilizedERC20Amount
 		);
 	}
@@ -182,7 +162,13 @@ contract V1EMPStrategy is
 		authManager()
 		utilizedERC20TransferClosed()
 	{
-		I_V1_EMP_STRATEGY_UTILITY.utilizedERC20UpdateValidate(__utilizedERC20, _utilizationERC20);
+		(bool valid, string memory message) = _I_V1_EMP_STRATEGY_UTILITY.utilizedERC20UpdateValid(
+			address(this),
+			__utilizedERC20,
+			_utilizationERC20
+		);
+
+		require(valid, message);
 
 		delete _utilizedERC20;
 
@@ -193,7 +179,7 @@ contract V1EMPStrategy is
 			_utilizedERC20_utilizationERC20[_utilizedERC20[i]] = _utilizationERC20[i];
 		}
 
-		_utilizedERC20 = I_V1_EMP_STRATEGY_UTILITY.utilizedERC20Sort(_utilizedERC20);
+		_utilizedERC20 = _I_V1_EMP_STRATEGY_UTILITY.utilizedERC20Sort(_utilizedERC20);
 
 		utilizedERC20UpdateTracker++;
 	}
@@ -208,7 +194,16 @@ contract V1EMPStrategy is
 	{
 		require(utilizedERC20DepositOpen, "!utilizedERC20DepositOpen");
 
-		uint256 utilizedERC20AmountETHValueTotal = I_V1_EMP_STRATEGY_UTILITY.depositAmountsValidate(_utilizedERC20Amount);
+		(
+			bool valid,
+			string memory message,
+			uint256 utilizedERC20AmountETHValueTotal
+		) = _I_V1_EMP_STRATEGY_UTILITY.depositAmountsValid(
+			address(this),
+			_utilizedERC20Amount
+		);
+
+		require(valid, message);
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{

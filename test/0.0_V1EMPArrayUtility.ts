@@ -26,7 +26,7 @@ describe("[0.0] V1EMPArrayUtility.sol", async () => {
 	beforeEach("[beforeEach] Set up contracts..", async () => {
 		const stagedContracts = await stageContracts();
 
-		arrayUtility = stagedContracts.arrayUtility
+		arrayUtility = stagedContracts.arrayUtility;
 	});
 
 

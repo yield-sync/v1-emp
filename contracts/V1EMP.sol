@@ -6,8 +6,10 @@ import { IAccessControlEnumerable } from "@openzeppelin/contracts/access/IAccess
 import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-import { IERC20, IV1EMP, IV1EMPRegistry, IV1EMPUtility } from "./interface/IV1EMP.sol";
+import { IERC20, IV1EMP } from "./interface/IV1EMP.sol";
+import { IV1EMPRegistry } from "./interface/IV1EMPRegistry.sol";
 import { IV1EMPStrategy } from "./interface/IV1EMPStrategy.sol";
+import { IV1EMPUtility } from "./interface/IV1EMPUtility.sol";
 
 
 contract V1EMP is
@@ -23,28 +25,13 @@ contract V1EMP is
 	bool public override utilizedERC20WithdrawFull;
 	bool public override utilizedERC20WithdrawOpen;
 
-	uint256 public constant override ONE_HUNDRED_PERCENT = 1e18;
-
 	uint256 public override feeRateGovernance;
 	uint256 public override feeRateManager;
 
-	IV1EMPRegistry public immutable override I_V1_EMP_REGISTRY;
-	IV1EMPUtility public immutable override I_V1_EMP_UTILITY;
+	IV1EMPRegistry internal immutable _I_V1_EMP_REGISTRY;
+	IV1EMPUtility internal immutable _I_V1_EMP_UTILITY;
 
 	mapping (address utilizedV1EMPStrategy => uint256 allocation) public override utilizedV1EMPStrategy_allocation;
-
-
-	receive ()
-		external
-		payable
-	{}
-
-
-	fallback ()
-		external
-		payable
-	{}
-
 
 	constructor (
 		address _manager,
@@ -58,15 +45,15 @@ contract V1EMP is
 		manager = _manager;
 		utilizedERC20WithdrawFull = _utilizedERC20WithdrawFull;
 
-		I_V1_EMP_REGISTRY = IV1EMPRegistry(_v1EMPRegistry);
-		I_V1_EMP_UTILITY = IV1EMPUtility(I_V1_EMP_REGISTRY.v1EMPUtility());
+		_I_V1_EMP_REGISTRY = IV1EMPRegistry(_v1EMPRegistry);
+		_I_V1_EMP_UTILITY = IV1EMPUtility(_I_V1_EMP_REGISTRY.v1EMPUtility());
 	}
 
 
 	modifier authGovernanceOrManager()
 	{
 		require(
-			msg.sender == manager || IAccessControlEnumerable(I_V1_EMP_REGISTRY.GOVERNANCE()).hasRole(bytes32(0), msg.sender),
+			msg.sender == manager || IAccessControlEnumerable(_I_V1_EMP_REGISTRY.GOVERNANCE()).hasRole(bytes32(0), msg.sender),
 			"!authorized"
 		);
 
@@ -103,10 +90,10 @@ contract V1EMP is
 		public
 		authGovernanceOrManager()
 	{
-		require(
-			_feeRateManager + feeRateGovernance <= ONE_HUNDRED_PERCENT,
-			"!(_feeRateManager + feeRateGovernance <= ONE_HUNDRED_PERCENT)"
-		);
+		if (feeRateGovernance + _feeRateManager > _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT())
+		{
+			revert("!(_feeRateManager)");
+		}
 
 		feeRateManager = _feeRateManager;
 	}
@@ -116,12 +103,12 @@ contract V1EMP is
 		public
 		override
 	{
-		require(IAccessControlEnumerable(I_V1_EMP_REGISTRY.GOVERNANCE()).hasRole(bytes32(0), msg.sender), "!authorized");
+		require(IAccessControlEnumerable(_I_V1_EMP_REGISTRY.GOVERNANCE()).hasRole(bytes32(0), msg.sender), "!authorized");
 
-		require(
-			_feeRateGovernance + feeRateManager <= ONE_HUNDRED_PERCENT,
-			"!(_feeRateGovernance + feeRateManager <= ONE_HUNDRED_PERCENT)"
-		);
+		if (_feeRateGovernance + feeRateManager > _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT())
+		{
+			revert("!(_feeRateGovernance)");
+		}
 
 		feeRateGovernance = _feeRateGovernance;
 	}
@@ -144,26 +131,30 @@ contract V1EMP is
 	{
 		utilizedERC20Update();
 
-		(bool valid, uint256 utilizedERC20AmountTotalETHValue) = I_V1_EMP_UTILITY.utilizedERC20AmountValid(
+		(
+			bool valid,
+			uint256 utilizedERC20AmountTotalETHValue,
+			string memory message
+		) = _I_V1_EMP_UTILITY.utilizedERC20AmountValid(
 			address(this),
 			_utilizedERC20Amount
 		);
 
-		require(valid, "!valid");
+		require(valid, message);
 
-		address[] memory _utilizedERC20 = I_V1_EMP_UTILITY.v1EMP_utilizedERC20(address(this));
+		address[] memory _utilizedERC20 = _I_V1_EMP_UTILITY.v1EMP_utilizedERC20(address(this));
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
 			IERC20(_utilizedERC20[i]).transferFrom(msg.sender, address(this), _utilizedERC20Amount[i]);
 		}
 
-		uint256 mintAmountManager = utilizedERC20AmountTotalETHValue * feeRateManager / ONE_HUNDRED_PERCENT;
+		uint256 mintAmountManager = utilizedERC20AmountTotalETHValue * feeRateManager / 1e18;
 
-		uint256 mintAmountGovernancePayTo = utilizedERC20AmountTotalETHValue * feeRateGovernance / ONE_HUNDRED_PERCENT;
+		uint256 mintAmountGovernancePayTo = utilizedERC20AmountTotalETHValue * feeRateGovernance / 1e18;
 
 		_mint(manager, mintAmountManager);
-		_mint(I_V1_EMP_REGISTRY.governancePayTo(), mintAmountGovernancePayTo);
+		_mint(_I_V1_EMP_REGISTRY.governancePayTo(), mintAmountGovernancePayTo);
 		_mint(msg.sender, utilizedERC20AmountTotalETHValue - mintAmountManager - mintAmountGovernancePayTo);
 	}
 
@@ -181,9 +172,9 @@ contract V1EMP is
 		public
 		override
 	{
-		I_V1_EMP_UTILITY.utilizedERC20Update();
+		_I_V1_EMP_UTILITY.utilizedERC20Update();
 
-		address[] memory __utilizedERC20 = I_V1_EMP_UTILITY.v1EMP_utilizedERC20(address(this));
+		address[] memory __utilizedERC20 = _I_V1_EMP_UTILITY.v1EMP_utilizedERC20(address(this));
 
 		for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
 		{
@@ -207,33 +198,19 @@ contract V1EMP is
 
 		require(balanceOf(msg.sender) >= _eRC20Amount, "!(balanceOf(msg.sender) >= _eRC20Amount)");
 
-		bool utilizedERC20Available = true;
-
 		utilizedERC20Update();
 
-		address[] memory _utilizedERC20 = I_V1_EMP_UTILITY.v1EMP_utilizedERC20(address(this));
-
-		uint256[] memory _utilizedERC20TotalAmount = I_V1_EMP_UTILITY.utilizedERC20TotalBalance(address(this));
-
-		uint256[] memory transferAmount = new uint256[](_utilizedERC20.length);
-
-		for (uint256 i = 0; i < _utilizedERC20.length; i++)
-		{
-			require(totalSupply() != 0, "!(totalSupply() != 0)");
-
-			transferAmount[i] = _utilizedERC20TotalAmount[i] * 1e18 / totalSupply() * _eRC20Amount / 1e18;
-
-			if (IERC20(_utilizedERC20[i]).balanceOf(address(this)) < transferAmount[i])
-			{
-				utilizedERC20Available = false;
-
-				break;
-			}
-		}
+		(
+			bool utilizedERC20Available,
+			uint256[] memory transferAmount
+		) = _I_V1_EMP_UTILITY.utilizedERC20AvailableAndTransferAmount(
+			address(this),
+			_eRC20Amount
+		);
 
 		if (utilizedERC20Available)
 		{
-			for (uint256 i = 0; i < _utilizedERC20.length; i++)
+			for (uint256 i = 0; i < _I_V1_EMP_UTILITY.v1EMP_utilizedERC20(address(this)).length; i++)
 			{
 				transfer(msg.sender, transferAmount[i]);
 			}
@@ -251,9 +228,7 @@ contract V1EMP is
 
 			for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
 			{
-				v1EMPStrategyERC20Amount[i] = _eRC20AmountPercentOfTotalSupply * IV1EMPStrategy(
-					_utilizedV1EMPStrategy[i]
-				).eMP_equity(
+				v1EMPStrategyERC20Amount[i] = _eRC20AmountPercentOfTotalSupply * IV1EMPStrategy(_utilizedV1EMPStrategy[i]).eMP_equity(
 					address(this)
 				) / 1e18;
 			}
@@ -288,15 +263,12 @@ contract V1EMP is
 		override
 		utilizedERC20DepositOpenRequired()
 	{
-		require(
-			_v1EMPStrategyUtilizedERC20Amount.length == _utilizedV1EMPStrategy.length,
-			"!(_v1EMPStrategyUtilizedERC20Amount.length == _utilizedV1EMPStrategy.length)"
+		(bool valid, string memory message) = _I_V1_EMP_UTILITY.v1EMPStrategyUtilizedERC20AmountValid(
+			address(this),
+			_v1EMPStrategyUtilizedERC20Amount
 		);
 
-		require(
-			I_V1_EMP_UTILITY.v1EMPStrategyUtilizedERC20AmountValid(address(this), _v1EMPStrategyUtilizedERC20Amount),
-			"!I_V1_EMP_UTILITY.v1EMPStrategyUtilizedERC20AmountValid(address(this), _v1EMPStrategyUtilizedERC20Amount)"
-		);
+		require(valid, message);
 
 		for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
 		{
@@ -315,19 +287,13 @@ contract V1EMP is
 			"!(!utilizedERC20DepositOpen && !utilizedERC20WithdrawOpen)"
 		);
 
-		require(_v1EMPStrategy.length == _allocation.length, "!(_v1EMPStrategy.length == _allocation.length)");
-
-		uint256 utilizedV1EMPStrategyAllocationTotal;
-
-		for (uint256 i = 0; i < _allocation.length; i++)
-		{
-			utilizedV1EMPStrategyAllocationTotal += _allocation[i];
-		}
-
-		require(
-			utilizedV1EMPStrategyAllocationTotal == ONE_HUNDRED_PERCENT,
-			"!(utilizedV1EMPStrategyAllocationTotal == ONE_HUNDRED_PERCENT)"
+		(bool valid, string memory message) = _I_V1_EMP_UTILITY.utilizedV1EMPStrategyValid(
+			address(this),
+			_v1EMPStrategy,
+			_allocation
 		);
+
+		require(valid, message);
 
 		delete _utilizedV1EMPStrategy;
 

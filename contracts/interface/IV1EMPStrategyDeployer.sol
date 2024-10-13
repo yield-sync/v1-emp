@@ -5,10 +5,9 @@ pragma solidity ^0.8.18;
 interface IV1EMPStrategyDeployer
 {
 	/**
-	* @param _name {string}
-	* @param _symbol {string}
+	* @notice Deploy V1 EMP Strategy
 	*/
-	function deployV1EMPStrategy(string memory _name, string memory _symbol)
+	function deployV1EMPStrategy()
 		external
 		returns (address v1EMPStrategy_)
 	;

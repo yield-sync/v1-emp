@@ -5,7 +5,7 @@ import { expect } from "chai";
 import { Contract, ContractFactory, VoidSigner } from "ethers";
 
 
-describe("[5.0] V1EMPDeployer.sol - Setup", async () => {
+describe("[6.0] V1EMPDeployer.sol - Setup", async () => {
 	let arrayUtility: Contract;
 	let empDeployer: Contract;
 	let governance: Contract;

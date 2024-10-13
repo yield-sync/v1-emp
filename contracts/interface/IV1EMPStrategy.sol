@@ -2,9 +2,7 @@
 pragma solidity ^0.8.18;
 
 
-import { IV1EMPRegistry } from "./IV1EMPRegistry.sol";
 import { IV1EMPStrategyInteractor } from "./IV1EMPStrategyInteractor.sol";
-import { IV1EMPStrategyUtility } from "./IV1EMPStrategyUtility.sol";
 import { UtilizationERC20 } from "../struct/UtilizationERC20.sol";
 
 
@@ -44,28 +42,6 @@ interface IV1EMPStrategy
 	;
 
 	/**
-	* @dev [view-string]
-	* @notice Name
-	* @return {string}
-	*/
-	function name()
-		external
-		view
-		returns (string memory)
-	;
-
-	/**
-	* @dev [view-string]
-	* @notice SYMBOL
-	* @return {string}
-	*/
-	function symbol()
-		external
-		view
-		returns (string memory)
-	;
-
-	/**
 	* @dev [view-uint256]
 	* @notice Equity Total
 	* @return {uint256}
@@ -85,39 +61,6 @@ interface IV1EMPStrategy
 		external
 		view
 		returns (uint256)
-	;
-
-	/**
-	* @dev [view-uint256]
-	* @notice One Hundred Percent
-	* @return {uint256}
-	*/
-	function ONE_HUNDRED_PERCENT()
-		external
-		view
-		returns (uint256)
-	;
-
-	/**
-	* @dev [view-IV1EMPRegistry]
-	* @notice Implemented IV1EMPRegistry
-	* @return {IV1EMPRegistry}
-	*/
-	function I_V1_EMP_REGISTRY()
-		external
-		view
-		returns (IV1EMPRegistry)
-	;
-
-	/**
-	* @dev [view-IV1EMPStrategyUtility]
-	* @notice Implemented IV1EMPStrategyUtility
-	* @return {IV1EMPStrategyUtility}
-	*/
-	function I_V1_EMP_STRATEGY_UTILITY()
-		external
-		view
-		returns (IV1EMPStrategyUtility)
 	;
 
 	/**
@@ -151,7 +94,7 @@ interface IV1EMPStrategy
 	* @param _utilizedERC20 {address}
 	* @return {UtilizationERC20[]}
 	*/
-	function utilizedERC20_utilizationERC20(address __utilizedERC20)
+	function utilizedERC20_utilizationERC20(address _utilizedERC20)
 		external
 		view
 		returns (UtilizationERC20 memory)
@@ -171,6 +114,8 @@ interface IV1EMPStrategy
 	/**
 	* @notice Utilized ERC20 Amount Total ETH Value
 	* @param _utilizedERC20Amount {uint256[]}
+	* @return utilizedERC20AmountETHValueTotal_ {uint256}
+	* @return utilizedERC20AmountETHValue_ {uint256[]}
 	*/
 	function utilizedERC20AmountETHValue(uint256[] memory _utilizedERC20Amount)
 		external
@@ -181,6 +126,7 @@ interface IV1EMPStrategy
 	/**
 	* @notice Utilized ERC20 Total Balance
 	* @param __utilizedERC20 {address}
+	* @return utilizedERC20TotalAmount_ {uint256}
 	*/
 	function utilizedERC20TotalBalance(address __utilizedERC20)
 		external
@@ -210,10 +156,10 @@ interface IV1EMPStrategy
 
 	/**
 	* @notice Set utilized ERC20s and purpose
-	* @param __utilizedERC20 {address[]}
+	* @param _utilizedERC20 {address[]}
 	* @param _utilizationERC20 {UtilizationERC20[]}
 	*/
-	function utilizedERC20Update(address[] memory __utilizedERC20, UtilizationERC20[] memory _utilizationERC20)
+	function utilizedERC20Update(address[] memory _utilizedERC20, UtilizationERC20[] memory _utilizationERC20)
 		external
 	;
 

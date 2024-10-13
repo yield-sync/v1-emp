@@ -10,7 +10,6 @@ contract V1EMPArrayUtility is
 {
 	address[] internal _uniqueAddresses;
 
-	/// @inheritdoc IV1EMPArrayUtility
 	bool public override duplicateFound;
 
 	mapping(address => bool) public seen;

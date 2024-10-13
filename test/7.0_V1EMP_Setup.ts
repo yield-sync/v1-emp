@@ -5,10 +5,10 @@ import { expect } from "chai";
 import { Contract, ContractFactory, VoidSigner } from "ethers";
 
 import { ERROR, PERCENT } from "../const";
-import StrategyTransferUtil from "../scripts/StrategyTransferUtil";
+import StrategyTransferUtil from "../util/StrategyTransferUtil";
 
 
-describe("[6.0] V1EMP.sol - Setup", async () => {
+describe("[7.0] V1EMP.sol - Setup", async () => {
 	let arrayUtility: Contract;
 	let governance: Contract;
 	let eTHValueFeed: Contract;
@@ -110,7 +110,7 @@ describe("[6.0] V1EMP.sol - Setup", async () => {
 		for (let i: number = 0; i < deployStrategies.length; i++)
 		{
 			// Deploy EMP Strategy
-			await strategyDeployer.deployV1EMPStrategy(`EMP Strategy ${i}`, `EMPS${i}`);
+			await strategyDeployer.deployV1EMPStrategy();
 
 			// Attach the deployed V1EMPStrategy address to variable
 			let deployedV1EMPStrategy = await V1EMPStrategy.attach(
@@ -136,7 +136,7 @@ describe("[6.0] V1EMP.sol - Setup", async () => {
 
 			strategies[i] = {
 				contract: deployedV1EMPStrategy,
-				strategyTransferUtil: new StrategyTransferUtil(deployedV1EMPStrategy, eTHValueFeed)
+				strategyTransferUtil: new StrategyTransferUtil(deployedV1EMPStrategy, registry)
 			};
 		}
 
@@ -156,170 +156,204 @@ describe("[6.0] V1EMP.sol - Setup", async () => {
 
 
 	describe("function managerUpdate()", async () => {
-		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
-			await expect(eMP.connect(outsider).managerUpdate(outsider.address)).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
+		describe("Expected Failure", async () => {
+			it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
+				await expect(eMP.connect(outsider).managerUpdate(outsider.address)).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
+			});
 		});
 
-		it("Should update manager..", async () => {
-			await expect(eMP.managerUpdate(outsider.address)).to.be.not.rejected;
+		describe("Expected Success", async () => {
+			it("Should update manager..", async () => {
+				await expect(eMP.managerUpdate(outsider.address)).to.be.not.rejected;
 
-			expect(await eMP.manager()).to.be.equal(outsider.address);
+				expect(await eMP.manager()).to.be.equal(outsider.address);
+			});
 		});
 	});
 
 	describe("function feeRateManagerUpdate() (1/2)", async () => {
-		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
-			await expect(eMP.connect(outsider).feeRateManagerUpdate(outsider.address)).to.be.rejectedWith(
-				ERROR.NOT_AUTHORIZED
-			);
+		describe("Expected Failure", async () => {
+			it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
+				await expect(eMP.connect(outsider).feeRateManagerUpdate(outsider.address)).to.be.rejectedWith(
+					ERROR.NOT_AUTHORIZED
+				);
+			});
+
+			it("Should NOT allow greater than 100% fee rate..", async () => {
+				const ONE_HUNDRED_PERCENT = await registry.ONE_HUNDRED_PERCENT();
+
+				await expect(
+					eMP.feeRateManagerUpdate(ONE_HUNDRED_PERCENT.add(ethers.utils.parseUnits("1", 18)))
+				).to.be.rejectedWith(
+					ERROR.EMP.FEE_RATE_MANAGER_GREATER_THAN_100_PERCENT
+				);
+			});
 		});
 
-		it("Should NOT allow greater than 100% fee rate..", async () => {
-			const ONE_HUNDRED_PERCENT = await eMP.ONE_HUNDRED_PERCENT();
+		describe("Expected Success", async () => {
+			it("Should allow feeRateManager to be changed..", async () => {
+				await expect(eMP.feeRateManagerUpdate(1)).to.be.not.rejected;
 
-			await expect(
-				eMP.feeRateManagerUpdate(ONE_HUNDRED_PERCENT.add(ethers.utils.parseUnits("1", 18)))
-			).to.be.rejectedWith(
-				ERROR.EMP.FEE_RATE_MANAGER_GREATER_THAN_100_PERCENT
-			);
-		});
-
-		it("Should allow feeRateManager to be changed..", async () => {
-			await expect(eMP.feeRateManagerUpdate(1)).to.be.not.rejected;
-
-			expect(await eMP.feeRateManager()).to.be.equal(1);
+				expect(await eMP.feeRateManager()).to.be.equal(1);
+			});
 		});
 	});
 
 	describe("function feeRateGovernanceUpdate() (1/2)", async () => {
-		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
-			await expect(eMP.connect(outsider).feeRateGovernanceUpdate(outsider.address)).to.be.rejectedWith(
-				ERROR.NOT_AUTHORIZED
-			);
+		describe("Expected Failure", async () => {
+			it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
+				await expect(eMP.connect(outsider).feeRateGovernanceUpdate(outsider.address)).to.be.rejectedWith(
+					ERROR.NOT_AUTHORIZED
+				);
+			});
+
+			it("Should NOT allow greater than 100% fee rate..", async () => {
+				const ONE_HUNDRED_PERCENT = await registry.ONE_HUNDRED_PERCENT();
+
+				await expect(
+					eMP.feeRateGovernanceUpdate(ONE_HUNDRED_PERCENT.add(ethers.utils.parseUnits("1", 18)))
+				).to.be.rejectedWith(
+					ERROR.EMP.FEE_RATE_GOVERNANCE_GREATER_THAN_100_PERCENT
+				);
+			});
 		});
 
-		it("Should NOT allow greater than 100% fee rate..", async () => {
-			const ONE_HUNDRED_PERCENT = await eMP.ONE_HUNDRED_PERCENT();
+		describe("Expected Success", async () => {
+			it("Should allow feeRateManager to be changed..", async () => {
+				await expect(eMP.feeRateGovernanceUpdate(1)).to.be.not.rejected;
 
-			await expect(
-				eMP.feeRateGovernanceUpdate(ONE_HUNDRED_PERCENT.add(ethers.utils.parseUnits("1", 18)))
-			).to.be.rejectedWith(
-				ERROR.EMP.FEE_RATE_GOVERNANCE_GREATER_THAN_100_PERCENT
-			);
-		});
-
-		it("Should allow feeRateManager to be changed..", async () => {
-			await expect(eMP.feeRateGovernanceUpdate(1)).to.be.not.rejected;
-
-			expect(await eMP.feeRateGovernance()).to.be.equal(1);
+				expect(await eMP.feeRateGovernance()).to.be.equal(1);
+			});
 		});
 	});
 
 	describe("function feeRateManagerUpdate() (2/2)", async () => {
-		it("Should NOT allow combined fees to be greater than 100% fee rate..", async () => {
-			await eMP.feeRateGovernanceUpdate(ethers.utils.parseUnits(".5", 18));
+		describe("Expected Failure", async () => {
+			it("Should NOT allow combined fees to be greater than 100% fee rate..", async () => {
+				await eMP.feeRateGovernanceUpdate(ethers.utils.parseUnits(".5", 18));
 
-			await expect(
-				eMP.feeRateManagerUpdate(ethers.utils.parseUnits("1", 18))
-			).to.be.rejectedWith(
-				ERROR.EMP.FEE_RATE_MANAGER_GREATER_THAN_100_PERCENT
-			);
+				await expect(
+					eMP.feeRateManagerUpdate(ethers.utils.parseUnits("1", 18))
+				).to.be.rejectedWith(
+					ERROR.EMP.FEE_RATE_MANAGER_GREATER_THAN_100_PERCENT
+				);
+			});
 		});
 	});
 
 	describe("function feeRateGovernanceUpdate() (2/2)", async () => {
-		it("Should NOT allow combined fees to be greater than 100% fee rate..", async () => {
-			await eMP.feeRateManagerUpdate(ethers.utils.parseUnits(".5", 18));
+		describe("Expected Failure", async () => {
+			it("Should NOT allow combined fees to be greater than 100% fee rate..", async () => {
+				await eMP.feeRateManagerUpdate(ethers.utils.parseUnits(".5", 18));
 
-			await expect(
-				eMP.feeRateGovernanceUpdate(ethers.utils.parseUnits("1", 18))
-			).to.be.rejectedWith(
-				ERROR.EMP.FEE_RATE_GOVERNANCE_GREATER_THAN_100_PERCENT
-			);
+				await expect(
+					eMP.feeRateGovernanceUpdate(ethers.utils.parseUnits("1", 18))
+				).to.be.rejectedWith(
+					ERROR.EMP.FEE_RATE_GOVERNANCE_GREATER_THAN_100_PERCENT
+				);
+			});
 		});
 	});
 
 	describe("function utilizedV1EMPStrategyUpdate() (1/2)", async () => {
-		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
-			await expect(eMP.connect(outsider).utilizedV1EMPStrategyUpdate([], [])).to.be.rejectedWith(
-				ERROR.NOT_AUTHORIZED
-			);
-		});
-
-		it("Should NOT allow strategies that add up to more than 100% to EMP..", async () => {
-			await expect(
-				eMP.utilizedV1EMPStrategyUpdate(
-					[strategies[0].contract.address, strategies[1].contract.address] as UtilizedEMPStrategyUpdate,
-					[PERCENT.HUNDRED, PERCENT.FIFTY] as UtilizedEMPStrategyAllocationUpdate
-				)
-			).to.be.rejectedWith(
-				ERROR.EMP.INVALID_STRATEGY_ALLOCATION_TOTAL
-			);
-		});
-
-		it("Should allow attaching Strategy to EMP..", async () => {
-			const UtilizedEMPStrategy: UtilizedEMPStrategyUpdate = [strategies[0].contract.address];
-
-			const UtilizedEMPStrategyAllocation: UtilizedEMPStrategyAllocationUpdate = [PERCENT.HUNDRED];
-
-			await eMP.utilizedV1EMPStrategyUpdate(UtilizedEMPStrategy, UtilizedEMPStrategyAllocation);
-
-			const _strategies: UtilizedEMPStrategy[] = await eMP.utilizedV1EMPStrategy();
-
-			expect(_strategies.length).to.be.equal(UtilizedEMPStrategy.length);
-
-			let found = 0;
-
-			for (let i: number = 0; i < UtilizedEMPStrategy.length; i++)
-			{
-				expect(await eMP.utilizedV1EMPStrategy_allocation(UtilizedEMPStrategy[i])).to.be.equal(
-					UtilizedEMPStrategyAllocation[i]
+		describe("Expected Failure", async () => {
+			it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
+				await expect(eMP.connect(outsider).utilizedV1EMPStrategyUpdate([], [])).to.be.rejectedWith(
+					ERROR.NOT_AUTHORIZED
 				);
+			});
 
-				for (let ii = 0; ii < _strategies.length; ii++)
+			it("Should NOT allow invalid strategies to be set..", async () => {
+				const V1EMPStrategy: ContractFactory = await ethers.getContractFactory("V1EMPStrategy");
+
+				// Deploy a temporary contract
+				const invalidStrategy = await V1EMPStrategy.deploy(outsider.address, registry.address);
+
+				await expect(
+					eMP.utilizedV1EMPStrategyUpdate(
+						[invalidStrategy.address] as UtilizedEMPStrategyUpdate,
+						[PERCENT.HUNDRED] as UtilizedEMPStrategyAllocationUpdate
+					)
+				).to.be.rejectedWith(ERROR.EMP_UTILITY.INVALID_V1_EMP_STRATEGY);
+			});
+
+			it("Should NOT allow strategies that add up to more than 100% to EMP..", async () => {
+				await expect(
+					eMP.utilizedV1EMPStrategyUpdate(
+						[strategies[0].contract.address, strategies[1].contract.address] as UtilizedEMPStrategyUpdate,
+						[PERCENT.HUNDRED, PERCENT.FIFTY] as UtilizedEMPStrategyAllocationUpdate
+					)
+				).to.be.rejectedWith(
+					ERROR.EMP_UTILITY.UTILIZED_V1_EMP_STRATEGY_INVALID_ALLOCATION
+				);
+			});
+		});
+
+		describe("Expected Success", async () => {
+			it("Should allow attaching Strategy to EMP..", async () => {
+				const UtilizedEMPStrategy: UtilizedEMPStrategyUpdate = [strategies[0].contract.address];
+
+				const UtilizedEMPStrategyAllocation: UtilizedEMPStrategyAllocationUpdate = [PERCENT.HUNDRED];
+
+				await eMP.utilizedV1EMPStrategyUpdate(UtilizedEMPStrategy, UtilizedEMPStrategyAllocation);
+
+				const _strategies: UtilizedEMPStrategy[] = await eMP.utilizedV1EMPStrategy();
+
+				expect(_strategies.length).to.be.equal(UtilizedEMPStrategy.length);
+
+				let found = 0;
+
+				for (let i: number = 0; i < UtilizedEMPStrategy.length; i++)
 				{
-					if (String(UtilizedEMPStrategy[i]) == String(_strategies[ii]))
+					expect(await eMP.utilizedV1EMPStrategy_allocation(UtilizedEMPStrategy[i])).to.be.equal(
+						UtilizedEMPStrategyAllocation[i]
+					);
+
+					for (let ii = 0; ii < _strategies.length; ii++)
 					{
-						found++;
+						if (String(UtilizedEMPStrategy[i]) == String(_strategies[ii]))
+						{
+							found++;
+						}
 					}
 				}
-			}
 
-			expect(found).to.be.equal(_strategies.length);
-		});
+				expect(found).to.be.equal(_strategies.length);
+			});
 
-		it("Should allow attaching multiple Strategies to EMP..", async () => {
-			const UtilizedEMPStrategy: UtilizedEMPStrategyUpdate = [
-				strategies[0].contract.address,
-				strategies[1].contract.address,
-			];
+			it("Should allow attaching multiple Strategies to EMP..", async () => {
+				const UtilizedEMPStrategy: UtilizedEMPStrategyUpdate = [
+					strategies[0].contract.address,
+					strategies[1].contract.address,
+				];
 
-			const UtilizedEMPStrategyAllocation: UtilizedEMPStrategyAllocationUpdate = [PERCENT.FIFTY, PERCENT.FIFTY];
+				const UtilizedEMPStrategyAllocation: UtilizedEMPStrategyAllocationUpdate = [PERCENT.FIFTY, PERCENT.FIFTY];
 
-			await eMP.utilizedV1EMPStrategyUpdate(UtilizedEMPStrategy, UtilizedEMPStrategyAllocation);
+				await eMP.utilizedV1EMPStrategyUpdate(UtilizedEMPStrategy, UtilizedEMPStrategyAllocation);
 
-			const _strategies: UtilizedEMPStrategy[] = await eMP.utilizedV1EMPStrategy();
+				const _strategies: UtilizedEMPStrategy[] = await eMP.utilizedV1EMPStrategy();
 
-			expect(_strategies.length).to.be.equal(UtilizedEMPStrategy.length);
+				expect(_strategies.length).to.be.equal(UtilizedEMPStrategy.length);
 
-			let found = 0;
+				let found = 0;
 
-			for (let i: number = 0; i < UtilizedEMPStrategy.length; i++)
-			{
-				expect(await eMP.utilizedV1EMPStrategy_allocation(UtilizedEMPStrategy[i])).to.be.equal(
-					UtilizedEMPStrategyAllocation[i]
-				);
-
-				for (let ii = 0; ii < _strategies.length; ii++)
+				for (let i: number = 0; i < UtilizedEMPStrategy.length; i++)
 				{
-					if (String(UtilizedEMPStrategy[i]) == String(_strategies[ii]))
+					expect(await eMP.utilizedV1EMPStrategy_allocation(UtilizedEMPStrategy[i])).to.be.equal(
+						UtilizedEMPStrategyAllocation[i]
+					);
+
+					for (let ii = 0; ii < _strategies.length; ii++)
 					{
-						found++;
+						if (String(UtilizedEMPStrategy[i]) == String(_strategies[ii]))
+						{
+							found++;
+						}
 					}
 				}
-			}
 
-			expect(found).to.be.equal(_strategies.length);
+				expect(found).to.be.equal(_strategies.length);
+			});
 		});
 	});
 
@@ -353,13 +387,26 @@ describe("[6.0] V1EMP.sol - Setup", async () => {
 			await expect(eMP.utilizedERC20Update()).to.be.not.reverted;
 		});
 
+		describe("Expected Success", async () => {
+			it("Should update the utilized ERC20..", async () => {
+				await expect(eMP.utilizedERC20Update()).to.be.not.reverted;
 
-		it("Should update the utilized ERC20..", async () => {
-			await expect(eMP.utilizedERC20Update()).to.be.not.reverted;
+				eMPUtilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMP.address);
 
-			eMPUtilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMP.address);
+				expect(eMPUtilizedERC20.length).to.be.equal(2);
 
-			expect(eMPUtilizedERC20.length).to.be.equal(2);
+				expect(
+					(await eMPUtility.v1EMP_utilizedERC20_utilizationERC20(eMP.address, mockERC20A.address)).allocation
+				).to.be.equal(
+					PERCENT.FIFTY
+				);
+
+				expect(
+					(await eMPUtility.v1EMP_utilizedERC20_utilizationERC20(eMP.address, mockERC20C.address)).allocation
+				).to.be.equal(
+					PERCENT.FIFTY
+				);
+			});
 		});
 	});
 

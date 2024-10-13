@@ -5,14 +5,14 @@ import { expect } from "chai";
 import { BigNumber, Contract, ContractFactory, VoidSigner } from "ethers";
 
 import { D_18, ERROR, PERCENT } from "../const";
-import EMPTransferUtil from "../scripts/EMPTransferUtil";
-import StrategyTransferUtil from "../scripts/StrategyTransferUtil";
+import EMPTransferUtil from "../util/EMPTransferUtil";
+import StrategyTransferUtil from "../util/StrategyTransferUtil";
 
 
 const LOCATION_MOCKERC20: string = "MockERC20";
 
 
-describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
+describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 	let eTHValueEMPDepositAmount: BigNumber = ethers.utils.parseUnits("2", 18);
 
 	let arrayUtility: Contract;
@@ -124,7 +124,7 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 			let strategyInteractor: Contract = await (await StrategyInteractorDummy.deploy()).deployed();
 
 			// Deploy EMP Strategy
-			await strategyDeployer.deployV1EMPStrategy(`EMP Strategy ${i}`, `EMPS${i}`);
+			await strategyDeployer.deployV1EMPStrategy();
 
 			// Attach the deployed V1EMPStrategy address to variable
 			let deployedV1EMPStrategy = await V1EMPStrategy.attach(
@@ -150,7 +150,7 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 
 			strategies[i] = {
 				contract: deployedV1EMPStrategy,
-				strategyTransferUtil: new StrategyTransferUtil(deployedV1EMPStrategy, eTHValueFeed)
+				strategyTransferUtil: new StrategyTransferUtil(deployedV1EMPStrategy, registry)
 			};
 		}
 
@@ -450,7 +450,7 @@ describe("[6.2] V1EMP.sol - Withdrawing Tokens", async () => {
 		});
 	});
 
-	describe("function utilizedERC20Withdraw() (2/2) - Full Withdrawals Enabled", async () => {
+	describe("function utilizedERC20Withdraw() (3/3) - Full Withdrawals Enabled", async () => {
 		describe("Expected Success", async () => {
 			beforeEach(async () => {
 				expect(await eMPs[0].contract.utilizedERC20WithdrawFull()).to.be.false;

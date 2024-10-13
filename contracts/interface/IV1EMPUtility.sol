@@ -2,8 +2,6 @@
 pragma solidity ^0.8.18;
 
 
-import { IV1EMPArrayUtility } from "./IV1EMPArrayUtility.sol";
-import { IV1EMPRegistry } from "./IV1EMPRegistry.sol";
 import { UtilizationERC20 } from "../struct/UtilizationERC20.sol";
 
 
@@ -33,28 +31,6 @@ interface IV1EMPUtility
 		returns (UtilizationERC20 memory)
 	;
 
-	/**
-	* @dev [view-IV1EMPArrayUtility]
-	* @notice Implemented IV1EMPArrayUtility
-	* @return {IV1EMPArrayUtility}
-	*/
-	function I_V1_EMP_ARRAY_UTILITY()
-		external
-		view
-		returns (IV1EMPArrayUtility)
-	;
-
-	/**
-	* @dev [view-IV1EMPRegistry]
-	* @notice Implemented IV1EMPRegistry
-	* @return {IV1EMPRegistry}
-	*/
-	function I_V1_EMP_REGISTRY()
-		external
-		view
-		returns (IV1EMPRegistry)
-	;
-
 
 	/// @notice view
 
@@ -76,11 +52,38 @@ interface IV1EMPUtility
 	* @param _utilizedERC20Amount {uint256}
 	* @return valid_ {bool}
 	* @return utilizedERC20AmountTotalETHValue_ {uint256}
+	* @return message_ {string}
 	*/
 	function utilizedERC20AmountValid(address _v1EMP, uint256[] memory _utilizedERC20Amount)
 		external
 		view
-		returns (bool valid_, uint256 utilizedERC20AmountTotalETHValue_)
+		returns (bool valid_, uint256 utilizedERC20AmountTotalETHValue_, string memory message_)
+	;
+
+	/**
+	* @notice Utilized ERC20 Available And Tranfer Amount
+	* @param _v1EMP {address}
+	* @param _eRC20Amount {uint256}
+	* @return utilizedERC20Available_ {bool}
+	* @return transferAmount_ {uint256[]}
+	*/
+	function utilizedERC20AvailableAndTransferAmount(address _v1EMP, uint256 _eRC20Amount)
+		external
+		view
+		returns(bool utilizedERC20Available_, uint256[] memory transferAmount_)
+	;
+
+	/**
+	* @notice
+	* @param _v1EMP {address}
+	* @param _v1EMPStrategy {address[]}
+	* @param _allocation {uint256[]}
+	* @return valid_ {bool}
+	* @return message_ {string}
+	*/
+	function utilizedV1EMPStrategyValid(address _v1EMP, address[] memory _v1EMPStrategy, uint256[] memory _allocation)
+		external
+		returns (bool valid_, string memory message_)
 	;
 
 
@@ -99,9 +102,10 @@ interface IV1EMPUtility
 	* @param _v1EMP {address}
 	* @param _v1EMPStrategyUtilizedERC20Amount {uint256[][]}
 	* @return valid_ {bool}
+	* @return message_ {string}
 	*/
 	function v1EMPStrategyUtilizedERC20AmountValid(address _v1EMP, uint256[][] memory _v1EMPStrategyUtilizedERC20Amount)
 		external
-		returns (bool valid_)
+		returns (bool valid_, string memory message_)
 	;
 }

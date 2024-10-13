@@ -18,8 +18,10 @@ contract V1EMPRegistry is
 	address public override v1EMPStrategyDeployer;
 	address public override v1EMPStrategyUtility;
 
-	uint256 public eMPIdTracker;
-	uint256 public eMPStrategyIdTracker;
+	uint256 public constant override ONE_HUNDRED_PERCENT = 1e18;
+
+	uint256 public override v1EMPIdTracker;
+	uint256 public override v1EMPStrategyIdTracker;
 
 	mapping (address eRC20 => address v1EMPERC20ETHValueFeed) public override eRC20_v1EMPERC20ETHValueFeed;
 
@@ -32,24 +34,9 @@ contract V1EMPRegistry is
 	mapping (uint256 v1EMPStrategyId => address v1EMPStrategy) public override v1EMPStrategyId_v1EMPStrategy;
 
 
-	receive ()
-		external
-		payable
-	{}
-
-
-	fallback ()
-		external
-		payable
-	{}
-
-
 	constructor (address _governance)
 	{
 		GOVERNANCE = _governance;
-
-		eMPIdTracker = 0;
-		eMPStrategyIdTracker = 0;
 	}
 
 
@@ -122,10 +109,10 @@ contract V1EMPRegistry is
 	{
 		require(v1EMPDeployer == msg.sender, "!(v1EMPDeployer == msg.sender)");
 
-		eMPIdTracker++;
+		v1EMPIdTracker++;
 
-		v1EMP_v1EMPId[_v1EMP] = eMPIdTracker;
-		v1EMPId_v1EMP[eMPIdTracker] = _v1EMP;
+		v1EMP_v1EMPId[_v1EMP] = v1EMPIdTracker;
+		v1EMPId_v1EMP[v1EMPIdTracker] = _v1EMP;
 	}
 
 	/// @inheritdoc IV1EMPRegistry
@@ -146,10 +133,10 @@ contract V1EMPRegistry is
 	{
 		require(v1EMPStrategyDeployer == msg.sender, "!(v1EMPStrategyDeployer == msg.sender)");
 
-		eMPStrategyIdTracker++;
+		v1EMPStrategyIdTracker++;
 
-		v1EMPStrategy_v1EMPStrategyId[_v1EMPStrategy] = eMPStrategyIdTracker;
-		v1EMPStrategyId_v1EMPStrategy[eMPStrategyIdTracker] = _v1EMPStrategy;
+		v1EMPStrategy_v1EMPStrategyId[_v1EMPStrategy] = v1EMPStrategyIdTracker;
+		v1EMPStrategyId_v1EMPStrategy[v1EMPStrategyIdTracker] = _v1EMPStrategy;
 	}
 
 	/// @inheritdoc IV1EMPRegistry

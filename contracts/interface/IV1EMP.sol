@@ -4,9 +4,6 @@ pragma solidity ^0.8.18;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-import { IV1EMPRegistry } from "./IV1EMPRegistry.sol";
-import { IV1EMPUtility } from "./IV1EMPUtility.sol";
-
 
 interface IV1EMP is
 	IERC20
@@ -56,28 +53,6 @@ interface IV1EMP is
 	;
 
 	/**
-	* @notice
-	* @dev [view-uint256]
-	* @return {uint256}
-	*/
-	function ONE_HUNDRED_PERCENT()
-		external
-		view
-		returns (uint256)
-	;
-
-	/**
-	* @dev [view-IV1EMPUtility]
-	* @notice Implemented IV1EMPUtility
-	* @return {IV1EMPUtility}
-	*/
-	function I_V1_EMP_UTILITY()
-		external
-		view
-		returns (IV1EMPUtility)
-	;
-
-	/**
 	* @notice Fee Rate for Manager
 	* @dev [view-uint256]
 	* @return {uint256}
@@ -97,17 +72,6 @@ interface IV1EMP is
 		external
 		view
 		returns (uint256)
-	;
-
-	/**
-	* @dev [view-IV1EMPRegistry]
-	* @notice Implemented IV1EMPRegistry
-	* @return {IV1EMPRegistry}
-	*/
-	function I_V1_EMP_REGISTRY()
-		external
-		view
-		returns (IV1EMPRegistry)
 	;
 
 	/**
@@ -188,7 +152,8 @@ interface IV1EMP is
 	;
 
 	/**
-	* @notice
+	* @notice Utilized ERC20 Withdraw
+	* @param _eRC20Amount {uint256}
 	*/
 	function utilizedERC20Withdraw(uint256 _eRC20Amount)
 		external
@@ -217,7 +182,9 @@ interface IV1EMP is
 	;
 
 	/**
-	* @notice
+	* @notice Utilized V1EMPStrategy Update
+	* @param _v1EMPStrategy {address[]}
+	* @param _allocation {uint256[]}
 	*/
 	function utilizedV1EMPStrategyUpdate(address[] memory _v1EMPStrategy, uint256[] memory _allocation)
 		external

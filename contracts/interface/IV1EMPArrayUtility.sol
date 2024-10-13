@@ -6,6 +6,7 @@ interface IV1EMPArrayUtility
 {
 	/**
 	* @notice Duplicates Found
+	* @return {bool}
 	*/
 	function duplicateFound()
 		external
@@ -17,6 +18,7 @@ interface IV1EMPArrayUtility
 	/**
 	* @notice Sort
 	* @param _array {address[]}
+	* @return {address[]}
 	*/
 	function sort(address[] memory _array)
 		external
@@ -28,6 +30,7 @@ interface IV1EMPArrayUtility
 	/**
 	* @notice Check if contains duplicates
 	* @param _array {address[]}
+	* @return duplicateFound_ {bool}
 	*/
 	function containsDuplicates(address[] memory _array)
 		external
@@ -37,6 +40,7 @@ interface IV1EMPArrayUtility
 	/**
 	* @notice Remove Duplicates from array
 	* @param _array {address[]}
+	* @return {address[]}
 	*/
 	function removeDuplicates(address[] memory _array)
 		external

@@ -5,15 +5,15 @@ import { expect } from "chai";
 import { BigNumber, Contract, ContractFactory, VoidSigner } from "ethers";
 
 import { D_18, ERROR, PERCENT } from "../const";
-import EMPTransferUtil from "../scripts/EMPTransferUtil";
-import StrategyTransferUtil from "../scripts/StrategyTransferUtil";
+import EMPTransferUtil from "../util/EMPTransferUtil";
+import StrategyTransferUtil from "../util/StrategyTransferUtil";
 
 
 const LOCATION_MOCKERC20: string = "MockERC20";
 const LOCATION_STRATGY: string = "V1EMPStrategy";
 
 
-describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
+describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 	let arrayUtility: Contract;
 	let governance: Contract;
 	let eTHValueFeed: Contract;
@@ -103,20 +103,14 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 		* EMP Strategies
 		*/
 		const deployStrategies: {
-			name: string,
-			ticker: string,
 			strategyUtilizedERC20: StrategyUtiliziedERC20,
 			strategyUtilization: StrategyUtilization,
 		}[] = [
 			{
-				name: "EMP Strategy 1",
-				ticker: "EMPS1",
 				strategyUtilizedERC20: [mockERC20A.address, mockERC20B.address],
 				strategyUtilization: [[true, true, PERCENT.FIFTY], [true, true, PERCENT.FIFTY]]
 			},
 			{
-				name: "EMP Strategy 2",
-				ticker: "EMPS2",
 				strategyUtilizedERC20: [mockERC20C.address],
 				strategyUtilization: [[true, true, PERCENT.HUNDRED]],
 			},
@@ -127,7 +121,7 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 			let strategyInteractor: Contract = await (await StrategyInteractorDummy.deploy()).deployed();
 
 			// Deploy EMP Strategy
-			await strategyDeployer.deployV1EMPStrategy(deployStrategies[i].name, deployStrategies[i].ticker);
+			await strategyDeployer.deployV1EMPStrategy();
 
 			// Attach the deployed V1EMPStrategy address to variable
 			let deployedV1EMPStrategy = await V1EMPStrategy.attach(
@@ -153,7 +147,7 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 
 			strategies[i] = {
 				contract: deployedV1EMPStrategy,
-				strategyTransferUtil: new StrategyTransferUtil(deployedV1EMPStrategy, eTHValueFeed)
+				strategyTransferUtil: new StrategyTransferUtil(deployedV1EMPStrategy, registry)
 			};
 		}
 
@@ -272,7 +266,7 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 				eMPDepositAmounts[0] = eMPDepositAmounts[0].sub(eMPDepositAmounts[0]);
 
 				await expect(eMPs[0].contract.utilizedERC20Deposit(eMPDepositAmounts)).to.be.revertedWith(
-					ERROR.EMP.INVALID
+					ERROR.EMP_UTILITY.INVALID_ALLOCATION
 				);
 			});
 		});
@@ -564,7 +558,7 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 			it("Should revert if invalid lengthed _v1EMPStrategyUtilizedERC20Amount passed..", async () => {
 				// Pass incorrect length of deposit amounts
 				await expect(eMPs[0].contract.utilizedV1EMPStrategyDeposit([])).to.be.rejectedWith(
-					ERROR.EMP.INVALID_STRATEGY_UTILIZED_ERC20_AMOUNT_LENGTH
+					ERROR.EMP.INVALID_UTILIZED_ERC20_AMOUNT_LENGTH
 				);
 			});
 
@@ -585,7 +579,7 @@ describe("[6.1] V1EMP.sol - Depositing Tokens", async () => {
 				await expect(
 					eMPs[0].contract.utilizedV1EMPStrategyDeposit([depositAmount[0], depositAmount[1]])
 				).to.be.revertedWith(
-					ERROR.EMP.AMOUNTS_VALIDATOR_FAILURE
+					ERROR.EMP.INVALID_UTILIZED_STRATEGY_ALLOCAITON
 				);
 			});
 		});

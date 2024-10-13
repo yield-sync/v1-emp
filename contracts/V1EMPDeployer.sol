@@ -13,18 +13,6 @@ contract V1EMPDeployer is
 	IV1EMPRegistry public immutable I_V1_EMP_REGISTRY;
 
 
-	receive ()
-		external
-		payable
-	{}
-
-
-	fallback ()
-		external
-		payable
-	{}
-
-
 	constructor (address _v1EMPRegistry)
 	{
 		I_V1_EMP_REGISTRY = IV1EMPRegistry(_v1EMPRegistry);

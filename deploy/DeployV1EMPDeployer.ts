@@ -1,11 +1,15 @@
 require("dotenv").config();
 
+const fs = require('fs');
+const path = require('path');
 
 import { Contract, ContractFactory } from "ethers";
+import { writeFileSync } from "fs";
 import { ethers, run, network } from "hardhat";
 
 
 // [const]
+const filePath = path.join(__dirname, '..', '..', 'deployed.txt');
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 
@@ -44,46 +48,80 @@ async function main() {
 
 	const [OWNER] = await ethers.getSigners();
 
-	console.log("Deploying contract with Account:", OWNER.address, "with balance of", await OWNER.getBalance());
+	const startingStatement = `Deploying \nNetwork: ${network.name} \nAccount: ${OWNER.address} \nBalance: ${await OWNER.getBalance()}\n`;
+
+	writeFileSync(filePath, startingStatement, { flag: "a" });
+
+	console.log(startingStatement);
 
 	// Get contract factories
 	const V1EMPArrayUtility: ContractFactory = await ethers.getContractFactory("V1EMPArrayUtility");
+	const V1EMPUtility: ContractFactory= await ethers.getContractFactory("V1EMPUtility");
+	const V1EMPStrategyUtility: ContractFactory= await ethers.getContractFactory("V1EMPStrategyUtility");
 	const V1EMPDeployer: ContractFactory = await ethers.getContractFactory("V1EMPDeployer");
 	const V1EMPRegistry: ContractFactory = await ethers.getContractFactory("V1EMPRegistry");
 	const V1EMPStrategyDeployer: ContractFactory = await ethers.getContractFactory("V1EMPStrategyDeployer");
-	const V1EMPUtility: ContractFactory= await ethers.getContractFactory("V1EMPUtility");
 
-	let arrayUtility: Contract = await (await V1EMPArrayUtility.deploy()).deployed();
-
-	console.log("arrayUtility Contract address:", arrayUtility.address);
-
+	// Registry
 	let registry = await (await V1EMPRegistry.deploy(governanceContract)).deployed();
 
-	console.log("registry Contract address:", registry.address);
+	console.log("registry contract address:", registry.address);
 
+	writeFileSync(filePath, `V1EMPRegistry: ${registry.address}\n`, { flag: "a" });
+
+	// Array Utility
+	let arrayUtility: Contract = await (await V1EMPArrayUtility.deploy()).deployed();
+
+	console.log("arrayUtility contract address:", arrayUtility.address);
+
+	writeFileSync(filePath, `V1EMPArrayUtility: ${arrayUtility.address}\n`, { flag: "a" });
+
+	// Register the Array Utility
 	await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
 
-	let strategyDeployer = await (await V1EMPStrategyDeployer.deploy(registry.address)).deployed();
 
-	console.log("strategyDeployer Contract address:", strategyDeployer.address);
+	// Strategy Utility
+	let eMPStrategyUtility = await (await V1EMPStrategyUtility.deploy(registry.address)).deployed();
 
-	await registry.v1EMPStrategyDeployerUpdate(strategyDeployer.address);
+	console.log("eMPStrategyUtility contract address:", eMPStrategyUtility.address);
 
+	writeFileSync(filePath, `V1EMPStrategyUtility: ${eMPStrategyUtility.address}\n`, { flag: "a" });
+
+	await registry.v1EMPStrategyUtilityUpdate(eMPStrategyUtility.address);
+
+
+	// EMP Utility
 	let eMPUtility = await (await V1EMPUtility.deploy(registry.address)).deployed();
 
-	console.log("eMPUtility Contract address:", eMPUtility.address);
+	console.log("eMPUtility contract address:", eMPUtility.address);
+
+	writeFileSync(filePath, `V1EMPUtility: ${eMPUtility.address}\n`, { flag: "a" });
 
 	await registry.v1EMPUtilityUpdate(eMPUtility.address);
 
+
+	// Strategy Deployer
+	let strategyDeployer = await (await V1EMPStrategyDeployer.deploy(registry.address)).deployed();
+
+	console.log("strategyDeployer contract address:", strategyDeployer.address);
+
+	writeFileSync(filePath, `V1EMPStrategyDeployer: ${strategyDeployer.address}\n`, { flag: "a" });
+
+	await registry.v1EMPStrategyDeployerUpdate(strategyDeployer.address);
+
+
+	// EMP Deployer
 	let eMPDeployer = await (await V1EMPDeployer.deploy(registry.address)).deployed();
 
-	console.log("eMPDeployer Contract address:", eMPDeployer.address);
+	console.log("eMPDeployer contract address:", eMPDeployer.address);
+
+	writeFileSync(filePath, `V1EMPDeployer: ${eMPDeployer.address}\n`, { flag: "a" });
 
 	await registry.v1EMPDeployerUpdate(eMPDeployer.address);
 
-	console.log("Waiting 30 seconds before verifying..");
 
 	// Delay
+	console.log("Waiting 30 seconds before verifying..");
 	await delay(30000);
 
 
@@ -105,8 +143,28 @@ async function main() {
 			"verify:verify",
 			{
 				address: registry.address,
-				constructorArguments: [],
+				constructorArguments: [governanceContract],
 				contract: "contracts/V1EMPRegistry.sol:V1EMPRegistry"
+			}
+		);
+
+		// V1 EMP Strategy Utility
+		await run(
+			"verify:verify",
+			{
+				address: eMPStrategyUtility.address,
+				constructorArguments: [registry.address],
+				contract: "contracts/V1EMPStrategyUtility.sol:V1EMPStrategyUtility"
+			}
+		);
+
+		// V1 EMP Utility
+		await run(
+			"verify:verify",
+			{
+				address: eMPUtility.address,
+				constructorArguments: [registry.address],
+				contract: "contracts/V1EMPUtility.sol:V1EMPUtility"
 			}
 		);
 
@@ -115,7 +173,7 @@ async function main() {
 			"verify:verify",
 			{
 				address: strategyDeployer.address,
-				constructorArguments: [],
+				constructorArguments: [registry.address],
 				contract: "contracts/V1EMPStrategyDeployer.sol:V1EMPStrategyDeployer"
 			}
 		);
@@ -125,7 +183,7 @@ async function main() {
 			"verify:verify",
 			{
 				address: eMPDeployer.address,
-				constructorArguments: [],
+				constructorArguments: [registry.address],
 				contract: "contracts/V1EMPDeployer.sol:V1EMPDeployer"
 			}
 		);
@@ -143,6 +201,7 @@ async function main() {
 	}
 
 	console.log("Account Balance:", await OWNER.getBalance());
+
 }
 
 

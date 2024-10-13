@@ -32,31 +32,31 @@ contract StrategyInteractorBlank is
 
 
 	/// @inheritdoc IV1EMPStrategyInteractor
-	function utilizedERC20TotalBalance(address __utilizedERC20)
+	function utilizedERC20TotalBalance(address _utilizedERC20)
 		public
 		view
 		override
 		returns (uint256 utilizedERC20TotalAmount_)
 	{
-		return IERC20(__utilizedERC20).balanceOf(address(this));
+		return IERC20(_utilizedERC20).balanceOf(address(this));
 	}
 
 
 	/// @inheritdoc IV1EMPStrategyInteractor
-	function utilizedERC20Deposit(address _from, address __utilizedERC20, uint256 _utilizedERC20Amount)
+	function utilizedERC20Deposit(address _from, address _utilizedERC20, uint256 _utilizedERC20Amount)
 		public
 		override
 		onlyStrategy()
 	{
-		IERC20(__utilizedERC20).transferFrom(_from, address(this), _utilizedERC20Amount);
+		IERC20(_utilizedERC20).transferFrom(_from, address(this), _utilizedERC20Amount);
 	}
 
 	/// @inheritdoc IV1EMPStrategyInteractor
-	function utilizedERC20Withdraw(address _to, address __utilizedERC20, uint256 _utilizedERC20Amount)
+	function utilizedERC20Withdraw(address _to, address _utilizedERC20, uint256 _utilizedERC20Amount)
 		public
 		override
 		onlyStrategy()
 	{
-		IERC20(__utilizedERC20).transfer(_to, _utilizedERC20Amount);
+		IERC20(_utilizedERC20).transfer(_to, _utilizedERC20Amount);
 	}
 }

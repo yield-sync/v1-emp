@@ -13,18 +13,6 @@ contract V1EMPStrategyDeployer is
 	IV1EMPRegistry public immutable I_V1_EMP_REGISTRY;
 
 
-	receive ()
-		external
-		payable
-	{}
-
-
-	fallback ()
-		external
-		payable
-	{}
-
-
 	constructor (address _v1EMPRegistry)
 	{
 		I_V1_EMP_REGISTRY = IV1EMPRegistry(_v1EMPRegistry);
@@ -32,11 +20,11 @@ contract V1EMPStrategyDeployer is
 
 
 	/// @inheritdoc IV1EMPStrategyDeployer
-	function deployV1EMPStrategy(string memory _name, string memory _symbol)
+	function deployV1EMPStrategy()
 		public
 		returns (address v1EMPStrategy_)
 	{
-		v1EMPStrategy_ = address(new V1EMPStrategy(msg.sender, address(I_V1_EMP_REGISTRY), _name, _symbol));
+		v1EMPStrategy_ = address(new V1EMPStrategy(msg.sender, address(I_V1_EMP_REGISTRY)));
 
 		I_V1_EMP_REGISTRY.v1EMPStrategyRegister(v1EMPStrategy_);
 	}

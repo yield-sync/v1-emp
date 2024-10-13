@@ -59,6 +59,40 @@ interface IV1EMPRegistry
 	;
 
 	/**
+	* @dev [view-uint256]
+	* @notice One Hundred Percent
+	* @return {uint256}
+	*/
+	function ONE_HUNDRED_PERCENT()
+		external
+		view
+		returns (uint256)
+	;
+
+	/**
+	* @dev [view-uint256]
+	* @notice V1 EMP Id Tracker
+	* @return {uint256}
+	*/
+	function v1EMPIdTracker()
+		external
+		view
+		returns (uint256)
+	;
+
+	/**
+	* @dev [view-uint256]
+	* @notice V1 EMP Strategy Id Tracker
+	* @return {uint256}
+	*/
+	function v1EMPStrategyIdTracker()
+		external
+		view
+		returns (uint256)
+	;
+
+	/**
+	* @notice ERC20 -> V1EMPERC20ETHValueFeed
 	* @param eRC20 {address}
 	* @return v1EMPERC20ETHValueFeed_ {address}
 	*/
@@ -69,6 +103,7 @@ interface IV1EMPRegistry
 	;
 
 	/**
+	* @notice v1EMP -> v1EMPId
 	* @param _v1EMP {address}
 	* @return v1EMPId_ {uint256}
 	*/
@@ -79,16 +114,7 @@ interface IV1EMPRegistry
 	;
 
 	/**
-	* @param _v1EMPStrategy {address}
-	* @return v1EMPStrategyId_ {uint256}
-	*/
-	function v1EMPStrategy_v1EMPStrategyId(address _v1EMPStrategy)
-		external
-		view
-		returns (uint256 v1EMPStrategyId_)
-	;
-
-	/**
+	* @notice v1EMPId -> v1EMP
 	* @param _v1EMPId {uint256}
 	* @return v1EMP_ {address}
 	*/
@@ -99,6 +125,18 @@ interface IV1EMPRegistry
 	;
 
 	/**
+	* @notice v1EMPStrategy -> v1EMPStrategyId
+	* @param _v1EMPStrategy {address}
+	* @return v1EMPStrategyId_ {uint256}
+	*/
+	function v1EMPStrategy_v1EMPStrategyId(address _v1EMPStrategy)
+		external
+		view
+		returns (uint256 v1EMPStrategyId_)
+	;
+
+	/**
+	* @notice v1EMPStrategyId -> v1EMPStrategy
 	* @param _v1EMPStrategyId {uint256}
 	* @return v1EMPStrategy_ {address}
 	*/
@@ -114,6 +152,7 @@ interface IV1EMPRegistry
 
 	/**
 	* @dev [view-address]
+	* @notice Governance Pay To
 	* @return {address}
 	*/
 	function governancePayTo()
@@ -127,7 +166,7 @@ interface IV1EMPRegistry
 
 
 	/**
-	* @notice Update eRC20_iV1EMPERC20ETHValueFeed
+	* @notice Update eRC20 -> iV1EMPERC20ETHValueFeed
 	* @param _eRC20 {address}
 	* @param _v1EMPERC20ETHValueFeed {address}
 	*/
@@ -136,6 +175,7 @@ interface IV1EMPRegistry
 	;
 
 	/**
+	* @notice V1EMPArrayUtility Update
 	* @param _v1EMPArrayUtility {address}
 	*/
 	function v1EMPArrayUtilityUpdate(address _v1EMPArrayUtility)
@@ -144,6 +184,7 @@ interface IV1EMPRegistry
 
 
 	/**
+	* @notice V1EMPDeployer Update
 	* @param _v1EMPDeployer {address}
 	*/
 	function v1EMPDeployerUpdate(address _v1EMPDeployer)
@@ -151,6 +192,7 @@ interface IV1EMPRegistry
 	;
 
 	/**
+	* @notice V1EMPRegister
 	* @param _v1EMP {address}
 	*/
 	function v1EMPRegister(address _v1EMP)
@@ -158,6 +200,7 @@ interface IV1EMPRegistry
 	;
 
 	/**
+	* @notice V1EMPStrategyDeployer Update
 	* @param _v1EMPStrategyDeployer {address}
 	*/
 	function v1EMPStrategyDeployerUpdate(address _v1EMPStrategyDeployer)
@@ -165,17 +208,23 @@ interface IV1EMPRegistry
 	;
 
 	/**
+	* @notice V1EMPStrategy Register
 	* @param _v1EMPStrategy {address}
 	*/
 	function v1EMPStrategyRegister(address _v1EMPStrategy)
 		external
 	;
 
+	/**
+	* @notice V1EMPStrategyUtility Update
+	* @param _v1EMPStrategyUtility {address}
+	*/
 	function v1EMPStrategyUtilityUpdate(address _v1EMPStrategyUtility)
 		external
 	;
 
 	/**
+	* @notice V1EMPUtility Update
 	* @param _v1EMPUtility {address}
 	*/
 	function v1EMPUtilityUpdate(address _v1EMPUtility)

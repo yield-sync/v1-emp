@@ -5,13 +5,13 @@ import { expect } from "chai";
 import { BigNumber, Contract, ContractFactory, VoidSigner } from "ethers";
 
 import { ERROR, PERCENT, D_18 } from "../const";
-import StrategyTransferUtil from "../scripts/StrategyTransferUtil";
+import StrategyTransferUtil from "../util/StrategyTransferUtil";
 
 
 const LOCATION_IERC20: string = "@openzeppelin/contracts/token/ERC20/IERC20.sol:IERC20";
 
 
-describe("[4.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
+describe("[5.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 	let arrayUtility: Contract;
 	let governance: Contract;
 	let eTHValueFeed: Contract;
@@ -107,7 +107,7 @@ describe("[4.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 		await registry.v1EMPStrategyDeployerUpdate(strategyDeployer.address);
 
 		// Deploy EMP Strategy
-		await strategyDeployer.deployV1EMPStrategy("Strategy", "S");
+		await strategyDeployer.deployV1EMPStrategy();
 
 		// Attach the deployed V1EMPStrategy address
 		strategy = await V1EMPStrategy.attach(String(await registry.v1EMPStrategyId_v1EMPStrategy(1)));

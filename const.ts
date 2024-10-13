@@ -29,13 +29,10 @@ export const ERROR = {
 			"!utilizedERC20DepositOpen"
 		,
 		FEE_RATE_GOVERNANCE_GREATER_THAN_100_PERCENT:
-			"!(_feeRateGovernance + feeRateManager <= ONE_HUNDRED_PERCENT)"
+			"!(_feeRateGovernance)"
 		,
 		FEE_RATE_MANAGER_GREATER_THAN_100_PERCENT:
-			"!(_feeRateManager + feeRateGovernance <= ONE_HUNDRED_PERCENT)"
-		,
-		INVALID_STRATEGY_ALLOCATION_TOTAL:
-			"!(utilizedV1EMPStrategyAllocationTotal == ONE_HUNDRED_PERCENT)"
+			"!(_feeRateManager)"
 		,
 		INVALID_BALANCE:
 			"!(balanceOf(msg.sender) >= _eRC20Amount)"
@@ -43,29 +40,36 @@ export const ERROR = {
 		INVALID_UTILIZED_ERC20_AMOUNT_LENGTH:
 			"!(utilizedV1EMPStrategy.length == _v1EMPStrategyUtilizedERC20Amount.length)"
 		,
+		INVALID_UTILIZED_STRATEGY_ALLOCAITON:
+			"!(utilizedERC20AmountAllocationActual == iV1EMP.utilizedV1EMPStrategy_allocation(utilizedV1EMPStrategy[i]))"
+		,
 		INVALID_STRATEGY_ERC20_AMOUNTS_LENGTH:
 			"!(_v1EMPStrategyERC20Amount.length == _utilizedV1EMPStrategy.length)"
 		,
 		INVALID_UTILIZED_ERC20_LENGTH:
 			"!(_utilizedERC20Amount.length == utilizedERC20.length)"
 		,
-		INVALID_STRATEGY_UTILIZED_ERC20_AMOUNT_LENGTH:
-			"!(_v1EMPStrategyUtilizedERC20Amount.length == _utilizedV1EMPStrategy.length)"
-		,
 		WITHDRAW_NOT_OPEN:
 			"!utilizedERC20WithdrawOpen"
-		,
-		AMOUNTS_VALIDATOR_FAILURE:
-			"!I_V1_EMP_UTILITY.v1EMPStrategyUtilizedERC20AmountValid(address(this), _v1EMPStrategyUtilizedERC20Amount)"
-		,
-		INVALID:
-			"!valid"
 		,
 		UTILIZED_ERC20_NOT_AVAILABLE:
 			"!(utilizedERC20Available)"
 		,
 		ADDRESS_NOT_EMP:
-			"!(I_V1_EMP_REGISTRY.v1EMP_v1EMPId(_v1EMP) > 0)"
+			"!(_I_V1_EMP_REGISTRY.v1EMP_v1EMPId(_v1EMP) > 0)"
+		,
+	},
+	EMP_UTILITY:
+	{
+		INVALID_ALLOCATION:
+		"!(utilizedERC20AllocationActual == _v1EMP_utilizedERC20_utilizationERC20[_v1EMP][utilizedERC20[i]].allocation)"
+		,
+		UTILIZED_V1_EMP_STRATEGY_INVALID_ALLOCATION:
+			"!(utilizedV1EMPStrategyAllocationTotal == _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT())"
+		,
+		INVALID_V1_EMP_STRATEGY:
+			"!(_I_V1_EMP_REGISTRY.v1EMPStrategy_v1EMPStrategyId(_v1EMPStrategy[i]) > 0)"
+		,
 	},
 	STRATEGY: {
 		DEPOSIT_NOT_OPEN:
@@ -75,7 +79,7 @@ export const ERROR = {
 			"!(address(iV1EMPStrategyInteractor) != address(0))"
 		,
 		INVALID_ERC20_ALLOCATION_TOTAL:
-			"!(utilizedERC20AllocationTotal == IV1EMPStrategy(msg.sender).ONE_HUNDRED_PERCENT())"
+			"!(utilizedERC20AllocationTotal == _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT())"
 		,
 		INVALID_BALANCE:
 			"!(eMP_equity[msg.sender] >= _eRC20Amount)"
@@ -102,7 +106,12 @@ export const ERROR = {
 			"!utilizedERC20WithdrawOpen"
 		,
 		ERC20_NO_ETH_VALUE_FEED_AVAILABLE:
-			"!(I_V1_EMP_REGISTRY.eRC20_v1EMPERC20ETHValueFeed(_utilizedERC20[i]) != address(0))"
+			"!(_I_V1_EMP_REGISTRY.eRC20_v1EMPERC20ETHValueFeed(_utilizedERC20[i]) != address(0))"
+		,
+	},
+	STRATEGY_UTILITY: {
+		ADDRESS_NOT_STRATEGY:
+			"!(_I_V1_EMP_REGISTRY.v1EMPStrategy_v1EMPStrategyId(_v1EMPStrategy) > 0)"
 		,
 	},
 	NOT_COMPUTED:

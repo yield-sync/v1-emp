@@ -25,7 +25,7 @@ export default class StrategyTransferUtil
 	 */
 	public async calculateERC20Required(ETHValue: BigNumber): Promise<BigNumber[]>
 	{
-		const ONE_HUNDRED_PERCENT = await this._v1EMPStrategy.ONE_HUNDRED_PERCENT();
+		const ONE_HUNDRED_PERCENT = await this._registry.ONE_HUNDRED_PERCENT();
 
 		const UTILIZED_ERC20S = await this._v1EMPStrategy.utilizedERC20();
 

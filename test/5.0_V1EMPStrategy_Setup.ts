@@ -7,7 +7,7 @@ import { Contract, ContractFactory, VoidSigner } from "ethers";
 import { ERROR, PERCENT } from "../const";
 
 
-describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
+describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 	let arrayUtility: Contract;
 	let governance: Contract;
 	let eTHValueFeed: Contract;
@@ -27,16 +27,6 @@ describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
-		/**
-		* This beforeEach process does the following:
-		* 1) Deploy a Governance contract
-		* 2) Set the treasury on the Governance contract
-		* 3) Deploy an Array Utility contract
-		* 4) Deploy a Registry contract
-		* 5) Register the Array Utility contract on the Registry contract
-		* 6) Deploy a Strategy Utility contract
-		* 7) Register the Strategy Utility contract on the Registry contract
-		*/
 		[owner, manager, treasury, badActor] = await ethers.getSigners();
 
 
@@ -95,7 +85,7 @@ describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
 		await registry.v1EMPStrategyDeployerUpdate(strategyDeployer.address);
 
 		// Deploy EMP Strategy
-		await strategyDeployer.deployV1EMPStrategy("Strategy", "S");
+		await strategyDeployer.deployV1EMPStrategy();
 
 		// Attach the deployed V1EMPStrategy address
 		strategy = await V1EMPStrategy.attach(String(await registry.v1EMPStrategyId_v1EMPStrategy(1)));
@@ -188,11 +178,10 @@ describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
 
 				for (let i: number = 0; i < INVALID_ALLOCATION.length; i++)
 				{
-					// Deploy a temporary contract
 					const V1EMPStrategy: ContractFactory = await ethers.getContractFactory("V1EMPStrategy");
 
 					const _YSS = await V1EMPStrategy.attach(
-						String(await registry.v1EMPStrategyId_v1EMPStrategy(await registry.eMPStrategyIdTracker()))
+						String(await registry.v1EMPStrategyId_v1EMPStrategy(await registry.v1EMPStrategyIdTracker()))
 					);
 
 					await expect(
@@ -234,7 +223,7 @@ describe("[4.0] V1EMPStrategy.sol - Setup", async () => {
 					const V1EMPStrategy: ContractFactory = await ethers.getContractFactory("V1EMPStrategy");
 
 					const _YSS = await V1EMPStrategy.attach(
-						String(await registry.v1EMPStrategyId_v1EMPStrategy(await registry.eMPStrategyIdTracker()))
+						String(await registry.v1EMPStrategyId_v1EMPStrategy(await registry.v1EMPStrategyIdTracker()))
 					);
 
 					await expect(_YSS.utilizedERC20Update(INPUT.utilizedERC20, INPUT.utilization)).to.be.not.rejected;
