@@ -224,7 +224,7 @@ contract V1EMP is
 
 			uint256[] memory v1EMPStrategyERC20Amount = new uint256[](_utilizedV1EMPStrategy.length);
 
-			uint256 _eRC20AmountPercentOfTotalSupply = _eRC20Amount * 10 ** decimals() / totalSupply();
+			uint256 _eRC20AmountPercentOfTotalSupply = _eRC20Amount * 1e18 / totalSupply();
 
 			for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
 			{
