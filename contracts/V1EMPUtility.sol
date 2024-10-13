@@ -125,6 +125,8 @@ contract V1EMPUtility is
 		override
 		returns(bool utilizedERC20Available_, uint256[] memory transferAmount_)
 	{
+		IV1EMP iV1EMP = IV1EMP(_v1EMP);
+
 		utilizedERC20Available_ = true;
 
 		address[] memory _utilizedERC20 = _v1EMP_utilizedERC20[_v1EMP];
@@ -135,11 +137,9 @@ contract V1EMPUtility is
 
 		for (uint256 i = 0; i < _v1EMP_utilizedERC20[_v1EMP].length; i++)
 		{
-			require(IV1EMP(_v1EMP).totalSupply() != 0, "!(totalSupply() != 0)");
+			require(iV1EMP.totalSupply() != 0, "!(iV1EMP.totalSupply() != 0)");
 
-			transferAmount_[i] = _utilizedERC20TotalAmount[i].mul(1e18).div(IV1EMP(_v1EMP).totalSupply()).mul(_eRC20Amount).div(
-				1e18
-			);
+			transferAmount_[i] = _utilizedERC20TotalAmount[i].mul(_eRC20Amount).div(iV1EMP.totalSupply());
 
 			if (IERC20(_utilizedERC20[i]).balanceOf(_v1EMP) < transferAmount_[i])
 			{
@@ -156,11 +156,9 @@ contract V1EMPUtility is
 		existantV1EMP(_v1EMP)
 		returns (uint256[] memory utilizedERC20TotalAmount_)
 	{
-		IV1EMP iV1EMP = IV1EMP(_v1EMP);
-
 		address[] memory _utilizedERC20 = _v1EMP_utilizedERC20[_v1EMP];
 
-		address[] memory _utilizedV1EMPStrategy = iV1EMP.utilizedV1EMPStrategy();
+		address[] memory _utilizedV1EMPStrategy = IV1EMP(_v1EMP).utilizedV1EMPStrategy();
 
 		utilizedERC20TotalAmount_ = new uint256[](_utilizedERC20.length);
 
