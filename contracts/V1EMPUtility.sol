@@ -89,15 +89,13 @@ contract V1EMPUtility is
 
 		for (uint256 i = 0; i < utilizedERC20.length; i++)
 		{
-			uint256 utilizedERC20AmountETHValue = _utilizedERC20Amount[i].mul(
+			eRC20AmountETHValue[i] = _utilizedERC20Amount[i].mul(
 				IV1EMPETHValueFeed(_I_V1_EMP_REGISTRY.eRC20_v1EMPERC20ETHValueFeed(utilizedERC20[i])).utilizedERC20ETHValue()
 			).div(
 				1e18
 			);
 
-			utilizedERC20AmountTotalETHValue_ += utilizedERC20AmountETHValue;
-
-			eRC20AmountETHValue[i] = utilizedERC20AmountETHValue;
+			utilizedERC20AmountTotalETHValue_ += eRC20AmountETHValue[i];
 		}
 
 		for (uint256 i = 0; i < utilizedERC20.length; i++)
@@ -279,15 +277,13 @@ contract V1EMPUtility is
 				{
 					utilizationERC20_[ii].deposit = true;
 
-					uint256 utilizationERC20Allocation = utilizationERC20.allocation.mul(
+					utilizationERC20_[ii].allocation += utilizationERC20.allocation.mul(
 						iV1EMP.utilizedV1EMPStrategy_allocation(_utilizedV1EMPStrategy[i])
 					).div(
 						1e18
 					);
 
-					utilizationERC20_[ii].allocation += utilizationERC20Allocation;
-
-					utilizedERC20AllocationTotal += utilizationERC20Allocation;
+					utilizedERC20AllocationTotal += utilizationERC20_[ii].allocation;
 				}
 
 				if (utilizationERC20.withdraw)

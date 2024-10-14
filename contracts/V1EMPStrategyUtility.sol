@@ -117,15 +117,13 @@ contract V1EMPStrategyUtility is
 		{
 			if (iV1EMPStrategy.utilizedERC20_utilizationERC20(_utilizedERC20[i]).deposit)
 			{
-				uint256 ethValue = _utilizedERC20Amount[i].mul(
+				utilizedERC20AmountETHValue_[i] = _utilizedERC20Amount[i].mul(
 					IV1EMPETHValueFeed(_I_V1_EMP_REGISTRY.eRC20_v1EMPERC20ETHValueFeed(_utilizedERC20[i])).utilizedERC20ETHValue()
 				).div(
 					1e18
 				);
 
-				utilizedERC20AmountETHValueTotal_ += ethValue;
-
-				utilizedERC20AmountETHValue_[i] = ethValue;
+				utilizedERC20AmountETHValueTotal_ += utilizedERC20AmountETHValue_[i];
 			}
 		}
 	}
