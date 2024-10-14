@@ -330,13 +330,11 @@ contract V1EMPUtility is
 
 		for (uint256 i = 0; i < utilizedV1EMPStrategy.length; i++)
 		{
-			(uint256 utilizedERC20AmountETHValueTotal_, ) = IV1EMPStrategy(utilizedV1EMPStrategy[i]).utilizedERC20AmountETHValue(
+			(utilizedV1EMPStrategyERC20AmountETHValue[i], ) = IV1EMPStrategy(utilizedV1EMPStrategy[i]).utilizedERC20AmountETHValue(
 				_v1EMPStrategyUtilizedERC20Amount[i]
 			);
 
-			utilizedV1EMPStrategyERC20AmountETHValueTotal_ += utilizedERC20AmountETHValueTotal_;
-
-			utilizedV1EMPStrategyERC20AmountETHValue[i] = utilizedERC20AmountETHValueTotal_;
+			utilizedV1EMPStrategyERC20AmountETHValueTotal_ += utilizedV1EMPStrategyERC20AmountETHValue[i];
 		}
 
 		for (uint256 i = 0; i < utilizedV1EMPStrategy.length; i++)
