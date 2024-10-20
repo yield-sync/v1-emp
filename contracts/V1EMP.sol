@@ -174,13 +174,13 @@ contract V1EMP is
 	{
 		_I_V1_EMP_UTILITY.utilizedERC20Update();
 
-		address[] memory __utilizedERC20 = _I_V1_EMP_UTILITY.v1EMP_utilizedERC20(address(this));
+		address[] memory _utilizedERC20 = _I_V1_EMP_UTILITY.v1EMP_utilizedERC20(address(this));
 
 		for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
 		{
-			for (uint256 ii = 0; ii < __utilizedERC20.length; ii++)
+			for (uint256 ii = 0; ii < _utilizedERC20.length; ii++)
 			{
-				IERC20(__utilizedERC20[ii]).approve(
+				IERC20(_utilizedERC20[ii]).approve(
 					address(IV1EMPStrategy(_utilizedV1EMPStrategy[i]).iV1EMPStrategyInteractor()),
 					type(uint256).max
 				);

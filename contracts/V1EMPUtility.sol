@@ -12,7 +12,6 @@ import { IV1EMPRegistry } from "./interface/IV1EMPRegistry.sol";
 import { IV1EMPStrategy } from "./interface/IV1EMPStrategy.sol";
 import { IV1EMPUtility, UtilizationERC20 } from "./interface/IV1EMPUtility.sol";
 
-
 contract V1EMPUtility is
 	IV1EMPUtility
 {
@@ -92,7 +91,7 @@ contract V1EMPUtility is
 			eRC20AmountETHValue[i] = _utilizedERC20Amount[i].mul(
 				IV1EMPETHValueFeed(_I_V1_EMP_REGISTRY.eRC20_v1EMPERC20ETHValueFeed(utilizedERC20[i])).utilizedERC20ETHValue()
 			).div(
-				1e18
+				10 ** IV1EMPETHValueFeed(_I_V1_EMP_REGISTRY.eRC20_v1EMPERC20ETHValueFeed(utilizedERC20[i])).eRC20Decimals()
 			);
 
 			utilizedERC20AmountTotalETHValue_ += eRC20AmountETHValue[i];
@@ -105,12 +104,12 @@ contract V1EMPUtility is
 				"!computed"
 			);
 
-			if (utilizedERC20AllocationActual != _v1EMP_utilizedERC20_utilizationERC20[_v1EMP][utilizedERC20[i]].allocation)
+			if (_v1EMP_utilizedERC20_utilizationERC20[_v1EMP][utilizedERC20[i]].allocation != utilizedERC20AllocationActual)
 			{
 				return (
 					false,
 					utilizedERC20AmountTotalETHValue_,
-					"!(utilizedERC20AllocationActual == _v1EMP_utilizedERC20_utilizationERC20[_v1EMP][utilizedERC20[i]].allocation)"
+					"!(_v1EMP_utilizedERC20_utilizationERC20[_v1EMP][utilizedERC20[i]].allocation == utilizedERC20AllocationActual)"
 				);
 			}
 		}
@@ -127,19 +126,15 @@ contract V1EMPUtility is
 
 		utilizedERC20Available_ = true;
 
-		address[] memory _utilizedERC20 = _v1EMP_utilizedERC20[_v1EMP];
-
 		transferAmount_ = new uint256[](_v1EMP_utilizedERC20[_v1EMP].length);
 
 		uint256[] memory _utilizedERC20TotalAmount = utilizedERC20TotalBalance(_v1EMP);
 
 		for (uint256 i = 0; i < _v1EMP_utilizedERC20[_v1EMP].length; i++)
 		{
-			require(iV1EMP.totalSupply() != 0, "!(iV1EMP.totalSupply() != 0)");
+			transferAmount_[i] = _utilizedERC20TotalAmount[i].mul(_eRC20Amount).div(iV1EMP.totalSupply(), "!computed");
 
-			transferAmount_[i] = _utilizedERC20TotalAmount[i].mul(_eRC20Amount).div(iV1EMP.totalSupply());
-
-			if (IERC20(_utilizedERC20[i]).balanceOf(_v1EMP) < transferAmount_[i])
+			if (IERC20(_v1EMP_utilizedERC20[_v1EMP][i]).balanceOf(_v1EMP) < transferAmount_[i])
 			{
 				utilizedERC20Available_ = false;
 			}
@@ -154,20 +149,18 @@ contract V1EMPUtility is
 		existantV1EMP(_v1EMP)
 		returns (uint256[] memory utilizedERC20TotalAmount_)
 	{
-		address[] memory _utilizedERC20 = _v1EMP_utilizedERC20[_v1EMP];
-
 		address[] memory _utilizedV1EMPStrategy = IV1EMP(_v1EMP).utilizedV1EMPStrategy();
 
-		utilizedERC20TotalAmount_ = new uint256[](_utilizedERC20.length);
+		utilizedERC20TotalAmount_ = new uint256[](_v1EMP_utilizedERC20[_v1EMP].length);
 
-		for (uint256 i = 0; i < _utilizedERC20.length; i++)
+		for (uint256 i = 0; i < _v1EMP_utilizedERC20[_v1EMP].length; i++)
 		{
-			utilizedERC20TotalAmount_[i] += IERC20(_utilizedERC20[i]).balanceOf(_v1EMP);
+			utilizedERC20TotalAmount_[i] += IERC20(_v1EMP_utilizedERC20[_v1EMP][i]).balanceOf(_v1EMP);
 
 			for (uint256 ii = 0; ii < _utilizedV1EMPStrategy.length; ii++)
 			{
 				utilizedERC20TotalAmount_[i] += IV1EMPStrategy(_utilizedV1EMPStrategy[ii]).utilizedERC20TotalBalance(
-					_utilizedERC20[i]
+					_v1EMP_utilizedERC20[_v1EMP][i]
 				);
 			}
 		}

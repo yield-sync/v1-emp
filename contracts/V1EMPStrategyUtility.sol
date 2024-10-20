@@ -67,7 +67,8 @@ contract V1EMPStrategyUtility is
 
 		uint256[] memory utilizedERC20AmountETHValue_;
 
-		(utilizedERC20AmountETHValueTotal_, utilizedERC20AmountETHValue_) = iV1EMPStrategy.utilizedERC20AmountETHValue(
+		(utilizedERC20AmountETHValueTotal_, utilizedERC20AmountETHValue_) = utilizedERC20AmountETHValue(
+			_v1EMPStrategy,
 			_utilizedERC20Amount
 		);
 
@@ -107,20 +108,20 @@ contract V1EMPStrategyUtility is
 	{
 		IV1EMPStrategy iV1EMPStrategy = IV1EMPStrategy(_v1EMPStrategy);
 
-		address[] memory _utilizedERC20 = iV1EMPStrategy.utilizedERC20();
+		address[] memory utilizedERC20 = iV1EMPStrategy.utilizedERC20();
 
-		require(_utilizedERC20.length == _utilizedERC20Amount.length, "!(_utilizedERC20.length == _utilizedERC20Amount.length)");
+		require(utilizedERC20.length == _utilizedERC20Amount.length, "!(utilizedERC20.length == _utilizedERC20Amount.length)");
 
 		utilizedERC20AmountETHValue_ = new uint256[](_utilizedERC20Amount.length);
 
-		for (uint256 i = 0; i < _utilizedERC20.length; i++)
+		for (uint256 i = 0; i < utilizedERC20.length; i++)
 		{
-			if (iV1EMPStrategy.utilizedERC20_utilizationERC20(_utilizedERC20[i]).deposit)
+			if (iV1EMPStrategy.utilizedERC20_utilizationERC20(utilizedERC20[i]).deposit)
 			{
 				utilizedERC20AmountETHValue_[i] = _utilizedERC20Amount[i].mul(
-					IV1EMPETHValueFeed(_I_V1_EMP_REGISTRY.eRC20_v1EMPERC20ETHValueFeed(_utilizedERC20[i])).utilizedERC20ETHValue()
+					IV1EMPETHValueFeed(_I_V1_EMP_REGISTRY.eRC20_v1EMPERC20ETHValueFeed(utilizedERC20[i])).utilizedERC20ETHValue()
 				).div(
-					1e18
+					10 ** IV1EMPETHValueFeed(_I_V1_EMP_REGISTRY.eRC20_v1EMPERC20ETHValueFeed(utilizedERC20[i])).eRC20Decimals()
 				);
 
 				utilizedERC20AmountETHValueTotal_ += utilizedERC20AmountETHValue_[i];

@@ -13,4 +13,14 @@ interface IV1EMPETHValueFeed
 		view
 		returns (uint256 utilizedERC20ETHValue_)
 	;
+
+	/**
+	*  @notice ERC20 Decimals
+	*/
+	function eRC20Decimals()
+		external
+		view
+		returns (uint8)
+	;
+
 }
