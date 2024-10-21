@@ -11,9 +11,9 @@ export default class EMPTransferUtil
 	private _registry: Contract;
 	private _eMP: Contract;
 	private _eMPUtility: Contract;
-	private _utilizedV1EMPStrategy: string[] = [];
+	private _utilizedV1EMPStrategy: { strategy: string; allocation: BigNumber }[] = [];
+	private _strategyUtilizedERC20UpdateTracker: { [key: string]: BigNumber; } = {};
 	private _utilizedERC20: { [key: string]: BigNumber; } = {};
-
 
 
 	constructor (_eMP: Contract, _registry: Contract, _eMPUtility: Contract)
@@ -27,19 +27,63 @@ export default class EMPTransferUtil
 	/**
 	 * @notice Checks if an update is needed for the
 	 */
-	public async updateNeeded()
+	public async updateAll()
 	{
+		await this.updateUtilizedV1EMPStrategy();
+		await this.updateUtilizedERC20UpdateTracker();		
+	}
 
+	public async statusUpdateRequired(): Promise<Boolean>
+	{
+		const STRATEGY = await ethers.getContractAt("V1EMPStrategy", this._utilizedV1EMPStrategy[i]);
+
+		const EMP_UTILIZED_STRATEGIES = await STRATEGY.utilizedV1EMPStrategy();
+
+		// Check that the utilized Strategies has not changed
+		for (let i = 0; i < EMP_UTILIZED_STRATEGIES.length; i++) {
+			EMP_UTILIZED_STRATEGIES[i];
+		}
+
+		// Check that the utilized erc20 for the strategies has not changed
+		for (let i = 0; i < this._utilizedV1EMPStrategy.length; i++)
+		{
+			const STRATEGY_ADDRESS = this._utilizedV1EMPStrategy[i];
+
+			const STRATEGY = await ethers.getContractAt("V1EMPStrategy", STRATEGY_ADDRESS);
+			
+			if (await STRATEGY.utilizedERC20UpdateTracker() != this._strategyUtilizedERC20UpdateTracker[STRATEGY_ADDRESS])
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
-	 * @notice Update the utilized V1 EMP Strategies
-	 */
+	* @notice Update the utilized V1 EMP Strategies
+	*/
 	public async updateUtilizedV1EMPStrategy()
 	{
 		this._utilizedV1EMPStrategy = await this._eMP.utilizedV1EMPStrategy();
 	}
 
+	/**
+	 * @notice Update Utilized ERC20 Update Tracker
+	 */
+	public async updateUtilizedERC20UpdateTracker()
+	{
+		await this.updateUtilizedV1EMPStrategy();
+
+		for (let i = 0; i < this._utilizedV1EMPStrategy.length; i++)
+		{
+			const STRATEGY_ADDRESS = this._utilizedV1EMPStrategy[i];
+
+			const STRATEGY = await ethers.getContractAt("V1EMPStrategy", STRATEGY_ADDRESS);
+			
+			this._strategyUtilizedERC20UpdateTracker[STRATEGY_ADDRESS] = await STRATEGY.utilizedERC20UpdateTracker();
+		}
+	}
 
 	/**
 	 * @notice This function computes what ERC20 are utiized without referring the the EMP utilizedERC20 function. This is
@@ -47,7 +91,7 @@ export default class EMPTransferUtil
 	 */
 	public async updateUtilizedERC20()
 	{
-		await this.updateUtilizedV1EMPStrategy();
+		await this.updateAll();
 
 		for (let i = 0; i < this._utilizedV1EMPStrategy.length; i++)
 		{
