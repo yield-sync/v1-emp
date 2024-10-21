@@ -25,6 +25,14 @@ export default class EMPTransferUtil
 
 
 	/**
+	 * @notice Checks if an update is needed for the
+	 */
+	public async updateNeeded()
+	{
+
+	}
+
+	/**
 	 * @notice Update the utilized V1 EMP Strategies
 	 */
 	public async updateUtilizedV1EMPStrategy()
@@ -39,29 +47,37 @@ export default class EMPTransferUtil
 	 */
 	public async updateUtilizedERC20()
 	{
-		// Update the utilized strategies
-		this.updateUtilizedV1EMPStrategy();
-
-		console.log("strategies", this._utilizedV1EMPStrategy);
+		await this.updateUtilizedV1EMPStrategy();
 
 		for (let i = 0; i < this._utilizedV1EMPStrategy.length; i++)
 		{
-			const strategy = await ethers.getContractAt(
-				"V1EMPStrategy",
-				await this._registry.eRC20_v1EMPERC20ETHValueFeed( this._utilizedV1EMPStrategy[i])
-			);
+			const STRATEGY = await ethers.getContractAt("V1EMPStrategy", this._utilizedV1EMPStrategy[i]);
 
-			const strategyUtilizedERC20 = await strategy.utilizedERC20();
+			const STRATEGY_UTILIZED_ERC20 = await STRATEGY.utilizedERC20();
 
-			for (let ii = 0; ii < strategyUtilizedERC20.length; ii++) {
-				const erc20 = strategyUtilizedERC20[ii];
-				console.log(erc20);
+			for (let ii = 0; ii < STRATEGY_UTILIZED_ERC20.length; ii++)
+			{
+				const ERC20 = STRATEGY_UTILIZED_ERC20[ii];
 
-				this._utilizedERC20[erc20] = this._utilizedERC20[erc20].add(BigNumber.from(1));
+				const ERC20_ALLOC: BigNumber = (await STRATEGY.utilizedERC20_utilizationERC20(ERC20)).allocation;
+
+				const EMP_ERC20_ALLOC: BigNumber = ERC20_ALLOC.mul(
+					await this._eMP.utilizedV1EMPStrategy_allocation(this._utilizedV1EMPStrategy[i])
+				).div(
+					D_18
+				);
+
+				if (!this._utilizedERC20[ERC20])
+				{
+					// Set to 0
+					this._utilizedERC20[ERC20] = EMP_ERC20_ALLOC;
+
+					continue;
+				}
+
+				this._utilizedERC20[ERC20] = this._utilizedERC20[ERC20].add(EMP_ERC20_ALLOC);
 			}
 		}
-
-		console.log(this._utilizedERC20);
 	}
 
 	/**
