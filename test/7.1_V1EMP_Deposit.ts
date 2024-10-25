@@ -17,6 +17,7 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 	let arrayUtility: Contract;
 	let governance: Contract;
 	let eTHValueFeed: Contract;
+	let eTHValueFeedC: Contract;
 	let eMPDeployer: Contract;
 	let eMPUtility: Contract;
 	let registry: Contract;
@@ -88,15 +89,16 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 
 
 		// Testing contracts
-		mockERC20A = await (await MockERC20.deploy("Mock A", "A")).deployed();
-		mockERC20B = await (await MockERC20.deploy("Mock B", "B")).deployed();
-		mockERC20C = await (await MockERC20.deploy("Mock C", "C")).deployed();
+		mockERC20A = await (await MockERC20.deploy("Mock A", "A", 18)).deployed();
+		mockERC20B = await (await MockERC20.deploy("Mock B", "B", 18)).deployed();
+		mockERC20C = await (await MockERC20.deploy("Mock C", "C", 6)).deployed();
 
-		eTHValueFeed = await (await ETHValueFeedDummy.deploy()).deployed();
+		eTHValueFeed = await (await ETHValueFeedDummy.deploy(18)).deployed();
+		eTHValueFeedC = await (await ETHValueFeedDummy.deploy(6)).deployed();
 
 		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20A.address, eTHValueFeed.address);
 		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20B.address, eTHValueFeed.address);
-		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20C.address, eTHValueFeed.address);
+		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20C.address, eTHValueFeedC.address);
 
 
 		/**
@@ -443,6 +445,7 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 						await strategies[0].contract.utilizedERC20WithdrawOpenToggle();
 					}
 
+					// Update the utilized tokens for the first strategy..
 					await strategies[0].contract.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
 				});
 
@@ -454,11 +457,26 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 				});
 
 				it("Should update EMP's utilizedERC20 array to be a union of the strategy's utilizedERC20s..", async () => {
-					await expect(
-						eMPs[0].contract.utilizedERC20Deposit(
-							[ethers.utils.parseUnits(".5", 18), ethers.utils.parseUnits(".5", 18)]
-						)
-					).to.be.not.reverted;
+					/**
+					* @dev The expectation is that the utilizd ERC20s are updated the next time the user tries to deposit
+					* the required tokens
+					*/
+
+					let result = await eMPs[0].eMPTransferUtil.calculateERC20RequiredExpected(eTHValueEMPDepositAmount);
+
+					utilizedERC20 = result.updatedUtilizedERC20;
+					eMPDepositAmounts = result.calculatedERC20Required;
+
+					// Approve the ERC20 tokens for the strategy interactor for new amount
+					for (let i: number = 0; i < utilizedERC20.length; i++)
+					{
+						await (await ethers.getContractAt(LOCATION_MOCKERC20, utilizedERC20[i])).approve(
+							eMPs[0].contract.address,
+							eMPDepositAmounts[i]
+						);
+					}
+
+					await expect(eMPs[0].contract.utilizedERC20Deposit(eMPDepositAmounts)).to.be.not.reverted;
 
 					utilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMPs[0].contract.address);
 

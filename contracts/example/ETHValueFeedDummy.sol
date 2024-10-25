@@ -12,6 +12,13 @@ contract ETHValueFeedDummy is
 	IV1EMPETHValueFeed
 {
 	uint256 public eTHValue = 1e18;
+	uint8 public decimals;
+
+
+	constructor (uint8 _decimals)
+	{
+		decimals = _decimals;
+	}
 
 
 	/// @inheritdoc IV1EMPETHValueFeed
@@ -22,6 +29,20 @@ contract ETHValueFeedDummy is
 		returns (uint256 utilizedERC20ETHValue_)
 	{
 		return eTHValue;
+	}
+
+	/// @inheritdoc IV1EMPETHValueFeed
+	/**
+	* @dev This function should return the decimals place for the given erc20. If the ERC20 does not have such a function
+	* then create a relevant decimals function here.
+	*/
+	function eRC20Decimals()
+		public
+		view
+		override
+		returns (uint8)
+	{
+		return decimals;
 	}
 
 
