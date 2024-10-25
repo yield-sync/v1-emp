@@ -18,6 +18,7 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 	let arrayUtility: Contract;
 	let governance: Contract;
 	let eTHValueFeed: Contract;
+	let eTHValueFeedC: Contract;
 	let eMPDeployer: Contract;
 	let eMPUtility: Contract;
 	let registry: Contract;
@@ -45,6 +46,20 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 
 	let eMPDepositAmounts: UtilizedERC20Amount;
 	let depositAmount: UtilizedERC20Amount = [];
+
+
+	async function approveTokens(eMP: string, utilizedERC20: string[], eMPDepositAmounts: BigNumber[])
+	{
+		if (utilizedERC20.length != eMPDepositAmounts.length)
+		{
+			throw new Error("function approveTokens: utilizedERC20.length != eMPDepositAmounts.length");
+		}
+
+		for (let i: number = 0; i < utilizedERC20.length; i++)
+		{
+			await (await ethers.getContractAt(LOCATION_MOCKERC20, utilizedERC20[i])).approve(eMP, eMPDepositAmounts[i]);
+		}
+	}
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
@@ -94,15 +109,16 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 
 
 		// Testing contracts
-		mockERC20A = await (await MockERC20.deploy("Mock A", "A")).deployed();
-		mockERC20B = await (await MockERC20.deploy("Mock B", "B")).deployed();
-		mockERC20C = await (await MockERC20.deploy("Mock C", "C")).deployed();
+		mockERC20A = await (await MockERC20.deploy("Mock A", "A", 18)).deployed();
+		mockERC20B = await (await MockERC20.deploy("Mock B", "B", 18)).deployed();
+		mockERC20C = await (await MockERC20.deploy("Mock C", "C", 6)).deployed();
 
-		eTHValueFeed = await (await ETHValueFeedDummy.deploy()).deployed();
+		eTHValueFeed = await (await ETHValueFeedDummy.deploy(18)).deployed();
+		eTHValueFeedC = await (await ETHValueFeedDummy.deploy(6)).deployed();
 
 		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20A.address, eTHValueFeed.address);
 		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20B.address, eTHValueFeed.address);
-		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20C.address, eTHValueFeed.address);
+		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20C.address, eTHValueFeedC.address);
 
 
 		/**
@@ -213,19 +229,9 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 			expect(await eMPs[i].contract.utilizedERC20WithdrawOpen()).to.be.true;
 		}
 
-
 		eMPDepositAmounts = await eMPs[0].eMPTransferUtil.calculateERC20Required(eTHValueEMPDepositAmount);
 
-		// Approve the ERC20 tokens for the strategy interactor
-		for (let i: number = 0; i < (await eMPUtility.v1EMP_utilizedERC20(eMPs[0].contract.address)).length; i++)
-		{
-			let eMPUtilizedERC20 = (await eMPUtility.v1EMP_utilizedERC20(eMPs[0].contract.address))[i];
-
-			await (await ethers.getContractAt(LOCATION_MOCKERC20, eMPUtilizedERC20)).approve(
-				eMPs[0].contract.address,
-				eMPDepositAmounts[i]
-			);
-		}
+		await approveTokens(eMPs[0].contract.address, eMPDepositAmounts, eMPDepositAmounts);
 
 		// Deposit the utilized ERC20 tokens into EMP
 		await eMPs[0].contract.utilizedERC20Deposit(eMPDepositAmounts);

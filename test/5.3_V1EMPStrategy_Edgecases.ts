@@ -15,6 +15,7 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 	let arrayUtility: Contract;
 	let governance: Contract;
 	let eTHValueFeed: Contract;
+	let eTHValueFeedC: Contract;
 	let strategyInteractor: Contract;
 	let registry: Contract;
 	let strategy: Contract;
@@ -73,15 +74,16 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 
 
 		// Testing contracts
-		mockERC20A = await (await MockERC20.deploy("Mock A", "A")).deployed();
-		mockERC20B = await (await MockERC20.deploy("Mock B", "B")).deployed();
-		mockERC20C = await (await MockERC20.deploy("Mock C", "C")).deployed();
+		mockERC20A = await (await MockERC20.deploy("Mock A", "A", 18)).deployed();
+		mockERC20B = await (await MockERC20.deploy("Mock B", "B", 18)).deployed();
+		mockERC20C = await (await MockERC20.deploy("Mock C", "C", 6)).deployed();
 
-		eTHValueFeed = await (await ETHValueFeedDummy.deploy()).deployed();
+		eTHValueFeed = await (await ETHValueFeedDummy.deploy(18)).deployed();
+		eTHValueFeedC = await (await ETHValueFeedDummy.deploy(6)).deployed();
 
 		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20A.address, eTHValueFeed.address);
 		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20B.address, eTHValueFeed.address);
-		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20C.address, eTHValueFeed.address);
+		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20C.address, eTHValueFeedC.address);
 
 		strategyInteractor = await (await StrategyInteractorDummy.deploy()).deployed();
 
@@ -255,7 +257,7 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 
 		it("Should fail to return C if withdraw is not set to true..", async () => {
 			// Give ERC20C to Strategy Interactor to mock rewards accrual
-			await mockERC20C.connect(owner).transfer(strategyInteractor.address, ethers.utils.parseUnits("1", 18));
+			await mockERC20C.connect(owner).transfer(strategyInteractor.address, ethers.utils.parseUnits("1", 6));
 
 			const UTILIZED_ERC20: string[] = await strategy.utilizedERC20();
 

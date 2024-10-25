@@ -5,6 +5,9 @@ import { BigNumber, Contract } from "ethers";
 import { D_18 } from "../const"
 
 
+const LOCATION_IERC20: string = "contracts/test-contracts/MockERC20.sol:MockERC20";
+
+
 export default class StrategyTransferUtil
 {
 	private _registry: Contract;
@@ -33,13 +36,19 @@ export default class StrategyTransferUtil
 
 		for (let i: number = 0; i < UTILIZED_ERC20S.length; i++)
 		{
-			let tokenAmount: BigNumber = ethers.utils.parseUnits("0", 18);
+			const MockERC20 = await ethers.getContractAt(LOCATION_IERC20, UTILIZED_ERC20S[i]);
+
+			let tokenAmount: BigNumber = ethers.utils.parseUnits("0", await MockERC20.decimals());
 
 			const UTILIZATION = await this._v1EMPStrategy.utilizedERC20_utilizationERC20(UTILIZED_ERC20S[i]);
 
 			if (UTILIZATION.deposit)
 			{
-				const ALLOCATION: BigNumber = UTILIZATION.allocation.mul(D_18).div(ONE_HUNDRED_PERCENT);
+				const ALLOCATION: BigNumber = UTILIZATION.allocation.mul(
+					ethers.utils.parseUnits("1", await MockERC20.decimals())
+				).div(
+					ONE_HUNDRED_PERCENT
+				);
 
 				tokenAmount = ETHValue.mul(ALLOCATION).div(D_18);
 			}
@@ -109,16 +118,22 @@ export default class StrategyTransferUtil
 		// Calculate how much of each utilized tokens are being used
 		for (let i: number = 0; i < UTILIZED_ERC20S.length; i++)
 		{
-			const feed = await ethers.getContractAt(
+			const ETH_VALUE_FEED = await ethers.getContractAt(
 				"ETHValueFeedDummy",
 				await this._registry.eRC20_v1EMPERC20ETHValueFeed(UTILIZED_ERC20S[i])
 			);
 
-			const ETH_VALUE: BigNumber = await feed.utilizedERC20ETHValue();
+			// Value of the each token denominated in ETH
+			const ETH_VALUE_PER_TOKEN: BigNumber = await ETH_VALUE_FEED.utilizedERC20ETHValue();
 
-			totalEthValue = totalEthValue.add(_utilizedERC20Deposits[i].mul(ETH_VALUE).div(D_18));
+			// 10 ** eRC20Decimals
+			const ERC20_DECIMALS: BigNumber = BigNumber.from(10).pow(await ETH_VALUE_FEED.eRC20Decimals());
 
-			utilizedERC20DepositEthValue.push(_utilizedERC20Deposits[i].mul(ETH_VALUE).div(D_18));
+			const TOTAL_ETH_VALUE = _utilizedERC20Deposits[i].mul(ETH_VALUE_PER_TOKEN).div(ERC20_DECIMALS);
+
+			totalEthValue = totalEthValue.add(TOTAL_ETH_VALUE);
+
+			utilizedERC20DepositEthValue.push(TOTAL_ETH_VALUE);
 		}
 
 		return {

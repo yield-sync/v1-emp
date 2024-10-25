@@ -62,7 +62,7 @@ export const ERROR = {
 	EMP_UTILITY:
 	{
 		INVALID_ALLOCATION:
-		"!(utilizedERC20AllocationActual == _v1EMP_utilizedERC20_utilizationERC20[_v1EMP][utilizedERC20[i]].allocation)"
+		"!(_v1EMP_utilizedERC20_utilizationERC20[_v1EMP][utilizedERC20[i]].allocation == utilizedERC20AllocationActual)"
 		,
 		UTILIZED_V1_EMP_STRATEGY_INVALID_ALLOCATION:
 			"!(utilizedV1EMPStrategyAllocationTotal == _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT())"
