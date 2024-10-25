@@ -44,6 +44,11 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 
 	async function approveTokens(eMP: string, utilizedERC20: string[], eMPDepositAmounts: BigNumber[])
 	{
+		if (utilizedERC20.length != eMPDepositAmounts.length)
+		{
+			throw new Error("function approveTokens: utilizedERC20.length != eMPDepositAmounts.length");
+		}
+
 		for (let i: number = 0; i < utilizedERC20.length; i++)
 		{
 			await (await ethers.getContractAt(LOCATION_MOCKERC20, utilizedERC20[i])).approve(eMP, eMPDepositAmounts[i]);

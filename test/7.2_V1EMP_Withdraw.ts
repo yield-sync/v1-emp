@@ -48,6 +48,20 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 	let depositAmount: UtilizedERC20Amount = [];
 
 
+	async function approveTokens(eMP: string, utilizedERC20: string[], eMPDepositAmounts: BigNumber[])
+	{
+		if (utilizedERC20.length != eMPDepositAmounts.length)
+		{
+			throw new Error("function approveTokens: utilizedERC20.length != eMPDepositAmounts.length");
+		}
+
+		for (let i: number = 0; i < utilizedERC20.length; i++)
+		{
+			await (await ethers.getContractAt(LOCATION_MOCKERC20, utilizedERC20[i])).approve(eMP, eMPDepositAmounts[i]);
+		}
+	}
+
+
 	beforeEach("[beforeEach] Set up contracts..", async () => {
 		[owner, manager, treasury, badActor] = await ethers.getSigners();
 
@@ -215,19 +229,9 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 			expect(await eMPs[i].contract.utilizedERC20WithdrawOpen()).to.be.true;
 		}
 
-
 		eMPDepositAmounts = await eMPs[0].eMPTransferUtil.calculateERC20Required(eTHValueEMPDepositAmount);
 
-		// Approve the ERC20 tokens for the strategy interactor
-		for (let i: number = 0; i < (await eMPUtility.v1EMP_utilizedERC20(eMPs[0].contract.address)).length; i++)
-		{
-			let eMPUtilizedERC20 = (await eMPUtility.v1EMP_utilizedERC20(eMPs[0].contract.address))[i];
-
-			await (await ethers.getContractAt(LOCATION_MOCKERC20, eMPUtilizedERC20)).approve(
-				eMPs[0].contract.address,
-				eMPDepositAmounts[i]
-			);
-		}
+		await approveTokens(eMPs[0].contract.address, eMPDepositAmounts, eMPDepositAmounts);
 
 		// Deposit the utilized ERC20 tokens into EMP
 		await eMPs[0].contract.utilizedERC20Deposit(eMPDepositAmounts);
