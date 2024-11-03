@@ -36,6 +36,21 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 	});
 
 
+	describe("function governanceUpdate()", async () => {
+		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
+			await expect(registry.connect(manager).governanceUpdate(owner.address)).to.be.rejectedWith(
+				ERROR.NOT_AUTHORIZED
+			);
+		});
+
+		it("Should allow authorized caller to update EMP Deployer..", async () => {
+			await expect(registry.governanceUpdate(owner.address)).to.be.not.rejected;
+
+			expect(await registry.governance()).to.be.equal(owner.address);
+		});
+	});
+
+
 	describe("function v1EMPArrayUtilityUpdate()", async () => {
 		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
 			await expect(registry.connect(manager).v1EMPArrayUtilityUpdate(arrayUtility.address)).to.be.rejectedWith(

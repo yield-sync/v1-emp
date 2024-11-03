@@ -10,8 +10,7 @@ import { IV1EMPRegistry } from "./interface/IV1EMPRegistry.sol";
 contract V1EMPRegistry is
 	IV1EMPRegistry
 {
-	address public immutable override GOVERNANCE;
-
+	address public override governance;
 	address public override v1EMPUtility;
 	address public override v1EMPArrayUtility;
 	address public override v1EMPDeployer;
@@ -36,13 +35,13 @@ contract V1EMPRegistry is
 
 	constructor (address _governance)
 	{
-		GOVERNANCE = _governance;
+		governance = _governance;
 	}
 
 
 	modifier authGovernance()
 	{
-		require(IGovernance(GOVERNANCE).hasRole(bytes32(0), msg.sender), "!authorized");
+		require(IGovernance(governance).hasRole(bytes32(0), msg.sender), "!authorized");
 
 		_;
 	}
@@ -57,7 +56,7 @@ contract V1EMPRegistry is
 		view
 		returns (address)
 	{
-		return IGovernance(GOVERNANCE).payTo();
+		return IGovernance(governance).payTo();
 	}
 
 
@@ -75,6 +74,15 @@ contract V1EMPRegistry is
 		require(_v1EMPERC20ETHValueFeed != address(0), "!(_v1EMPERC20ETHValueFeed != address(0))");
 
 		eRC20_v1EMPERC20ETHValueFeed[_eRC20] = _v1EMPERC20ETHValueFeed;
+	}
+
+	/// @inheritdoc IV1EMPRegistry
+	function governanceUpdate(address _governance)
+		public
+		override
+		authGovernance()
+	{
+		governance = _governance;
 	}
 
 	/// @inheritdoc IV1EMPRegistry
