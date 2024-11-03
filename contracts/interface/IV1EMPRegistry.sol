@@ -8,7 +8,7 @@ interface IV1EMPRegistry
 	* @dev [view-address]
 	* @return {address}
 	*/
-	function GOVERNANCE()
+	function governance()
 		external
 		returns (address)
 	;
@@ -171,6 +171,14 @@ interface IV1EMPRegistry
 	* @param _v1EMPERC20ETHValueFeed {address}
 	*/
 	function eRC20_v1EMPERC20ETHValueFeedUpdate(address _eRC20, address _v1EMPERC20ETHValueFeed)
+		external
+	;
+
+	/**
+	* @notice Governance Update
+	* @param _governance {address}
+	*/
+	function governanceUpdate(address _governance)
 		external
 	;
 

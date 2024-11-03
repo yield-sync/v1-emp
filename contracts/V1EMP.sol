@@ -54,7 +54,7 @@ contract V1EMP is
 	modifier authGovernanceOrManager()
 	{
 		require(
-			msg.sender == manager || IAccessControlEnumerable(_I_V1_EMP_REGISTRY.GOVERNANCE()).hasRole(bytes32(0), msg.sender),
+			msg.sender == manager || IAccessControlEnumerable(_I_V1_EMP_REGISTRY.governance()).hasRole(bytes32(0), msg.sender),
 			"!authorized"
 		);
 
@@ -104,7 +104,7 @@ contract V1EMP is
 		public
 		override
 	{
-		require(IAccessControlEnumerable(_I_V1_EMP_REGISTRY.GOVERNANCE()).hasRole(bytes32(0), msg.sender), "!authorized");
+		require(IAccessControlEnumerable(_I_V1_EMP_REGISTRY.governance()).hasRole(bytes32(0), msg.sender), "!authorized");
 
 		if (_feeRateGovernance + feeRateManager > _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT())
 		{
