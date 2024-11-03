@@ -91,6 +91,19 @@ interface IV1EMPUtility
 
 
 	/**
+	* @notice Tolerated Transfer Amount
+	* @param _v1EMP {address}
+	* @param utilizedERC20 {address}
+	* @param transferAmount {uint256}
+	* @return toleratedTransferAmount_ {uint256}
+	*/
+	function toleratedTransferAmount(address _v1EMP, address utilizedERC20, uint256 transferAmount)
+		external
+		view
+		returns (uint256 toleratedTransferAmount_)
+	;
+
+	/**
 	* @notice Utilized ERC20 Update
 	*/
 	function utilizedERC20Update()

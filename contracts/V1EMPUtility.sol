@@ -12,11 +12,14 @@ import { IV1EMPRegistry } from "./interface/IV1EMPRegistry.sol";
 import { IV1EMPStrategy } from "./interface/IV1EMPStrategy.sol";
 import { IV1EMPUtility, UtilizationERC20 } from "./interface/IV1EMPUtility.sol";
 
+
 contract V1EMPUtility is
 	IV1EMPUtility
 {
 	using SafeMath for uint256;
 
+
+	uint8 public constant TOLERANCE = 10;
 
 	IV1EMPArrayUtility internal immutable _I_V1_EMP_ARRAY_UTILITY;
 	IV1EMPRegistry internal immutable _I_V1_EMP_REGISTRY;
@@ -202,6 +205,22 @@ contract V1EMPUtility is
 
 	/// @notice mutative
 
+
+	/// @inheritdoc IV1EMPUtility
+	function toleratedTransferAmount(address _v1EMP, address utilizedERC20, uint256 transferAmount)
+		public
+		view
+		override
+		existantV1EMP(_v1EMP)
+		returns (uint256 toleratedTransferAmount_)
+	{
+		if (IERC20(utilizedERC20).balanceOf(_v1EMP) < transferAmount)
+		{
+			return transferAmount -= TOLERANCE;
+		}
+
+		return transferAmount;
+	}
 
 	/// @inheritdoc IV1EMPUtility
 	function utilizedERC20Update()

@@ -46,7 +46,7 @@ interface IV1EMPStrategy
 	* @notice Equity Total
 	* @return {uint256}
 	*/
-	function equityTotal()
+	function sharesTotal()
 		external
 		view
 		returns (uint256)
@@ -105,7 +105,7 @@ interface IV1EMPStrategy
 	* @param _eMP {address}
 	* @return {uint256}
 	*/
-	function eMP_equity(address _eMP)
+	function eMP_shares(address _eMP)
 		external
 		view
 		returns (uint256)
@@ -165,10 +165,9 @@ interface IV1EMPStrategy
 
 	/**
 	* @notice Deposit utilized ERC20s
-	* @param _from {address}
 	* @param _utilizedERC20Amount {uint256[]}
 	*/
-	function utilizedERC20Deposit(address _from, uint256[] memory _utilizedERC20Amount)
+	function utilizedERC20Deposit(uint256[] memory _utilizedERC20Amount)
 		external
 	;
 
@@ -181,9 +180,9 @@ interface IV1EMPStrategy
 
 	/**
 	* @notice Withdraw utilized ERC20s
-	* @param _eRC20Amount {uint256}
+	* @param _shares {uint256}
 	*/
-	function utilizedERC20Withdraw(uint256 _eRC20Amount)
+	function utilizedERC20Withdraw(uint256 _shares)
 		external
 	;
 

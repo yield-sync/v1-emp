@@ -82,7 +82,7 @@ export const ERROR = {
 			"!(utilizedERC20AllocationTotal == _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT())"
 		,
 		INVALID_BALANCE:
-			"!(eMP_equity[msg.sender] >= _eRC20Amount)"
+			"!(eMP_shares[msg.sender] >= _shares)"
 		,
 		INVALID_UTILIZED_ERC20_AMOUNT:
 			"!(iV1EMPStrategy.utilizedERC20_utilizationERC20(utilizedERC20[i]).allocation == utilizedERC20AmountAllocationActual)"

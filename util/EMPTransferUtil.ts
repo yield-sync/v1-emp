@@ -6,7 +6,7 @@ import { D_18 } from "../const"
 
 
 
-export default class EMPTransferUtil
+export default class EMPUtility
 {
 	private _registry: Contract;
 	private _eMP: Contract;
@@ -22,10 +22,10 @@ export default class EMPTransferUtil
 
 
 	/**
-	* Determin if the utilized ERC20 on EMP needs to be resynced
+	* Determin if the utilized ERC20 on EMP needs to be resynced with the utilized ERC20 on the EMP's utilized strategies
 	* @returns {boolean} If the strategies utilized ERC20 has been updated
 	*/
-	public async statusUpdateRequired(): Promise<Boolean>
+	public async utilizedERC20UpdateRequiredStatus(): Promise<Boolean>
 	{
 		const strategies = await this._eMP.utilizedV1EMPStrategy()
 
@@ -55,9 +55,9 @@ export default class EMPTransferUtil
 	 * @param ETHValue {BigNumber} Deposit ETH value
 	 * @returns Object containing utilized ERC 20 amounts
 	 */
-	public async calculateERC20Required(ETHValue: BigNumber): Promise<BigNumber[]>
+	public async calculatedUtilizedERC20Amount(ETHValue: BigNumber): Promise<BigNumber[]>
 	{
-		if (await this.statusUpdateRequired())
+		if (await this.utilizedERC20UpdateRequiredStatus())
 		{
 			throw new Error("EMP needs to synchronize new strategy utilized ERC20");
 		}
@@ -98,54 +98,12 @@ export default class EMPTransferUtil
 	}
 
 	/**
-	 * This function calculates the ETH value of each token as well as the total value of everything held by deposits param
-	 * @param _utilizedERC20Deposits {BigNumber[]} ERC20 deposits
-	 * @returns Object containing the ETH value of each ERC20 token and Total ETH value of all ERC20 tokens
+	 * @notice In the case that utilizedERC20 on the EMP needs to be updated this function computes the UtilizedERC20Deposit
+	 * without referring the the EMP utilizedERC20 function.
+	 *
+	 * This is neccessary because there is always a possibility that the utilizedERC20 is not updated.
 	 */
-	public async valueOfERC20Deposits(
-		_utilizedERC20Deposits: BigNumber[]
-	): Promise<{totalEthValue: BigNumber, utilizedERC20DepositEthValue: BigNumber[]}>
-	{
-		const UTILIZED_ERC20S = await this._eMPUtility.v1EMP_utilizedERC20(this._eMP.address);
-
-		let totalEthValue: BigNumber = ethers.utils.parseUnits("0", 18);
-
-		let utilizedERC20DepositEthValue: BigNumber[] = [];
-
-		// Calculate how much of each utilized tokens are being used
-		for (let i: number = 0; i < UTILIZED_ERC20S.length; i++)
-		{
-			const ETH_VALUE_FEED = await ethers.getContractAt(
-				"ETHValueFeedDummy",
-				await this._registry.eRC20_v1EMPERC20ETHValueFeed(UTILIZED_ERC20S[i])
-			);
-
-			// Value of the each token denominated in ETH
-			const ETH_VALUE_PER_TOKEN: BigNumber = await ETH_VALUE_FEED.utilizedERC20ETHValue();
-
-			// 10 ** eRC20Decimals
-			const ERC20_DECIMALS: BigNumber = BigNumber.from(10).pow(await ETH_VALUE_FEED.eRC20Decimals());
-
-			const TOTAL_ETH_VALUE = _utilizedERC20Deposits[i].mul(ETH_VALUE_PER_TOKEN).div(ERC20_DECIMALS);
-
-			totalEthValue = totalEthValue.add(TOTAL_ETH_VALUE);
-
-			utilizedERC20DepositEthValue.push(TOTAL_ETH_VALUE);
-		}
-
-		return {
-			totalEthValue,
-			utilizedERC20DepositEthValue
-		};
-	}
-
-
-
-	/**
-	 * @notice This function computes what ERC20 are utiized without referring the the EMP utilizedERC20 function. This is
-	 * neccessary because there is always a possibility that the utilizedERC20 is not updated.
-	 */
-	public async calculateERC20RequiredExpected(depositAmountEthValue: BigNumber): Promise<{
+	public async calculatedUtilizedERC20AmountExpected(depositAmountEthValue: BigNumber): Promise<{
 		updatedUtilizedERC20: string[],
 		calculatedERC20Required: BigNumber[]
 	}>
@@ -222,5 +180,48 @@ export default class EMPTransferUtil
 		}
 
 		return { updatedUtilizedERC20, calculatedERC20Required };
+	}
+
+	/**
+	 * This function calculates the ETH value of each token as well as the total value of everything held by deposits param
+	 * @param _utilizedERC20Deposits {BigNumber[]} ERC20 deposits
+	 * @returns Object containing the ETH value of each ERC20 token and Total ETH value of all ERC20 tokens
+	 */
+	public async valueOfERC20Deposits(_utilizedERC20Deposits: BigNumber[]): Promise<{
+		totalEthValue: BigNumber,
+		utilizedERC20DepositEthValue: BigNumber[]
+	}>
+	{
+		const UTILIZED_ERC20S = await this._eMPUtility.v1EMP_utilizedERC20(this._eMP.address);
+
+		let totalEthValue: BigNumber = ethers.utils.parseUnits("0", 18);
+
+		let utilizedERC20DepositEthValue: BigNumber[] = [];
+
+		// Calculate how much of each utilized tokens are being used
+		for (let i: number = 0; i < UTILIZED_ERC20S.length; i++)
+		{
+			const ETH_VALUE_FEED = await ethers.getContractAt(
+				"ETHValueFeedDummy",
+				await this._registry.eRC20_v1EMPERC20ETHValueFeed(UTILIZED_ERC20S[i])
+			);
+
+			// Value of the each token denominated in ETH
+			const ETH_VALUE_PER_TOKEN: BigNumber = await ETH_VALUE_FEED.utilizedERC20ETHValue();
+
+			// 10 ** eRC20Decimals
+			const ERC20_DECIMALS: BigNumber = BigNumber.from(10).pow(await ETH_VALUE_FEED.eRC20Decimals());
+
+			const TOTAL_ETH_VALUE = _utilizedERC20Deposits[i].mul(ETH_VALUE_PER_TOKEN).div(ERC20_DECIMALS);
+
+			totalEthValue = totalEthValue.add(TOTAL_ETH_VALUE);
+
+			utilizedERC20DepositEthValue.push(TOTAL_ETH_VALUE);
+		}
+
+		return {
+			totalEthValue,
+			utilizedERC20DepositEthValue
+		};
 	}
 }

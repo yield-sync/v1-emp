@@ -265,7 +265,7 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 				let eTHValueEMPDepositAmount: BigNumber = ethers.utils.parseUnits("2", 18);
 				let eMPDepositAmounts: UtilizedERC20Amount;
 
-				eMPDepositAmounts = await eMPs[0].eMPTransferUtil.calculateERC20Required(eTHValueEMPDepositAmount);
+				eMPDepositAmounts = await eMPs[0].eMPTransferUtil.calculatedUtilizedERC20Amount(eTHValueEMPDepositAmount);
 
 				const utilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMPs[0].contract.address);
 
@@ -292,7 +292,7 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 				* 2) Approve the tokens
 				*/
 
-				eMPDepositAmounts = await eMPs[0].eMPTransferUtil.calculateERC20Required(eTHValueEMPDepositAmount);
+				eMPDepositAmounts = await eMPs[0].eMPTransferUtil.calculatedUtilizedERC20Amount(eTHValueEMPDepositAmount);
 
 				const utilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMPs[0].contract.address);
 
@@ -462,7 +462,9 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 					* the required tokens
 					*/
 
-					let result = await eMPs[0].eMPTransferUtil.calculateERC20RequiredExpected(eTHValueEMPDepositAmount);
+					let result = await eMPs[0].eMPTransferUtil.calculatedUtilizedERC20AmountExpected(
+						eTHValueEMPDepositAmount
+					);
 
 					utilizedERC20 = result.updatedUtilizedERC20;
 					eMPDepositAmounts = result.calculatedERC20Required;
@@ -493,7 +495,7 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 			* 3) Deposit ERC20 tokens into EMP
 			*/
 
-			eMPDepositAmounts = await eMPs[0].eMPTransferUtil.calculateERC20Required(eTHValueEMPDepositAmount);
+			eMPDepositAmounts = await eMPs[0].eMPTransferUtil.calculatedUtilizedERC20Amount(eTHValueEMPDepositAmount);
 
 			utilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMPs[0].contract.address);
 
@@ -527,7 +529,7 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 			* 3) Deposit ERC20 tokens into EMP
 			*/
 
-			eMPDepositAmounts = await eMPs[0].eMPTransferUtil.calculateERC20Required(eTHValueEMPDepositAmount);
+			eMPDepositAmounts = await eMPs[0].eMPTransferUtil.calculatedUtilizedERC20Amount(eTHValueEMPDepositAmount);
 
 			utilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMPs[0].contract.address);
 
@@ -610,7 +612,7 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 				{
 					const strategy = strategies[i].contract;
 
-					expect(await strategy.eMP_equity(eMPs[0].contract.address)).to.be.equal(
+					expect(await strategy.eMP_shares(eMPs[0].contract.address)).to.be.equal(
 						eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(D_18)
 					);
 				}
@@ -665,7 +667,7 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 			* 5) Deposit tokens into EMP
 			*/
 
-			eMPDepositAmounts = await eMPs[0].eMPTransferUtil.calculateERC20Required(eTHValueEMPDepositAmount);
+			eMPDepositAmounts = await eMPs[0].eMPTransferUtil.calculatedUtilizedERC20Amount(eTHValueEMPDepositAmount);
 
 			utilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMPs[0].contract.address);
 
@@ -709,8 +711,8 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 
 
 			beforeEach(async () => {
-				eMPDepositAmounts = await eMPs[0].eMPTransferUtil.calculateERC20Required(eTHValueEMPDepositAmount);
-				eMP2DepositAmounts = await eMPs[1].eMPTransferUtil.calculateERC20Required(eTHValueEMPDepositAmount);
+				eMPDepositAmounts = await eMPs[0].eMPTransferUtil.calculatedUtilizedERC20Amount(eTHValueEMPDepositAmount);
+				eMP2DepositAmounts = await eMPs[1].eMPTransferUtil.calculatedUtilizedERC20Amount(eTHValueEMPDepositAmount);
 
 				utilizedERC20EMP1 = await eMPUtility.v1EMP_utilizedERC20(eMPs[0].contract.address);
 				utilizedERC20EMP2 = await eMPUtility.v1EMP_utilizedERC20(eMPs[1].contract.address);
@@ -755,20 +757,20 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 					eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(D_18)
 				);
 
-				expect(await strategies[0].contract.equityTotal()).to.be.equal(STRATEGY_1_DEPOSIT_AMOUNT);
+				expect(await strategies[0].contract.sharesTotal()).to.be.equal(STRATEGY_1_DEPOSIT_AMOUNT);
 
-				expect(await strategies[1].contract.equityTotal()).to.be.equal(STRATEGY_2_DEPOSIT_AMOUNT);
+				expect(await strategies[1].contract.sharesTotal()).to.be.equal(STRATEGY_2_DEPOSIT_AMOUNT);
 			});
 
 			it("Should distribute the strategy tokens fairely to multiple EMP depositing into it..", async () => {
 				const TOTAL_STRATEGY_TOKENS = eTHValueEMPDepositAmount.mul(2).sub(
-					await strategies[0].contract.eMP_equity(eMPs[0].contract.address)
+					await strategies[0].contract.eMP_shares(eMPs[0].contract.address)
 				).sub(
-					await strategies[1].contract.eMP_equity(eMPs[0].contract.address)
+					await strategies[1].contract.eMP_shares(eMPs[0].contract.address)
 				).sub(
-					await strategies[0].contract.eMP_equity(eMPs[1].contract.address)
+					await strategies[0].contract.eMP_shares(eMPs[1].contract.address)
 				).sub(
-					await strategies[1].contract.eMP_equity(eMPs[1].contract.address)
+					await strategies[1].contract.eMP_shares(eMPs[1].contract.address)
 				);
 
 				expect(TOTAL_STRATEGY_TOKENS).to.be.equal(ethers.utils.parseUnits("0", 18));

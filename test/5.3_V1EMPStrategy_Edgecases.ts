@@ -155,9 +155,9 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 				await mockERC20A.approve(strategyInteractor.address, DEPOSIT_AMOUNT);
 
 				// DEPOSIT - ERC20 tokens into the strategy
-				await strategy.utilizedERC20Deposit(owner.address, [DEPOSIT_AMOUNT])
+				await strategy.utilizedERC20Deposit([DEPOSIT_AMOUNT])
 
-				let BalanceStrategyOwner = await strategy.eMP_equity(owner.address);
+				let BalanceStrategyOwner = await strategy.eMP_shares(owner.address);
 
 				const feed = await ethers.getContractAt(
 					"ETHValueFeedDummy",
@@ -180,9 +180,9 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 				await mockERC20A.approve(strategyInteractor.address, DEPOSIT_AMOUNT_2);
 
 				// DEPOSIT - ERC20 tokens into the strategy
-				await strategy.utilizedERC20Deposit(owner.address, [DEPOSIT_AMOUNT_2])
+				await strategy.utilizedERC20Deposit([DEPOSIT_AMOUNT_2])
 
-				BalanceStrategyOwner = await strategy.eMP_equity(owner.address);
+				BalanceStrategyOwner = await strategy.eMP_shares(owner.address);
 
 				expect(BalanceStrategyOwner).to.be.equal(ethers.utils.parseUnits("3", 18));
 
@@ -199,7 +199,7 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 		});
 
 		describe("function utilizedERC20Withdraw()", async () => {
-			const B4_TOTAL_SUPPLY_STRATEGY: BigNumber = await strategy.equityTotal();
+			const B4_TOTAL_SUPPLY_STRATEGY: BigNumber = await strategy.sharesTotal();
 			const B4_BALANCE_MOCK_A_SI: BigNumber = await mockERC20A.balanceOf(strategyInteractor.address);
 			const B4_BALANCE_MOCK_A_OWNER: BigNumber = await mockERC20A.balanceOf(owner.address);
 			const DEPOSIT_AMOUNT_A: BigNumber = ethers.utils.parseUnits("1", 18);
@@ -210,19 +210,19 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 				await mockERC20A.approve(strategyInteractor.address, DEPOSIT_AMOUNT_A);
 
 				// DEPOSIT - ERC20 tokens into the strategy
-				await strategy.utilizedERC20Deposit(owner.address, [DEPOSIT_AMOUNT_A])
+				await strategy.utilizedERC20Deposit([DEPOSIT_AMOUNT_A])
 
 				// [main-test] Withdraw ERC20 tokens into the strategy
-				await strategy.utilizedERC20Withdraw(await strategy.eMP_equity(owner.address));
+				await strategy.utilizedERC20Withdraw(await strategy.eMP_shares(owner.address));
 
 				// [PRICE-UPDATE] Update Ether value of MockERC20A
 				await eTHValueFeed.updateETHValue(ethers.utils.parseUnits("2", 18));
 
 				// Strategy token burned
-				expect(await strategy.eMP_equity(owner.address)).to.be.equal(B4_BALANCE_MOCK_A_SI);
+				expect(await strategy.eMP_shares(owner.address)).to.be.equal(B4_BALANCE_MOCK_A_SI);
 
 				// Supply put back to original
-				expect(await strategy.equityTotal()).to.be.equal(B4_TOTAL_SUPPLY_STRATEGY);
+				expect(await strategy.sharesTotal()).to.be.equal(B4_TOTAL_SUPPLY_STRATEGY);
 
 				// Expect that the balance been returned to original or greater
 				expect(await mockERC20A.balanceOf(owner.address)).to.be.equal(B4_BALANCE_MOCK_A_OWNER);
@@ -268,7 +268,7 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 			expect(DEPOSIT_AMOUNTS.length).to.be.equal(UTILIZED_ERC20.length);
 
 			// Capture balances
-			const B4_TOTAL_SUPPLY_STRATEGY: BigNumber = await strategy.equityTotal();
+			const B4_TOTAL_SUPPLY_STRATEGY: BigNumber = await strategy.sharesTotal();
 
 			const B4_BALANCE_MOCK_C_OWNER: BigNumber = await mockERC20C.balanceOf(owner.address);
 
@@ -292,7 +292,7 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 
 			// DEPOSIT - ERC20 A and ERC20 B tokens into the strategy
 			await expect(
-				strategy.utilizedERC20Deposit(owner.address, DEPOSIT_AMOUNTS)
+				strategy.utilizedERC20Deposit(DEPOSIT_AMOUNTS)
 			).to.be.not.rejected;
 
 			for (let i: number = 0; i < UTILIZED_ERC20.length; i++)
@@ -309,10 +309,10 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 			}
 
 			// [main-test] Withdraw ERC20 tokens into the strategy
-			await strategy.utilizedERC20Withdraw(await strategy.eMP_equity(owner.address));
+			await strategy.utilizedERC20Withdraw(await strategy.eMP_shares(owner.address));
 
 			// Supply put back to original
-			expect(await strategy.equityTotal()).to.be.equal(B4_TOTAL_SUPPLY_STRATEGY);
+			expect(await strategy.sharesTotal()).to.be.equal(B4_TOTAL_SUPPLY_STRATEGY);
 
 			expect(await mockERC20C.balanceOf(owner.address)).to.equal(B4_BALANCE_MOCK_C_OWNER);
 		});

@@ -33,6 +33,7 @@ contract V1EMP is
 
 	mapping (address utilizedV1EMPStrategy => uint256 allocation) public override utilizedV1EMPStrategy_allocation;
 
+
 	constructor (
 		address _manager,
 		address _v1EMPRegistry,
@@ -208,14 +209,9 @@ contract V1EMP is
 			_eRC20Amount
 		);
 
-		if (utilizedERC20Available)
-		{
-			for (uint256 i = 0; i < _I_V1_EMP_UTILITY.v1EMP_utilizedERC20(address(this)).length; i++)
-			{
-				transfer(msg.sender, transferAmount[i]);
-			}
-		}
-		else
+		address[] memory utilizedERC20 = _I_V1_EMP_UTILITY.v1EMP_utilizedERC20(address(this));
+
+		if (!utilizedERC20Available)
 		{
 			if (!utilizedERC20WithdrawFull)
 			{
@@ -228,12 +224,20 @@ contract V1EMP is
 
 			for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
 			{
-				v1EMPStrategyERC20Amount[i] = _eRC20AmountPercentOfTotalSupply * IV1EMPStrategy(_utilizedV1EMPStrategy[i]).eMP_equity(
+				v1EMPStrategyERC20Amount[i] = _eRC20AmountPercentOfTotalSupply * IV1EMPStrategy(_utilizedV1EMPStrategy[i]).eMP_shares(
 					address(this)
 				) / 1e18;
 			}
 
 			utilizedV1EMPStrategyWithdraw(v1EMPStrategyERC20Amount);
+		}
+
+		for (uint256 i = 0; i < utilizedERC20.length; i++)
+		{
+			IERC20(utilizedERC20[i]).transfer(
+				msg.sender,
+				_I_V1_EMP_UTILITY.toleratedTransferAmount(address(this), utilizedERC20[i], transferAmount[i])
+			);
 		}
 
 		_burn(msg.sender, _eRC20Amount);
@@ -272,7 +276,7 @@ contract V1EMP is
 
 		for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
 		{
-			IV1EMPStrategy(_utilizedV1EMPStrategy[i]).utilizedERC20Deposit(address(this), _v1EMPStrategyUtilizedERC20Amount[i]);
+			IV1EMPStrategy(_utilizedV1EMPStrategy[i]).utilizedERC20Deposit(_v1EMPStrategyUtilizedERC20Amount[i]);
 		}
 	}
 

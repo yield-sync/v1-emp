@@ -24,7 +24,7 @@ contract V1EMPStrategy is
 	bool public override utilizedERC20DepositOpen;
 	bool public override utilizedERC20WithdrawOpen;
 
-	uint256 public override equityTotal;
+	uint256 public override sharesTotal;
 	uint256 public override utilizedERC20UpdateTracker;
 
 	IV1EMPRegistry internal immutable _I_V1_EMP_REGISTRY;
@@ -44,7 +44,7 @@ contract V1EMPStrategy is
 		return _utilizedERC20_utilizationERC20[__utilizedERC20];
 	}
 
-	mapping (address eMP => uint256 equity) public override eMP_equity;
+	mapping (address eMP => uint256 shares) public override eMP_shares;
 
 
 	constructor (address _manager, address _v1EMPRegistry)
@@ -185,7 +185,7 @@ contract V1EMPStrategy is
 	}
 
 	/// @inheritdoc IV1EMPStrategy
-	function utilizedERC20Deposit(address _from, uint256[] memory _utilizedERC20Amount)
+	function utilizedERC20Deposit(uint256[] memory _utilizedERC20Amount)
 		public
 		override
 		authEMP()
@@ -207,12 +207,12 @@ contract V1EMPStrategy is
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
-			iV1EMPStrategyInteractor.utilizedERC20Deposit(_from, _utilizedERC20[i], _utilizedERC20Amount[i]);
+			iV1EMPStrategyInteractor.utilizedERC20Deposit(msg.sender, _utilizedERC20[i], _utilizedERC20Amount[i]);
 		}
 
-		equityTotal += utilizedERC20AmountETHValueTotal;
+		sharesTotal += utilizedERC20AmountETHValueTotal;
 
-		eMP_equity[_from] += utilizedERC20AmountETHValueTotal;
+		eMP_shares[msg.sender] += utilizedERC20AmountETHValueTotal;
 	}
 
 	/// @inheritdoc IV1EMPStrategy
@@ -226,7 +226,7 @@ contract V1EMPStrategy is
 	}
 
 	/// @inheritdoc IV1EMPStrategy
-	function utilizedERC20Withdraw(uint256 _eRC20Amount)
+	function utilizedERC20Withdraw(uint256 _shares)
 		public
 		override
 		authEMP()
@@ -235,30 +235,30 @@ contract V1EMPStrategy is
 	{
 		require(utilizedERC20WithdrawOpen, "!utilizedERC20WithdrawOpen");
 
-		require(eMP_equity[msg.sender] >= _eRC20Amount, "!(eMP_equity[msg.sender] >= _eRC20Amount)");
+		require(eMP_shares[msg.sender] >= _shares, "!(eMP_shares[msg.sender] >= _shares)");
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
 			if (_utilizedERC20_utilizationERC20[_utilizedERC20[i]].withdraw)
 			{
-				uint256 utilizedERC20AmountPerToken = iV1EMPStrategyInteractor.utilizedERC20TotalBalance(_utilizedERC20[i]).mul(
+				uint256 utilizedERC20AmountPerShare = iV1EMPStrategyInteractor.utilizedERC20TotalBalance(_utilizedERC20[i]).mul(
 					1e18
 				).div(
-					equityTotal,
+					sharesTotal,
 					"!computed"
 				);
 
 				iV1EMPStrategyInteractor.utilizedERC20Withdraw(
 					msg.sender,
 					_utilizedERC20[i],
-					utilizedERC20AmountPerToken.mul(_eRC20Amount).div(1e18)
+					utilizedERC20AmountPerShare.mul(_shares).div(1e18)
 				);
 			}
 		}
 
-		equityTotal -= _eRC20Amount;
+		sharesTotal -= _shares;
 
-		eMP_equity[msg.sender] -= _eRC20Amount;
+		eMP_shares[msg.sender] -= _shares;
 	}
 
 	/// @inheritdoc IV1EMPStrategy
