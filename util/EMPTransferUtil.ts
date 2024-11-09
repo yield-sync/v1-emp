@@ -23,7 +23,7 @@ export default class EMPUtility
 
 	/**
 	* Determin if the utilized ERC20 on EMP needs to be resynced with the utilized ERC20 on the EMP's utilized strategies
-	* @returns {boolean} If the strategies utilized ERC20 has been updated
+	* @returns {boolean} If the strategies utilized needs to be updated
 	*/
 	public async utilizedERC20UpdateRequiredStatus(): Promise<Boolean>
 	{
