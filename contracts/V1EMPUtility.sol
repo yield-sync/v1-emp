@@ -207,12 +207,12 @@ contract V1EMPUtility is
 
 
 	/// @inheritdoc IV1EMPUtility
-	function toleratedTransferAmount(address _v1EMP, address utilizedERC20, uint256 transferAmount)
+	function optimizedTransferAmount(address _v1EMP, address utilizedERC20, uint256 transferAmount)
 		public
 		view
 		override
 		existantV1EMP(_v1EMP)
-		returns (uint256 toleratedTransferAmount_)
+		returns (uint256 optimizedTransferAmount_)
 	{
 		if (IERC20(utilizedERC20).balanceOf(_v1EMP) < transferAmount)
 		{

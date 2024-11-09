@@ -236,7 +236,7 @@ contract V1EMP is
 		{
 			IERC20(utilizedERC20[i]).transfer(
 				msg.sender,
-				_I_V1_EMP_UTILITY.toleratedTransferAmount(address(this), utilizedERC20[i], transferAmount[i])
+				_I_V1_EMP_UTILITY.optimizedTransferAmount(address(this), utilizedERC20[i], transferAmount[i])
 			);
 		}
 

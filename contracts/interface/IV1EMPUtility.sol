@@ -95,12 +95,12 @@ interface IV1EMPUtility
 	* @param _v1EMP {address}
 	* @param utilizedERC20 {address}
 	* @param transferAmount {uint256}
-	* @return toleratedTransferAmount_ {uint256}
+	* @return optimizedTransferAmount_ {uint256}
 	*/
-	function toleratedTransferAmount(address _v1EMP, address utilizedERC20, uint256 transferAmount)
+	function optimizedTransferAmount(address _v1EMP, address utilizedERC20, uint256 transferAmount)
 		external
 		view
-		returns (uint256 toleratedTransferAmount_)
+		returns (uint256 optimizedTransferAmount_)
 	;
 
 	/**
