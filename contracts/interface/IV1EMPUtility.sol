@@ -91,7 +91,7 @@ interface IV1EMPUtility
 
 
 	/**
-	* @notice Tolerated Transfer Amount
+	* @notice Optimized Transfer Amount
 	* @param _v1EMP {address}
 	* @param utilizedERC20 {address}
 	* @param transferAmount {uint256}
