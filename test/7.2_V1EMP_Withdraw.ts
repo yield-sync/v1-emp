@@ -8,7 +8,7 @@ type DeployEMP = {
 type DeployStrategy = {
 	strategyUtilizedERC20: string[],
 	strategyUtilization: [boolean, boolean, BigNumber][],
-	strategyInteractor: string
+	strategyInteractor: string | null
 };
 
 type TestEMP = {
@@ -103,23 +103,27 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 				String(await registry.v1EMPStrategyId_v1EMPStrategy(i + 1))
 			);
 
-			// Set the Strategy Interactor
-			await deployedV1EMPStrategy.iV1EMPStrategyInteractorUpdate(deployStrategies[i].strategyInteractor);
+			if (deployStrategies[i].strategyInteractor)
+			{
+				await deployedV1EMPStrategy.iV1EMPStrategyInteractorUpdate(deployStrategies[i].strategyInteractor);
+			}
 
 			await deployedV1EMPStrategy.utilizedERC20Update(
 				deployStrategies[i].strategyUtilizedERC20,
 				deployStrategies[i].strategyUtilization
 			);
 
-			// Enable Deposits and Withdraws
-			await deployedV1EMPStrategy.utilizedERC20DepositOpenToggle();
+			if (deployStrategies[i].strategyInteractor)
+			{
+				// Enable Deposits and Withdraws
+				await deployedV1EMPStrategy.utilizedERC20DepositOpenToggle();
 
-			expect(await deployedV1EMPStrategy.utilizedERC20DepositOpen()).to.be.true;
+				expect(await deployedV1EMPStrategy.utilizedERC20DepositOpen()).to.be.true;
 
-			await deployedV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
+				await deployedV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
 
-			expect(await deployedV1EMPStrategy.utilizedERC20WithdrawOpen()).to.be.true;
-
+				expect(await deployedV1EMPStrategy.utilizedERC20WithdrawOpen()).to.be.true;
+			}
 			testStrategies[i] = {
 				contract: deployedV1EMPStrategy,
 				strategyTransferUtil: new StrategyTransferUtil(deployedV1EMPStrategy, registry)
