@@ -53,7 +53,18 @@ interface IV1EMPStrategy
 	;
 
 	/**
-	* @dev [view-erc256]
+	* @dev [view-uint256]
+	* @notice Utilized ERC20 Update Tracker
+	* @return {uint256}
+	*/
+	function iV1StrategyInteractorUpdateTracker()
+		external
+		view
+		returns (uint256)
+	;
+
+	/**
+	* @dev [view-uint256]
 	* @notice Utilized ERC20 Update Tracker
 	* @return {uint256}
 	*/
