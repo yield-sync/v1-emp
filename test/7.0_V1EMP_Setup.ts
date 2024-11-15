@@ -359,7 +359,7 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 		});
 	});
 
-	describe("function utilizedERC20Update()", async () => {
+	describe("function utilizedStrategySync()", async () => {
 		let eMPUtilizedERC20: string[];
 
 
@@ -386,12 +386,12 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 
 			await strategies[0].contract.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
 
-			await expect(eMP.utilizedERC20Update()).to.be.not.reverted;
+			await expect(eMP.utilizedStrategySync()).to.be.not.reverted;
 		});
 
 		describe("Expected Success", async () => {
 			it("Should update the utilized ERC20..", async () => {
-				await expect(eMP.utilizedERC20Update()).to.be.not.reverted;
+				await expect(eMP.utilizedStrategySync()).to.be.not.reverted;
 
 				eMPUtilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMP.address);
 
@@ -413,7 +413,7 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 	});
 
 	describe("function utilizedV1EMPStrategyUpdate() (2/2)", async () => {
-		describe("[indirect-call] function utilizedERC20Update() - Utilized ERC20 tokens changed..", async () => {
+		describe("[indirect-call] function utilizedStrategySync() - Utilized ERC20 tokens changed..", async () => {
 			let eMPUtilizedERC20: string[];
 
 

@@ -223,7 +223,7 @@ contract V1EMPUtility is
 	}
 
 	/// @inheritdoc IV1EMPUtility
-	function utilizedERC20Update()
+	function utilizedStrategySync()
 		public
 		override
 	{

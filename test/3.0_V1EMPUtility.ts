@@ -89,9 +89,9 @@ describe("[3.0] V1EMPUtility.sol", async () => {
 	});
 
 	describe("mutatitive", async () => {
-		describe("function utilizedERC20Update()", async () => {
+		describe("function utilizedStrategySync()", async () => {
 			it("[modifier][auth] Should only be able to called by EMP..", async () => {
-				await expect(utility.utilizedERC20Update()).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
+				await expect(utility.utilizedStrategySync()).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
 			});
 		});
 

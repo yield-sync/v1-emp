@@ -290,8 +290,43 @@ describe("[7.3] V1EMP.sol - Edgecases", async () => {
 	});
 
 	describe("EMP with uninitialized Strategies", async () => {
-		it("Should allow depositing tokens into the EMP..", async () => {
+		it("Should allow setting utilizedERC20 on EMP..", async () => {
+			let utilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMPs[0].contract.address);
 
+			let myUtilizedERC20 = await arrayUtility.sort([mockERC20A.address, mockERC20B.address, mockERC20C.address])
+
+			for (let i = 0; i < utilizedERC20.length; i++)
+			{
+				expect(utilizedERC20[i]).to.be.equal(myUtilizedERC20[i]);
+			}
+
+			// Reorder the ERC20
+			for (let i = 0; i < utilizedERC20.length; i++)
+			{
+				let utilization = await eMPUtility.v1EMP_utilizedERC20_utilizationERC20(
+					eMPs[0].contract.address,
+					utilizedERC20[i]
+				);
+
+				if (mockERC20A.address == utilizedERC20[i])
+				{
+					expect(utilization.allocation).to.be.equal(PERCENT.TWENTY_FIVE);
+				}
+
+				if (mockERC20B.address == utilizedERC20[i])
+				{
+					expect(utilization.allocation).to.be.equal(PERCENT.TWENTY_FIVE);
+				}
+
+				if (mockERC20C.address == utilizedERC20[i])
+				{
+					expect(utilization.allocation).to.be.equal(PERCENT.FIFTY);
+				}
+			}
+		});
+
+		it("Should allow depositing tokens into the EMP..", async () => {
+			// TODO: Complete this test
 		});
 	});
 });

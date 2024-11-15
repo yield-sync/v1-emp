@@ -104,9 +104,9 @@ interface IV1EMPUtility
 	;
 
 	/**
-	* @notice Utilized ERC20 Update
+	* @notice Utilized Strategy Sync
 	*/
-	function utilizedERC20Update()
+	function utilizedStrategySync()
 		external
 	;
 

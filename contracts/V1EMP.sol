@@ -130,7 +130,7 @@ contract V1EMP is
 		nonReentrant()
 		utilizedERC20DepositOpenRequired()
 	{
-		utilizedERC20Update();
+		utilizedStrategySync();
 
 		(
 			bool valid,
@@ -169,11 +169,11 @@ contract V1EMP is
 	}
 
 	/// @inheritdoc IV1EMP
-	function utilizedERC20Update()
+	function utilizedStrategySync()
 		public
 		override
 	{
-		_I_V1_EMP_UTILITY.utilizedERC20Update();
+		_I_V1_EMP_UTILITY.utilizedStrategySync();
 
 		address[] memory _utilizedERC20 = _I_V1_EMP_UTILITY.v1EMP_utilizedERC20(address(this));
 
@@ -204,7 +204,7 @@ contract V1EMP is
 
 		require(balanceOf(msg.sender) >= _eRC20Amount, "!(balanceOf(msg.sender) >= _eRC20Amount)");
 
-		utilizedERC20Update();
+		utilizedStrategySync();
 
 		(
 			bool utilizedERC20Available,
@@ -313,7 +313,7 @@ contract V1EMP is
 			utilizedV1EMPStrategy_allocation[_v1EMPStrategy[i]] = _allocation[i];
 		}
 
-		utilizedERC20Update();
+		utilizedStrategySync();
 	}
 
 	/// @inheritdoc IV1EMP
@@ -327,7 +327,7 @@ contract V1EMP is
 			"!(_v1EMPStrategyERC20Amount.length == _utilizedV1EMPStrategy.length)"
 		);
 
-		utilizedERC20Update();
+		utilizedStrategySync();
 
 		for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
 		{
