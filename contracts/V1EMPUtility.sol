@@ -258,7 +258,7 @@ contract V1EMPUtility is
 
 		address[] memory utilizedERC20 = new address[](utilizedERC20MaxLength);
 
-		uint256 utilizedERC20I = 0;
+		uint256 indexUtilizedERC20 = 0;
 
 		for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
 		{
@@ -266,7 +266,7 @@ contract V1EMPUtility is
 
 			for (uint256 ii = 0; ii < strategyUtilizedERC20.length; ii++)
 			{
-				utilizedERC20[utilizedERC20I++] = strategyUtilizedERC20[ii];
+				utilizedERC20[indexUtilizedERC20++] = strategyUtilizedERC20[ii];
 			}
 		}
 
