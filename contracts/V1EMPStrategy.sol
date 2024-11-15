@@ -25,7 +25,6 @@ contract V1EMPStrategy is
 	bool public override utilizedERC20WithdrawOpen;
 
 	uint256 public override sharesTotal;
-	uint256 public override iV1StrategyInteractorUpdateTracker;
 	uint256 public override utilizedERC20UpdateTracker;
 
 	IV1EMPRegistry internal immutable _I_V1_EMP_REGISTRY;
@@ -145,8 +144,6 @@ contract V1EMPStrategy is
 		utilizedERC20TransferClosed()
 	{
 		iV1EMPStrategyInteractor = IV1EMPStrategyInteractor(_iStrategyInteractor);
-
-		iV1StrategyInteractorUpdateTracker++;
 	}
 
 	/// @inheritdoc IV1EMPStrategy

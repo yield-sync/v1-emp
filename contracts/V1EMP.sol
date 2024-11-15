@@ -181,6 +181,11 @@ contract V1EMP is
 		{
 			for (uint256 ii = 0; ii < _utilizedERC20.length; ii++)
 			{
+				if (address(IV1EMPStrategy(_utilizedV1EMPStrategy[i]).iV1EMPStrategyInteractor()) == address(0))
+				{
+					continue;
+				}
+
 				IERC20(_utilizedERC20[ii]).approve(
 					address(IV1EMPStrategy(_utilizedV1EMPStrategy[i]).iV1EMPStrategyInteractor()),
 					type(uint256).max
