@@ -229,7 +229,7 @@ contract V1EMPUtility is
 	{
 		require(_I_V1_EMP_REGISTRY.v1EMP_v1EMPId(msg.sender) > 0, "!authorized");
 
-		bool updatedRequired_ = false;
+		bool updatedRequired = false;
 
 		IV1EMP iV1EMP = IV1EMP(msg.sender);
 
@@ -243,7 +243,7 @@ contract V1EMPUtility is
 
 			if (v1EMP_v1EMPStrategy_utilizedERC20UpdateTracker[msg.sender][_utilizedV1EMPStrategy[i]] != utilizedERC20UpdateTracker)
 			{
-				updatedRequired_ = true;
+				updatedRequired = true;
 
 				v1EMP_v1EMPStrategy_utilizedERC20UpdateTracker[msg.sender][_utilizedV1EMPStrategy[i]] = utilizedERC20UpdateTracker;
 			}
@@ -251,12 +251,12 @@ contract V1EMPUtility is
 			utilizedERC20MaxLength += IV1EMPStrategy(_utilizedV1EMPStrategy[i]).utilizedERC20().length;
 		}
 
-		if (!updatedRequired_)
+		if (!updatedRequired)
 		{
 			return;
 		}
 
-		address[] memory utilizedERC20_ = new address[](utilizedERC20MaxLength);
+		address[] memory utilizedERC20 = new address[](utilizedERC20MaxLength);
 
 		uint256 utilizedERC20I = 0;
 
@@ -266,41 +266,41 @@ contract V1EMPUtility is
 
 			for (uint256 ii = 0; ii < strategyUtilizedERC20.length; ii++)
 			{
-				utilizedERC20_[utilizedERC20I++] = strategyUtilizedERC20[ii];
+				utilizedERC20[utilizedERC20I++] = strategyUtilizedERC20[ii];
 			}
 		}
 
-		utilizedERC20_ = _I_V1_EMP_ARRAY_UTILITY.removeDuplicates(utilizedERC20_);
-		utilizedERC20_ = _I_V1_EMP_ARRAY_UTILITY.sort(utilizedERC20_);
+		utilizedERC20 = _I_V1_EMP_ARRAY_UTILITY.removeDuplicates(utilizedERC20);
+		utilizedERC20 = _I_V1_EMP_ARRAY_UTILITY.sort(utilizedERC20);
 
 		uint256 utilizedERC20AllocationTotal;
 
-		UtilizationERC20[] memory utilizationERC20_ = new UtilizationERC20[](utilizedERC20_.length);
+		UtilizationERC20[] memory utilizationERC20 = new UtilizationERC20[](utilizedERC20.length);
 
 		for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
 		{
 			IV1EMPStrategy iV1EMPStrategy = IV1EMPStrategy(_utilizedV1EMPStrategy[i]);
 
-			for (uint256 ii = 0; ii < utilizedERC20_.length; ii++)
+			for (uint256 ii = 0; ii < utilizedERC20.length; ii++)
 			{
-				UtilizationERC20 memory utilizationERC20 = iV1EMPStrategy.utilizedERC20_utilizationERC20(utilizedERC20_[ii]);
+				UtilizationERC20 memory uERC20 = iV1EMPStrategy.utilizedERC20_utilizationERC20(utilizedERC20[ii]);
 
-				if (utilizationERC20.deposit)
+				if (uERC20.deposit)
 				{
-					utilizationERC20_[ii].deposit = true;
+					utilizationERC20[ii].deposit = true;
 
-					utilizationERC20_[ii].allocation += utilizationERC20.allocation.mul(
+					utilizationERC20[ii].allocation += uERC20.allocation.mul(
 						iV1EMP.utilizedV1EMPStrategy_allocation(_utilizedV1EMPStrategy[i])
 					).div(
 						1e18
 					);
 
-					utilizedERC20AllocationTotal += utilizationERC20_[ii].allocation;
+					utilizedERC20AllocationTotal += utilizationERC20[ii].allocation;
 				}
 
-				if (utilizationERC20.withdraw)
+				if (uERC20.withdraw)
 				{
-					utilizationERC20_[ii].withdraw = true;
+					utilizationERC20[ii].withdraw = true;
 				}
 			}
 		}
@@ -310,11 +310,11 @@ contract V1EMPUtility is
 			"!(utilizedERC20AllocationTotal == _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT())"
 		);
 
-		_v1EMP_utilizedERC20[msg.sender] = utilizedERC20_;
+		_v1EMP_utilizedERC20[msg.sender] = utilizedERC20;
 
 		for (uint256 i = 0; i < _v1EMP_utilizedERC20[msg.sender].length; i++)
 		{
-			_v1EMP_utilizedERC20_utilizationERC20[msg.sender][_v1EMP_utilizedERC20[msg.sender][i]] = utilizationERC20_[i];
+			_v1EMP_utilizedERC20_utilizationERC20[msg.sender][_v1EMP_utilizedERC20[msg.sender][i]] = utilizationERC20[i];
 		}
 	}
 
