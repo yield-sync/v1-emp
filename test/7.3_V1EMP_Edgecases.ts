@@ -37,7 +37,7 @@ import StrategyTransferUtil from "../util/StrategyTransferUtil";
 const LOCATION_MOCKERC20: string = "MockERC20";
 
 
-describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
+describe("[7.3] V1EMP.sol - Edgecases", async () => {
 	let eTHValueEMPDepositAmount: BigNumber = ethers.utils.parseUnits("1", 18);
 
 	let arrayUtility: Contract;
@@ -289,8 +289,8 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 		expect(await eMPs[0].contract.balanceOf(owner.address)).to.be.greaterThan(0);
 	});
 
-	describe("EMP has Strategies set but Strategies do not have SI set", async () => {
-		it("Should allow depositing tokens into the EMP", async () => {
+	describe("EMP with uninitialized Strategies", async () => {
+		it("Should allow depositing tokens into the EMP..", async () => {
 
 		});
 	});
