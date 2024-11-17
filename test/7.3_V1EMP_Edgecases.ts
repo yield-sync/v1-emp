@@ -285,19 +285,19 @@ describe("[7.3] V1EMP.sol - Edgecases", async () => {
 					utilizedERC20[i]
 				);
 
-				if (mockERC20A.address == utilizedERC20[i])
+				switch (utilizedERC20[i])
 				{
-					expect(utilization.allocation).to.be.equal(PERCENT.TWENTY_FIVE);
-				}
-
-				if (mockERC20B.address == utilizedERC20[i])
-				{
-					expect(utilization.allocation).to.be.equal(PERCENT.TWENTY_FIVE);
-				}
-
-				if (mockERC20C.address == utilizedERC20[i])
-				{
-					expect(utilization.allocation).to.be.equal(PERCENT.FIFTY);
+					case mockERC20A.address:
+						expect(utilization.allocation).to.be.equal(PERCENT.TWENTY_FIVE);
+						break;
+					case mockERC20B.address:
+						expect(utilization.allocation).to.be.equal(PERCENT.TWENTY_FIVE);
+						break;
+					case mockERC20C.address:
+						expect(utilization.allocation).to.be.equal(PERCENT.FIFTY);
+						break;
+					default:
+						break;
 				}
 			}
 		});
