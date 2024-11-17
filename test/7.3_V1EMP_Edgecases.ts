@@ -264,29 +264,6 @@ describe("[7.3] V1EMP.sol - Edgecases", async () => {
 				},
 			]
 		);
-
-		eMPDepositAmounts = await eMPs[0].eMPTransferUtil.calculatedUtilizedERC20Amount(eTHValueEMPDepositAmount);
-
-		// Approve tokens
-		await approveTokens(
-			eMPs[0].contract.address,
-			await eMPUtility.v1EMP_utilizedERC20(eMPs[0].contract.address),
-			eMPDepositAmounts
-		);
-
-		// Deposit the utilized ERC20 tokens into EMP
-		await eMPs[0].contract.utilizedERC20Deposit(eMPDepositAmounts);
-
-		depositAmount[0] = await strategies[0].strategyTransferUtil.calculateERC20Required(
-			eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(D_18)
-		);
-
-		depositAmount[1] = await strategies[1].strategyTransferUtil.calculateERC20Required(
-			eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(D_18)
-		);
-
-		// Expect that the owner address received something
-		expect(await eMPs[0].contract.balanceOf(owner.address)).to.be.greaterThan(0);
 	});
 
 	describe("EMP with uninitialized Strategies", async () => {
@@ -325,8 +302,32 @@ describe("[7.3] V1EMP.sol - Edgecases", async () => {
 			}
 		});
 
-		it("Should allow depositing tokens into the EMP..", async () => {
-			// TODO: Complete this test
+		describe("EMP should be able to recieve tokens", async () => {
+			it("Should allow depositing tokens into the EMP..", async () => {
+				// This test is significant because
+				eMPDepositAmounts = await eMPs[0].eMPTransferUtil.calculatedUtilizedERC20Amount(eTHValueEMPDepositAmount);
+
+				// Approve tokens
+				await approveTokens(
+					eMPs[0].contract.address,
+					await eMPUtility.v1EMP_utilizedERC20(eMPs[0].contract.address),
+					eMPDepositAmounts
+				);
+
+				// Deposit the utilized ERC20 tokens into EMP
+				await eMPs[0].contract.utilizedERC20Deposit(eMPDepositAmounts);
+
+				depositAmount[0] = await strategies[0].strategyTransferUtil.calculateERC20Required(
+					eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(D_18)
+				);
+
+				depositAmount[1] = await strategies[1].strategyTransferUtil.calculateERC20Required(
+					eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(D_18)
+				);
+
+				// Expect that the owner address received something
+				expect(await eMPs[0].contract.balanceOf(owner.address)).to.be.greaterThan(0);
+			});
 		});
 	});
 });
