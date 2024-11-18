@@ -32,12 +32,19 @@ contract V1EMPStrategyUtility is
 	}
 
 
-	modifier existantV1EMPStrategy(address _v1EMPStrategy)
+	function _existantV1EMPStrategy(address _v1EMPStrategy)
+		internal
+		view
 	{
 		require(
 			_I_V1_EMP_REGISTRY.v1EMPStrategy_v1EMPStrategyId(_v1EMPStrategy) > 0,
 			"!(_I_V1_EMP_REGISTRY.v1EMPStrategy_v1EMPStrategyId(_v1EMPStrategy) > 0)"
 		);
+	}
+
+	modifier existantV1EMPStrategy(address _v1EMPStrategy)
+	{
+		_existantV1EMPStrategy(_v1EMPStrategy);
 
 		_;
 	}

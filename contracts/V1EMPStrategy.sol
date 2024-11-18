@@ -61,33 +61,61 @@ contract V1EMPStrategy is
 	}
 
 
-	modifier authEMP()
+	function _authEMP()
+		internal
+		view
 	{
 		require(_I_V1_EMP_REGISTRY.v1EMP_v1EMPId(msg.sender) > 0, "!authorized");
+	}
+
+	modifier authEMP()
+	{
+		_authEMP();
 
 		_;
+	}
+
+	function _authManager()
+		internal
+		view
+	{
+		require(manager == msg.sender, "!authorized");
 	}
 
 	modifier authManager()
 	{
-		require(manager == msg.sender, "!authorized");
+		_authManager();
 
 		_;
+	}
+
+	function _initialized()
+		internal
+		view
+	{
+		require(address(iV1EMPStrategyInteractor) != address(0), "!(address(iV1EMPStrategyInteractor) != address(0))");
 	}
 
 	modifier initialized()
 	{
-		require(address(iV1EMPStrategyInteractor) != address(0), "!(address(iV1EMPStrategyInteractor) != address(0))");
+		_initialized();
 
 		_;
 	}
 
-	modifier utilizedERC20TransferClosed()
+	function _utilizedERC20TransferClosed()
+		internal
+		view
 	{
 		require(
 			!utilizedERC20DepositOpen && !utilizedERC20WithdrawOpen,
 			"!(!utilizedERC20DepositOpen && !utilizedERC20WithdrawOpen)"
 		);
+	}
+
+	modifier utilizedERC20TransferClosed()
+	{
+		_utilizedERC20TransferClosed();
 
 		_;
 	}

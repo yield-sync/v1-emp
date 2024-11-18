@@ -23,9 +23,16 @@ contract StrategyInteractorBlank is
 	}
 
 
-	modifier onlyStrategy()
+	function _onlyStrategy()
+		internal
+		view
 	{
 		require(address(V1_EMP_STRATEGY) == msg.sender, "address(V1_EMP_STRATEGY) != msg.sender");
+	}
+
+	modifier onlyStrategy()
+	{
+		_onlyStrategy();
 
 		_;
 	}

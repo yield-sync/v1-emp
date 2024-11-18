@@ -2,7 +2,7 @@
 pragma solidity ^0.8.18;
 
 
-import { IAccessControlEnumerable } from "@openzeppelin/contracts/access/IAccessControlEnumerable.sol";
+import { IAccessControl } from "@openzeppelin/contracts/access/IAccessControl.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
@@ -51,19 +51,32 @@ contract V1EMP is
 	}
 
 
-	modifier authGovernanceOrManager()
+	function _authGovernanceOrManager()
+		internal
 	{
 		require(
-			msg.sender == manager || IAccessControlEnumerable(_I_V1_EMP_REGISTRY.governance()).hasRole(bytes32(0), msg.sender),
+			msg.sender == manager || IAccessControl(_I_V1_EMP_REGISTRY.governance()).hasRole(bytes32(0), msg.sender),
 			"!authorized"
 		);
+	}
+
+	modifier authGovernanceOrManager()
+	{
+		_authGovernanceOrManager();
 
 		_;
 	}
 
-	modifier utilizedERC20DepositOpenRequired()
+	function _utilizedERC20DepositOpenRequired()
+		internal
+		view
 	{
 		require(utilizedERC20DepositOpen, "!utilizedERC20DepositOpen");
+	}
+
+	modifier utilizedERC20DepositOpenRequired()
+	{
+		_utilizedERC20DepositOpenRequired();
 
 		_;
 	}
@@ -104,7 +117,7 @@ contract V1EMP is
 		public
 		override
 	{
-		require(IAccessControlEnumerable(_I_V1_EMP_REGISTRY.governance()).hasRole(bytes32(0), msg.sender), "!authorized");
+		require(IAccessControl(_I_V1_EMP_REGISTRY.governance()).hasRole(bytes32(0), msg.sender), "!authorized");
 
 		if (_feeRateGovernance + feeRateManager > _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT())
 		{
@@ -155,7 +168,9 @@ contract V1EMP is
 		uint256 mintAmountGovernancePayTo = utilizedERC20AmountTotalETHValue * feeRateGovernance / 1e18;
 
 		_mint(manager, mintAmountManager);
+
 		_mint(_I_V1_EMP_REGISTRY.governancePayTo(), mintAmountGovernancePayTo);
+
 		_mint(msg.sender, utilizedERC20AmountTotalETHValue - mintAmountManager - mintAmountGovernancePayTo);
 	}
 
@@ -175,21 +190,23 @@ contract V1EMP is
 	{
 		_I_V1_EMP_UTILITY.utilizedStrategySync();
 
-		address[] memory _utilizedERC20 = _I_V1_EMP_UTILITY.v1EMP_utilizedERC20(address(this));
+		address[] memory utilizedERC20 = _I_V1_EMP_UTILITY.v1EMP_utilizedERC20(address(this));
 
 		for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
 		{
-			for (uint256 ii = 0; ii < _utilizedERC20.length; ii++)
+			for (uint256 ii = 0; ii < utilizedERC20.length; ii++)
 			{
-				if (address(IV1EMPStrategy(_utilizedV1EMPStrategy[i]).iV1EMPStrategyInteractor()) == address(0))
+				address v1EMPStrategyInteractor = address(IV1EMPStrategy(_utilizedV1EMPStrategy[i]).iV1EMPStrategyInteractor());
+
+				if (v1EMPStrategyInteractor == address(0))
 				{
 					continue;
 				}
 
-				IERC20(_utilizedERC20[ii]).approve(
-					address(IV1EMPStrategy(_utilizedV1EMPStrategy[i]).iV1EMPStrategyInteractor()),
-					type(uint256).max
-				);
+				if (IERC20(utilizedERC20[ii]).allowance(address(this), v1EMPStrategyInteractor) != type(uint256).max)
+				{
+					IERC20(utilizedERC20[ii]).approve(v1EMPStrategyInteractor, type(uint256).max);
+				}
 			}
 		}
 	}
@@ -331,10 +348,12 @@ contract V1EMP is
 
 		for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
 		{
-			if (_v1EMPStrategyERC20Amount[i] > 0)
+			if (_v1EMPStrategyERC20Amount[i] == 0)
 			{
-				IV1EMPStrategy(_utilizedV1EMPStrategy[i]).utilizedERC20Withdraw(_v1EMPStrategyERC20Amount[i]);
+				continue;
 			}
+
+			IV1EMPStrategy(_utilizedV1EMPStrategy[i]).utilizedERC20Withdraw(_v1EMPStrategyERC20Amount[i]);
 		}
 	}
 }
