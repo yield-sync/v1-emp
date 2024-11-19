@@ -85,6 +85,29 @@ contract V1EMP is
 	/// @notice view
 
 
+	// @inheritdoc IV1EMPUtility
+	function utilizedERC20TotalBalance()
+		public
+		view
+		returns (uint256[] memory utilizedERC20TotalAmount_)
+	{
+		address[] memory _utilizedERC20 = _I_V1_EMP_UTILITY.v1EMP_utilizedERC20(address(this));
+
+		utilizedERC20TotalAmount_ = new uint256[](_utilizedERC20.length);
+
+		for (uint256 i = 0; i < _utilizedERC20.length; i++)
+		{
+			utilizedERC20TotalAmount_[i] += IERC20(_utilizedERC20[i]).balanceOf(address(this));
+
+			for (uint256 ii = 0; ii < _utilizedV1EMPStrategy.length; ii++)
+			{
+				utilizedERC20TotalAmount_[i] += IV1EMPStrategy(_utilizedV1EMPStrategy[ii]).utilizedERC20TotalBalance(
+					_utilizedERC20[i]
+				);
+			}
+		}
+	}
+
 	/// @inheritdoc IV1EMP
 	function utilizedV1EMPStrategy()
 		public
@@ -223,13 +246,25 @@ contract V1EMP is
 
 		utilizedStrategySync();
 
-		(
-			bool utilizedERC20Available,
-			uint256[] memory transferAmount
-		) = _I_V1_EMP_UTILITY.utilizedERC20AvailableAndTransferAmount(
-			address(this),
-			_eRC20Amount
-		);
+		address[] memory _utilizedERC20 = _I_V1_EMP_UTILITY.v1EMP_utilizedERC20(address(this));
+
+		bool utilizedERC20Available = true;
+
+		uint256[] memory transferAmount = new uint256[](_utilizedERC20.length);
+
+		uint256[] memory utilizedERC20TotalAmount = utilizedERC20TotalBalance();
+
+		for (uint256 i = 0; i < _utilizedERC20.length; i++)
+		{
+			require(totalSupply() > 0, "!totalSupply()");
+
+			transferAmount[i] = utilizedERC20TotalAmount[i] * _eRC20Amount / totalSupply();
+
+			if (IERC20(_utilizedERC20[i]).balanceOf(address(this)) < transferAmount[i])
+			{
+				utilizedERC20Available = false;
+			}
+		}
 
 		address[] memory utilizedERC20 = _I_V1_EMP_UTILITY.v1EMP_utilizedERC20(address(this));
 

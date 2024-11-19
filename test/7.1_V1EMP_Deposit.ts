@@ -506,7 +506,7 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 
 
 		it("Should return the holdings of the EMP..", async () => {
-			const EMP_ERC20_BALANCES = await eMPUtility.utilizedERC20TotalBalance(eMPs[0].contract.address);
+			const EMP_ERC20_BALANCES = await eMPs[0].contract.utilizedERC20TotalBalance();
 
 			for (let i = 0; i < utilizedERC20.length; i++)
 			{
@@ -688,7 +688,7 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 
 
 		it("Should return the holdings of the EMP..", async () => {
-			const EMP_ERC20_BALANCES = await eMPUtility.utilizedERC20TotalBalance(eMPs[0].contract.address);
+			const EMP_ERC20_BALANCES = await eMPs[0].contract.utilizedERC20TotalBalance();
 
 			for (let i = 0; i < utilizedERC20.length; i++)
 			{

@@ -36,17 +36,6 @@ interface IV1EMPUtility
 
 
 	/**
-	* @notice
-	* @param _v1EMP {address}
-	* @return utilizedERC20TotalAmount_ {uint256[]}
-	*/
-	function utilizedERC20TotalBalance(address _v1EMP)
-		external
-		view
-		returns (uint256[] memory utilizedERC20TotalAmount_)
-	;
-
-	/**
 	* @notice Utilized ERC20 Amount Valid
 	* @param _v1EMP {address}
 	* @param _utilizedERC20Amount {uint256}
@@ -58,19 +47,6 @@ interface IV1EMPUtility
 		external
 		view
 		returns (bool valid_, uint256 utilizedERC20AmountTotalETHValue_, string memory message_)
-	;
-
-	/**
-	* @notice Utilized ERC20 Available And Tranfer Amount
-	* @param _v1EMP {address}
-	* @param _eRC20Amount {uint256}
-	* @return utilizedERC20Available_ {bool}
-	* @return transferAmount_ {uint256[]}
-	*/
-	function utilizedERC20AvailableAndTransferAmount(address _v1EMP, uint256 _eRC20Amount)
-		external
-		view
-		returns(bool utilizedERC20Available_, uint256[] memory transferAmount_)
 	;
 
 	/**

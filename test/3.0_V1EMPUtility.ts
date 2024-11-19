@@ -51,24 +51,6 @@ describe("[3.0] V1EMPUtility.sol", async () => {
 			});
 		});
 
-		describe("function utilizedERC20AvailableAndTransferAmount()", async () => {
-			it("[modifier] Should only be able to pass a valid EMP address..", async () => {
-				await expect(
-					utility.utilizedERC20AvailableAndTransferAmount(ethers.constants.AddressZero, 0)
-				).to.be.rejectedWith(
-					ERROR.EMP.ADDRESS_NOT_EMP
-				);
-			});
-		});
-
-		describe("function utilizedERC20TotalBalance()", async () => {
-			it("[modifier] Should only be able to pass a valid EMP address..", async () => {
-				await expect(utility.utilizedERC20TotalBalance(ethers.constants.AddressZero)).to.be.rejectedWith(
-					ERROR.EMP.ADDRESS_NOT_EMP
-				);
-			});
-		});
-
 		describe("function utilizedV1EMPStrategyValid()", async () => {
 			it("[modifier] Should only be able to pass a valid EMP address..", async () => {
 				await expect(utility.utilizedV1EMPStrategyValid(ethers.constants.AddressZero, [], [])).to.be.rejectedWith(
