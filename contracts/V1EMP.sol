@@ -5,6 +5,7 @@ pragma solidity ^0.8.18;
 import { IAccessControl } from "@openzeppelin/contracts/access/IAccessControl.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 import { IERC20, IV1EMP } from "./interface/IV1EMP.sol";
 import { IV1EMPRegistry } from "./interface/IV1EMPRegistry.sol";
@@ -17,6 +18,9 @@ contract V1EMP is
 	ERC20,
 	IV1EMP
 {
+	using SafeMath for uint256;
+
+
 	address public override manager;
 
 	address[] internal _utilizedV1EMPStrategy;
@@ -127,7 +131,7 @@ contract V1EMP is
 		public
 		authGovernanceOrManager()
 	{
-		if (feeRateGovernance + _feeRateManager > _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT())
+		if (feeRateGovernance.add(_feeRateManager) > _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT())
 		{
 			revert("!(_feeRateManager)");
 		}
@@ -142,7 +146,7 @@ contract V1EMP is
 	{
 		require(IAccessControl(_I_V1_EMP_REGISTRY.governance()).hasRole(bytes32(0), msg.sender), "!authorized");
 
-		if (_feeRateGovernance + feeRateManager > _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT())
+		if (_feeRateGovernance.add(feeRateManager) > _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT())
 		{
 			revert("!(_feeRateGovernance)");
 		}
@@ -186,15 +190,15 @@ contract V1EMP is
 			IERC20(_utilizedERC20[i]).transferFrom(msg.sender, address(this), _utilizedERC20Amount[i]);
 		}
 
-		uint256 mintAmountManager = utilizedERC20AmountTotalETHValue * feeRateManager / 1e18;
+		uint256 mintAmountManager = utilizedERC20AmountTotalETHValue.mul(feeRateManager).div(1e18);
 
-		uint256 mintAmountGovernancePayTo = utilizedERC20AmountTotalETHValue * feeRateGovernance / 1e18;
+		uint256 mintAmountGovernancePayTo = utilizedERC20AmountTotalETHValue.mul(feeRateGovernance).div(1e18);
 
 		_mint(manager, mintAmountManager);
 
 		_mint(_I_V1_EMP_REGISTRY.governancePayTo(), mintAmountGovernancePayTo);
 
-		_mint(msg.sender, utilizedERC20AmountTotalETHValue - mintAmountManager - mintAmountGovernancePayTo);
+		_mint(msg.sender, utilizedERC20AmountTotalETHValue.sub(mintAmountManager).sub(mintAmountGovernancePayTo));
 	}
 
 	/// @inheritdoc IV1EMP
@@ -256,9 +260,7 @@ contract V1EMP is
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
-			require(totalSupply() > 0, "!totalSupply()");
-
-			transferAmount[i] = utilizedERC20TotalAmount[i] * _eRC20Amount / totalSupply();
+			transferAmount[i] = utilizedERC20TotalAmount[i].mul(_eRC20Amount).div(totalSupply(), "!computed");
 
 			if (IERC20(_utilizedERC20[i]).balanceOf(address(this)) < transferAmount[i])
 			{
@@ -277,13 +279,15 @@ contract V1EMP is
 
 			uint256[] memory v1EMPStrategyERC20Amount = new uint256[](_utilizedV1EMPStrategy.length);
 
-			uint256 _eRC20AmountPercentOfTotalSupply = _eRC20Amount * 1e18 / totalSupply();
+			uint256 _eRC20AmountPercentOfTotalSupply = _eRC20Amount.mul(1e18).div(totalSupply());
 
 			for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
 			{
-				v1EMPStrategyERC20Amount[i] = _eRC20AmountPercentOfTotalSupply * IV1EMPStrategy(_utilizedV1EMPStrategy[i]).eMP_shares(
-					address(this)
-				) / 1e18;
+				v1EMPStrategyERC20Amount[i] = _eRC20AmountPercentOfTotalSupply.mul(
+					IV1EMPStrategy(_utilizedV1EMPStrategy[i]).eMP_shares(address(this))
+				).div(
+					1e18
+				);
 			}
 
 			utilizedV1EMPStrategyWithdraw(v1EMPStrategyERC20Amount);
