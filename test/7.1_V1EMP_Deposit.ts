@@ -4,9 +4,8 @@ const { ethers } = require("hardhat");
 import { expect } from "chai";
 import { BigNumber, Contract, ContractFactory, VoidSigner } from "ethers";
 
+import { approveTokens, deployEMP, deployStrategies } from "./Scripts";
 import { D_18, ERROR, PERCENT } from "../const";
-import EMPTransferUtil from "../util/EMPTransferUtil";
-import StrategyTransferUtil from "../util/StrategyTransferUtil";
 
 
 const LOCATION_MOCKERC20: string = "MockERC20";
@@ -31,29 +30,9 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 	let manager: VoidSigner;
 	let treasury: VoidSigner;
 
-	let eMPs: {
-		contract: Contract,
-		eMPTransferUtil: EMPTransferUtil
-	}[] = [];
+	let eMPs: TestEMP[] = [];
 
-	let strategies: {
-		contract: Contract,
-		strategyTransferUtil: StrategyTransferUtil
-	}[] = [];
-
-
-	async function approveTokens(eMP: string, utilizedERC20: string[], eMPDepositAmounts: BigNumber[])
-	{
-		if (utilizedERC20.length != eMPDepositAmounts.length)
-		{
-			throw new Error("function approveTokens: utilizedERC20.length != eMPDepositAmounts.length");
-		}
-
-		for (let i: number = 0; i < utilizedERC20.length; i++)
-		{
-			await (await ethers.getContractAt(LOCATION_MOCKERC20, utilizedERC20[i])).approve(eMP, eMPDepositAmounts[i]);
-		}
-	}
+	let strategies: TestStrategy[] = [];
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
@@ -115,119 +94,53 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20C.address, eTHValueFeedC.address);
 
 
+		let strategyInteractor: Contract = await (await StrategyInteractorDummy.deploy()).deployed();
+		let strategyInteractor2: Contract = await (await StrategyInteractorDummy.deploy()).deployed();
+
 		/**
 		* EMP Strategies
 		*/
-		const deployStrategies: {
-			strategyUtilizedERC20: StrategyUtiliziedERC20,
-			strategyUtilization: StrategyUtilization,
-		}[] = [
-			{
-				strategyUtilizedERC20: [mockERC20A.address, mockERC20B.address],
-				strategyUtilization: [[true, true, PERCENT.FIFTY], [true, true, PERCENT.FIFTY]]
-			},
-			{
-				strategyUtilizedERC20: [mockERC20C.address],
-				strategyUtilization: [[true, true, PERCENT.HUNDRED]],
-			},
-		];
-
-		for (let i: number = 0; i < deployStrategies.length; i++)
-		{
-			let strategyInteractor: Contract = await (await StrategyInteractorDummy.deploy()).deployed();
-
-			// Deploy EMP Strategy
-			await strategyDeployer.deployV1EMPStrategy();
-
-			// Attach the deployed V1EMPStrategy address to variable
-			let deployedV1EMPStrategy = await V1EMPStrategy.attach(
-				String(await registry.v1EMPStrategyId_v1EMPStrategy(i + 1))
-			);
-
-			// Set the Strategy Interactor
-			await deployedV1EMPStrategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
-
-			await deployedV1EMPStrategy.utilizedERC20Update(
-				deployStrategies[i].strategyUtilizedERC20,
-				deployStrategies[i].strategyUtilization
-			);
-
-			// Enable Deposits and Withdraws
-			await deployedV1EMPStrategy.utilizedERC20DepositOpenToggle();
-
-			expect(await deployedV1EMPStrategy.utilizedERC20DepositOpen()).to.be.true;
-
-			await deployedV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
-
-			expect(await deployedV1EMPStrategy.utilizedERC20WithdrawOpen()).to.be.true;
-
-			strategies[i] = {
-				contract: deployedV1EMPStrategy,
-				strategyTransferUtil: new StrategyTransferUtil(deployedV1EMPStrategy, registry)
-			};
-		}
-
+		strategies = await deployStrategies(
+			registry,
+			strategyDeployer,
+			V1EMPStrategy,
+			[
+				{
+					strategyUtilizedERC20: [mockERC20A.address, mockERC20B.address],
+					strategyUtilization: [[true, true, PERCENT.FIFTY], [true, true, PERCENT.FIFTY]],
+					strategyInteractor: strategyInteractor.address
+				},
+				{
+					strategyUtilizedERC20: [mockERC20C.address],
+					strategyUtilization: [[true, true, PERCENT.HUNDRED]],
+					strategyInteractor: strategyInteractor2.address
+				},
+			]
+		);
 
 		/**
 		* EMP
 		*/
-		const deployEMPs: {
-			name: string,
-			ticker: string,
-			utilizedEMPStrategyUpdate: UtilizedEMPStrategyUpdate,
-			utilizedEMPStrategyAllocationUpdate: UtilizedEMPStrategyAllocationUpdate
-		}[] = [
-			{
-				name: "EMP 1",
-				ticker: "EMP1",
-				utilizedEMPStrategyUpdate: [strategies[0].contract.address, strategies[1].contract.address],
-				utilizedEMPStrategyAllocationUpdate: [PERCENT.FIFTY, PERCENT.FIFTY],
-			},
-			{
-				name: "EMP 2",
-				ticker: "EMP2",
-				utilizedEMPStrategyUpdate: [strategies[0].contract.address, strategies[1].contract.address],
-				utilizedEMPStrategyAllocationUpdate: [PERCENT.SEVENTY_FIVE, PERCENT.TWENTY_FIVE],
-			},
-		];
-
-		for (let i: number = 0; i < deployEMPs.length; i++)
-		{
-			// Deploy EMPs
-			await eMPDeployer.deployV1EMP(false, deployEMPs[i].name, deployEMPs[i].ticker);
-
-			// Get address from registry
-			let registryResults = await registry.v1EMPId_v1EMP(i + 1);
-
-			// Verify that a EMP has been registered
-			expect(String(registryResults)).to.be.not.equal(ethers.constants.AddressZero);
-
-			const eMPContract = await V1EMP.attach(String(registryResults));
-
-			eMPs[i] = ({
-				contract: eMPContract,
-				eMPTransferUtil: new EMPTransferUtil(eMPContract, registry, eMPUtility),
-			});
-
-			// Set the Manager
-			await eMPs[i].contract.managerUpdate(manager.address);
-
-			expect(await eMPs[i].contract.utilizedERC20DepositOpen()).to.be.false;
-
-			expect(await eMPs[i].contract.utilizedERC20WithdrawOpen()).to.be.false;
-
-			// Set the utilzation to 2 different strategies
-			await eMPs[i].contract.utilizedV1EMPStrategyUpdate(
-				deployEMPs[i].utilizedEMPStrategyUpdate,
-				deployEMPs[i].utilizedEMPStrategyAllocationUpdate
-			);
-
-			// Open deposits
-			await eMPs[i].contract.utilizedERC20DepositOpenToggle();
-
-			// Open Deposits
-			expect(await eMPs[i].contract.utilizedERC20DepositOpen()).to.be.true;
-		}
+		eMPs = await deployEMP(
+			manager.address,
+			registry,
+			eMPDeployer,
+			eMPUtility,
+			[
+				{
+					name: "EMP 1",
+					ticker: "EMP1",
+					utilizedEMPStrategyUpdate: [strategies[0].contract.address, strategies[1].contract.address],
+					utilizedEMPStrategyAllocationUpdate: [PERCENT.FIFTY, PERCENT.FIFTY],
+				},
+				{
+					name: "EMP 2",
+					ticker: "EMP2",
+					utilizedEMPStrategyUpdate: [strategies[0].contract.address, strategies[1].contract.address],
+					utilizedEMPStrategyAllocationUpdate: [PERCENT.SEVENTY_FIVE, PERCENT.TWENTY_FIVE],
+				},
+			]
+		);
 	});
 
 

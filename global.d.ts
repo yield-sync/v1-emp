@@ -18,3 +18,32 @@ type UtilizedEMPStrategyUpdate = string[];
 type UtilizedEMPStrategyAllocationUpdate = BigNumber[];
 type UtilizedERC20Amount = BigNumber[];
 type UtilizedEMPStrategyERC20Amount = BigNumber[][];
+
+/**
+* Deploy EMP
+*/
+type DeployEMP = {
+	name: string,
+	ticker: string,
+	utilizedEMPStrategyUpdate: UtilizedEMPStrategyUpdate,
+	utilizedEMPStrategyAllocationUpdate: UtilizedEMPStrategyAllocationUpdate
+};
+
+/**
+* Deploy Strategy
+*/
+type DeployStrategy = {
+	strategyUtilizedERC20: string[],
+	strategyUtilization: [boolean, boolean, BigNumber][],
+	strategyInteractor?: string
+};
+
+type TestEMP = {
+	contract: Contract,
+	eMPTransferUtil: EMPTransferUtil
+};
+
+type TestStrategy = {
+	contract: Contract,
+	strategyTransferUtil: StrategyTransferUtil
+};
