@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { BigNumber, Contract, ContractFactory, VoidSigner } from "ethers";
 
-import { approveTokens, deployEMP, deployStrategies } from "./Scripts";
+import { approveTokens, deployContract, deployEMP, deployStrategies } from "./Scripts";
 import { D_18, ERROR, PERCENT } from "../const";
 
 
@@ -39,53 +39,39 @@ describe("[7.3] V1EMP.sol - Edgecases", async () => {
 	beforeEach("[beforeEach] Set up contracts..", async () => {
 		[owner, manager, treasury, badActor] = await ethers.getSigners();
 
-		const YieldSyncGovernance: ContractFactory = await ethers.getContractFactory("YieldSyncGovernance");
-		const V1EMPArrayUtility: ContractFactory = await ethers.getContractFactory("V1EMPArrayUtility");
-		const V1EMPDeployer: ContractFactory = await ethers.getContractFactory("V1EMPDeployer");
-		const V1EMPRegistry: ContractFactory = await ethers.getContractFactory("V1EMPRegistry");
-		const V1EMPStrategy: ContractFactory = await ethers.getContractFactory("V1EMPStrategy");
-		const V1EMPStrategyDeployer: ContractFactory = await ethers.getContractFactory("V1EMPStrategyDeployer");
-		const V1EMPStrategyUtility: ContractFactory = await ethers.getContractFactory("V1EMPStrategyUtility");
-		const V1EMPUtility: ContractFactory= await ethers.getContractFactory("V1EMPUtility");
 
-		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
-		const ETHValueFeedDummy: ContractFactory = await ethers.getContractFactory("ETHValueFeedDummy");
-		const StrategyInteractorDummy: ContractFactory = await ethers.getContractFactory("StrategyInteractorDummy");
-
-
-		// Core contracts
-		governance = await (await YieldSyncGovernance.deploy()).deployed();
+		governance = await deployContract("YieldSyncGovernance");
 
 		await governance.payToUpdate(treasury.address);
 
-		arrayUtility = await (await V1EMPArrayUtility.deploy()).deployed();
+		arrayUtility = await deployContract("V1EMPArrayUtility");
 
-		registry = await (await V1EMPRegistry.deploy(governance.address)).deployed();
+		registry = await deployContract("V1EMPRegistry", [governance.address]);
 
 		await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
 
-		strategyUtility = await (await V1EMPStrategyUtility.deploy(registry.address)).deployed();
+		strategyUtility = await deployContract("V1EMPStrategyUtility", [registry.address]);
 
 		await registry.v1EMPStrategyUtilityUpdate(strategyUtility.address);
 
-		strategyDeployer = await (await V1EMPStrategyDeployer.deploy(registry.address)).deployed();
+		strategyDeployer = await deployContract("V1EMPStrategyDeployer", [registry.address]);
 
 		await registry.v1EMPStrategyDeployerUpdate(strategyDeployer.address);
 
-		eMPUtility = await (await V1EMPUtility.deploy(registry.address)).deployed();
+		eMPUtility = await deployContract("V1EMPUtility", [registry.address]);
 
 		await registry.v1EMPUtilityUpdate(eMPUtility.address);
 
-		eMPDeployer = await (await V1EMPDeployer.deploy(registry.address)).deployed();
+		eMPDeployer = await deployContract("V1EMPDeployer", [registry.address]);
 
 		await registry.v1EMPDeployerUpdate(eMPDeployer.address);
 
-		mockERC20A = await (await MockERC20.deploy("Mock A", "A", 18)).deployed();
-		mockERC20B = await (await MockERC20.deploy("Mock B", "B", 18)).deployed();
-		mockERC20C = await (await MockERC20.deploy("Mock C", "C", 6)).deployed();
+		mockERC20A = await deployContract("MockERC20", ["Mock A", "A", 18]);
+		mockERC20B = await deployContract("MockERC20", ["Mock B", "B", 18]);
+		mockERC20C = await deployContract("MockERC20", ["Mock C", "C", 6]);
 
-		eTHValueFeed = await (await ETHValueFeedDummy.deploy(18)).deployed();
-		eTHValueFeedC = await (await ETHValueFeedDummy.deploy(6)).deployed();
+		eTHValueFeed = await deployContract("ETHValueFeedDummy", [18]);
+		eTHValueFeedC = await deployContract("ETHValueFeedDummy", [6]);
 
 		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20A.address, eTHValueFeed.address);
 		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20B.address, eTHValueFeed.address);
@@ -95,7 +81,7 @@ describe("[7.3] V1EMP.sol - Edgecases", async () => {
 		strategies = await deployStrategies(
 			registry,
 			strategyDeployer,
-			V1EMPStrategy,
+			await ethers.getContractFactory("V1EMPStrategy"),
 			[
 				{
 					strategyUtilizedERC20: [mockERC20A.address, mockERC20B.address],

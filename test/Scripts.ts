@@ -13,6 +13,20 @@ class TransferOpenError extends Error {}
 
 
 /**
+* Deploy a Contract
+* @param _contractFactory {string}
+* @returns Promise<Contract>
+*/
+export async function deployContract(_contractFactory: string, params: any[] = []): Promise<Contract>
+{
+	const contractFactory: ContractFactory = await ethers.getContractFactory(_contractFactory);
+
+	const deployedContract = await contractFactory.deploy(...params);
+
+	return await deployedContract.deployed();
+}
+
+/**
 * Approve Tokens
 * @param eMP {string}
 * @param utilizedERC20 {string[]}
