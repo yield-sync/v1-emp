@@ -157,6 +157,8 @@ contract V1EMPStrategy is
 		override
 		returns (uint256 utilizedERC20TotalAmount_)
 	{
+		require(address(iV1EMPStrategyInteractor) != address(0), "!(address(iV1EMPStrategyInteractor) != address(0))");
+
 		return iV1EMPStrategyInteractor.utilizedERC20TotalBalance(__utilizedERC20);
 	}
 
@@ -171,6 +173,8 @@ contract V1EMPStrategy is
 		authManager()
 		utilizedERC20TransferClosed()
 	{
+		require(_iStrategyInteractor != address(0), "!_iStrategyInteractor");
+
 		iV1EMPStrategyInteractor = IV1EMPStrategyInteractor(_iStrategyInteractor);
 	}
 
@@ -180,6 +184,8 @@ contract V1EMPStrategy is
 		override
 		authManager()
 	{
+		require(_manager != address(0), "!_manager");
+
 		manager = _manager;
 	}
 

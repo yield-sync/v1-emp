@@ -96,6 +96,9 @@ export const ERROR = {
 		INVALID_PARAMS_UPDATE_CONTAINS_DUPLCIATES:
 			"I_V1_EMP_ARRAY_UTILITY.containsDuplicates(_utilizedERC20)"
 		,
+		INVALID_STRATEGY_INTERACTOR:
+			"!_iStrategyInteractor"
+		,
 		UTILIZED_ERC20_AMOUNT_NOT_ZERO:
 			"!(_utilizedERC20Amount[i] == 0)"
 		,

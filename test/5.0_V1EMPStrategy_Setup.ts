@@ -262,25 +262,40 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 		 * set. Part 2 is dependant the Deposits/Withdrawals toggle to be functional.
 		*/
 
-		it(
-			"[auth] Should revert when unauthorized msg.sender calls..",
-			async () => {
-				await expect(
-					strategy.connect(badActor).iV1EMPStrategyInteractorUpdate(strategyInteractor.address)
-				).to.be.rejectedWith(
-					ERROR.NOT_AUTHORIZED
-				);
-			}
-		);
+		describe("Expected Failure", async () => {
+			it(
+				"[auth] Should revert when unauthorized msg.sender calls..",
+				async () => {
+					await expect(
+						strategy.connect(badActor).iV1EMPStrategyInteractorUpdate(strategyInteractor.address)
+					).to.be.rejectedWith(
+						ERROR.NOT_AUTHORIZED
+					);
+				}
+			);
 
-		it(
-			"Should be able to set iV1EMPStrategyInteractor..",
-			async () => {
-				await strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
+			it(
+				"Should revert if address(0) passed..",
+				async () => {
+					await expect(
+						strategy.iV1EMPStrategyInteractorUpdate(ethers.constants.AddressZero)
+					).to.be.rejectedWith(
+						ERROR.STRATEGY.INVALID_STRATEGY_INTERACTOR
+					);
+				}
+			);
+		});
 
-				expect(await strategy.iV1EMPStrategyInteractor()).to.be.equal(strategyInteractor.address);
-			}
-		);
+		describe("Expected Success", async () => {
+			it(
+				"Should be able to set iV1EMPStrategyInteractor..",
+				async () => {
+					await strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
+
+					expect(await strategy.iV1EMPStrategyInteractor()).to.be.equal(strategyInteractor.address);
+				}
+			);
+		});
 	});
 
 	describe("function utilizedERC20DepositOpenToggle()", async () => {
