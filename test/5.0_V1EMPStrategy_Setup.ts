@@ -122,6 +122,12 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 				);
 			});
 
+			it("Should revert if zero address passed as ERC20..", async () => {
+				await expect(
+					strategy.utilizedERC20Update([ethers.constants.AddressZero], [[true, true, PERCENT.HUNDRED]])
+				).to.be.rejectedWith(ERROR.STRATEGY.INVALID_UTILIZED_ERC20);
+			});
+
 			it("Should revert if array contains duplicates..", async () => {
 				await expect(
 					strategy.utilizedERC20Update(

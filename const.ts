@@ -78,11 +78,14 @@ export const ERROR = {
 		INTERACTOR_NOT_SET:
 			"!(address(iV1EMPStrategyInteractor) != address(0))"
 		,
+		INVALID_BALANCE:
+			"!(eMP_shares[msg.sender] >= _shares)"
+		,
 		INVALID_ERC20_ALLOCATION_TOTAL:
 			"!(utilizedERC20AllocationTotal == _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT())"
 		,
-		INVALID_BALANCE:
-			"!(eMP_shares[msg.sender] >= _shares)"
+		INVALID_UTILIZED_ERC20:
+			"!(_utilizedERC20[i] != address(0))"
 		,
 		INVALID_UTILIZED_ERC20_AMOUNT:
 			"!(iV1EMPStrategy.utilizedERC20_utilizationERC20(utilizedERC20[i]).allocation == utilizedERC20AmountAllocationActual)"

@@ -177,6 +177,11 @@ contract V1EMPStrategyUtility is
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
+			if (_utilizedERC20[i] == address(0))
+			{
+				return (false, "!(_utilizedERC20[i] != address(0))");
+			}
+
 			if (_I_V1_EMP_REGISTRY.eRC20_v1EMPERC20ETHValueFeed(_utilizedERC20[i]) == address(0))
 			{
 				return (false, "!(_I_V1_EMP_REGISTRY.eRC20_v1EMPERC20ETHValueFeed(_utilizedERC20[i]) != address(0))");
