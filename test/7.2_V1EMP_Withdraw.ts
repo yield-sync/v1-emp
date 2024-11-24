@@ -342,10 +342,10 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 		});
 	});
 
-	describe("function utilizedERC20WithdrawFullToggle()", async () => {
+	describe("function utilizedERC20WithdrawFullUpdate()", async () => {
 		describe("Expected Failure", async () => {
 			it("[modifier][auth] Should revert when unauthorized msg.sender calls..", async () => {
-				await expect(eMPs[0].contract.connect(badActor).utilizedERC20WithdrawFullToggle()).to.be.rejectedWith(
+				await expect(eMPs[0].contract.connect(badActor).utilizedERC20WithdrawFullUpdate(true)).to.be.rejectedWith(
 					ERROR.NOT_AUTHORIZED
 				);
 			});
@@ -356,7 +356,7 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 
 				expect(await eMPs[0].contract.utilizedERC20WithdrawFull()).to.be.false;
 
-				await expect(eMPs[0].contract.utilizedERC20WithdrawFullToggle()).to.be.not.rejected;
+				await expect(eMPs[0].contract.utilizedERC20WithdrawFullUpdate(true)).to.be.not.rejected;
 
 				expect(await eMPs[0].contract.utilizedERC20WithdrawFull()).to.be.true;
 			});
@@ -368,7 +368,7 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 			beforeEach(async () => {
 				expect(await eMPs[0].contract.utilizedERC20WithdrawFull()).to.be.false;
 
-				await eMPs[0].contract.utilizedERC20WithdrawFullToggle();
+				await eMPs[0].contract.utilizedERC20WithdrawFullUpdate(true);
 
 				expect(await eMPs[0].contract.utilizedERC20WithdrawFull()).to.be.true;
 			});

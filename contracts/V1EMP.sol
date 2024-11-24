@@ -305,12 +305,12 @@ contract V1EMP is
 	}
 
 	/// @inheritdoc IV1EMP
-	function utilizedERC20WithdrawFullToggle()
+	function utilizedERC20WithdrawFullUpdate(bool _utilizedERC20WithdrawFull)
 		public
 		override
 		authGovernanceOrManager()
 	{
-		utilizedERC20WithdrawFull = !utilizedERC20WithdrawFull;
+		utilizedERC20WithdrawFull = _utilizedERC20WithdrawFull;
 	}
 
 	/// @inheritdoc IV1EMP

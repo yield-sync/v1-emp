@@ -161,9 +161,10 @@ interface IV1EMP is
 	;
 
 	/**
-	* @notice Utilized ERC20 Withdraw Full Toggle
+	* @notice Utilized ERC20 Withdraw Full Update
+	* @param _utilizedERC20WithdrawFull {uint256}
 	*/
-	function utilizedERC20WithdrawFullToggle()
+	function utilizedERC20WithdrawFullUpdate(bool _utilizedERC20WithdrawFull)
 		external
 	;
 
