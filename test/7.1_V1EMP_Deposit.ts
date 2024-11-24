@@ -13,6 +13,8 @@ const LOCATION_STRATGY: string = "V1EMPStrategy";
 
 
 describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
+	let eTHValueEMPDepositAmount: BigNumber = ethers.utils.parseUnits("1", 18);
+
 	let arrayUtility: Contract;
 	let governance: Contract;
 	let eTHValueFeed: Contract;
@@ -125,6 +127,113 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 				},
 			]
 		);
+	});
+
+	describe("EMP with uninitialized Strategies", async () => {
+		let eMPDepositAmounts: UtilizedERC20Amount;
+		let depositAmount: UtilizedERC20Amount = [];
+
+		let _eMPs: TestEMP[] = [];
+
+		let _strategies: TestStrategy[] = [];
+
+
+		beforeEach(async () => {
+			// Deploy Strategies
+			_strategies = await deployStrategies(
+				registry,
+				strategyDeployer,
+				await ethers.getContractFactory("V1EMPStrategy"),
+				[
+					{
+						strategyUtilizedERC20: [mockERC20A.address, mockERC20B.address],
+						strategyUtilization: [[true, true, PERCENT.FIFTY], [true, true, PERCENT.FIFTY]]
+					},
+					{
+						strategyUtilizedERC20: [mockERC20C.address],
+						strategyUtilization: [[true, true, PERCENT.HUNDRED]]
+					},
+				]
+			);
+
+			// Deploy EMPa
+			_eMPs = await deployEMP(
+				manager.address,
+				registry,
+				eMPDeployer,
+				eMPUtility,
+				[
+					{
+						name: "EMP 1",
+						ticker: "EMP1",
+						utilizedEMPStrategyUpdate: [_strategies[0].contract.address, _strategies[1].contract.address],
+						utilizedEMPStrategyAllocationUpdate: [PERCENT.FIFTY, PERCENT.FIFTY],
+					},
+				]
+			);
+		});
+
+
+		it("Should allow setting utilizedERC20 on EMP..", async () => {
+			let utilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(_eMPs[0].contract.address);
+
+			let myUtilizedERC20 = await arrayUtility.sort([mockERC20A.address, mockERC20B.address, mockERC20C.address])
+
+			for (let i = 0; i < utilizedERC20.length; i++)
+			{
+				expect(utilizedERC20[i]).to.be.equal(myUtilizedERC20[i]);
+			}
+
+			// Reorder the ERC20
+			for (let i = 0; i < utilizedERC20.length; i++)
+			{
+				let utilization = await eMPUtility.v1EMP_utilizedERC20_utilizationERC20(
+					eMPs[0].contract.address,
+					utilizedERC20[i]
+				);
+
+				switch (utilizedERC20[i])
+				{
+					case mockERC20A.address:
+						expect(utilization.allocation).to.be.equal(PERCENT.TWENTY_FIVE);
+						break;
+					case mockERC20B.address:
+						expect(utilization.allocation).to.be.equal(PERCENT.TWENTY_FIVE);
+						break;
+					case mockERC20C.address:
+						expect(utilization.allocation).to.be.equal(PERCENT.FIFTY);
+						break;
+					default:
+						break;
+				}
+			}
+		});
+
+		it("Should allow depositing of tokens..", async () => {
+			// This test is significant because
+			eMPDepositAmounts = await _eMPs[0].eMPTransferUtil.calculatedUtilizedERC20Amount(eTHValueEMPDepositAmount);
+
+			// Approve tokens
+			await approveTokens(
+				_eMPs[0].contract.address,
+				await eMPUtility.v1EMP_utilizedERC20(_eMPs[0].contract.address),
+				eMPDepositAmounts
+			);
+
+			// Deposit the utilized ERC20 tokens into EMP
+			await _eMPs[0].contract.utilizedERC20Deposit(eMPDepositAmounts);
+
+			depositAmount[0] = await _strategies[0].strategyTransferUtil.calculateERC20Required(
+				eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(D_18)
+			);
+
+			depositAmount[1] = await _strategies[1].strategyTransferUtil.calculateERC20Required(
+				eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(D_18)
+			);
+
+			// Expect that the owner address received something
+			expect(await _eMPs[0].contract.balanceOf(owner.address)).to.be.greaterThan(0);
+		});
 	});
 
 
@@ -333,7 +442,7 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 					await strategies[0].contract.utilizedERC20DepositOpenUpdate(false);
 
 					await strategies[0].contract.utilizedERC20WithdrawOpenUpdate(false);
-					
+
 					// Update the utilized tokens for the first strategy..
 					await strategies[0].contract.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
 				});

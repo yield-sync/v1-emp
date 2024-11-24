@@ -66,7 +66,11 @@ export async function deployStrategies(
 	{
 		await strategyDeployer.deployV1EMPStrategy();
 
-		let deployedV1EMPStrategy = await V1EMPStrategy.attach(String(await registry.v1EMPStrategyId_v1EMPStrategy(i + 1)));
+		let latestId = await registry.v1EMPStrategyIdTracker();
+
+		let deployedV1EMPStrategy = await V1EMPStrategy.attach(
+			String(await registry.v1EMPStrategyId_v1EMPStrategy(latestId))
+		);
 
 		if (deployStrategies[i].strategyInteractor)
 		{
@@ -119,7 +123,9 @@ export async function deployEMP(
 	{
 		await eMPDeployer.deployV1EMP(false, deployEMPs[i].name, deployEMPs[i].ticker);
 
-		let registryResults = await registry.v1EMPId_v1EMP(i + 1);
+		let latestId = await registry.v1EMPIdTracker();
+
+		let registryResults = await registry.v1EMPId_v1EMP(latestId);
 
 		const eMPContract = await V1EMP.attach(String(registryResults));
 
