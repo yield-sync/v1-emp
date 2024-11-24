@@ -128,11 +128,11 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 			);
 
 			// Enable Deposits and Withdraws
-			await deployedV1EMPStrategy.utilizedERC20DepositOpenToggle();
+			await deployedV1EMPStrategy.utilizedERC20DepositOpenUpdate(true);
 
 			expect(await deployedV1EMPStrategy.utilizedERC20DepositOpen()).to.be.true;
 
-			await deployedV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
+			await deployedV1EMPStrategy.utilizedERC20WithdrawOpenUpdate(true);
 
 			expect(await deployedV1EMPStrategy.utilizedERC20WithdrawOpen()).to.be.true;
 
@@ -374,15 +374,9 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 
 			expect(eMPUtilizedERC20.length).to.be.equal(3);
 
-			if (await strategies[0].contract.utilizedERC20DepositOpen())
-			{
-				await strategies[0].contract.utilizedERC20DepositOpenToggle();
-			}
+			await strategies[0].contract.utilizedERC20DepositOpenUpdate(false);
 
-			if (await strategies[0].contract.utilizedERC20WithdrawOpen())
-			{
-				await strategies[0].contract.utilizedERC20WithdrawOpenToggle();
-			}
+			await strategies[0].contract.utilizedERC20WithdrawOpenUpdate(false);
 
 			await strategies[0].contract.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
 

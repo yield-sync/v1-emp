@@ -169,8 +169,7 @@ describe("[5.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 				// Set SI
 				await strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
 
-				// Toggle deposits on
-				await strategy.utilizedERC20DepositOpenToggle();
+				await strategy.utilizedERC20DepositOpenUpdate(true);
 
 				// Set deposit amount
 				const DEPOSIT_AMOUNT: BigNumber = ethers.utils.parseUnits("1", 18);
@@ -201,13 +200,10 @@ describe("[5.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 				// Set SI
 				await strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
 
-				// Toggle deposits on
-				await strategy.utilizedERC20DepositOpenToggle();
+				await strategy.utilizedERC20DepositOpenUpdate(true);
 
-				// Toggle withdrawals on
-				await strategy.utilizedERC20WithdrawOpenToggle();
+				await strategy.utilizedERC20WithdrawOpenUpdate(true);
 
-				// Expect that withdrawals are toggled on
 				expect(await strategy.utilizedERC20WithdrawOpen()).to.be.true;
 			});
 
@@ -266,15 +262,15 @@ describe("[5.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 					);
 
 					// Disable transfers
-					await strategy.utilizedERC20DepositOpenToggle();
-					await strategy.utilizedERC20WithdrawOpenToggle();
+					await strategy.utilizedERC20DepositOpenUpdate(false);
+					await strategy.utilizedERC20WithdrawOpenUpdate(false);
 
 					// Set utilization.withdraw to false
 					await strategy.utilizedERC20Update([mockERC20A.address], [[true, false, PERCENT.HUNDRED]]);
 
 					// Enable transfers
-					await strategy.utilizedERC20DepositOpenToggle();
-					await strategy.utilizedERC20WithdrawOpenToggle();
+					await strategy.utilizedERC20DepositOpenUpdate(true);
+					await strategy.utilizedERC20WithdrawOpenUpdate(true);
 
 					// [main-test] Withdraw ERC20 tokens into the strategy
 					await expect(strategy.utilizedERC20Withdraw(await strategy.eMP_shares(owner.address))).to.be.not.rejected;
@@ -358,13 +354,12 @@ describe("[5.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 				// Set SI
 				await strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
 
-				// Toggle deposits on
-				await strategy.utilizedERC20DepositOpenToggle();
+				await strategy.utilizedERC20DepositOpenUpdate(true);
 
-				// Toggle withdrawals on
-				await strategy.utilizedERC20WithdrawOpenToggle();
+				expect(await strategy.utilizedERC20DepositOpen()).to.be.true;
 
-				// Expect that withdrawals are toggled on
+				await strategy.utilizedERC20WithdrawOpenUpdate(true);
+
 				expect(await strategy.utilizedERC20WithdrawOpen()).to.be.true;
 			});
 

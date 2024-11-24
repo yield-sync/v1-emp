@@ -138,9 +138,10 @@ interface IV1EMP is
 	;
 
 	/**
-	* @notice Utilized ERC20 Deposit Open Toggle
+	* @notice Utilized ERC20 Deposit Open Update
+	* @param _utilizedERC20DepositOpen {bool}
 	*/
-	function utilizedERC20DepositOpenToggle()
+	function utilizedERC20DepositOpenUpdate(bool _utilizedERC20DepositOpen)
 		external
 	;
 
@@ -167,9 +168,10 @@ interface IV1EMP is
 	;
 
 	/**
-	* @notice Utilized ERC20 Withdraw Open Toggle
+	* @notice Utilized ERC20 Withdraw Open Update
+	* @param _utilizedERC20WithdrawOpen {bool}
 	*/
-	function utilizedERC20WithdrawOpenToggle()
+	function utilizedERC20WithdrawOpenUpdate(bool _utilizedERC20WithdrawOpen)
 		external
 	;
 

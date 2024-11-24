@@ -80,15 +80,9 @@ export async function deployStrategies(
 
 		if (deployStrategies[i].strategyInteractor)
 		{
-			if (await deployedV1EMPStrategy.utilizedERC20DepositOpen() == false)
-			{
-				await deployedV1EMPStrategy.utilizedERC20DepositOpenToggle();
-			}
+			await deployedV1EMPStrategy.utilizedERC20DepositOpenUpdate(true);
 
-			if (await deployedV1EMPStrategy.utilizedERC20WithdrawOpen() == false)
-			{
-				await deployedV1EMPStrategy.utilizedERC20WithdrawOpenToggle();
-			}
+			await deployedV1EMPStrategy.utilizedERC20WithdrawOpenUpdate(true);
 		}
 
 		testStrategies[i] = {
@@ -149,10 +143,10 @@ export async function deployEMP(
 		);
 
 		// Open deposits
-		await testEMPs[i].contract.utilizedERC20DepositOpenToggle();
+		await testEMPs[i].contract.utilizedERC20DepositOpenUpdate(true);
 
 		// Open withdrawals
-		await testEMPs[i].contract.utilizedERC20WithdrawOpenToggle();
+		await testEMPs[i].contract.utilizedERC20WithdrawOpenUpdate(true);
 
 		if (!await testEMPs[i].contract.utilizedERC20DepositOpen() || !await testEMPs[i].contract.utilizedERC20WithdrawOpen())
 		{

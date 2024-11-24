@@ -132,13 +132,11 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 		describe("Expected Failure", async () => {
 			it("Should NOT allow depositing if not open..", async () => {
 				/**
-				* @notice This test is to check that depositing must be toggled on in order to call the function properly.
+				* @notice This test is to check that depositing must be on in order to call the function properly.
 				*/
 
 				// Close deposits
-				await eMPs[0].contract.utilizedERC20DepositOpenToggle();
-
-				expect(await eMPs[0].contract.utilizedERC20DepositOpen()).to.be.false;
+				await eMPs[0].contract.utilizedERC20DepositOpenUpdate(false);
 
 				// Even if utilizedERC20Amounts, the function should revert with reason that deposits are NOT open
 				await expect(eMPs[0].contract.utilizedERC20Deposit([])).to.be.rejectedWith(ERROR.STRATEGY.DEPOSIT_NOT_OPEN);
@@ -332,16 +330,10 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 
 					expect(utilizedERC20.length).to.be.equal(3);
 
-					if (await strategies[0].contract.utilizedERC20DepositOpen())
-					{
-						await strategies[0].contract.utilizedERC20DepositOpenToggle();
-					}
+					await strategies[0].contract.utilizedERC20DepositOpenUpdate(false);
 
-					if (await strategies[0].contract.utilizedERC20WithdrawOpen())
-					{
-						await strategies[0].contract.utilizedERC20WithdrawOpenToggle();
-					}
-
+					await strategies[0].contract.utilizedERC20WithdrawOpenUpdate(false);
+					
 					// Update the utilized tokens for the first strategy..
 					await strategies[0].contract.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
 				});
@@ -440,10 +432,7 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 		describe("Expected Failure", async () => {
 			it("Should NOT allow depositing into strategies if not open..", async () => {
 				// Close deposits
-				await eMPs[0].contract.utilizedERC20DepositOpenToggle();
-
-				// Expect deposit to be closed
-				expect(await eMPs[0].contract.utilizedERC20DepositOpen()).to.be.false;
+				await eMPs[0].contract.utilizedERC20DepositOpenUpdate(false);
 
 				// Attempt to deposit the tokens
 				await expect(eMPs[0].contract.utilizedV1EMPStrategyDeposit([])).to.be.rejectedWith(
