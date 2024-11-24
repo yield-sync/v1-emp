@@ -4,6 +4,7 @@ const { ethers } = require("hardhat");
 import { expect } from "chai";
 import { Contract, ContractFactory, VoidSigner } from "ethers";
 import { ERROR } from "../const";
+import { approveTokens, deployContract, deployEMP, deployStrategies } from "./Scripts";
 
 
 describe("[2.0] V1EMPStrategyUtility.sol", async () => {
@@ -18,26 +19,18 @@ describe("[2.0] V1EMPStrategyUtility.sol", async () => {
 	beforeEach("[beforeEach] Set up contracts..", async () => {
 		[, , treasury] = await ethers.getSigners();
 
-
-		const YieldSyncGovernance: ContractFactory = await ethers.getContractFactory("YieldSyncGovernance");
-		const V1EMPArrayUtility: ContractFactory = await ethers.getContractFactory("V1EMPArrayUtility");
-		const V1EMPRegistry: ContractFactory = await ethers.getContractFactory("V1EMPRegistry");
-		const V1EMPStrategyUtility: ContractFactory= await ethers.getContractFactory("V1EMPStrategyUtility");
-
-
-		governance = await (await YieldSyncGovernance.deploy()).deployed();
+		governance = await deployContract("YieldSyncGovernance");
 
 		await governance.payToUpdate(treasury.address);
 
-		arrayUtility = await (await V1EMPArrayUtility.deploy()).deployed();
+		arrayUtility = await deployContract("V1EMPArrayUtility");
 
-		registry = await (await V1EMPRegistry.deploy(governance.address)).deployed();
+		registry = await deployContract("V1EMPRegistry", [governance.address]);
 
 		await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
 
-		utility = await (await V1EMPStrategyUtility.deploy(registry.address)).deployed();
+		utility = await deployContract("V1EMPStrategyUtility", [registry.address]);
 
-		// Set the Strategy Deployer
 		await registry.v1EMPStrategyDeployerUpdate(utility.address);
 	});
 
