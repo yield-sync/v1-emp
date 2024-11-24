@@ -217,22 +217,13 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 
 				expect(eMPUtilizedERC20.length).to.be.equal(3);
 
-				if (await strategies[0].contract.utilizedERC20DepositOpen())
-				{
-					await strategies[0].contract.utilizedERC20DepositOpenToggle();
-				}
+				await strategies[0].contract.utilizedERC20DepositOpenUpdate(false);
 
-				if (await strategies[0].contract.utilizedERC20WithdrawOpen())
-				{
-					await strategies[0].contract.utilizedERC20WithdrawOpenToggle();
-				}
+				await strategies[0].contract.utilizedERC20WithdrawOpenUpdate(false);
 
 				await strategies[0].contract.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
 
-				if (!await strategies[0].contract.utilizedERC20WithdrawOpen())
-				{
-					await strategies[0].contract.utilizedERC20WithdrawOpenToggle();
-				}
+				await strategies[0].contract.utilizedERC20WithdrawOpenUpdate(true);
 			});
 
 
@@ -275,10 +266,10 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 		describe("Expected Failure", async () => {
 			it("Should NOT allow withdrawing if not open..", async () => {
 				/**
-				* @notice This test is to check that depositing must be toggled on in order to call the function properly.
+				* @notice This test is to check that depositing must be on in order to call the function properly.
 				*/
 
-				await eMPs[0].contract.utilizedERC20WithdrawOpenToggle();
+				await eMPs[0].contract.utilizedERC20WithdrawOpenUpdate(false);
 
 				expect(await eMPs[0].contract.utilizedERC20WithdrawOpen()).to.be.false;
 
@@ -329,22 +320,13 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 
 				expect(eMPUtilizedERC20.length).to.be.equal(3);
 
-				if (await strategies[0].contract.utilizedERC20DepositOpen())
-				{
-					await strategies[0].contract.utilizedERC20DepositOpenToggle();
-				}
+				await strategies[0].contract.utilizedERC20DepositOpenUpdate(false);
 
-				if (await strategies[0].contract.utilizedERC20WithdrawOpen())
-				{
-					await strategies[0].contract.utilizedERC20WithdrawOpenToggle();
-				}
+				await strategies[0].contract.utilizedERC20WithdrawOpenUpdate(false);
 
 				await strategies[0].contract.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
 
-				if (!await strategies[0].contract.utilizedERC20WithdrawOpen())
-				{
-					await strategies[0].contract.utilizedERC20WithdrawOpenToggle();
-				}
+				await strategies[0].contract.utilizedERC20WithdrawOpenUpdate(true);
 			});
 
 
@@ -370,7 +352,7 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 		});
 
 		describe("Expected Success", async () => {
-			it("Should toggle utilizedERC20WithdrawOpen..", async () => {
+			it("Should set utilizedERC20WithdrawOpen to true..", async () => {
 
 				expect(await eMPs[0].contract.utilizedERC20WithdrawFull()).to.be.false;
 

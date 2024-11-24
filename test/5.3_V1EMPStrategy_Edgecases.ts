@@ -109,11 +109,9 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 		// Set the Strategy Interactor
 		await strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
 
-		await strategy.utilizedERC20DepositOpenToggle();
+		await strategy.utilizedERC20DepositOpenUpdate(true);
 
-		expect(await strategy.utilizedERC20DepositOpen()).to.be.true;
-
-		await strategy.utilizedERC20WithdrawOpenToggle();
+		await strategy.utilizedERC20WithdrawOpenUpdate(true);
 
 		expect(await strategy.utilizedERC20WithdrawOpen()).to.be.true;
 
@@ -122,11 +120,11 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 
 	describe("Utilized ERC20 price change", async () => {
 		beforeEach(async () => {
-			await strategy.utilizedERC20DepositOpenToggle();
+			await strategy.utilizedERC20DepositOpenUpdate(false);
 
 			expect(await strategy.utilizedERC20DepositOpen()).to.be.false;
 
-			await strategy.utilizedERC20WithdrawOpenToggle();
+			await strategy.utilizedERC20WithdrawOpenUpdate(false);
 
 			expect(await strategy.utilizedERC20WithdrawOpen()).to.be.false;
 
@@ -135,11 +133,11 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 				strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]])
 			).to.be.not.rejected;
 
-			await strategy.utilizedERC20DepositOpenToggle();
+			await strategy.utilizedERC20DepositOpenUpdate(true);
 
 			expect(await strategy.utilizedERC20DepositOpen()).to.be.true;
 
-			await strategy.utilizedERC20WithdrawOpenToggle();
+			await strategy.utilizedERC20WithdrawOpenUpdate(true);
 
 			expect(await strategy.utilizedERC20WithdrawOpen()).to.be.true;
 		});
@@ -232,11 +230,11 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 
 	describe("Strategy that accepts ERC20 A and ERC20 B but returns ERC20 C", async () => {
 		beforeEach(async () => {
-			await strategy.utilizedERC20DepositOpenToggle();
+			await strategy.utilizedERC20DepositOpenUpdate(false);
 
 			expect(await strategy.utilizedERC20DepositOpen()).to.be.false;
 
-			await strategy.utilizedERC20WithdrawOpenToggle();
+			await strategy.utilizedERC20WithdrawOpenUpdate(false);
 
 			expect(await strategy.utilizedERC20WithdrawOpen()).to.be.false;
 
@@ -246,11 +244,11 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 				[[true, false, PERCENT.FIFTY], [true, false, PERCENT.FIFTY], [false, false, PERCENT.ZERO]],
 			);
 
-			await strategy.utilizedERC20DepositOpenToggle();
+			await strategy.utilizedERC20DepositOpenUpdate(true);
 
 			expect(await strategy.utilizedERC20DepositOpen()).to.be.true;
 
-			await strategy.utilizedERC20WithdrawOpenToggle();
+			await strategy.utilizedERC20WithdrawOpenUpdate(true);
 
 			expect(await strategy.utilizedERC20WithdrawOpen()).to.be.true;
 		});

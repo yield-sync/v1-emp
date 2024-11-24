@@ -250,13 +250,13 @@ contract V1EMPStrategy is
 	}
 
 	/// @inheritdoc IV1EMPStrategy
-	function utilizedERC20DepositOpenToggle()
+	function utilizedERC20DepositOpenUpdate(bool _utilizedERC20DepositOpen)
 		public
 		override
 		authManager()
 		initialized()
 	{
-		utilizedERC20DepositOpen = !utilizedERC20DepositOpen;
+		utilizedERC20DepositOpen = _utilizedERC20DepositOpen;
 	}
 
 	/// @inheritdoc IV1EMPStrategy
@@ -296,12 +296,12 @@ contract V1EMPStrategy is
 	}
 
 	/// @inheritdoc IV1EMPStrategy
-	function utilizedERC20WithdrawOpenToggle()
+	function utilizedERC20WithdrawOpenUpdate(bool _utilizedERC20WithdrawOpe)
 		public
 		override
 		authManager()
 		initialized()
 	{
-		utilizedERC20WithdrawOpen = !utilizedERC20WithdrawOpen;
+		utilizedERC20WithdrawOpen = _utilizedERC20WithdrawOpe;
 	}
 }

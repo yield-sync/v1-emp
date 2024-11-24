@@ -165,8 +165,7 @@ describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 
 				await strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
 
-				// Toggle deposits on
-				await strategy.utilizedERC20DepositOpenToggle();
+				await strategy.utilizedERC20DepositOpenUpdate(true);
 
 				await expect(strategy.utilizedERC20Deposit([])).to.be.rejectedWith(
 					ERROR.STRATEGY.INVAILD_PARAMS_DEPOSIT_LENGTH
@@ -179,8 +178,7 @@ describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 
 				await strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
 
-				// Toggle deposits on
-				await strategy.utilizedERC20DepositOpenToggle();
+				await strategy.utilizedERC20DepositOpenUpdate(true);
 
 				// Set ETH value to ZERO
 				await eTHValueFeed.updateETHValue(0);
@@ -201,8 +199,7 @@ describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 
 				await strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
 
-				// Toggle deposits on
-				await strategy.utilizedERC20DepositOpenToggle();
+				await strategy.utilizedERC20DepositOpenUpdate(true);
 
 				const DEPOSIT_AMOUNT: BigNumber = ethers.utils.parseUnits("1", 18);
 
@@ -222,8 +219,7 @@ describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 
 				await strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
 
-				// Toggle deposits on
-				await strategy.utilizedERC20DepositOpenToggle();
+				await strategy.utilizedERC20DepositOpenUpdate(true);
 
 				const DEPOSIT_AMOUNT: BigNumber = ethers.utils.parseUnits("1", 18);
 
@@ -247,8 +243,7 @@ describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 				// Set SI
 				await strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
 
-				// Toggle deposits on
-				await strategy.utilizedERC20DepositOpenToggle();
+				await strategy.utilizedERC20DepositOpenUpdate(true);
 			});
 
 
@@ -330,8 +325,7 @@ describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 				// Set SI
 				await strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
 
-				// Toggle deposits on
-				await strategy.utilizedERC20DepositOpenToggle();
+				await strategy.utilizedERC20DepositOpenUpdate(true);
 			});
 
 

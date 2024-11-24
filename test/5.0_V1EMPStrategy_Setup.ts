@@ -264,8 +264,8 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 
 		/**
 		 * @notice
-		 * This is split up because the next tests for Deposits/Withdrawals toggle functions is dependant on the SI to be
-		 * set. Part 2 is dependant the Deposits/Withdrawals toggle to be functional.
+		 * This is split up because the next tests for Deposits/Withdrawals update FNs is dependant on the SI to be
+		 * set. Part 2 is dependant the Deposits/Withdrawals update to be functional.
 		*/
 
 		describe("Expected Failure", async () => {
@@ -304,18 +304,18 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 		});
 	});
 
-	describe("function utilizedERC20DepositOpenToggle()", async () => {
+	describe("function utilizedERC20DepositOpenUpdate()", async () => {
 		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
-			await expect(strategy.connect(badActor).utilizedERC20DepositOpenToggle()).to.be.rejectedWith(
+			await expect(strategy.connect(badActor).utilizedERC20DepositOpenUpdate(true)).to.be.rejectedWith(
 				ERROR.NOT_AUTHORIZED
 			);
 		});
 
 		it("[modifier] Should revert if Strategy Interactor is not set..", async () => {
-			await expect(strategy.utilizedERC20DepositOpenToggle()).to.be.rejectedWith(ERROR.STRATEGY.INTERACTOR_NOT_SET);
+			await expect(strategy.utilizedERC20DepositOpenUpdate(true)).to.be.rejectedWith(ERROR.STRATEGY.INTERACTOR_NOT_SET);
 		});
 
-		it("Should toggle utilizedERC20DepositOpen..", async () => {
+		it("Should set utilizedERC20DepositOpen to true..", async () => {
 			// Set strategy ERC20 tokens
 			await strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
 
@@ -324,24 +324,26 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 
 			expect(await strategy.utilizedERC20DepositOpen()).to.be.false;
 
-			await expect(strategy.utilizedERC20DepositOpenToggle()).to.be.not.rejected;
+			await expect(strategy.utilizedERC20DepositOpenUpdate(true)).to.be.not.rejected;
 
 			expect(await strategy.utilizedERC20DepositOpen()).to.be.true;
 		});
 	});
 
-	describe("function utilizedERC20WithdrawOpenToggle()", async () => {
+	describe("function utilizedERC20WithdrawOpenUpdate()", async () => {
 		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
 			await expect(
-				strategy.connect(badActor).utilizedERC20WithdrawOpenToggle()
+				strategy.connect(badActor).utilizedERC20WithdrawOpenUpdate(true)
 			).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
 		});
 
 		it("[modifier] Should revert if Strategy Interactor is not set..", async () => {
-			await expect(strategy.utilizedERC20WithdrawOpenToggle()).to.be.rejectedWith(ERROR.STRATEGY.INTERACTOR_NOT_SET);
+			await expect(strategy.utilizedERC20WithdrawOpenUpdate(true)).to.be.rejectedWith(
+				ERROR.STRATEGY.INTERACTOR_NOT_SET
+			);
 		});
 
-		it("Should toggle utilizedERC20WithdrawOpen..", async () => {
+		it("Should set utilizedERC20WithdrawOpen to true..", async () => {
 			// Set strategy ERC20 tokens
 			await strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
 
@@ -350,7 +352,7 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 
 			expect(await strategy.utilizedERC20WithdrawOpen()).to.be.false;
 
-			await expect(strategy.utilizedERC20WithdrawOpenToggle()).to.be.not.rejected;
+			await expect(strategy.utilizedERC20WithdrawOpenUpdate(true)).to.be.not.rejected;
 
 			expect(await strategy.utilizedERC20WithdrawOpen()).to.be.true;
 		});
@@ -371,9 +373,7 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 
 
 		it("Should not be able to set update utilized ERC20 when utilizedERC20DepositOpen is true..", async () => {
-			await strategy.utilizedERC20DepositOpenToggle();
-
-			expect(await strategy.utilizedERC20DepositOpen()).to.be.true;
+			await strategy.utilizedERC20DepositOpenUpdate(true);
 
 			await expect(
 				strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]])
@@ -398,9 +398,7 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 
 
 		it("Should not be able to set iV1EMPStrategyInteractor when utilizedERC20DepositOpen is true..", async () => {
-			await expect(strategy.utilizedERC20DepositOpenToggle()).to.be.not.rejected;
-
-			expect(await strategy.utilizedERC20DepositOpen()).to.be.true;
+			await expect(strategy.utilizedERC20DepositOpenUpdate(true)).to.be.not.rejected;
 
 			await expect(strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address)).to.be.rejectedWith(
 				ERROR.STRATEGY.UTILIZED_ERC20_TRANSFERS_OPEN
@@ -408,7 +406,7 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 		});
 
 		it("Should not be able to set iV1EMPStrategyInteractor when utilizedERC20WithdrawOpen is true..", async () => {
-			await expect(strategy.utilizedERC20WithdrawOpenToggle()).to.be.not.rejected;
+			await expect(strategy.utilizedERC20WithdrawOpenUpdate(true)).to.be.not.rejected;
 
 			expect(await strategy.utilizedERC20WithdrawOpen()).to.be.true;
 

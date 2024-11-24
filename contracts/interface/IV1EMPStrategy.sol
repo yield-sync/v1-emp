@@ -172,9 +172,10 @@ interface IV1EMPStrategy
 	;
 
 	/**
-	* @notice Utilized ERC20 Deposit Open Toggle
+	* @notice Utilized ERC20 Deposit Open Update
+	* @param _utilizedERC20DepositOpen {bool}
 	*/
-	function utilizedERC20DepositOpenToggle()
+	function utilizedERC20DepositOpenUpdate(bool _utilizedERC20DepositOpen)
 		external
 	;
 
@@ -187,9 +188,10 @@ interface IV1EMPStrategy
 	;
 
 	/**
-	* @notice Utilized ERC20 Deposit Open Toggle
+	* @notice Utilized ERC20 Deposit Open Update
+	* @param _utilizedERC20WithdrawOpe {bool}
 	*/
-	function utilizedERC20WithdrawOpenToggle()
+	function utilizedERC20WithdrawOpenUpdate(bool _utilizedERC20WithdrawOpe)
 		external
 	;
 }
