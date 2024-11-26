@@ -188,7 +188,7 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 			for (let i = 0; i < utilizedERC20.length; i++)
 			{
 				let utilization = await eMPUtility.v1EMP_utilizedERC20_utilizationERC20(
-					eMPs[0].contract.address,
+					_eMPs[0].contract.address,
 					utilizedERC20[i]
 				);
 
