@@ -51,6 +51,8 @@ contract V1EMP is
 		utilizedERC20WithdrawFull = _utilizedERC20WithdrawFull;
 
 		_I_V1_EMP_REGISTRY = IV1EMPRegistry(_v1EMPRegistry);
+		// TODO consider removing this because in the case that it gets updated on the registry this contract points to an
+		// invalid EMP Utility
 		_I_V1_EMP_UTILITY = IV1EMPUtility(_I_V1_EMP_REGISTRY.v1EMPUtility());
 	}
 

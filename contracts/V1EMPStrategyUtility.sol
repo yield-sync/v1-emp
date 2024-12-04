@@ -21,14 +21,12 @@ contract V1EMPStrategyUtility is
 	using SafeMath for uint256;
 
 
-	IV1EMPArrayUtility internal immutable _I_V1_EMP_ARRAY_UTILITY;
 	IV1EMPRegistry internal immutable _I_V1_EMP_REGISTRY;
 
 
 	constructor (address _v1EMPRegistry)
 	{
 		_I_V1_EMP_REGISTRY = IV1EMPRegistry(_v1EMPRegistry);
-		_I_V1_EMP_ARRAY_UTILITY = IV1EMPArrayUtility(_I_V1_EMP_REGISTRY.v1EMPArrayUtility());
 	}
 
 
@@ -136,19 +134,18 @@ contract V1EMPStrategyUtility is
 		}
 	}
 
-	/// @inheritdoc IV1EMPStrategyUtility
-	function utilizedERC20Sort(address[] memory _utilizedERC20)
-		public
-		view
-		override
-		returns (address[] memory)
-	{
-		return _I_V1_EMP_ARRAY_UTILITY.sort(_utilizedERC20);
-	}
-
 
 	/// @notice mutative
 
+
+	/// @inheritdoc IV1EMPStrategyUtility
+	function utilizedERC20Sort(address[] memory _utilizedERC20)
+		public
+		override
+		returns (address[] memory)
+	{
+		return IV1EMPArrayUtility(_I_V1_EMP_REGISTRY.v1EMPArrayUtility()).sort(_utilizedERC20);
+	}
 
 	/// @inheritdoc IV1EMPStrategyUtility
 	function utilizedERC20UpdateValid(
@@ -168,9 +165,9 @@ contract V1EMPStrategyUtility is
 			return (false, "!(_utilizedERC20.length == _utilizationERC20.length)");
 		}
 
-		if (_I_V1_EMP_ARRAY_UTILITY.containsDuplicates(_utilizedERC20))
+		if (IV1EMPArrayUtility(_I_V1_EMP_REGISTRY.v1EMPArrayUtility()).containsDuplicates(_utilizedERC20))
 		{
-			return (false, "_I_V1_EMP_ARRAY_UTILITY.containsDuplicates(_utilizedERC20)");
+			return (false, "IV1EMPArrayUtility(_I_V1_EMP_REGISTRY.v1EMPArrayUtility()).containsDuplicates(_utilizedERC20)");
 		}
 
 		uint256 utilizedERC20AllocationTotal;

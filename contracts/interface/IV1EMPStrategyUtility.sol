@@ -37,6 +37,10 @@ interface IV1EMPStrategyUtility
 		returns (uint256 utilizedERC20AmountETHValueTotal_, uint256[] memory utilizedERC20AmountETHValue_)
 	;
 
+
+	/// @notice mutative
+
+
 	/**
 	* @notice Utilized ERC20 Sort
 	* @param _utilizedERC20 {addrss[]}
@@ -44,13 +48,8 @@ interface IV1EMPStrategyUtility
 	*/
 	function utilizedERC20Sort(address[] memory _utilizedERC20)
 		external
-		view
 		returns (address[] memory)
 	;
-
-
-	/// @notice mutative
-
 
 	/**
 	* @notice Utilized ERC20 Update Valid
