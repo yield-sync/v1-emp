@@ -2,18 +2,9 @@ const { ethers } = require("hardhat");
 
 
 import { expect } from "chai";
-import { Contract, ContractFactory, VoidSigner } from "ethers";
+import { Contract, VoidSigner } from "ethers";
 
-
-const stageContracts = async () => {
-	const TestV1EMPArrayUtility: ContractFactory = await ethers.getContractFactory("TestV1EMPArrayUtility");
-
-	const arrayUtility: Contract = await (await TestV1EMPArrayUtility.deploy()).deployed();
-
-	return {
-		arrayUtility
-	};
-}
+import { deployContract } from "./Scripts";
 
 
 describe("[0.0] V1EMPArrayUtility.sol", async () => {
@@ -24,9 +15,7 @@ describe("[0.0] V1EMPArrayUtility.sol", async () => {
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
-		const stagedContracts = await stageContracts();
-
-		arrayUtility = stagedContracts.arrayUtility;
+		arrayUtility = await deployContract("TestV1EMPArrayUtility");
 	});
 
 
