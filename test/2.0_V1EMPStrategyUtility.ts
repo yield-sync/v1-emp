@@ -2,9 +2,10 @@ const { ethers } = require("hardhat");
 
 
 import { expect } from "chai";
-import { Contract, ContractFactory, VoidSigner } from "ethers";
+import { Contract, VoidSigner } from "ethers";
+
 import { ERROR } from "../const";
-import { approveTokens, deployContract, deployEMP, deployStrategies } from "./Scripts";
+import { deployContract } from "./Scripts";
 
 
 describe("[2.0] V1EMPStrategyUtility.sol", async () => {

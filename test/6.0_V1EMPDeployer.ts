@@ -2,7 +2,9 @@ const { ethers } = require("hardhat");
 
 
 import { expect } from "chai";
-import { Contract, ContractFactory, VoidSigner } from "ethers";
+import { Contract, VoidSigner } from "ethers";
+
+import { deployContract } from "./Scripts";
 
 
 describe("[6.0] V1EMPDeployer.sol - Setup", async () => {
@@ -17,32 +19,16 @@ describe("[6.0] V1EMPDeployer.sol - Setup", async () => {
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
-		/**
-		* This beforeEach process does the following:
-		* 1) Deploy a registry
-		* 2) deploys an EMP Deployer and registers it on the registry
-		*/
 		[owner, manager, treasury] = await ethers.getSigners();
 
-		const V1EMPArrayUtility: ContractFactory = await ethers.getContractFactory("V1EMPArrayUtility");
-		const YieldSyncGovernance: ContractFactory = await ethers.getContractFactory("YieldSyncGovernance");
-		const V1EMPRegistry: ContractFactory = await ethers.getContractFactory("V1EMPRegistry");
-		const V1EMPDeployer: ContractFactory = await ethers.getContractFactory("V1EMPDeployer");
+		governance = await deployContract("YieldSyncGovernance");
+		arrayUtility = await deployContract("V1EMPArrayUtility");
+		registry = await deployContract("V1EMPRegistry", [governance.address]);
+		empDeployer = await deployContract("V1EMPDeployer", [registry.address]);
 
-		arrayUtility = await (await V1EMPArrayUtility.deploy()).deployed();
-		governance = await (await YieldSyncGovernance.deploy()).deployed();
-		registry = await (await V1EMPRegistry.deploy(governance.address)).deployed();
-
+		await governance.payToUpdate(treasury.address);
 		await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
-
-		empDeployer = await (await V1EMPDeployer.deploy(registry.address)).deployed();
-
-		// Set Treasury
-		await expect(governance.payToUpdate(treasury.address)).to.be.not.rejected;
-
 		await registry.v1EMPUtilityUpdate(arrayUtility.address);
-
-		// Set the EMP Deployer on registry
 		await registry.v1EMPDeployerUpdate(empDeployer.address);
 	});
 
