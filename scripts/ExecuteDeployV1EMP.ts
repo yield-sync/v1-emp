@@ -1,7 +1,5 @@
 require("dotenv").config();
 
-const fs = require('fs');
-const path = require('path');
 
 import { Contract, ContractFactory } from "ethers";
 import { ethers, run, network } from "hardhat";
@@ -11,10 +9,8 @@ import { ethers, run, network } from "hardhat";
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 
-async function main() {
-	const V1EMPRegistry: ContractFactory = await ethers.getContractFactory("V1EMPRegistry");
-	const V1EMPDeployer: ContractFactory = await ethers.getContractFactory("V1EMPDeployer");
-
+async function main()
+{
 	let v1EMPDeployer: string;
 	let v1EMPRegistry: string;
 
@@ -54,12 +50,13 @@ async function main() {
 
 	const [OWNER] = await ethers.getSigners();
 
+	const V1EMPRegistry: ContractFactory = await ethers.getContractFactory("V1EMPRegistry");
+	const V1EMPDeployer: ContractFactory = await ethers.getContractFactory("V1EMPDeployer");
 
 	const registry: Contract = await V1EMPRegistry.attach(String(v1EMPRegistry));
-
 	const empDeployer: Contract = await V1EMPDeployer.attach(String(v1EMPDeployer));
 
-
+	// Main function
 	await empDeployer.deployV1EMP(false, "EMP1", "EMP1");
 
 	// Delay
