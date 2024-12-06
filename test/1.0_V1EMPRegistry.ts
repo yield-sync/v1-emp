@@ -53,6 +53,12 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 			);
 		});
 
+		it("Should not allow invalid arrayUtility to be set..", async () => {
+			await expect(registry.v1EMPArrayUtilityUpdate(ethers.constants.AddressZero)).to.be.rejectedWith(
+				ERROR.REGISTRY.ARRAY_UTILITY_IS_ADDRESS_ZERO
+			);
+		});
+
 		it("Should allow authorized caller to update EMP Deployer..", async () => {
 			await expect(registry.v1EMPArrayUtilityUpdate(arrayUtility.address)).to.be.not.rejected;
 
@@ -70,6 +76,14 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 		it("Should not allow to set the EMP Utility until the Array Utility is set..", async () => {
 			await expect(registry.v1EMPUtilityUpdate(owner.address)).to.be.rejectedWith(
 				ERROR.REGISTRY.ARRAY_UTILITY_NOT_SET
+			);
+		});
+
+		it("Should not allow invalid v1EMPUtility to be set..", async () => {
+			await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
+
+			await expect(registry.v1EMPUtilityUpdate(ethers.constants.AddressZero)).to.be.rejectedWith(
+				ERROR.REGISTRY.EMP_UTILITY_IS_ADDRESS_ZERO
 			);
 		});
 
@@ -92,6 +106,14 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 		it("Should not allow to set the EMP Strategy Utility until the Array Utility is set..", async () => {
 			await expect(registry.v1EMPStrategyUtilityUpdate(owner.address)).to.be.rejectedWith(
 				ERROR.REGISTRY.ARRAY_UTILITY_NOT_SET
+			);
+		});
+
+		it("Should not allow invalid __v1EMPStrategyUtility to be set..", async () => {
+			await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
+
+			await expect(registry.v1EMPStrategyUtilityUpdate(ethers.constants.AddressZero)).to.be.rejectedWith(
+				ERROR.REGISTRY.STRATEGY_UTILITY_IS_ADDRESS_ZERO
 			);
 		});
 
@@ -120,6 +142,16 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 
 			await expect(registry.v1EMPDeployerUpdate(owner.address)).to.be.rejectedWith(
 				ERROR.REGISTRY.EMP_UTILITY_NOT_SET
+			);
+		});
+
+		it("Should not allow invalid EMPDeployer to be set..", async () => {
+			await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
+
+			await registry.v1EMPUtilityUpdate(owner.address);
+
+			await expect(registry.v1EMPDeployerUpdate(ethers.constants.AddressZero)).to.be.rejectedWith(
+				ERROR.REGISTRY.EMP_DEPLOYER_IS_ADDRESS_ZERO
 			);
 		});
 
@@ -166,6 +198,14 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 
 			await expect(registry.connect(manager).v1EMPStrategyDeployerUpdate(manager.address)).to.be.rejectedWith(
 				ERROR.NOT_AUTHORIZED
+			);
+		});
+
+		it("Should not allow invalid EMPStrategyDeployer to be set..", async () => {
+			await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
+
+			await expect(registry.v1EMPStrategyDeployerUpdate(ethers.constants.AddressZero)).to.be.rejectedWith(
+				ERROR.REGISTRY.EMP_STRATEGY_DEPLOYER_IS_ADDRESS_ZERO
 			);
 		});
 

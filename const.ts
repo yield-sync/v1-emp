@@ -6,22 +6,37 @@ export const D_18 = ethers.utils.parseUnits('1', 18);
 export const ERROR = {
 	REGISTRY: {
 		ARRAY_UTILITY_NOT_SET:
-			"!(v1EMPArrayUtility != address(0))"
+			"!(_v1EMPArrayUtility != address(0))"
+		,
+		ARRAY_UTILITY_IS_ADDRESS_ZERO:
+			"!(__v1EMPArrayUtility != address(0))"
 		,
 		EMP_UTILITY_NOT_SET:
-			"!(v1EMPUtility != address(0))"
+			"!(_v1EMPUtility != address(0))"
 		,
 		NOT_EMP_DEPLOYER:
-			"!(v1EMPDeployer == msg.sender)"
+			"!(_v1EMPDeployer == msg.sender)"
 		,
 		NOT_STRATEGY_DEPLOYER:
-			"!(v1EMPStrategyDeployer == msg.sender)"
+			"!(_v1EMPStrategyDeployer == msg.sender)"
+		,
+		EMP_STRATEGY_DEPLOYER_IS_ADDRESS_ZERO:
+			"!(__v1EMPStrategyDeployer != address(0))"
+		,
+		EMP_DEPLOYER_IS_ADDRESS_ZERO:
+			"!(__v1EMPDeployer != address(0))"
+		,
+		EMP_UTILITY_IS_ADDRESS_ZERO:
+			"!(__v1EMPUtility != address(0))"
 		,
 		ERC20_ADDRESS_ZERO:
 			"!(_eRC20 != address(0))"
 		,
 		ETH_VALUE_FEED_ADDRESS_ZERO:
 			"!(_v1EMPERC20ETHValueFeed != address(0))"
+		,
+		STRATEGY_UTILITY_IS_ADDRESS_ZERO:
+			"!(__v1EMPStrategyUtility != address(0))"
 		,
 	},
 	EMP: {
