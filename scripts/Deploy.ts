@@ -43,6 +43,7 @@ async function main() {
 			break;
 
 		default:
+			console.error("Error: Unkown network");
 			process.exit(999)
 	}
 
