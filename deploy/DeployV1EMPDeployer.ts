@@ -1,11 +1,11 @@
 require("dotenv").config();
 
-const fs = require('fs');
 const path = require('path');
 
-import { Contract, ContractFactory } from "ethers";
+
 import { writeFileSync } from "fs";
 import { ethers, run, network } from "hardhat";
+import { deployContract } from "../test/Scripts";
 
 
 // [const]
@@ -48,74 +48,69 @@ async function main() {
 
 	const [OWNER] = await ethers.getSigners();
 
-	const startingStatement = `Deploying \nNetwork: ${network.name} \nAccount: ${OWNER.address} \nBalance: ${await OWNER.getBalance()}\n`;
+	const NOTICE = `Deploying \nNetwork: ${network.name} \nAccount: ${OWNER.address} \nBalance: ${await OWNER.getBalance()}\n`;
 
-	writeFileSync(filePath, startingStatement, { flag: "a" });
+	writeFileSync(filePath, NOTICE, { flag: "a" });
 
-	console.log(startingStatement);
+	console.log(NOTICE);
 
-	// Get contract factories
-	const V1EMPArrayUtility: ContractFactory = await ethers.getContractFactory("V1EMPArrayUtility");
-	const V1EMPUtility: ContractFactory= await ethers.getContractFactory("V1EMPUtility");
-	const V1EMPStrategyUtility: ContractFactory= await ethers.getContractFactory("V1EMPStrategyUtility");
-	const V1EMPDeployer: ContractFactory = await ethers.getContractFactory("V1EMPDeployer");
-	const V1EMPRegistry: ContractFactory = await ethers.getContractFactory("V1EMPRegistry");
-	const V1EMPStrategyDeployer: ContractFactory = await ethers.getContractFactory("V1EMPStrategyDeployer");
-
-	// Registry
-	let registry = await (await V1EMPRegistry.deploy(governanceContract)).deployed();
-
-	console.log("registry contract address:", registry.address);
-
-	writeFileSync(filePath, `V1EMPRegistry: ${registry.address}\n`, { flag: "a" });
 
 	// Array Utility
-	let arrayUtility: Contract = await (await V1EMPArrayUtility.deploy()).deployed();
-
-	console.log("arrayUtility contract address:", arrayUtility.address);
+	const arrayUtility = await deployContract("V1EMPArrayUtility");
 
 	writeFileSync(filePath, `V1EMPArrayUtility: ${arrayUtility.address}\n`, { flag: "a" });
 
-	// Register the Array Utility
-	await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
+	console.log("arrayUtility contract address:", arrayUtility.address);
+
+
+	// Registry
+	const registry = await deployContract("V1EMPRegistry", [governanceContract]);
+
+	writeFileSync(filePath, `V1EMPRegistry: ${registry.address}\n`, { flag: "a" });
+
+	console.log("registry contract address:", registry.address);
 
 
 	// Strategy Utility
-	let eMPStrategyUtility = await (await V1EMPStrategyUtility.deploy(registry.address)).deployed();
-
-	console.log("eMPStrategyUtility contract address:", eMPStrategyUtility.address);
+	const eMPStrategyUtility = await deployContract("V1EMPStrategyUtility", [registry.address]);
 
 	writeFileSync(filePath, `V1EMPStrategyUtility: ${eMPStrategyUtility.address}\n`, { flag: "a" });
 
-	await registry.v1EMPStrategyUtilityUpdate(eMPStrategyUtility.address);
+	console.log("eMPStrategyUtility contract address:", eMPStrategyUtility.address);
 
 
 	// EMP Utility
-	let eMPUtility = await (await V1EMPUtility.deploy(registry.address)).deployed();
-
-	console.log("eMPUtility contract address:", eMPUtility.address);
+	const eMPUtility = await deployContract("V1EMPUtility", [registry.address]);
 
 	writeFileSync(filePath, `V1EMPUtility: ${eMPUtility.address}\n`, { flag: "a" });
 
-	await registry.v1EMPUtilityUpdate(eMPUtility.address);
+	console.log("eMPUtility contract address:", eMPUtility.address);
 
 
 	// Strategy Deployer
-	let strategyDeployer = await (await V1EMPStrategyDeployer.deploy(registry.address)).deployed();
-
-	console.log("strategyDeployer contract address:", strategyDeployer.address);
+	const strategyDeployer = await deployContract("V1EMPStrategyDeployer", [registry.address]);
 
 	writeFileSync(filePath, `V1EMPStrategyDeployer: ${strategyDeployer.address}\n`, { flag: "a" });
 
-	await registry.v1EMPStrategyDeployerUpdate(strategyDeployer.address);
+	console.log("strategyDeployer contract address:", strategyDeployer.address);
 
 
 	// EMP Deployer
-	let eMPDeployer = await (await V1EMPDeployer.deploy(registry.address)).deployed();
+	const eMPDeployer = await deployContract("V1EMPDeployer", [registry.address]);
+
+	writeFileSync(filePath, `V1EMPDeployer: ${eMPDeployer.address}\n`, { flag: "a" });
 
 	console.log("eMPDeployer contract address:", eMPDeployer.address);
 
-	writeFileSync(filePath, `V1EMPDeployer: ${eMPDeployer.address}\n`, { flag: "a" });
+
+	// Register the contract on the register contract
+	await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
+
+	await registry.v1EMPStrategyUtilityUpdate(eMPStrategyUtility.address);
+
+	await registry.v1EMPStrategyDeployerUpdate(strategyDeployer.address);
+
+	await registry.v1EMPUtilityUpdate(eMPUtility.address);
 
 	await registry.v1EMPDeployerUpdate(eMPDeployer.address);
 
