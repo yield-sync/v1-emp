@@ -5,7 +5,7 @@ import { expect } from "chai";
 import { BigNumber, Contract, ContractFactory, VoidSigner } from "ethers";
 
 import { ERROR, PERCENT, D_18 } from "../const";
-import StrategyTransferUtil from "../util/StrategyTransferUtil";
+import UtilStrategyTransfer from "../util/UtilStrategyTransfer";
 
 
 const LOCATION_IERC20: string = "@openzeppelin/contracts/token/ERC20/IERC20.sol:IERC20";
@@ -26,7 +26,7 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 	let mockERC20B: Contract;
 	let mockERC20C: Contract;
 
-	let strategyTransferUtil: StrategyTransferUtil;
+	let utilStrategyTransfer: UtilStrategyTransfer;
 
 	let owner: VoidSigner;
 	let manager: VoidSigner;
@@ -36,7 +36,7 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
 		/**
-		* @dev It is important to utilize the strategyTransferUtil for multiple ERC20 based strategies because they get
+		* @dev It is important to utilize the UtilStrategyTransfer for multiple ERC20 based strategies because they get
 		* reordred when setup. The strategyUtil will return the deposit amounts in the order of the what the conctract
 		* returns for the Utilized ERC20s
 		*/
@@ -115,7 +115,7 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 
 		expect(await strategy.utilizedERC20WithdrawOpen()).to.be.true;
 
-		strategyTransferUtil = new StrategyTransferUtil(strategy, registry);
+		utilStrategyTransfer = new UtilStrategyTransfer(strategy, registry);
 	});
 
 	describe("Utilized ERC20 price change", async () => {
@@ -259,7 +259,7 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 
 			const UTILIZED_ERC20: string[] = await strategy.utilizedERC20();
 
-			const DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil.calculateERC20Required(
+			const DEPOSIT_AMOUNTS: BigNumber[] = await utilStrategyTransfer.calculateERC20Required(
 				ethers.utils.parseUnits("1", 18)
 			);
 

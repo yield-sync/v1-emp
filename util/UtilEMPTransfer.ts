@@ -6,7 +6,7 @@ import { D_18 } from "../const"
 
 
 
-export default class EMPUtility
+export default class UtilEMPTransfer
 {
 	private _registry: Contract;
 	private _eMP: Contract;

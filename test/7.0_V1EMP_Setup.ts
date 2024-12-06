@@ -5,8 +5,8 @@ import { expect } from "chai";
 import { Contract, ContractFactory, VoidSigner } from "ethers";
 
 import { ERROR, PERCENT } from "../const";
-import StrategyTransferUtil from "../util/StrategyTransferUtil";
-import { approveTokens, deployContract, deployEMP, deployStrategies } from "./Scripts";
+import UtilStrategyTransfer from "../util/UtilStrategyTransfer";
+import { approveTokens, deployContract, deployEMP, deployStrategies } from "../util/UtilEMP";
 
 
 describe("[7.0] V1EMP.sol - Setup", async () => {
@@ -31,7 +31,7 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 
 	let strategies: {
 		contract: Contract,
-		strategyTransferUtil: StrategyTransferUtil
+		UtilStrategyTransfer: UtilStrategyTransfer
 	}[] = [];
 
 

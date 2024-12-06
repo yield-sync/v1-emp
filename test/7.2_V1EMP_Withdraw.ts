@@ -4,7 +4,7 @@ const { ethers } = require("hardhat");
 import { expect } from "chai";
 import { BigNumber, Contract, ContractFactory, VoidSigner } from "ethers";
 
-import { approveTokens, deployContract, deployEMP, deployStrategies } from "./Scripts";
+import { approveTokens, deployContract, deployEMP, deployStrategies } from "../util/UtilEMP";
 import { D_18, ERROR, PERCENT } from "../const";
 
 
@@ -140,7 +140,7 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 		BeforeBalanceMockCEMP = await mockERC20C.balanceOf(eMPs[0].contract.address);
 
 
-		eMPDepositAmounts = await eMPs[0].eMPTransferUtil.calculatedUtilizedERC20Amount(eTHValueEMPDepositAmount);
+		eMPDepositAmounts = await eMPs[0].UtilEMPTransfer.calculatedUtilizedERC20Amount(eTHValueEMPDepositAmount);
 
 		// Approve tokens
 		await approveTokens(
@@ -152,11 +152,11 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 		// Deposit the utilized ERC20 tokens into EMP
 		await eMPs[0].contract.utilizedERC20Deposit(eMPDepositAmounts);
 
-		depositAmount[0] = await strategies[0].strategyTransferUtil.calculateERC20Required(
+		depositAmount[0] = await strategies[0].UtilStrategyTransfer.calculateERC20Required(
 			eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(D_18)
 		);
 
-		depositAmount[1] = await strategies[1].strategyTransferUtil.calculateERC20Required(
+		depositAmount[1] = await strategies[1].UtilStrategyTransfer.calculateERC20Required(
 			eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(D_18)
 		);
 

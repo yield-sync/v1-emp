@@ -1,7 +1,7 @@
 import { BigNumber, Contract, ContractFactory } from "ethers";
 
-import EMPTransferUtil from "../util/EMPTransferUtil";
-import StrategyTransferUtil from "../util/StrategyTransferUtil";
+import UtilEMPTransfer from "./UtilEMPTransfer";
+import UtilStrategyTransfer from "./UtilStrategyTransfer";
 
 
 const { ethers } = require("hardhat");
@@ -91,7 +91,7 @@ export async function deployStrategies(
 
 		testStrategies[i] = {
 			contract: deployedV1EMPStrategy,
-			strategyTransferUtil: new StrategyTransferUtil(deployedV1EMPStrategy, registry)
+			UtilStrategyTransfer: new UtilStrategyTransfer(deployedV1EMPStrategy, registry)
 		};
 	}
 
@@ -131,7 +131,7 @@ export async function deployEMP(
 
 		testEMPs[i] = ({
 			contract: eMPContract,
-			eMPTransferUtil: new EMPTransferUtil(eMPContract, registry, eMPUtility),
+			UtilEMPTransfer: new UtilEMPTransfer(eMPContract, registry, eMPUtility),
 		});
 
 		// Set the Manager

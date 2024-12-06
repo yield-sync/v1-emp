@@ -5,7 +5,7 @@ import { expect } from "chai";
 import { Contract, VoidSigner } from "ethers";
 
 import { ERROR } from "../const";
-import { deployContract } from "./Scripts";
+import { deployContract } from "../util/UtilEMP";
 
 
 describe("[1.0] V1EMPRegistry.sol", async () => {

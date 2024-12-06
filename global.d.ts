@@ -40,10 +40,10 @@ type DeployStrategy = {
 
 type TestEMP = {
 	contract: Contract,
-	eMPTransferUtil: EMPTransferUtil
+	UtilEMPTransfer: UtilEMPTransfer
 };
 
 type TestStrategy = {
 	contract: Contract,
-	strategyTransferUtil: StrategyTransferUtil
+	UtilStrategyTransfer: UtilStrategyTransfer
 };

@@ -5,7 +5,7 @@ import { expect } from "chai";
 import { BigNumber, Contract, ContractFactory, VoidSigner } from "ethers";
 
 import { ERROR, PERCENT, D_18 } from "../const";
-import StrategyTransferUtil from "../util/StrategyTransferUtil";
+import UtilStrategyTransfer from "../util/UtilStrategyTransfer";
 
 
 const LOCATION_IERC20: string = "@openzeppelin/contracts/token/ERC20/IERC20.sol:IERC20";
@@ -27,7 +27,7 @@ describe("[5.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 	let mockERC20C: Contract;
 	let mockERC20D: Contract;
 
-	let strategyTransferUtil: StrategyTransferUtil;
+	let utilStrategyTransfer: UtilStrategyTransfer;
 
 	let owner: VoidSigner;
 	let manager: VoidSigner;
@@ -46,7 +46,7 @@ describe("[5.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 		* 6) Deploy a Strategy Utility contract
 		* 7) Register the Strategy Utility contract on the Registry contract
 		*
-		* @dev It is important to utilize the strategyTransferUtil for multiple ERC20 based strategies because they get
+		* @dev It is important to utilize the UtilStrategyTransfer for multiple ERC20 based strategies because they get
 		* reordred when setup. The strategyUtil will return the deposit amounts in the order of the what the conctract
 		* returns for the Utilized ERC20s
 		*/
@@ -114,7 +114,7 @@ describe("[5.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 		// Attach the deployed V1EMPStrategy address
 		strategy = await V1EMPStrategy.attach(String(await registry.v1EMPStrategyId_v1EMPStrategy(1)));
 
-		strategyTransferUtil = new StrategyTransferUtil(strategy, registry);
+		utilStrategyTransfer = new UtilStrategyTransfer(strategy, registry);
 	});
 
 
@@ -367,7 +367,7 @@ describe("[5.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 				it("Should allow caller to burn Strategy ERC20 tokens and receive deposits back..", async () => {
 					const UTILIZED_ERC20: string[] = await strategy.utilizedERC20();
 
-					const DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil.calculateERC20Required(
+					const DEPOSIT_AMOUNTS: BigNumber[] = await utilStrategyTransfer.calculateERC20Required(
 						ethers.utils.parseUnits("1", 18)
 					);
 

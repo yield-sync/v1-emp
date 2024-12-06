@@ -5,7 +5,7 @@ const path = require('path');
 
 import { writeFileSync } from "fs";
 import { ethers, run, network } from "hardhat";
-import { deployContract } from "../test/Scripts";
+import { deployContract } from "../util/UtilEMP";
 
 
 // [const]

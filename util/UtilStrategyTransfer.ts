@@ -8,7 +8,7 @@ import { D_18 } from "../const"
 const LOCATION_IERC20: string = "contracts/test-contracts/MockERC20.sol:MockERC20";
 
 
-export default class StrategyTransferUtil
+export default class UtilStrategyTransfer
 {
 	private _registry: Contract;
 	private _v1EMPStrategy: Contract;

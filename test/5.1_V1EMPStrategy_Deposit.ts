@@ -5,7 +5,7 @@ import { expect } from "chai";
 import { BigNumber, Contract, ContractFactory, VoidSigner } from "ethers";
 
 import { ERROR, PERCENT, D_18 } from "../const";
-import StrategyTransferUtil from "../util/StrategyTransferUtil";
+import UtilStrategyTransfer from "../util/UtilStrategyTransfer";
 
 
 const LOCATION_IERC20: string = "@openzeppelin/contracts/token/ERC20/IERC20.sol:IERC20";
@@ -26,7 +26,7 @@ describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 	let mockERC20C: Contract;
 	let mockERC20D: Contract;
 
-	let strategyTransferUtil: StrategyTransferUtil;
+	let utilStrategyTransfer: UtilStrategyTransfer;
 
 	let owner: VoidSigner;
 	let manager: VoidSigner;
@@ -45,7 +45,7 @@ describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 		* 6) Deploy a Strategy Utility contract
 		* 7) Register the Strategy Utility contract on the Registry contract
 		*
-		* @dev It is important to utilize the strategyTransferUtil for multiple ERC20 based strategies because they get
+		* @dev It is important to utilize the UtilStrategyTransfer for multiple ERC20 based strategies because they get
 		* reordred when setup. The strategyUtil will return the deposit amounts in the order of the what the conctract
 		* returns for the Utilized ERC20s
 		*/
@@ -113,7 +113,7 @@ describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 		// Attach the deployed V1EMPStrategy address
 		strategy = await V1EMPStrategy.attach(String(await registry.v1EMPStrategyId_v1EMPStrategy(1)));
 
-		strategyTransferUtil = new StrategyTransferUtil(strategy, registry);
+		utilStrategyTransfer = new UtilStrategyTransfer(strategy, registry);
 	});
 
 
@@ -257,13 +257,13 @@ describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 					// DEPOSIT - ERC20 tokens into the strategy
 					await expect(strategy.utilizedERC20Deposit([DEPOSIT_AMOUNT])).to.be.not.rejected;
 
-					const { totalEthValue } = await strategyTransferUtil.valueOfERC20Deposits([DEPOSIT_AMOUNT]);
+					const { totalEthValue } = await utilStrategyTransfer.valueOfERC20Deposits([DEPOSIT_AMOUNT]);
 
 					expect(await mockERC20A.balanceOf(strategyInteractor.address)).to.be.equal(totalEthValue);
 				});
 
 				it("Should issue strategy ERC20 tokens upon utilized ERC20 deposit..", async () => {
-					const DEPOSIT_AMOUNTS: BigNumber[] = await strategyTransferUtil.calculateERC20Required(
+					const DEPOSIT_AMOUNTS: BigNumber[] = await utilStrategyTransfer.calculateERC20Required(
 						ethers.utils.parseUnits("1", 18)
 					);
 
@@ -287,7 +287,7 @@ describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 					const MINTED_STRATEGY_TOKENS: BigNumber = TOTAL_SUPPLY_STRATEGY.sub(b4TotalSupplyStrategy);
 
 					// Get values
-					const { totalEthValue } = await strategyTransferUtil.valueOfERC20Deposits(DEPOSIT_AMOUNTS);
+					const { totalEthValue } = await utilStrategyTransfer.valueOfERC20Deposits(DEPOSIT_AMOUNTS);
 
 					// Expect that the owner received the strategy tokens
 					expect(await strategy.eMP_shares(owner.address)).to.be.equal(MINTED_STRATEGY_TOKENS);
@@ -360,7 +360,7 @@ describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 
 
 				beforeEach(async () => {
-					depositAmounts = await strategyTransferUtil.calculateERC20Required(ethers.utils.parseUnits("3", 18));
+					depositAmounts = await utilStrategyTransfer.calculateERC20Required(ethers.utils.parseUnits("3", 18));
 
 					expect(depositAmounts.length).to.be.equal(utilizedERC20.length);
 
@@ -388,7 +388,7 @@ describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 				});
 
 				it("Should issue strategy ERC20 tokens upon utilized ERC20 deposit..", async () => {
-					const { totalEthValue } = await strategyTransferUtil.valueOfERC20Deposits(depositAmounts);
+					const { totalEthValue } = await utilStrategyTransfer.valueOfERC20Deposits(depositAmounts);
 
 					// [main-test]
 					expect(await strategy.eMP_shares(owner.address)).to.be.equal(totalEthValue);
