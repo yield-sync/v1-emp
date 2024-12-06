@@ -100,10 +100,11 @@ contract V1EMP is
 	/// @notice view
 
 
-	// @inheritdoc IV1EMPUtility
+	/// @inheritdoc IV1EMP
 	function utilizedERC20TotalBalance()
 		public
 		view
+		override
 		returns (uint256[] memory utilizedERC20TotalAmount_)
 	{
 		address[] memory _utilizedERC20 = _I_V1_EMP_UTILITY().v1EMP_utilizedERC20(address(this));

@@ -82,12 +82,22 @@ interface IV1EMP is
 	*/
 	function utilizedV1EMPStrategy_allocation(address _utilizedV1EMPStrategy)
 		external
+		view
 		returns (uint256)
 	;
 
 
 	/// @notice view
 
+
+	/**
+	* @notice Utilized ERC20 Total Balance
+	*/
+	function utilizedERC20TotalBalance()
+		external
+		view
+		returns (uint256[] memory utilizedERC20TotalAmount_)
+	;
 
 	/**
 	* @dev [view-address[]]
