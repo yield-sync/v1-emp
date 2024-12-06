@@ -28,7 +28,6 @@ contract V1EMPStrategy is
 	uint256 public override utilizedERC20UpdateTracker;
 
 	IV1EMPRegistry internal immutable _I_V1_EMP_REGISTRY;
-	IV1EMPStrategyUtility internal immutable _I_V1_EMP_STRATEGY_UTILITY;
 
 	IV1EMPStrategyInteractor public override iV1EMPStrategyInteractor;
 
@@ -57,7 +56,6 @@ contract V1EMPStrategy is
 		utilizedERC20UpdateTracker = 0;
 
 		_I_V1_EMP_REGISTRY = IV1EMPRegistry(_v1EMPRegistry);
-		_I_V1_EMP_STRATEGY_UTILITY = IV1EMPStrategyUtility(_I_V1_EMP_REGISTRY.v1EMPStrategyUtility());
 	}
 
 
@@ -121,6 +119,18 @@ contract V1EMPStrategy is
 	}
 
 
+	/// @notice internal
+
+
+	function _I_V1_EMP_STRATEGY_UTILITY()
+		internal
+		view
+		returns (IV1EMPStrategyUtility)
+	{
+		return IV1EMPStrategyUtility(_I_V1_EMP_REGISTRY.v1EMPStrategyUtility());
+	}
+
+
 	/// @notice view
 
 
@@ -144,7 +154,7 @@ contract V1EMPStrategy is
 		(
 			utilizedERC20AmountETHValueTotal_,
 			utilizedERC20AmountETHValue_
-		) = _I_V1_EMP_STRATEGY_UTILITY.utilizedERC20AmountETHValue(
+		) = _I_V1_EMP_STRATEGY_UTILITY().utilizedERC20AmountETHValue(
 			address(this),
 			_utilizedERC20Amount
 		);
@@ -196,7 +206,7 @@ contract V1EMPStrategy is
 		authManager()
 		utilizedERC20TransferClosed()
 	{
-		(bool valid, string memory message) = _I_V1_EMP_STRATEGY_UTILITY.utilizedERC20UpdateValid(
+		(bool valid, string memory message) = _I_V1_EMP_STRATEGY_UTILITY().utilizedERC20UpdateValid(
 			address(this),
 			__utilizedERC20,
 			_utilizationERC20
@@ -213,7 +223,7 @@ contract V1EMPStrategy is
 			_utilizedERC20_utilizationERC20[_utilizedERC20[i]] = _utilizationERC20[i];
 		}
 
-		_utilizedERC20 = _I_V1_EMP_STRATEGY_UTILITY.utilizedERC20Sort(_utilizedERC20);
+		_utilizedERC20 = _I_V1_EMP_STRATEGY_UTILITY().utilizedERC20Sort(_utilizedERC20);
 
 		utilizedERC20UpdateTracker++;
 	}
@@ -232,7 +242,7 @@ contract V1EMPStrategy is
 			bool valid,
 			string memory message,
 			uint256 utilizedERC20AmountETHValueTotal
-		) = _I_V1_EMP_STRATEGY_UTILITY.depositAmountsValid(
+		) = _I_V1_EMP_STRATEGY_UTILITY().depositAmountsValid(
 			address(this),
 			_utilizedERC20Amount
 		);

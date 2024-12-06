@@ -134,18 +134,19 @@ contract V1EMPStrategyUtility is
 		}
 	}
 
-
-	/// @notice mutative
-
-
 	/// @inheritdoc IV1EMPStrategyUtility
 	function utilizedERC20Sort(address[] memory _utilizedERC20)
 		public
+		view
 		override
 		returns (address[] memory)
 	{
 		return IV1EMPArrayUtility(_I_V1_EMP_REGISTRY.v1EMPArrayUtility()).sort(_utilizedERC20);
 	}
+
+
+	/// @notice mutative
+
 
 	/// @inheritdoc IV1EMPStrategyUtility
 	function utilizedERC20UpdateValid(
