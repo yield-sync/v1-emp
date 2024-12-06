@@ -66,7 +66,8 @@ contract V1EMPRegistry is
 		return IGovernance(_governance).payTo();
 	}
 
-		function governance()
+	/// @inheritdoc IV1EMPRegistry
+	function governance()
 		public
 		view
 		override
@@ -75,6 +76,7 @@ contract V1EMPRegistry is
 		return _governance;
 	}
 
+	/// @inheritdoc IV1EMPRegistry
 	function v1EMPUtility()
 		public
 		view
@@ -84,6 +86,7 @@ contract V1EMPRegistry is
 		return _v1EMPUtility;
 	}
 
+	/// @inheritdoc IV1EMPRegistry
 	function v1EMPArrayUtility()
 		public
 		view
@@ -93,6 +96,7 @@ contract V1EMPRegistry is
 		return _v1EMPArrayUtility;
 	}
 
+	/// @inheritdoc IV1EMPRegistry
 	function v1EMPDeployer()
 		public
 		view
@@ -102,6 +106,7 @@ contract V1EMPRegistry is
 		return _v1EMPDeployer;
 	}
 
+	/// @inheritdoc IV1EMPRegistry
 	function v1EMPStrategyDeployer()
 		public
 		view
@@ -111,6 +116,7 @@ contract V1EMPRegistry is
 		return _v1EMPStrategyDeployer;
 	}
 
+	/// @inheritdoc IV1EMPRegistry
 	function v1EMPStrategyUtility()
 		public
 		view
