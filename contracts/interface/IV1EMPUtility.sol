@@ -36,6 +36,19 @@ interface IV1EMPUtility
 
 
 	/**
+	* @notice Optimized Transfer Amount
+	* @param _v1EMP {address}
+	* @param utilizedERC20 {address}
+	* @param transferAmount {uint256}
+	* @return optimizedTransferAmount_ {uint256}
+	*/
+	function optimizedTransferAmount(address _v1EMP, address utilizedERC20, uint256 transferAmount)
+		external
+		view
+		returns (uint256 optimizedTransferAmount_)
+	;
+
+	/**
 	* @notice Utilized ERC20 Amount Valid
 	* @param _v1EMP {address}
 	* @param _utilizedERC20Amount {uint256}
@@ -62,30 +75,6 @@ interface IV1EMPUtility
 		returns (bool valid_, string memory message_)
 	;
 
-
-	/// @notice mutative
-
-
-	/**
-	* @notice Optimized Transfer Amount
-	* @param _v1EMP {address}
-	* @param utilizedERC20 {address}
-	* @param transferAmount {uint256}
-	* @return optimizedTransferAmount_ {uint256}
-	*/
-	function optimizedTransferAmount(address _v1EMP, address utilizedERC20, uint256 transferAmount)
-		external
-		view
-		returns (uint256 optimizedTransferAmount_)
-	;
-
-	/**
-	* @notice Utilized Strategy Sync
-	*/
-	function utilizedStrategySync()
-		external
-	;
-
 	/**
 	* @notice V1 EMP Strategy Utilized ERC20 Amount Valid
 	* @param _v1EMP {address}
@@ -95,6 +84,18 @@ interface IV1EMPUtility
 	*/
 	function v1EMPStrategyUtilizedERC20AmountValid(address _v1EMP, uint256[][] memory _v1EMPStrategyUtilizedERC20Amount)
 		external
+		view
 		returns (bool valid_, string memory message_)
+	;
+
+
+	/// @notice mutative
+
+
+	/**
+	* @notice Utilized Strategy Sync
+	*/
+	function utilizedStrategySync()
+		external
 	;
 }
