@@ -196,7 +196,6 @@ async function main() {
 	}
 
 	console.log("Account Balance:", await OWNER.getBalance());
-
 }
 
 
