@@ -9,7 +9,7 @@ import { deployContract } from "../util/UtilEMP";
 
 
 // [const]
-const filePath = path.join(__dirname, '..', '..', 'deployed.txt');
+const filePath = path.join(__dirname, '..', 'deployed.txt');
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 
