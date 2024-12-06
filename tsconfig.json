@@ -8,5 +8,5 @@
 		"skipLibCheck": true
 	},
 	"files": ["./hardhat.config.ts"],
-	"include": ["./src", "util", "util/*", "./test/*", "global.d.ts", "const.ts", "deploy", "./deploy", "./deploy/*"]
+	"include": ["./src", "util", "util/*", "./test/*", "global.d.ts", "const.ts", "scripts", "scripts", "scripts/*"]
 }
