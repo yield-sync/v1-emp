@@ -60,18 +60,22 @@ contract V1EMPUtility is
 	}
 
 
-	function _existantV1EMP(address _v1EMP)
-		internal
-		view
-	{
-		require(_I_V1_EMP_REGISTRY.v1EMP_v1EMPId(_v1EMP) > 0, "!(_I_V1_EMP_REGISTRY.v1EMP_v1EMPId(_v1EMP) > 0)");
-	}
-
 	modifier existantV1EMP(address _v1EMP)
 	{
 		_existantV1EMP(_v1EMP);
 
 		_;
+	}
+
+
+	/// @notice internal
+
+
+	function _existantV1EMP(address _v1EMP)
+		internal
+		view
+	{
+		require(_I_V1_EMP_REGISTRY.v1EMP_v1EMPId(_v1EMP) > 0, "!(_I_V1_EMP_REGISTRY.v1EMP_v1EMPId(_v1EMP) > 0)");
 	}
 
 

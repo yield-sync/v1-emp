@@ -9,10 +9,7 @@ import { IV1EMPArrayUtility } from "./interface/IV1EMPArrayUtility.sol";
 import { IV1EMPETHValueFeed } from "./interface/IV1EMPETHValueFeed.sol";
 import { IV1EMPRegistry } from "./interface/IV1EMPRegistry.sol";
 import { IV1EMPStrategy } from "./interface/IV1EMPStrategy.sol";
-import {
-	IV1EMPStrategyUtility,
-	UtilizationERC20
-} from "./interface/IV1EMPStrategyUtility.sol";
+import { IV1EMPStrategyUtility, UtilizationERC20 } from "./interface/IV1EMPStrategyUtility.sol";
 
 
 contract V1EMPStrategyUtility is
@@ -30,6 +27,17 @@ contract V1EMPStrategyUtility is
 	}
 
 
+	modifier existantV1EMPStrategy(address _v1EMPStrategy)
+	{
+		_existantV1EMPStrategy(_v1EMPStrategy);
+
+		_;
+	}
+
+
+	/// @notice internal
+
+
 	function _existantV1EMPStrategy(address _v1EMPStrategy)
 		internal
 		view
@@ -38,13 +46,6 @@ contract V1EMPStrategyUtility is
 			_I_V1_EMP_REGISTRY.v1EMPStrategy_v1EMPStrategyId(_v1EMPStrategy) > 0,
 			"!(_I_V1_EMP_REGISTRY.v1EMPStrategy_v1EMPStrategyId(_v1EMPStrategy) > 0)"
 		);
-	}
-
-	modifier existantV1EMPStrategy(address _v1EMPStrategy)
-	{
-		_existantV1EMPStrategy(_v1EMPStrategy);
-
-		_;
 	}
 
 

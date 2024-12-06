@@ -53,28 +53,11 @@ contract V1EMP is
 	}
 
 
-	function _authGovernanceOrManager()
-		internal
-		view
-	{
-		require(
-			msg.sender == manager || IAccessControl(_I_V1_EMP_REGISTRY.governance()).hasRole(bytes32(0), msg.sender),
-			"!authorized"
-		);
-	}
-
 	modifier authGovernanceOrManager()
 	{
 		_authGovernanceOrManager();
 
 		_;
-	}
-
-	function _utilizedERC20DepositOpenRequired()
-		internal
-		view
-	{
-		require(utilizedERC20DepositOpen, "!utilizedERC20DepositOpen");
 	}
 
 	modifier utilizedERC20DepositOpenRequired()
@@ -87,6 +70,23 @@ contract V1EMP is
 
 	/// @notice internal
 
+
+	function _authGovernanceOrManager()
+		internal
+		view
+	{
+		require(
+			msg.sender == manager || IAccessControl(_I_V1_EMP_REGISTRY.governance()).hasRole(bytes32(0), msg.sender),
+			"!authorized"
+		);
+	}
+
+	function _utilizedERC20DepositOpenRequired()
+		internal
+		view
+	{
+		require(utilizedERC20DepositOpen, "!utilizedERC20DepositOpen");
+	}
 
 	function _I_V1_EMP_UTILITY()
 		internal

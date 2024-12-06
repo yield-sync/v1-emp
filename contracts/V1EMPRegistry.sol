@@ -39,18 +39,22 @@ contract V1EMPRegistry is
 	}
 
 
-	function _authGovernance()
-		internal
-		view
-	{
-		require(IGovernance(_governance).hasRole(bytes32(0), msg.sender), "!authorized");
-	}
-
 	modifier authGovernance()
 	{
 		_authGovernance();
 
 		_;
+	}
+
+
+	/// @notice internal
+
+
+	function _authGovernance()
+		internal
+		view
+	{
+		require(IGovernance(_governance).hasRole(bytes32(0), msg.sender), "!authorized");
 	}
 
 

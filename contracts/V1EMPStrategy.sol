@@ -59,25 +59,11 @@ contract V1EMPStrategy is
 	}
 
 
-	function _authEMP()
-		internal
-		view
-	{
-		require(_I_V1_EMP_REGISTRY.v1EMP_v1EMPId(msg.sender) > 0, "!authorized");
-	}
-
 	modifier authEMP()
 	{
 		_authEMP();
 
 		_;
-	}
-
-	function _authManager()
-		internal
-		view
-	{
-		require(manager == msg.sender, "!authorized");
 	}
 
 	modifier authManager()
@@ -87,28 +73,11 @@ contract V1EMPStrategy is
 		_;
 	}
 
-	function _initialized()
-		internal
-		view
-	{
-		require(address(iV1EMPStrategyInteractor) != address(0), "!(address(iV1EMPStrategyInteractor) != address(0))");
-	}
-
 	modifier initialized()
 	{
 		_initialized();
 
 		_;
-	}
-
-	function _utilizedERC20TransferClosed()
-		internal
-		view
-	{
-		require(
-			!utilizedERC20DepositOpen && !utilizedERC20WithdrawOpen,
-			"!(!utilizedERC20DepositOpen && !utilizedERC20WithdrawOpen)"
-		);
 	}
 
 	modifier utilizedERC20TransferClosed()
@@ -121,6 +90,37 @@ contract V1EMPStrategy is
 
 	/// @notice internal
 
+
+	function _authEMP()
+		internal
+		view
+	{
+		require(_I_V1_EMP_REGISTRY.v1EMP_v1EMPId(msg.sender) > 0, "!authorized");
+	}
+
+	function _authManager()
+		internal
+		view
+	{
+		require(manager == msg.sender, "!authorized");
+	}
+
+	function _initialized()
+		internal
+		view
+	{
+		require(address(iV1EMPStrategyInteractor) != address(0), "!(address(iV1EMPStrategyInteractor) != address(0))");
+	}
+
+	function _utilizedERC20TransferClosed()
+		internal
+		view
+	{
+		require(
+			!utilizedERC20DepositOpen && !utilizedERC20WithdrawOpen,
+			"!(!utilizedERC20DepositOpen && !utilizedERC20WithdrawOpen)"
+		);
+	}
 
 	function _I_V1_EMP_STRATEGY_UTILITY()
 		internal
