@@ -33,7 +33,6 @@ contract V1EMP is
 	uint256 public override feeRateManager;
 
 	IV1EMPRegistry internal immutable _I_V1_EMP_REGISTRY;
-	IV1EMPUtility internal immutable _I_V1_EMP_UTILITY;
 
 	mapping (address utilizedV1EMPStrategy => uint256 allocation) public override utilizedV1EMPStrategy_allocation;
 
@@ -51,14 +50,12 @@ contract V1EMP is
 		utilizedERC20WithdrawFull = _utilizedERC20WithdrawFull;
 
 		_I_V1_EMP_REGISTRY = IV1EMPRegistry(_v1EMPRegistry);
-		// TODO consider removing this because in the case that it gets updated on the registry this contract points to an
-		// invalid EMP Utility
-		_I_V1_EMP_UTILITY = IV1EMPUtility(_I_V1_EMP_REGISTRY.v1EMPUtility());
 	}
 
 
 	function _authGovernanceOrManager()
 		internal
+		view
 	{
 		require(
 			msg.sender == manager || IAccessControl(_I_V1_EMP_REGISTRY.governance()).hasRole(bytes32(0), msg.sender),
@@ -88,6 +85,18 @@ contract V1EMP is
 	}
 
 
+	/// @notice internal
+
+
+	function _I_V1_EMP_UTILITY()
+		internal
+		view
+		returns (IV1EMPUtility)
+	{
+		return IV1EMPUtility(_I_V1_EMP_REGISTRY.v1EMPUtility());
+	}
+
+
 	/// @notice view
 
 
@@ -97,7 +106,7 @@ contract V1EMP is
 		view
 		returns (uint256[] memory utilizedERC20TotalAmount_)
 	{
-		address[] memory _utilizedERC20 = _I_V1_EMP_UTILITY.v1EMP_utilizedERC20(address(this));
+		address[] memory _utilizedERC20 = _I_V1_EMP_UTILITY().v1EMP_utilizedERC20(address(this));
 
 		utilizedERC20TotalAmount_ = new uint256[](_utilizedERC20.length);
 
@@ -178,14 +187,11 @@ contract V1EMP is
 			bool valid,
 			uint256 utilizedERC20AmountTotalETHValue,
 			string memory message
-		) = _I_V1_EMP_UTILITY.utilizedERC20AmountValid(
-			address(this),
-			_utilizedERC20Amount
-		);
+		) = _I_V1_EMP_UTILITY().utilizedERC20AmountValid(address(this), _utilizedERC20Amount);
 
 		require(valid, message);
 
-		address[] memory _utilizedERC20 = _I_V1_EMP_UTILITY.v1EMP_utilizedERC20(address(this));
+		address[] memory _utilizedERC20 = _I_V1_EMP_UTILITY().v1EMP_utilizedERC20(address(this));
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
@@ -217,9 +223,9 @@ contract V1EMP is
 		public
 		override
 	{
-		_I_V1_EMP_UTILITY.utilizedStrategySync();
+		_I_V1_EMP_UTILITY().utilizedStrategySync();
 
-		address[] memory utilizedERC20 = _I_V1_EMP_UTILITY.v1EMP_utilizedERC20(address(this));
+		address[] memory utilizedERC20 = _I_V1_EMP_UTILITY().v1EMP_utilizedERC20(address(this));
 
 		for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
 		{
@@ -252,7 +258,7 @@ contract V1EMP is
 
 		utilizedStrategySync();
 
-		address[] memory _utilizedERC20 = _I_V1_EMP_UTILITY.v1EMP_utilizedERC20(address(this));
+		address[] memory _utilizedERC20 = _I_V1_EMP_UTILITY().v1EMP_utilizedERC20(address(this));
 
 		bool utilizedERC20Available = true;
 
@@ -270,7 +276,7 @@ contract V1EMP is
 			}
 		}
 
-		address[] memory utilizedERC20 = _I_V1_EMP_UTILITY.v1EMP_utilizedERC20(address(this));
+		address[] memory utilizedERC20 = _I_V1_EMP_UTILITY().v1EMP_utilizedERC20(address(this));
 
 		if (!utilizedERC20Available)
 		{
@@ -299,7 +305,7 @@ contract V1EMP is
 		{
 			IERC20(utilizedERC20[i]).transfer(
 				msg.sender,
-				_I_V1_EMP_UTILITY.optimizedTransferAmount(address(this), utilizedERC20[i], transferAmount[i])
+				_I_V1_EMP_UTILITY().optimizedTransferAmount(address(this), utilizedERC20[i], transferAmount[i])
 			);
 		}
 
@@ -330,7 +336,7 @@ contract V1EMP is
 		override
 		utilizedERC20DepositOpenRequired()
 	{
-		(bool valid, string memory message) = _I_V1_EMP_UTILITY.v1EMPStrategyUtilizedERC20AmountValid(
+		(bool valid, string memory message) = _I_V1_EMP_UTILITY().v1EMPStrategyUtilizedERC20AmountValid(
 			address(this),
 			_v1EMPStrategyUtilizedERC20Amount
 		);
@@ -354,7 +360,7 @@ contract V1EMP is
 			"!(!utilizedERC20DepositOpen && !utilizedERC20WithdrawOpen)"
 		);
 
-		(bool valid, string memory message) = _I_V1_EMP_UTILITY.utilizedV1EMPStrategyValid(
+		(bool valid, string memory message) = _I_V1_EMP_UTILITY().utilizedV1EMPStrategyValid(
 			address(this),
 			_v1EMPStrategy,
 			_allocation

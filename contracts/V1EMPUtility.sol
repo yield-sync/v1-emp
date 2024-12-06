@@ -21,7 +21,6 @@ contract V1EMPUtility is
 
 	uint8 public constant TOLERANCE = 10;
 
-	IV1EMPArrayUtility internal immutable _I_V1_EMP_ARRAY_UTILITY;
 	IV1EMPRegistry internal immutable _I_V1_EMP_REGISTRY;
 
 	mapping (address v1EMP => address[] utilizedERC20) internal _v1EMP_utilizedERC20;
@@ -58,7 +57,6 @@ contract V1EMPUtility is
 	constructor (address _v1EMPRegistry)
 	{
 		_I_V1_EMP_REGISTRY = IV1EMPRegistry(_v1EMPRegistry);
-		_I_V1_EMP_ARRAY_UTILITY = IV1EMPArrayUtility(_I_V1_EMP_REGISTRY.v1EMPArrayUtility());
 	}
 
 
@@ -226,8 +224,8 @@ contract V1EMPUtility is
 			}
 		}
 
-		utilizedERC20 = _I_V1_EMP_ARRAY_UTILITY.removeDuplicates(utilizedERC20);
-		utilizedERC20 = _I_V1_EMP_ARRAY_UTILITY.sort(utilizedERC20);
+		utilizedERC20 = IV1EMPArrayUtility(_I_V1_EMP_REGISTRY.v1EMPArrayUtility()).removeDuplicates(utilizedERC20);
+		utilizedERC20 = IV1EMPArrayUtility(_I_V1_EMP_REGISTRY.v1EMPArrayUtility()).sort(utilizedERC20);
 
 		uint256 utilizedERC20AllocationTotal;
 

@@ -5,60 +5,6 @@ pragma solidity ^0.8.18;
 interface IV1EMPRegistry
 {
 	/**
-	* @dev [view-address]
-	* @return {address}
-	*/
-	function governance()
-		external
-		returns (address)
-	;
-
-	/**
-	* @dev [view-address]
-	* @return {address}
-	*/
-	function v1EMPArrayUtility()
-		external
-		returns (address)
-	;
-
-	/**
-	* @dev [view-address]
-	* @return {address}
-	*/
-	function v1EMPDeployer()
-		external
-		returns (address)
-	;
-
-	/**
-	* @dev [view-address]
-	* @return {address}
-	*/
-	function v1EMPStrategyUtility()
-		external
-		returns (address)
-	;
-
-	/**
-	* @dev [view-address]
-	* @return {address}
-	*/
-	function v1EMPStrategyDeployer()
-		external
-		returns (address)
-	;
-
-	/**
-	* @dev [view-address]
-	* @return {address}
-	*/
-	function v1EMPUtility()
-		external
-		returns (address)
-	;
-
-	/**
 	* @dev [view-uint256]
 	* @notice One Hundred Percent
 	* @return {uint256}
@@ -161,6 +107,65 @@ interface IV1EMPRegistry
 		returns (address)
 	;
 
+	/**
+	* @dev [view-address]
+	* @return {address}
+	*/
+	function governance()
+		external
+		view
+		returns (address)
+	;
+
+	/**
+	* @dev [view-address]
+	* @return {address}
+	*/
+	function v1EMPArrayUtility()
+		external
+		view
+		returns (address)
+	;
+
+	/**
+	* @dev [view-address]
+	* @return {address}
+	*/
+	function v1EMPDeployer()
+		external
+		view
+		returns (address)
+	;
+
+	/**
+	* @dev [view-address]
+	* @return {address}
+	*/
+	function v1EMPStrategyUtility()
+		external
+		view
+		returns (address)
+	;
+
+	/**
+	* @dev [view-address]
+	* @return {address}
+	*/
+	function v1EMPStrategyDeployer()
+		external
+		returns (address)
+	;
+
+	/**
+	* @dev [view-address]
+	* @return {address}
+	*/
+	function v1EMPUtility()
+		external
+		view
+		returns (address)
+	;
+
 
 	/// @notice mutative
 
@@ -176,26 +181,26 @@ interface IV1EMPRegistry
 
 	/**
 	* @notice Governance Update
-	* @param _governance {address}
+	* @param __governance {address}
 	*/
-	function governanceUpdate(address _governance)
+	function governanceUpdate(address __governance)
 		external
 	;
 
 	/**
 	* @notice V1EMPArrayUtility Update
-	* @param _v1EMPArrayUtility {address}
+	* @param __v1EMPArrayUtility {address}
 	*/
-	function v1EMPArrayUtilityUpdate(address _v1EMPArrayUtility)
+	function v1EMPArrayUtilityUpdate(address __v1EMPArrayUtility)
 		external
 	;
 
 
 	/**
 	* @notice V1EMPDeployer Update
-	* @param _v1EMPDeployer {address}
+	* @param __v1EMPDeployer {address}
 	*/
-	function v1EMPDeployerUpdate(address _v1EMPDeployer)
+	function v1EMPDeployerUpdate(address __v1EMPDeployer)
 		external
 	;
 
@@ -209,9 +214,9 @@ interface IV1EMPRegistry
 
 	/**
 	* @notice V1EMPStrategyDeployer Update
-	* @param _v1EMPStrategyDeployer {address}
+	* @param __v1EMPStrategyDeployer {address}
 	*/
-	function v1EMPStrategyDeployerUpdate(address _v1EMPStrategyDeployer)
+	function v1EMPStrategyDeployerUpdate(address __v1EMPStrategyDeployer)
 		external
 	;
 
@@ -225,17 +230,17 @@ interface IV1EMPRegistry
 
 	/**
 	* @notice V1EMPStrategyUtility Update
-	* @param _v1EMPStrategyUtility {address}
+	* @param __v1EMPStrategyUtility {address}
 	*/
-	function v1EMPStrategyUtilityUpdate(address _v1EMPStrategyUtility)
+	function v1EMPStrategyUtilityUpdate(address __v1EMPStrategyUtility)
 		external
 	;
 
 	/**
 	* @notice V1EMPUtility Update
-	* @param _v1EMPUtility {address}
+	* @param __v1EMPUtility {address}
 	*/
-	function v1EMPUtilityUpdate(address _v1EMPUtility)
+	function v1EMPUtilityUpdate(address __v1EMPUtility)
 		external
 	;
 }

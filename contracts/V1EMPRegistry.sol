@@ -10,12 +10,12 @@ import { IV1EMPRegistry } from "./interface/IV1EMPRegistry.sol";
 contract V1EMPRegistry is
 	IV1EMPRegistry
 {
-	address public override governance;
-	address public override v1EMPUtility;
-	address public override v1EMPArrayUtility;
-	address public override v1EMPDeployer;
-	address public override v1EMPStrategyDeployer;
-	address public override v1EMPStrategyUtility;
+	address internal _governance;
+	address internal _v1EMPUtility;
+	address internal _v1EMPArrayUtility;
+	address internal _v1EMPDeployer;
+	address internal _v1EMPStrategyDeployer;
+	address internal _v1EMPStrategyUtility;
 
 	uint256 public constant override ONE_HUNDRED_PERCENT = 1e18;
 
@@ -33,9 +33,9 @@ contract V1EMPRegistry is
 	mapping (uint256 v1EMPStrategyId => address v1EMPStrategy) public override v1EMPStrategyId_v1EMPStrategy;
 
 
-	constructor (address _governance)
+	constructor (address __governance)
 	{
-		governance = _governance;
+		_governance = __governance;
 	}
 
 
@@ -43,7 +43,7 @@ contract V1EMPRegistry is
 		internal
 		view
 	{
-		require(IGovernance(governance).hasRole(bytes32(0), msg.sender), "!authorized");
+		require(IGovernance(_governance).hasRole(bytes32(0), msg.sender), "!authorized");
 	}
 
 	modifier authGovernance()
@@ -63,7 +63,61 @@ contract V1EMPRegistry is
 		view
 		returns (address)
 	{
-		return IGovernance(governance).payTo();
+		return IGovernance(_governance).payTo();
+	}
+
+		function governance()
+		public
+		view
+		override
+		returns(address)
+	{
+		return _governance;
+	}
+
+	function v1EMPUtility()
+		public
+		view
+		override
+		returns(address)
+	{
+		return _v1EMPUtility;
+	}
+
+	function v1EMPArrayUtility()
+		public
+		view
+		override
+		returns(address)
+	{
+		return _v1EMPArrayUtility;
+	}
+
+	function v1EMPDeployer()
+		public
+		view
+		override
+		returns(address)
+	{
+		return _v1EMPDeployer;
+	}
+
+	function v1EMPStrategyDeployer()
+		public
+		view
+		override
+		returns(address)
+	{
+		return _v1EMPStrategyDeployer;
+	}
+
+	function v1EMPStrategyUtility()
+		public
+		view
+		override
+		returns(address)
+	{
+		return _v1EMPStrategyUtility;
 	}
 
 
@@ -84,37 +138,37 @@ contract V1EMPRegistry is
 	}
 
 	/// @inheritdoc IV1EMPRegistry
-	function governanceUpdate(address _governance)
+	function governanceUpdate(address __governance)
 		public
 		override
 		authGovernance()
 	{
-		governance = _governance;
+		_governance = __governance;
 	}
 
 	/// @inheritdoc IV1EMPRegistry
-	function v1EMPArrayUtilityUpdate(address _v1EMPArrayUtility)
+	function v1EMPArrayUtilityUpdate(address __v1EMPArrayUtility)
 		public
 		override
 		authGovernance()
 	{
-		require(v1EMPArrayUtility == address(0), "!(v1EMPArrayUtility == address(0))");
+		require(_v1EMPArrayUtility == address(0), "!(v1EMPArrayUtility == address(0))");
 
-		v1EMPArrayUtility = _v1EMPArrayUtility;
+		_v1EMPArrayUtility = __v1EMPArrayUtility;
 	}
 
 
 	/// @inheritdoc IV1EMPRegistry
-	function v1EMPDeployerUpdate(address _v1EMPDeployer)
+	function v1EMPDeployerUpdate(address __v1EMPDeployer)
 		public
 		override
 		authGovernance()
 	{
-		require(v1EMPUtility != address(0), "!(v1EMPUtility != address(0))");
+		require(_v1EMPUtility != address(0), "!(v1EMPUtility != address(0))");
 
-		require(v1EMPDeployer == address(0), "!(v1EMPDeployer == address(0))");
+		require(_v1EMPDeployer == address(0), "!(v1EMPDeployer == address(0))");
 
-		v1EMPDeployer = _v1EMPDeployer;
+		_v1EMPDeployer = __v1EMPDeployer;
 	}
 
 	/// @inheritdoc IV1EMPRegistry
@@ -122,7 +176,7 @@ contract V1EMPRegistry is
 		public
 		override
 	{
-		require(v1EMPDeployer == msg.sender, "!(v1EMPDeployer == msg.sender)");
+		require(_v1EMPDeployer == msg.sender, "!(v1EMPDeployer == msg.sender)");
 
 		v1EMPIdTracker++;
 
@@ -131,14 +185,14 @@ contract V1EMPRegistry is
 	}
 
 	/// @inheritdoc IV1EMPRegistry
-	function v1EMPStrategyDeployerUpdate(address _v1EMPStrategyDeployer)
+	function v1EMPStrategyDeployerUpdate(address __v1EMPStrategyDeployer)
 		public
 		override
 		authGovernance()
 	{
-		require(v1EMPStrategyDeployer == address(0), "!(v1EMPStrategyDeployer == address(0))");
+		require(_v1EMPStrategyDeployer == address(0), "!(v1EMPStrategyDeployer == address(0))");
 
-		v1EMPStrategyDeployer = _v1EMPStrategyDeployer;
+		_v1EMPStrategyDeployer = __v1EMPStrategyDeployer;
 	}
 
 	/// @inheritdoc IV1EMPRegistry
@@ -146,7 +200,7 @@ contract V1EMPRegistry is
 		public
 		override
 	{
-		require(v1EMPStrategyDeployer == msg.sender, "!(v1EMPStrategyDeployer == msg.sender)");
+		require(_v1EMPStrategyDeployer == msg.sender, "!(v1EMPStrategyDeployer == msg.sender)");
 
 		v1EMPStrategyIdTracker++;
 
@@ -155,28 +209,28 @@ contract V1EMPRegistry is
 	}
 
 	/// @inheritdoc IV1EMPRegistry
-	function v1EMPStrategyUtilityUpdate(address _v1EMPStrategyUtility)
+	function v1EMPStrategyUtilityUpdate(address __v1EMPStrategyUtility)
 		public
 		override
 		authGovernance()
 	{
-		require(v1EMPArrayUtility != address(0), "!(v1EMPArrayUtility != address(0))");
+		require(_v1EMPArrayUtility != address(0), "!(v1EMPArrayUtility != address(0))");
 
-		require(v1EMPStrategyUtility == address(0), "!(v1EMPStrategyUtility == address(0))");
+		require(_v1EMPStrategyUtility == address(0), "!(v1EMPStrategyUtility == address(0))");
 
-		v1EMPStrategyUtility = _v1EMPStrategyUtility;
+		_v1EMPStrategyUtility = __v1EMPStrategyUtility;
 	}
 
 	/// @inheritdoc IV1EMPRegistry
-	function v1EMPUtilityUpdate(address _v1EMPUtility)
+	function v1EMPUtilityUpdate(address __v1EMPUtility)
 		public
 		override
 		authGovernance()
 	{
-		require(v1EMPArrayUtility != address(0), "!(v1EMPArrayUtility != address(0))");
+		require(_v1EMPArrayUtility != address(0), "!(v1EMPArrayUtility != address(0))");
 
-		require(v1EMPUtility == address(0), "!(v1EMPUtility == address(0))");
+		require(_v1EMPUtility == address(0), "!(v1EMPUtility == address(0))");
 
-		v1EMPUtility = _v1EMPUtility;
+		_v1EMPUtility = __v1EMPUtility;
 	}
 }
