@@ -164,6 +164,8 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 
 			expect(await registry.v1EMPDeployer()).to.be.equal(owner.address);
 		});
+
+		it("Should NOT allow EMP Deployer to updated again after being set..")
 	});
 
 	describe("function v1EMPRegister()", async () => {
@@ -216,6 +218,9 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 
 			expect(await registry.v1EMPStrategyDeployer()).to.be.equal(owner.address);
 		});
+
+		it("Should NOT allow EMP Srategy Deployer to updated again after being set..")
+
 	});
 
 	describe("function v1EMPStrategyRegister()", async () => {
