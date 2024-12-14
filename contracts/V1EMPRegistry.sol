@@ -162,9 +162,9 @@ contract V1EMPRegistry is
 		override
 		authGovernance()
 	{
-		require(_v1EMPArrayUtility == address(0), "!(_v1EMPArrayUtility == address(0))");
-
 		require(__v1EMPArrayUtility != address(0), "!(__v1EMPArrayUtility != address(0))");
+
+		require(_v1EMPArrayUtility == address(0), "!(_v1EMPArrayUtility == address(0))");
 
 		_v1EMPArrayUtility = __v1EMPArrayUtility;
 	}
@@ -176,11 +176,11 @@ contract V1EMPRegistry is
 		override
 		authGovernance()
 	{
+		require(__v1EMPDeployer != address(0), "!(__v1EMPDeployer != address(0))");
+
 		require(_v1EMPUtility != address(0), "!(_v1EMPUtility != address(0))");
 
 		require(_v1EMPDeployer == address(0), "!(_v1EMPDeployer == address(0))");
-
-		require(__v1EMPDeployer != address(0), "!(__v1EMPDeployer != address(0))");
 
 		_v1EMPDeployer = __v1EMPDeployer;
 	}
@@ -204,9 +204,9 @@ contract V1EMPRegistry is
 		override
 		authGovernance()
 	{
-		require(_v1EMPStrategyDeployer == address(0), "!(_v1EMPStrategyDeployer == address(0))");
-
 		require(__v1EMPStrategyDeployer != address(0), "!(__v1EMPStrategyDeployer != address(0))");
+
+		require(_v1EMPStrategyDeployer == address(0), "!(_v1EMPStrategyDeployer == address(0))");
 
 		_v1EMPStrategyDeployer = __v1EMPStrategyDeployer;
 	}
@@ -230,11 +230,11 @@ contract V1EMPRegistry is
 		override
 		authGovernance()
 	{
+		require(__v1EMPStrategyUtility != address(0), "!(__v1EMPStrategyUtility != address(0))");
+
 		require(_v1EMPArrayUtility != address(0), "!(_v1EMPArrayUtility != address(0))");
 
 		require(_v1EMPStrategyUtility == address(0), "!(_v1EMPStrategyUtility == address(0))");
-
-		require(__v1EMPStrategyUtility != address(0), "!(__v1EMPStrategyUtility != address(0))");
 
 		_v1EMPStrategyUtility = __v1EMPStrategyUtility;
 	}
@@ -245,11 +245,11 @@ contract V1EMPRegistry is
 		override
 		authGovernance()
 	{
+		require(__v1EMPUtility != address(0), "!(__v1EMPUtility != address(0))");
+
 		require(_v1EMPArrayUtility != address(0), "!(_v1EMPArrayUtility != address(0))");
 
 		require(_v1EMPUtility == address(0), "!(_v1EMPUtility == address(0))");
-
-		require(__v1EMPUtility != address(0), "!(__v1EMPUtility != address(0))");
 
 		_v1EMPUtility = __v1EMPUtility;
 	}
