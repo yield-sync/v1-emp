@@ -39,7 +39,7 @@ interface IV1EMPStrategyUtility
 
 	/**
 	* @notice Utilized ERC20 Sort
-	* @param _utilizedERC20 {addrss[]}
+	* @param _utilizedERC20 {address[]}
 	* @return {address[]}
 	*/
 	function utilizedERC20Sort(address[] memory _utilizedERC20)

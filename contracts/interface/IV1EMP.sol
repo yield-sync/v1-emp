@@ -115,7 +115,7 @@ interface IV1EMP is
 
 
 	/**
-	* @notice Udpate Fee Rate for Manager
+	* @notice Update Fee Rate for Manager
 	* @param _feeRateManager {uint256}
 	*/
 	function feeRateManagerUpdate(uint256 _feeRateManager)
@@ -123,7 +123,7 @@ interface IV1EMP is
 	;
 
 	/**
-	* @notice Udpate Fee Rate for Governance
+	* @notice Update Fee Rate for Governance
 	* @param _feeRateGovernance {uint256}
 	*/
 	function feeRateGovernanceUpdate(uint256 _feeRateGovernance)
