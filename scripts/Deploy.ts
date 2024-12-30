@@ -49,13 +49,15 @@ async function main() {
 
 	const [OWNER] = await ethers.getSigners();
 
+	console.log("Deploying..");
+
 	const notice_network: string = `Network: ${network.name}`;
 	const notice_account: string = `Account: ${OWNER.address}`
 	const notice_balance: string = `Balance: ${await OWNER.getBalance()}`;
 	const notice: string = `${notice_network}\n${notice_account}\n${notice_balance}\n`;
 
 
-	writeFileSync(filePath, "Deploying..\n", { flag: "a" });
+	writeFileSync(filePath, `Attempted Deployment: ${Date.now()}\n`, { flag: "a" });
 	writeFileSync(filePath, notice, { flag: "a" });
 
 	console.log(notice);
