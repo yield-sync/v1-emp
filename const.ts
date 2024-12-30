@@ -35,6 +35,9 @@ export const ERROR = {
 		ETH_VALUE_FEED_ADDRESS_ZERO:
 			"!(_v1EMPERC20ETHValueFeed != address(0))"
 		,
+		GOVERNANCE_IS_ADDRESS_ZERO:
+			"!(__governance != address(0))"
+		,
 		STRATEGY_UTILITY_IS_ADDRESS_ZERO:
 			"!(__v1EMPStrategyUtility != address(0))"
 		,

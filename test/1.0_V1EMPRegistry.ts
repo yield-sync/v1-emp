@@ -38,6 +38,12 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 			);
 		});
 
+		it("Should not allow invalid arrayUtility to be set..", async () => {
+			await expect(registry.governanceUpdate(ethers.constants.AddressZero)).to.be.rejectedWith(
+				ERROR.REGISTRY.GOVERNANCE_IS_ADDRESS_ZERO
+			);
+		});
+
 		it("Should allow authorized caller to update EMP Deployer..", async () => {
 			await expect(registry.governanceUpdate(owner.address)).to.be.not.rejected;
 

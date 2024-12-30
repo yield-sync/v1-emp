@@ -153,6 +153,8 @@ contract V1EMPRegistry is
 		override
 		authGovernance()
 	{
+		require(__governance != address(0), "!(__governance != address(0))");
+
 		_governance = __governance;
 	}
 
