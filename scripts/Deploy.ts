@@ -203,7 +203,7 @@ async function main() {
 		}
 	}
 
-	const notice_balance_after: string = `Account Balance After: ${await OWNER.getBalance()}`;
+	const notice_balance_after: string = `Account Balance After: ${await OWNER.getBalance()}\n`;
 
 	writeFileSync(filePath, notice_balance_after, { flag: "a" });
 
