@@ -43,17 +43,22 @@ async function main() {
 			break;
 
 		default:
-			console.error("Error: Unkown network");
+			console.error("Error: Unknown network");
 			process.exit(999)
 	}
 
 	const [OWNER] = await ethers.getSigners();
 
-	const NOTICE = `Deploying \nNetwork: ${network.name} \nAccount: ${OWNER.address} \nBalance: ${await OWNER.getBalance()}\n`;
+	const notice_network: string = `Network: ${network.name}`;
+	const notice_account: string = `Account: ${OWNER.address}`
+	const notice_balance: string = `Balance: ${await OWNER.getBalance()}`;
+	const notice: string = `${notice_network}\n${notice_account}\n${notice_balance}\n`;
 
-	writeFileSync(filePath, NOTICE, { flag: "a" });
 
-	console.log(NOTICE);
+	writeFileSync(filePath, "Deploying..\n", { flag: "a" });
+	writeFileSync(filePath, notice, { flag: "a" });
+
+	console.log(notice);
 
 
 	// Array Utility
@@ -196,7 +201,11 @@ async function main() {
 		}
 	}
 
-	console.log("Account Balance:", await OWNER.getBalance());
+	const notice_balance_after: string = `Account Balance After: ${await OWNER.getBalance()}`;
+
+	writeFileSync(filePath, notice_balance_after, { flag: "a" });
+
+	console.log(notice_balance_after);
 }
 
 
