@@ -10,12 +10,12 @@ import { IV1EMPRegistry } from "./interface/IV1EMPRegistry.sol";
 contract V1EMPStrategyDeployer is
 	IV1EMPStrategyDeployer
 {
-	IV1EMPRegistry public immutable I_V1_EMP_REGISTRY;
+	IV1EMPRegistry internal immutable _I_V1_EMP_REGISTRY;
 
 
 	constructor (address _v1EMPRegistry)
 	{
-		I_V1_EMP_REGISTRY = IV1EMPRegistry(_v1EMPRegistry);
+		_I_V1_EMP_REGISTRY = IV1EMPRegistry(_v1EMPRegistry);
 	}
 
 
@@ -24,8 +24,8 @@ contract V1EMPStrategyDeployer is
 		public
 		returns (address v1EMPStrategy_)
 	{
-		v1EMPStrategy_ = address(new V1EMPStrategy(msg.sender, address(I_V1_EMP_REGISTRY)));
+		v1EMPStrategy_ = address(new V1EMPStrategy(msg.sender, address(_I_V1_EMP_REGISTRY)));
 
-		I_V1_EMP_REGISTRY.v1EMPStrategyRegister(v1EMPStrategy_);
+		_I_V1_EMP_REGISTRY.v1EMPStrategyRegister(v1EMPStrategy_);
 	}
 }
