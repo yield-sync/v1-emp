@@ -207,6 +207,12 @@ async function main() {
 
 	writeFileSync(filePath, notice_balance_after, { flag: "a" });
 
+	writeFileSync(
+		filePath,
+		`================================================================================\n\n`,
+		{ flag: "a" }
+	);
+
 	console.log(notice_balance_after);
 }
 
