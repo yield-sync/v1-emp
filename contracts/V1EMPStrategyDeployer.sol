@@ -27,6 +27,7 @@ contract V1EMPStrategyDeployer is
 	/// @inheritdoc IV1EMPStrategyDeployer
 	function deployV1EMPStrategy()
 		public
+		override
 		returns (address v1EMPStrategy_)
 	{
 		require(
