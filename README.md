@@ -71,3 +71,7 @@ The ETH value should handle the decimal of the erc 20
 ```sol
 npx hardhat size-contracts
 ```
+
+Network: Ethereum Mainnet
+USDC/USD Price Feed Address: 0x8fFfFfd4AfB6115b954Bd326cbe7B4BA576818f6
+ETH/USD Price Feed Address: 0x5f4ec3df9cbd43714fe2740f5e3616155c5b8419

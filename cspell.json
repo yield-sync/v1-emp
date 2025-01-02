@@ -4,6 +4,6 @@
     "dictionaryDefinitions": [],
     "dictionaries": [],
     "words": [],
-    "ignoreWords": ["EMPERC", "EMPETH", "existant", "IERC", "inheritdoc", "Interactor", "Reentrancy"],
+    "ignoreWords": ["chainlink", "EMPERC", "EMPETH", "existant", "IERC", "inheritdoc", "Interactor", "Reentrancy", "USDCV"],
     "import": []
 }
