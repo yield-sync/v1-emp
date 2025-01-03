@@ -8,6 +8,9 @@ import "@nomiclabs/hardhat-solhint";
 import "hardhat-contract-sizer";
 
 
+const accounts: string[] = [`0x${process.env.PRIVATE_KEY}`];
+const oneGwei: number = 1000000000;
+
 export default {
 	etherscan: {
 		apiKey: {
@@ -32,41 +35,43 @@ export default {
 	networks: {
 		goerli: {
 			url: `https://goerli.infura.io/v3/${process.env.INFURA_API_KEY}`,
-			accounts: [`0x${process.env.PRIVATE_KEY}` as string]
+			accounts
 		},
 		ropsten: {
 			url: `https://ropsten.infura.io/v3/${process.env.INFURA_API_KEY}`,
-			accounts: [`0x${process.env.PRIVATE_KEY}` as string]
+			accounts
 		},
 		mainnet: {
 			url: `https://mainnet.infura.io/v3/${process.env.INFURA_API_KEY}`,
-			accounts: [`0x${process.env.PRIVATE_KEY}` as string]
+			accounts
 		},
 		optimism: {
 			url: `https://mainnet.optimism.io`,
-			accounts: [`0x${process.env.PRIVATE_KEY}` as string],
+			accounts,
 			gasPrice: 15000000,
 			ovm: true
 		},
 		optimismgoerli: {
 			url: `https://goerli.optimism.io`,
-			accounts: [`0x${process.env.PRIVATE_KEY}` as string],
+			accounts,
 			gasPrice: 15000000
 		},
 		sepolia: {
 			url: `https://sepolia.infura.io/v3/${process.env.INFURA_API_KEY}`,
-			accounts: [`0x${process.env.PRIVATE_KEY}` as string]
+			accounts,
+			chainId: 11155111,
+			gasPrice: oneGwei,
 		},
 		'base-mainnet': {
 			url: 'https://mainnet.base.org',
-			accounts: [`0x${process.env.PRIVATE_KEY}` as string],
-			gasPrice: 1000000000,
+			accounts,
+			gasPrice: oneGwei,
 		},
 		'base-sepolia': {
 			url: 'https://sepolia.base.org',
-			accounts: [`0x${process.env.PRIVATE_KEY}` as string],
-			gasPrice: 1000000000,
+			accounts,
 			chainId: 84532,
+			gasPrice: oneGwei,
 		},
 		hardhat: {
 			allowUnlimitedContractSize: true,

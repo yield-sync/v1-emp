@@ -19,11 +19,20 @@ class TransferOpenError extends Error {}
 */
 export async function deployContract(_contractFactory: string, params: any[] = []): Promise<Contract>
 {
-	const contractFactory: ContractFactory = await ethers.getContractFactory(_contractFactory);
+	try
+	{
+		const contractFactory: ContractFactory = await ethers.getContractFactory(_contractFactory);
 
-	const deployedContract = await contractFactory.deploy(...params);
+		const deployedContract = await contractFactory.deploy(...params);
 
-	return await deployedContract.deployed();
+		return await deployedContract.deployed();
+	}
+	catch (error)
+	{
+		console.error("Error deploying contract:", error);
+
+		throw error;
+	}
 }
 
 /**
