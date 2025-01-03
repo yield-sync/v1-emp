@@ -1,11 +1,11 @@
-require("dotenv").config();
-
-const path = require('path');
-
-
 import { writeFileSync } from "fs";
 import { ethers, run, network } from "hardhat";
 import { deployContract } from "../util/UtilEMP";
+
+
+require("dotenv").config();
+
+const path = require('path');
 
 
 // [const]
@@ -13,7 +13,10 @@ const filePath = path.join(__dirname, '..', 'deployed.txt');
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 
-async function main() {
+async function main()
+{
+	console.log("Attempting Deployment..");
+
 	let governanceContract: string;
 
 	switch (network.name)
@@ -23,7 +26,7 @@ async function main() {
 			{
 				console.error("Error: No Yield Sync Governance contract set for Sepolia.");
 
-				process.exit(2)
+				process.exit(2);
 			}
 
 			governanceContract = process.env.YIELD_SYNC_GOVERNANCE_ADDRESS_SEPOLIA;
@@ -35,7 +38,7 @@ async function main() {
 			{
 				console.error("Error: No Yield Sync Governance contract set for Base Sepolia.");
 
-				process.exit(2)
+				process.exit(2);
 			}
 
 			governanceContract = process.env.YIELD_SYNC_GOVERNANCE_ADDRESS_BASE_SEPOLIA;
@@ -44,20 +47,15 @@ async function main() {
 
 		default:
 			console.error("Error: Unknown network");
-			process.exit(999)
+			process.exit(999);
 	}
 
-	const [OWNER] = await ethers.getSigners();
+	const [DEPLOYER] = await ethers.getSigners();
 
-	console.log("Deploying..");
+	writeFileSync(filePath, `Attempted Deployment Timestamp: ${Date.now()}\n`, { flag: "a" });
 
-	const notice_network: string = `Network: ${network.name}`;
-	const notice_account: string = `Account: ${OWNER.address}`
-	const notice_balance: string = `Balance: ${await OWNER.getBalance()}`;
-	const notice: string = `${notice_network}\n${notice_account}\n${notice_balance}\n`;
+	const notice: string = `Network: ${network.name}\nAccount: ${DEPLOYER.address}\nBalance: ${await DEPLOYER.getBalance()}\n`;
 
-
-	writeFileSync(filePath, `Attempted Deployment: ${Date.now()}\n`, { flag: "a" });
 	writeFileSync(filePath, notice, { flag: "a" });
 
 	console.log(notice);
@@ -203,7 +201,7 @@ async function main() {
 		}
 	}
 
-	const notice_balance_after: string = `Account Balance After: ${await OWNER.getBalance()}\n`;
+	const notice_balance_after: string = `Account Balance After: ${await DEPLOYER.getBalance()}\n`;
 
 	writeFileSync(filePath, notice_balance_after, { flag: "a" });
 

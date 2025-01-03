@@ -4,7 +4,8 @@
 	"description": "",
 	"main": "scripts/deploy.js",
 	"scripts": {
-		"deploy-to-base-sepolia": "npx hardhat run scripts/Deploy.ts --network base-sepolia"
+		"deploy-to-base-sepolia": "npx hardhat run scripts/Deploy.ts --network base-sepolia",
+		"deploy-to-sepolia": "npx hardhat run scripts/Deploy.ts --network sepolia"
 	},
 	"repository": {
 		"type": "git",
