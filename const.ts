@@ -41,6 +41,12 @@ export const ERROR = {
 		STRATEGY_UTILITY_IS_ADDRESS_ZERO:
 			"!(__v1EMPStrategyUtility != address(0))"
 		,
+		EMP_DEPLOYER_ALREADY_SET:
+			"!(_v1EMPDeployer == address(0))"
+		,
+		EMP_STRATEGY_DEPLOYER_ALREADY_SET:
+			"!(_v1EMPStrategyDeployer == address(0))"
+		,
 	},
 	EMP: {
 		DEPOSIT_NOT_OPEN:

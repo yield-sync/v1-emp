@@ -171,7 +171,25 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 			expect(await registry.v1EMPDeployer()).to.be.equal(owner.address);
 		});
 
-		it("Should NOT allow EMP Deployer to updated again after being set..")
+		it("Should NOT allow EMP Deployer to updated again after being set..", async () => {
+			// Set prerequisites
+			await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
+			await registry.v1EMPUtilityUpdate(owner.address);
+
+			// Set EMP Deployer for the first time
+			await registry.v1EMPDeployerUpdate(owner.address);
+
+			// Ensure the EMP Deployer is correctly set
+			expect(await registry.v1EMPDeployer()).to.be.equal(owner.address);
+
+			// Attempt to set EMP Deployer again
+			await expect(registry.v1EMPDeployerUpdate(manager.address)).to.be.rejectedWith(
+				ERROR.REGISTRY.EMP_DEPLOYER_ALREADY_SET
+			);
+
+			// Ensure the EMP Deployer remains unchanged
+			expect(await registry.v1EMPDeployer()).to.be.equal(owner.address);
+		});
 	});
 
 	describe("function v1EMPRegister()", async () => {
@@ -225,7 +243,24 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 			expect(await registry.v1EMPStrategyDeployer()).to.be.equal(owner.address);
 		});
 
-		it("Should NOT allow EMP Srategy Deployer to updated again after being set..")
+		it("Should NOT allow EMP Strategy Deployer to updated again after being set..", async () => {
+			// Set prerequisites
+			await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
+
+			// Set EMP Strategy Deployer for the first time
+			await registry.v1EMPStrategyDeployerUpdate(owner.address);
+
+			// Ensure the EMP Strategy Deployer is correctly set
+			expect(await registry.v1EMPStrategyDeployer()).to.be.equal(owner.address);
+
+			// Attempt to set EMP Strategy Deployer again
+			await expect(registry.v1EMPStrategyDeployerUpdate(manager.address)).to.be.rejectedWith(
+				ERROR.REGISTRY.EMP_STRATEGY_DEPLOYER_ALREADY_SET
+			);
+
+			// Ensure the EMP Strategy Deployer remains unchanged
+			expect(await registry.v1EMPStrategyDeployer()).to.be.equal(owner.address);
+		})
 
 	});
 
