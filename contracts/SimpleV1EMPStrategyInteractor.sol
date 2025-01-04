@@ -56,8 +56,6 @@ contract SimpleV1EMPStrategyInteractor is
 		nonReentrant()
 		onlyOwner()
 	{
-		require(_utilizedERC20Amount >= 0, "Amount must be greater than zero");
-
 		IERC20(_utilizedERC20).transferFrom(_from, address(this), _utilizedERC20Amount);
 	}
 
@@ -68,8 +66,6 @@ contract SimpleV1EMPStrategyInteractor is
 		nonReentrant()
 		onlyOwner()
 	{
-		require(_utilizedERC20Amount >= 0, "Amount must be greater than zero");
-
 		IERC20(_utilizedERC20).transfer(_to, _utilizedERC20Amount);
 	}
 }
