@@ -288,9 +288,7 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 			}
 
 			// DEPOSIT - ERC20 A and ERC20 B tokens into the strategy
-			await expect(
-				strategy.utilizedERC20Deposit(DEPOSIT_AMOUNTS)
-			).to.be.not.rejected;
+			await strategy.utilizedERC20Deposit(DEPOSIT_AMOUNTS);
 
 			for (let i: number = 0; i < UTILIZED_ERC20.length; i++)
 			{
