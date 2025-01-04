@@ -61,7 +61,7 @@ describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 
 		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
 		const ETHValueFeedDummy: ContractFactory = await ethers.getContractFactory("ETHValueFeedDummy");
-		const StrategyInteractorDummy: ContractFactory = await ethers.getContractFactory("StrategyInteractorDummy");
+		const SimpleV1EMPStrategyInteractor: ContractFactory = await ethers.getContractFactory("SimpleV1EMPStrategyInteractor");
 
 
 		governance = await (await YieldSyncGovernance.deploy()).deployed();
@@ -93,8 +93,6 @@ describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20C.address, eTHValueFeedC.address);
 		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20D.address, eTHValueFeed.address);
 
-		strategyInteractor = await (await StrategyInteractorDummy.deploy()).deployed();
-
 		/**
 		* @notice The owner has to be registered as the EMP deployer so that it can authorize itself as an EMP to access the
 		* functions available on the strategy.
@@ -114,6 +112,8 @@ describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 		strategy = await V1EMPStrategy.attach(String(await registry.v1EMPStrategyId_v1EMPStrategy(1)));
 
 		utilStrategyTransfer = new UtilStrategyTransfer(strategy, registry);
+
+		strategyInteractor = await (await SimpleV1EMPStrategyInteractor.deploy(strategy.address)).deployed();
 	});
 
 

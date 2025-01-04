@@ -35,8 +35,6 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;
 	let mockERC20C: Contract;
-	let strategyInteractor: Contract;
-	let strategyInteractor2: Contract;
 
 	let owner: VoidSigner;
 	let manager: VoidSigner;
@@ -80,9 +78,6 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 
 		await registry.v1EMPDeployerUpdate(eMPDeployer.address);
 
-		strategyInteractor = await deployContract("StrategyInteractorDummy");
-		strategyInteractor2 = await deployContract("StrategyInteractorDummy");
-
 		mockERC20A = await deployContract("MockERC20", ["Mock A", "A", 18]);
 		mockERC20B = await deployContract("MockERC20", ["Mock B", "B", 18]);
 		mockERC20C = await deployContract("MockERC20", ["Mock C", "C", 6]);
@@ -98,19 +93,18 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 		strategies = await deployStrategies(
 			registry,
 			strategyDeployer,
-			await ethers.getContractFactory("V1EMPStrategy"),
 			[
 				{
 					strategyUtilizedERC20: [mockERC20A.address, mockERC20B.address],
 					strategyUtilization: [[true, true, PERCENT.FIFTY], [true, true, PERCENT.FIFTY]],
-					strategyInteractor: strategyInteractor.address
+					useSimpleStrategyInteractor: true
 				},
 				{
 					strategyUtilizedERC20: [mockERC20C.address],
 					strategyUtilization: [[true, true, PERCENT.HUNDRED]],
-					strategyInteractor: strategyInteractor2.address
+					useSimpleStrategyInteractor: true
 				},
-			]
+			],
 		);
 
 		// Deploy EMPa

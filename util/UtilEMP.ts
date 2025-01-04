@@ -57,18 +57,18 @@ export async function approveTokens(eMP: string, utilizedERC20: string[], eMPDep
 /**
 * Deploy Strategies
 * @param registry {Contract}
-* @param strategyDeployer {Conract}
-* @param V1EMPStrategy {ContractFactory}
+* @param strategyDeployer {Contract}
 * @param deployStrategies {DeployStrategy[]}
 * @returns Promise<TestStrategy[]>
 */
 export async function deployStrategies(
 	registry: Contract,
 	strategyDeployer: Contract,
-	V1EMPStrategy: ContractFactory,
-	deployStrategies: DeployStrategy[]
+	deployStrategies: DeployStrategy[],
 ): Promise<TestStrategy[]>
 {
+	const V1EMPStrategy = await ethers.getContractFactory("V1EMPStrategy");
+
 	let testStrategies: TestStrategy[] = [];
 
 	for (let i: number = 0; i < deployStrategies.length; i++)
@@ -85,16 +85,28 @@ export async function deployStrategies(
 		{
 			await deployedV1EMPStrategy.iV1EMPStrategyInteractorUpdate(deployStrategies[i].strategyInteractor);
 		}
+		else
+		{
+			if (deployStrategies[i].useSimpleStrategyInteractor)
+			{
+				const SimpleV1EMPStrategyInteractor = await ethers.getContractFactory("SimpleV1EMPStrategyInteractor");
+
+				const strategyInteractor = await (
+					await SimpleV1EMPStrategyInteractor.deploy(deployedV1EMPStrategy.address)
+				).deployed();
+
+				await deployedV1EMPStrategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
+			}
+		}
 
 		await deployedV1EMPStrategy.utilizedERC20Update(
 			deployStrategies[i].strategyUtilizedERC20,
 			deployStrategies[i].strategyUtilization
 		);
 
-		if (deployStrategies[i].strategyInteractor)
+		if (deployStrategies[i].strategyInteractor || deployStrategies[i].useSimpleStrategyInteractor)
 		{
 			await deployedV1EMPStrategy.utilizedERC20DepositOpenUpdate(true);
-
 			await deployedV1EMPStrategy.utilizedERC20WithdrawOpenUpdate(true);
 		}
 

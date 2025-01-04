@@ -52,7 +52,7 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 
 		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
 		const ETHValueFeedDummy: ContractFactory = await ethers.getContractFactory("ETHValueFeedDummy");
-		const StrategyInteractorDummy: ContractFactory = await ethers.getContractFactory("StrategyInteractorDummy");
+		const SimpleV1EMPStrategyInteractor: ContractFactory = await ethers.getContractFactory("SimpleV1EMPStrategyInteractor");
 
 
 		// Core contracts
@@ -85,8 +85,6 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20B.address, eTHValueFeed.address);
 		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20C.address, eTHValueFeedC.address);
 
-		strategyInteractor = await (await StrategyInteractorDummy.deploy()).deployed();
-
 
 		/**
 		* @notice The owner has to be registered as the EMP deployer so that it can authorize itself as an EMP to access the
@@ -105,6 +103,8 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 
 		// Attach the deployed V1EMPStrategy address
 		strategy = await V1EMPStrategy.attach(String(await registry.v1EMPStrategyId_v1EMPStrategy(1)));
+
+		strategyInteractor = await (await SimpleV1EMPStrategyInteractor.deploy(strategy.address)).deployed();
 
 		// Set the Strategy Interactor
 		await strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
@@ -197,13 +197,12 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 		});
 
 		describe("function utilizedERC20Withdraw()", async () => {
-			const B4_TOTAL_SUPPLY_STRATEGY: BigNumber = await strategy.sharesTotal();
-			const B4_BALANCE_MOCK_A_SI: BigNumber = await mockERC20A.balanceOf(strategyInteractor.address);
-			const B4_BALANCE_MOCK_A_OWNER: BigNumber = await mockERC20A.balanceOf(owner.address);
-			const DEPOSIT_AMOUNT_A: BigNumber = ethers.utils.parseUnits("1", 18);
-
-
 			it("Should return same amount of ERC20 even if value of ERC20 changes..", async () => {
+				const B4_BALANCE_MOCK_A_SI: BigNumber = await mockERC20A.balanceOf(strategyInteractor.address);
+				const B4_BALANCE_MOCK_A_OWNER: BigNumber = await mockERC20A.balanceOf(owner.address);
+				const DEPOSIT_AMOUNT_A: BigNumber = ethers.utils.parseUnits("1", 18);
+				const B4_TOTAL_SUPPLY_STRATEGY: BigNumber = await strategy.sharesTotal();
+
 				// APPROVE - SI contract to spend tokens on behalf of owner
 				await mockERC20A.approve(strategyInteractor.address, DEPOSIT_AMOUNT_A);
 

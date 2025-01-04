@@ -38,7 +38,6 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 	beforeEach("[beforeEach] Set up contracts..", async () => {
 		[, , treasury, outsider] = await ethers.getSigners();
 
-		const StrategyInteractorDummy: ContractFactory = await ethers.getContractFactory("StrategyInteractorDummy");
 		const V1EMP: ContractFactory = await ethers.getContractFactory("V1EMP");
 
 		// Core contracts
@@ -79,27 +78,24 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20B.address, eTHValueFeed.address);
 		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20C.address, eTHValueFeedC.address);
 
-		strategyInteractor = await (await StrategyInteractorDummy.deploy()).deployed();
-
 		/**
 		* EMP Strategies
 		*/
 		strategies = await deployStrategies(
 			registry,
 			strategyDeployer,
-			await ethers.getContractFactory("V1EMPStrategy"),
 			[
 				{
 					strategyUtilizedERC20: [mockERC20A.address, mockERC20B.address],
 					strategyUtilization: [[true, true, PERCENT.FIFTY], [true, true, PERCENT.FIFTY]],
-					strategyInteractor: strategyInteractor.address
+					useSimpleStrategyInteractor: true
 				},
 				{
 					strategyUtilizedERC20: [mockERC20C.address],
 					strategyUtilization: [[true, true, PERCENT.HUNDRED]],
-					strategyInteractor: strategyInteractor.address
+					useSimpleStrategyInteractor: true
 				},
-			]
+			],
 		);
 
 		/**

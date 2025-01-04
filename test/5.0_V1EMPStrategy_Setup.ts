@@ -40,7 +40,7 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
 		const ETHValueFeedDummy: ContractFactory = await ethers.getContractFactory("ETHValueFeedDummy");
 		const V1EMPStrategy: ContractFactory = await ethers.getContractFactory("V1EMPStrategy");
-		const StrategyInteractorDummy: ContractFactory = await ethers.getContractFactory("StrategyInteractorDummy");
+		const SimpleV1EMPStrategyInteractor: ContractFactory = await ethers.getContractFactory("SimpleV1EMPStrategyInteractor");
 
 
 		// Core contracts
@@ -61,7 +61,6 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 		strategyDeployer = await (await V1EMPStrategyDeployer.deploy(registry.address)).deployed();
 
 		// Testing contracts
-		strategyInteractor = await (await StrategyInteractorDummy.deploy()).deployed();
 		mockERC20A = await (await MockERC20.deploy("Mock A", "A", 18)).deployed();
 		mockERC20B = await (await MockERC20.deploy("Mock B", "B", 18)).deployed();
 		mockERC20C = await (await MockERC20.deploy("Mock C", "C", 6)).deployed();
@@ -91,6 +90,8 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 
 		// Attach the deployed V1EMPStrategy address
 		strategy = await V1EMPStrategy.attach(String(await registry.v1EMPStrategyId_v1EMPStrategy(1)));
+
+		strategyInteractor = await (await SimpleV1EMPStrategyInteractor.deploy(strategy.address)).deployed();
 	});
 
 
