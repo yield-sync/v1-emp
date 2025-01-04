@@ -29,6 +29,7 @@ describe("SimpleV1EMPStrategyInteractor", function () {
 		expect(await strategyInteractor.OWNER()).to.equal(await owner.getAddress());
 	});
 
+
 	describe("function utilizedERC20Deposit()", function () {
 		describe("Expected Failure", function () {
 			it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
