@@ -2,7 +2,7 @@
 pragma solidity ^0.8.18;
 
 /**
-* @dev DO NOT DEPLOY OR THIS CONTRACT ON ANY NON-TEST NETWORK.
+ * @notice WARNING: This contract is ONLY for TESTING.
 * @notice This is supposed to mock a Chainlink price oracle.
 */
 contract MockV3Aggregator

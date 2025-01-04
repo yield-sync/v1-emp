@@ -8,7 +8,7 @@ import { console } from "hardhat/console.sol";
 
 
 /**
-* @dev DO NOT DEPLOY OR THIS CONTRACT ON ANY NON-TEST NETWORK.
+ * @notice WARNING: This contract is ONLY for TESTING.
 */
 contract ReenteranceAttacker is Ownable
 {

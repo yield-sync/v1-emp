@@ -6,7 +6,7 @@ import { IV1EMPETHValueFeed } from "../interface/IV1EMPETHValueFeed.sol";
 
 
 /**
- * @notice WARNING: This contract is ONLY for TESTING. Do not use as actual ETH feed
+ * @notice WARNING: This contract is ONLY for TESTING.
  */
 contract ETHValueFeedDummy is
 	IV1EMPETHValueFeed
