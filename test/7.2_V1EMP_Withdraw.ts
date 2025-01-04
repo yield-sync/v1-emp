@@ -97,15 +97,25 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 				{
 					strategyUtilizedERC20: [mockERC20A.address, mockERC20B.address],
 					strategyUtilization: [[true, true, PERCENT.FIFTY], [true, true, PERCENT.FIFTY]],
-					useSimpleStrategyInteractor: true
 				},
 				{
 					strategyUtilizedERC20: [mockERC20C.address],
 					strategyUtilization: [[true, true, PERCENT.HUNDRED]],
-					useSimpleStrategyInteractor: true
 				},
 			],
 		);
+
+		const strategyInteractor = await deployContract("SimpleV1EMPStrategyInteractor", [strategies[0].contract.address]);
+		const strategyInteractor2 = await deployContract("SimpleV1EMPStrategyInteractor", [strategies[1].contract.address]);
+
+		await strategies[0].contract.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
+		await strategies[1].contract.iV1EMPStrategyInteractorUpdate(strategyInteractor2.address);
+
+		await strategies[0].contract.utilizedERC20DepositOpenUpdate(true);
+		await strategies[0].contract.utilizedERC20WithdrawOpenUpdate(true);
+
+		await strategies[1].contract.utilizedERC20DepositOpenUpdate(true);
+		await strategies[1].contract.utilizedERC20WithdrawOpenUpdate(true);
 
 		// Deploy EMPa
 		eMPs = await deployEMP(

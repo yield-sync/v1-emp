@@ -85,26 +85,13 @@ export async function deployStrategies(
 		{
 			await deployedV1EMPStrategy.iV1EMPStrategyInteractorUpdate(deployStrategies[i].strategyInteractor);
 		}
-		else
-		{
-			if (deployStrategies[i].useSimpleStrategyInteractor)
-			{
-				const SimpleV1EMPStrategyInteractor = await ethers.getContractFactory("SimpleV1EMPStrategyInteractor");
-
-				const strategyInteractor = await (
-					await SimpleV1EMPStrategyInteractor.deploy(deployedV1EMPStrategy.address)
-				).deployed();
-
-				await deployedV1EMPStrategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
-			}
-		}
 
 		await deployedV1EMPStrategy.utilizedERC20Update(
 			deployStrategies[i].strategyUtilizedERC20,
 			deployStrategies[i].strategyUtilization
 		);
 
-		if (deployStrategies[i].strategyInteractor || deployStrategies[i].useSimpleStrategyInteractor)
+		if (deployStrategies[i].strategyInteractor)
 		{
 			await deployedV1EMPStrategy.utilizedERC20DepositOpenUpdate(true);
 			await deployedV1EMPStrategy.utilizedERC20WithdrawOpenUpdate(true);
