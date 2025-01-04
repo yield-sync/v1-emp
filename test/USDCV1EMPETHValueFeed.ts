@@ -35,37 +35,43 @@ describe("USDCV1EMPETHValueFeed", function () {
 		await valueFeed.deployed();
 	});
 
+
 	describe("function utilizedERC20ETHValue()", function () {
-		it("should return the correct ETH price in USDC", async () => {
-			const usdcInEth = await valueFeed.utilizedERC20ETHValue();
+		describe("Expected Failure", function () {
+			it("should revert if ETH/USD price is zero", async () => {
+				// Set ETH/USD price to zero
+				await ethUsdPriceFeed.updateAnswer(0);
 
-			const expectedUsdcInEth = USDC_USD_PRICE.mul(ethers.utils.parseUnits("1", 18)).div(ETH_USD_PRICE);
+				await expect(valueFeed.utilizedERC20ETHValue()).to.be.revertedWith("Invalid price");
+			});
 
-			expect(usdcInEth).to.equal(expectedUsdcInEth);
+			it("should revert if USDC/USD price is zero", async () => {
+				// Set USDC/USD price to zero
+				await usdcUsdPriceFeed.updateAnswer(0);
+
+				await expect(valueFeed.utilizedERC20ETHValue()).to.be.revertedWith("Invalid price");
+			});
 		});
 
-		it("should revert if ETH/USD price is zero", async () => {
-			// Set ETH/USD price to zero
-			await ethUsdPriceFeed.updateAnswer(0);
+		describe("Expected Success", function () {
+			it("should return the correct ETH price in USDC", async () => {
+				const usdcInEth = await valueFeed.utilizedERC20ETHValue();
 
-			await expect(valueFeed.utilizedERC20ETHValue()).to.be.revertedWith("Invalid price");
-		});
+				const expectedUsdcInEth = USDC_USD_PRICE.mul(ethers.utils.parseUnits("1", 18)).div(ETH_USD_PRICE);
 
-		it("should revert if USDC/USD price is zero", async () => {
-			// Set USDC/USD price to zero
-			await usdcUsdPriceFeed.updateAnswer(0);
-
-			await expect(valueFeed.utilizedERC20ETHValue()).to.be.revertedWith("Invalid price");
+				expect(usdcInEth).to.equal(expectedUsdcInEth);
+			});
 		});
 	});
 
-
 	describe("function eRC20Decimals()", function () {
-		it("should return the correct decimals for the USDC price feed", async () => {
-			const decimals = await valueFeed.eRC20Decimals();
+		describe("Expected Success", function () {
+			it("should return the correct decimals for the USDC price feed", async () => {
+				const decimals = await valueFeed.eRC20Decimals();
 
-			// USDC price feed has 8 decimals
-			expect(decimals).to.equal(8);
+				// USDC price feed has 8 decimals
+				expect(decimals).to.equal(8);
+			});
 		});
 	});
 });
