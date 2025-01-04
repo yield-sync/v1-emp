@@ -35,25 +35,37 @@ describe("USDCV1EMPETHValueFeed", function () {
 		await valueFeed.deployed();
 	});
 
-	it("should return the correct ETH price in USDC", async () => {
-		const usdcInEth = await valueFeed.utilizedERC20ETHValue();
-		const expectedUsdcInEth = USDC_USD_PRICE.mul(ethers.utils.parseUnits("1", 18)).div(ETH_USD_PRICE);
+	describe("function utilizedERC20ETHValue()", function () {
+		it("should return the correct ETH price in USDC", async () => {
+			const usdcInEth = await valueFeed.utilizedERC20ETHValue();
 
-		expect(usdcInEth).to.equal(expectedUsdcInEth);
+			const expectedUsdcInEth = USDC_USD_PRICE.mul(ethers.utils.parseUnits("1", 18)).div(ETH_USD_PRICE);
+
+			expect(usdcInEth).to.equal(expectedUsdcInEth);
+		});
+
+		it("should revert if ETH/USD price is zero", async () => {
+			// Set ETH/USD price to zero
+			await ethUsdPriceFeed.updateAnswer(0);
+
+			await expect(valueFeed.utilizedERC20ETHValue()).to.be.revertedWith("Invalid price");
+		});
+
+		it("should revert if USDC/USD price is zero", async () => {
+			// Set USDC/USD price to zero
+			await usdcUsdPriceFeed.updateAnswer(0);
+
+			await expect(valueFeed.utilizedERC20ETHValue()).to.be.revertedWith("Invalid price");
+		});
 	});
 
-	it("should return the correct decimals for the USDC price feed", async () => {
-		const decimals = await valueFeed.eRC20Decimals();
-		expect(decimals).to.equal(8); // USDC price feed has 8 decimals
-	});
 
-	it("should revert if ETH/USD price is zero", async () => {
-		await ethUsdPriceFeed.updateAnswer(0); // Set ETH/USD price to zero
-		await expect(valueFeed.utilizedERC20ETHValue()).to.be.revertedWith("Invalid price");
-	});
+	describe("function eRC20Decimals()", function () {
+		it("should return the correct decimals for the USDC price feed", async () => {
+			const decimals = await valueFeed.eRC20Decimals();
 
-	it("should revert if USDC/USD price is zero", async () => {
-		await usdcUsdPriceFeed.updateAnswer(0); // Set USDC/USD price to zero
-		await expect(valueFeed.utilizedERC20ETHValue()).to.be.revertedWith("Invalid price");
+			// USDC price feed has 8 decimals
+			expect(decimals).to.equal(8);
+		});
 	});
 });
