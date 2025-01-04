@@ -14,12 +14,12 @@ import { IV1EMPStrategyInteractor } from "./interface/IV1EMPStrategyInteractor.s
 contract SimpleV1EMPStrategyInteractor is
 	IV1EMPStrategyInteractor
 {
-	IV1EMPStrategy public immutable V1_EMP_STRATEGY;
+	IV1EMPStrategy internal immutable _V1_EMP_STRATEGY;
 
 
 	constructor (address _strategy)
 	{
-		V1_EMP_STRATEGY = IV1EMPStrategy(_strategy);
+		_V1_EMP_STRATEGY = IV1EMPStrategy(_strategy);
 	}
 
 
@@ -27,7 +27,7 @@ contract SimpleV1EMPStrategyInteractor is
 		internal
 		view
 	{
-		require(address(V1_EMP_STRATEGY) == msg.sender, "address(V1_EMP_STRATEGY) != msg.sender");
+		require(address(_V1_EMP_STRATEGY) == msg.sender, "address(_V1_EMP_STRATEGY) != msg.sender");
 	}
 
 	modifier onlyStrategy()
