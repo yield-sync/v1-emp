@@ -5,6 +5,9 @@ pragma solidity ^0.8.18;
 import { ERC721 } from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 
+/**
+* @dev DO NOT DEPLOY OR THIS CONTRACT ON ANY NON-TEST NETWORK.
+*/
 contract MockERC721 is ERC721
 {
 	constructor ()
