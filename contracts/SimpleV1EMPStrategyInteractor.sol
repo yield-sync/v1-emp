@@ -9,9 +9,9 @@ import { IV1EMPStrategyInteractor } from "./interface/IV1EMPStrategyInteractor.s
 
 
 /**
-* @notice This contract does not deposit tokens into a protocol.
+* @notice This contract does not deposit tokens into a protocol
 */
-contract SimpleStrategyInteractor is
+contract SimpleV1EMPStrategyInteractor is
 	IV1EMPStrategyInteractor
 {
 	IV1EMPStrategy public immutable V1_EMP_STRATEGY;
