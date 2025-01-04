@@ -2,9 +2,10 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 import { Contract, Signer } from "ethers";
 
+
 describe("USDCV1EMPETHValueFeed", function () {
-	const ETH_USD_PRICE = ethers.utils.parseUnits("1800", 8); // 1800 USD/ETH with 8 decimals
-	const USDC_USD_PRICE = ethers.utils.parseUnits("1", 8); // 1 USD/USDC with 8 decimals
+	const ETH_USD_PRICE = ethers.utils.parseUnits("1800", 8);
+	const USDC_USD_PRICE = ethers.utils.parseUnits("1", 8);
 
 	let ethUsdPriceFeed: Contract;
 	let usdcUsdPriceFeed: Contract;
@@ -13,21 +14,16 @@ describe("USDCV1EMPETHValueFeed", function () {
 
 
 	beforeEach(async () => {
-		// Get signers
 		[deployer] = await ethers.getSigners();
 
-		// Deploy mock price feed contracts
 		const MockAggregator = await ethers.getContractFactory("MockV3Aggregator");
 
-		ethUsdPriceFeed = await MockAggregator.deploy(8, ETH_USD_PRICE); // 8 decimals
+		ethUsdPriceFeed = await MockAggregator.deploy(8, ETH_USD_PRICE);
+		usdcUsdPriceFeed = await MockAggregator.deploy(8, USDC_USD_PRICE);
 
 		await ethUsdPriceFeed.deployed();
-
-		usdcUsdPriceFeed = await MockAggregator.deploy(8, USDC_USD_PRICE); // 8 decimals
-
 		await usdcUsdPriceFeed.deployed();
 
-		// Deploy the value feed contract
 		const ValueFeed = await ethers.getContractFactory("USDCV1EMPETHValueFeed");
 
 		valueFeed = await ValueFeed.deploy(ethUsdPriceFeed.address, usdcUsdPriceFeed.address);
