@@ -4,6 +4,8 @@ EMP (Asset Management Protocol) is a protocol that allows automated allocations 
 
 ## Note
 
+Once this project is done and deployed to networks this repo should become archived. No further changes should be accepted
+
 This protocol complies to the [yield-sync/specifications](https://github.com/yield-sync/specifications/tree/master/v1-amp)
 
 ## Get Started
