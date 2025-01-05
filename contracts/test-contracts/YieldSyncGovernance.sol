@@ -2,4 +2,4 @@
 pragma solidity ^0.8.18;
 
 
-import { YieldSyncGovernance } from "@yield-sync/v1-sdk/contracts/YieldSyncGovernance.sol";
+import { YieldSyncGovernance } from "@yield-sync/sdk/contracts/YieldSyncGovernance.sol";
