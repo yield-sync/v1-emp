@@ -2,7 +2,7 @@
 pragma solidity ^0.8.18;
 
 
-import { IGovernance } from "@yield-sync/sdk/contracts/interface/IGovernance.sol";
+import { IGovernance } from "@yield-sync/governance/contracts/interface/IGovernance.sol";
 
 import { IV1EMPRegistry } from "./interface/IV1EMPRegistry.sol";
 
