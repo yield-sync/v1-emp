@@ -23,7 +23,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 	beforeEach("[beforeEach] Set up contracts..", async () => {
 		[owner, manager, treasury, fakeERC20, fakeEthValueFeed] = await ethers.getSigners();
 
-		governance = await deployContract("YieldSyncGovernance");
+		governance = await deployContract("@yield-sync/governance/contracts/YieldSyncGovernance.sol:YieldSyncGovernance");
 		arrayUtility = await deployContract("V1EMPArrayUtility");
 		registry = await deployContract("V1EMPRegistry", [governance.address]);
 

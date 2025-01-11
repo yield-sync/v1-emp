@@ -41,7 +41,7 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 		const V1EMP: ContractFactory = await ethers.getContractFactory("V1EMP");
 
 		// Core contracts
-		governance = await deployContract("YieldSyncGovernance");
+		governance = await deployContract("@yield-sync/governance/contracts/YieldSyncGovernance.sol:YieldSyncGovernance");
 
 		await governance.payToUpdate(treasury.address);
 

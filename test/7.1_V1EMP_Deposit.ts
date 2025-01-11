@@ -41,7 +41,7 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 		[owner, manager, treasury] = await ethers.getSigners();
 
 
-		governance = await deployContract("YieldSyncGovernance");
+		governance = await deployContract("@yield-sync/governance/contracts/YieldSyncGovernance.sol:YieldSyncGovernance");
 
 		await governance.payToUpdate(treasury.address);
 

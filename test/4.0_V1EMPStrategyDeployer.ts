@@ -19,7 +19,7 @@ describe("[4.0] V1EMPStrategyDeployer.sol", async () => {
 	beforeEach("[beforeEach] Set up contracts..", async () => {
 		[, , treasury, badActor] = await ethers.getSigners();
 
-		governance = await deployContract("YieldSyncGovernance");
+		governance = await deployContract("@yield-sync/governance/contracts/YieldSyncGovernance.sol:YieldSyncGovernance");
 		arrayUtility = await deployContract("V1EMPArrayUtility");
 		registry = await deployContract("V1EMPRegistry", [governance.address]);
 		strategyDeployer = await deployContract("V1EMPStrategyDeployer", [registry.address]);

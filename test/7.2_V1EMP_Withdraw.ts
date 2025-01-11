@@ -52,7 +52,7 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 		[owner, manager, treasury, badActor] = await ethers.getSigners();
 
 
-		governance = await deployContract("YieldSyncGovernance");
+		governance = await deployContract("@yield-sync/governance/contracts/YieldSyncGovernance.sol:YieldSyncGovernance");
 
 		await governance.payToUpdate(treasury.address);
 
