@@ -12,7 +12,7 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 	let governance: Contract;
 	let eTHValueFeed: Contract;
 	let eTHValueFeedC: Contract;
-	let strategyInteractor: Contract;
+	let eRC20Handler: Contract;
 	let registry: Contract;
 	let strategy: Contract;
 	let strategyDeployer: Contract;
@@ -40,7 +40,7 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
 		const ETHValueFeedDummy: ContractFactory = await ethers.getContractFactory("ETHValueFeedDummy");
 		const V1EMPStrategy: ContractFactory = await ethers.getContractFactory("V1EMPStrategy");
-		const SimpleV1EMPStrategyInteractor: ContractFactory = await ethers.getContractFactory("SimpleV1EMPStrategyInteractor");
+		const Holder: ContractFactory = await ethers.getContractFactory("@yield-sync/erc20-handler/contracts/Holder.sol:Holder");
 
 
 		// Core contracts
@@ -91,7 +91,7 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 		// Attach the deployed V1EMPStrategy address
 		strategy = await V1EMPStrategy.attach(String(await registry.v1EMPStrategyId_v1EMPStrategy(1)));
 
-		strategyInteractor = await (await SimpleV1EMPStrategyInteractor.deploy(strategy.address)).deployed();
+		eRC20Handler = await (await Holder.deploy(strategy.address)).deployed();
 	});
 
 
@@ -139,7 +139,7 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 						]
 					)
 				).to.be.rejectedWith(
-					ERROR.STRATEGY.INVALID_PARAMS_UPDATE_CONTAINS_DUPLCIATES
+					ERROR.STRATEGY.INVALID_PARAMS_UPDATE_CONTAINS_DUPLICATES
 				);
 			});
 
@@ -261,7 +261,7 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 		});
 	});
 
-	describe("function iV1EMPStrategyInteractorUpdate() (1/2)", async () => {
+	describe("function iV1EMPERC20HandlerUpdate() (1/2)", async () => {
 
 		/**
 		 * @notice
@@ -274,7 +274,7 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 				"[auth] Should revert when unauthorized msg.sender calls..",
 				async () => {
 					await expect(
-						strategy.connect(badActor).iV1EMPStrategyInteractorUpdate(strategyInteractor.address)
+						strategy.connect(badActor).iV1EMPERC20HandlerUpdate(eRC20Handler.address)
 					).to.be.rejectedWith(
 						ERROR.NOT_AUTHORIZED
 					);
@@ -285,9 +285,9 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 				"Should revert if address(0) passed..",
 				async () => {
 					await expect(
-						strategy.iV1EMPStrategyInteractorUpdate(ethers.constants.AddressZero)
+						strategy.iV1EMPERC20HandlerUpdate(ethers.constants.AddressZero)
 					).to.be.rejectedWith(
-						ERROR.STRATEGY.INVALID_STRATEGY_INTERACTOR
+						ERROR.STRATEGY.INVALID_ERC20_HANDLER
 					);
 				}
 			);
@@ -295,11 +295,11 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 
 		describe("Expected Success", async () => {
 			it(
-				"Should be able to set iV1EMPStrategyInteractor..",
+				"Should be able to set iERC20Handler..",
 				async () => {
-					await strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
+					await strategy.iV1EMPERC20HandlerUpdate(eRC20Handler.address);
 
-					expect(await strategy.iV1EMPStrategyInteractor()).to.be.equal(strategyInteractor.address);
+					expect(await strategy.iERC20Handler()).to.be.equal(eRC20Handler.address);
 				}
 			);
 		});
@@ -312,8 +312,8 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 			);
 		});
 
-		it("[modifier] Should revert if Strategy Interactor is not set..", async () => {
-			await expect(strategy.utilizedERC20DepositOpenUpdate(true)).to.be.rejectedWith(ERROR.STRATEGY.INTERACTOR_NOT_SET);
+		it("[modifier] Should revert if ERC20 Handler is not set..", async () => {
+			await expect(strategy.utilizedERC20DepositOpenUpdate(true)).to.be.rejectedWith(ERROR.STRATEGY.ERC20_HANDLER_NOT_SET);
 		});
 
 		it("Should set utilizedERC20DepositOpen to true..", async () => {
@@ -321,7 +321,7 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 			await strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
 
 			// Set SI
-			await strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
+			await strategy.iV1EMPERC20HandlerUpdate(eRC20Handler.address);
 
 			expect(await strategy.utilizedERC20DepositOpen()).to.be.false;
 
@@ -338,9 +338,9 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 			).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
 		});
 
-		it("[modifier] Should revert if Strategy Interactor is not set..", async () => {
+		it("[modifier] Should revert if ERC20 Handler is not set..", async () => {
 			await expect(strategy.utilizedERC20WithdrawOpenUpdate(true)).to.be.rejectedWith(
-				ERROR.STRATEGY.INTERACTOR_NOT_SET
+				ERROR.STRATEGY.ERC20_HANDLER_NOT_SET
 			);
 		});
 
@@ -349,7 +349,7 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 			await strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
 
 			// Set SI
-			await strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
+			await strategy.iV1EMPERC20HandlerUpdate(eRC20Handler.address);
 
 			expect(await strategy.utilizedERC20WithdrawOpen()).to.be.false;
 
@@ -365,7 +365,7 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 			await strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
 
 			// Set SI
-			await strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
+			await strategy.iV1EMPERC20HandlerUpdate(eRC20Handler.address);
 
 			expect(await strategy.utilizedERC20DepositOpen()).to.be.false;
 
@@ -384,13 +384,13 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 		});
 	});
 
-	describe("function iV1EMPStrategyInteractorUpdate() (2/2)", async () => {
+	describe("function iV1EMPERC20HandlerUpdate() (2/2)", async () => {
 		beforeEach(async () => {
 			// Set strategy ERC20 tokens
 			await strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
 
 			// Set SI
-			await strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
+			await strategy.iV1EMPERC20HandlerUpdate(eRC20Handler.address);
 
 			expect(await strategy.utilizedERC20DepositOpen()).to.be.false;
 
@@ -398,20 +398,20 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 		});
 
 
-		it("Should not be able to set iV1EMPStrategyInteractor when utilizedERC20DepositOpen is true..", async () => {
+		it("Should not be able to set iERC20Handler when utilizedERC20DepositOpen is true..", async () => {
 			await expect(strategy.utilizedERC20DepositOpenUpdate(true)).to.be.not.rejected;
 
-			await expect(strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address)).to.be.rejectedWith(
+			await expect(strategy.iV1EMPERC20HandlerUpdate(eRC20Handler.address)).to.be.rejectedWith(
 				ERROR.STRATEGY.UTILIZED_ERC20_TRANSFERS_OPEN
 			);
 		});
 
-		it("Should not be able to set iV1EMPStrategyInteractor when utilizedERC20WithdrawOpen is true..", async () => {
+		it("Should not be able to set iERC20Handler when utilizedERC20WithdrawOpen is true..", async () => {
 			await expect(strategy.utilizedERC20WithdrawOpenUpdate(true)).to.be.not.rejected;
 
 			expect(await strategy.utilizedERC20WithdrawOpen()).to.be.true;
 
-			await expect(strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address)).to.be.rejectedWith(
+			await expect(strategy.iV1EMPERC20HandlerUpdate(eRC20Handler.address)).to.be.rejectedWith(
 				ERROR.STRATEGY.UTILIZED_ERC20_TRANSFERS_OPEN
 			);
 		});

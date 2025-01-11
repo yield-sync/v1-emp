@@ -81,9 +81,9 @@ export async function deployStrategies(
 			String(await registry.v1EMPStrategyId_v1EMPStrategy(latestId))
 		);
 
-		if (deployStrategies[i].strategyInteractor)
+		if (deployStrategies[i].eRC20Handler)
 		{
-			await deployedV1EMPStrategy.iV1EMPStrategyInteractorUpdate(deployStrategies[i].strategyInteractor);
+			await deployedV1EMPStrategy.iV1EMPERC20HandlerUpdate(deployStrategies[i].eRC20Handler);
 		}
 
 		await deployedV1EMPStrategy.utilizedERC20Update(
@@ -91,7 +91,7 @@ export async function deployStrategies(
 			deployStrategies[i].strategyUtilization
 		);
 
-		if (deployStrategies[i].strategyInteractor)
+		if (deployStrategies[i].eRC20Handler)
 		{
 			await deployedV1EMPStrategy.utilizedERC20DepositOpenUpdate(true);
 			await deployedV1EMPStrategy.utilizedERC20WithdrawOpenUpdate(true);

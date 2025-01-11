@@ -105,11 +105,11 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 			],
 		);
 
-		const strategyInteractor = await deployContract("SimpleV1EMPStrategyInteractor", [strategies[0].contract.address]);
-		const strategyInteractor2 = await deployContract("SimpleV1EMPStrategyInteractor", [strategies[1].contract.address]);
+		const eRC20Handler = await deployContract("@yield-sync/erc20-handler/contracts/Holder.sol:Holder", [strategies[0].contract.address]);
+		const eRC20Handler2 = await deployContract("@yield-sync/erc20-handler/contracts/Holder.sol:Holder", [strategies[1].contract.address]);
 
-		await strategies[0].contract.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
-		await strategies[1].contract.iV1EMPStrategyInteractorUpdate(strategyInteractor2.address);
+		await strategies[0].contract.iV1EMPERC20HandlerUpdate(eRC20Handler.address);
+		await strategies[1].contract.iV1EMPERC20HandlerUpdate(eRC20Handler2.address);
 
 		await strategies[0].contract.utilizedERC20DepositOpenUpdate(true);
 		await strategies[0].contract.utilizedERC20WithdrawOpenUpdate(true);

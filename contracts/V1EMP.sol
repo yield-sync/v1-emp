@@ -232,16 +232,16 @@ contract V1EMP is
 		{
 			for (uint256 ii = 0; ii < utilizedERC20.length; ii++)
 			{
-				address v1EMPStrategyInteractor = address(IV1EMPStrategy(_utilizedV1EMPStrategy[i]).iV1EMPStrategyInteractor());
+				address eRC20Handler = address(IV1EMPStrategy(_utilizedV1EMPStrategy[i]).iERC20Handler());
 
-				if (v1EMPStrategyInteractor == address(0))
+				if (eRC20Handler == address(0))
 				{
 					continue;
 				}
 
-				if (IERC20(utilizedERC20[ii]).allowance(address(this), v1EMPStrategyInteractor) != type(uint256).max)
+				if (IERC20(utilizedERC20[ii]).allowance(address(this), eRC20Handler) != type(uint256).max)
 				{
-					IERC20(utilizedERC20[ii]).approve(v1EMPStrategyInteractor, type(uint256).max);
+					IERC20(utilizedERC20[ii]).approve(eRC20Handler, type(uint256).max);
 				}
 			}
 		}

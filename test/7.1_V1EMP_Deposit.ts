@@ -96,11 +96,11 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 			],
 		);
 
-		const strategyInteractor = await deployContract("SimpleV1EMPStrategyInteractor", [strategies[0].contract.address]);
-		const strategyInteractor2 = await deployContract("SimpleV1EMPStrategyInteractor", [strategies[1].contract.address]);
+		const eRC20Handler = await deployContract("@yield-sync/erc20-handler/contracts/Holder.sol:Holder", [strategies[0].contract.address]);
+		const eRC20Handler2 = await deployContract("@yield-sync/erc20-handler/contracts/Holder.sol:Holder", [strategies[1].contract.address]);
 
-		await strategies[0].contract.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
-		await strategies[1].contract.iV1EMPStrategyInteractorUpdate(strategyInteractor2.address);
+		await strategies[0].contract.iV1EMPERC20HandlerUpdate(eRC20Handler.address);
+		await strategies[1].contract.iV1EMPERC20HandlerUpdate(eRC20Handler2.address);
 
 		await strategies[0].contract.utilizedERC20DepositOpenUpdate(true);
 		await strategies[0].contract.utilizedERC20WithdrawOpenUpdate(true);
@@ -616,7 +616,7 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 				}
 			});
 
-			it("Should deposit correct amount of ERC20 tokens into Strategy Interactors..", async () => {
+			it("Should deposit correct amount of ERC20 tokens into ERC20 Handlers..", async () => {
 				const STRATEGIES: string[] = await eMPs[0].contract.utilizedV1EMPStrategy();
 
 				// For each strategy..
@@ -625,8 +625,8 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 					// Create readable stragy contract
 					const STRATEGY: Contract = await ethers.getContractAt(LOCATION_STRATGY, STRATEGIES[i]);
 
-					// Get the strategy interactor contract
-					const STRATEGY_INTERACTOR: Contract = await STRATEGY.iV1EMPStrategyInteractor();
+					// Get the erc20 handler contract
+					const ERC20_HANDLER: Contract = await STRATEGY.iERC20Handler();
 
 					// Get the array of utilized ERC20 tokens for the specified strategy
 					const UTILIZED_ERC20: string[] = await STRATEGY.utilizedERC20();
@@ -637,8 +637,8 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 						// Create IERC20 interfaceo for the utilized ERC20
 						const IERC20 = await ethers.getContractAt(LOCATION_MOCKERC20, UTILIZED_ERC20[ii]);
 
-						// Retrieve the balance of the Strategy Interactor
-						const BALANCE: BigNumber = await IERC20.balanceOf(STRATEGY_INTERACTOR);
+						// Retrieve the balance of the ERC20 Handler
+						const BALANCE: BigNumber = await IERC20.balanceOf(ERC20_HANDLER);
 
 						// Validate the balance of the strategy Interactor
 						expect(BALANCE).to.be.equal(depositAmount[i][ii]);

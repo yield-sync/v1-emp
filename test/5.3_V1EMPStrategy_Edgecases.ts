@@ -16,7 +16,7 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 	let governance: Contract;
 	let eTHValueFeed: Contract;
 	let eTHValueFeedC: Contract;
-	let strategyInteractor: Contract;
+	let eRC20Handler: Contract;
 	let registry: Contract;
 	let strategy: Contract;
 	let strategyDeployer: Contract;
@@ -52,7 +52,7 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 
 		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
 		const ETHValueFeedDummy: ContractFactory = await ethers.getContractFactory("ETHValueFeedDummy");
-		const SimpleV1EMPStrategyInteractor: ContractFactory = await ethers.getContractFactory("SimpleV1EMPStrategyInteractor");
+		const Holder: ContractFactory = await ethers.getContractFactory("@yield-sync/erc20-handler/contracts/Holder.sol:Holder");
 
 
 		// Core contracts
@@ -104,10 +104,10 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 		// Attach the deployed V1EMPStrategy address
 		strategy = await V1EMPStrategy.attach(String(await registry.v1EMPStrategyId_v1EMPStrategy(1)));
 
-		strategyInteractor = await (await SimpleV1EMPStrategyInteractor.deploy(strategy.address)).deployed();
+		eRC20Handler = await (await Holder.deploy(strategy.address)).deployed();
 
-		// Set the Strategy Interactor
-		await strategy.iV1EMPStrategyInteractorUpdate(strategyInteractor.address);
+		// Set the ERC20 Handler
+		await strategy.iV1EMPERC20HandlerUpdate(eRC20Handler.address);
 
 		await strategy.utilizedERC20DepositOpenUpdate(true);
 
@@ -150,7 +150,7 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 
 			it("Should receive strategy tokens based on what market value is (denominated in ETH)..", async () => {
 				// Approve the SI to spend Mock A on behalf of owner
-				await mockERC20A.approve(strategyInteractor.address, DEPOSIT_AMOUNT);
+				await mockERC20A.approve(eRC20Handler.address, DEPOSIT_AMOUNT);
 
 				// DEPOSIT - ERC20 tokens into the strategy
 				await strategy.utilizedERC20Deposit([DEPOSIT_AMOUNT])
@@ -175,7 +175,7 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 				await eTHValueFeed.updateETHValue(ethers.utils.parseUnits("2", 18));
 
 				// APPROVE - SI contract to spend tokens on behalf of owner
-				await mockERC20A.approve(strategyInteractor.address, DEPOSIT_AMOUNT_2);
+				await mockERC20A.approve(eRC20Handler.address, DEPOSIT_AMOUNT_2);
 
 				// DEPOSIT - ERC20 tokens into the strategy
 				await strategy.utilizedERC20Deposit([DEPOSIT_AMOUNT_2])
@@ -198,13 +198,13 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 
 		describe("function utilizedERC20Withdraw()", async () => {
 			it("Should return same amount of ERC20 even if value of ERC20 changes..", async () => {
-				const B4_BALANCE_MOCK_A_SI: BigNumber = await mockERC20A.balanceOf(strategyInteractor.address);
+				const B4_BALANCE_MOCK_A_SI: BigNumber = await mockERC20A.balanceOf(eRC20Handler.address);
 				const B4_BALANCE_MOCK_A_OWNER: BigNumber = await mockERC20A.balanceOf(owner.address);
 				const DEPOSIT_AMOUNT_A: BigNumber = ethers.utils.parseUnits("1", 18);
 				const B4_TOTAL_SUPPLY_STRATEGY: BigNumber = await strategy.sharesTotal();
 
 				// APPROVE - SI contract to spend tokens on behalf of owner
-				await mockERC20A.approve(strategyInteractor.address, DEPOSIT_AMOUNT_A);
+				await mockERC20A.approve(eRC20Handler.address, DEPOSIT_AMOUNT_A);
 
 				// DEPOSIT - ERC20 tokens into the strategy
 				await strategy.utilizedERC20Deposit([DEPOSIT_AMOUNT_A])
@@ -253,8 +253,8 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 		});
 
 		it("Should fail to return C if withdraw is not set to true..", async () => {
-			// Give ERC20C to Strategy Interactor to mock rewards accrual
-			await mockERC20C.connect(owner).transfer(strategyInteractor.address, ethers.utils.parseUnits("1", 6));
+			// Give ERC20C to ERC20 Handler to mock rewards accrual
+			await mockERC20C.connect(owner).transfer(eRC20Handler.address, ethers.utils.parseUnits("1", 6));
 
 			const UTILIZED_ERC20: string[] = await strategy.utilizedERC20();
 
@@ -270,7 +270,7 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 			const B4_BALANCE_MOCK_C_OWNER: BigNumber = await mockERC20C.balanceOf(owner.address);
 
 			let b4BalancesOwner: BigNumber[] = [];
-			let b4BalancesStrategyInteractor: BigNumber[] = [];
+			let b4BalancesERC20Handler: BigNumber[] = [];
 
 			for (let i: number = 0; i < UTILIZED_ERC20.length; i++)
 			{
@@ -280,11 +280,11 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 				);
 
 				// APPROVE - SI contract to spend tokens on behalf of owner
-				await IERC20.approve(strategyInteractor.address, DEPOSIT_AMOUNTS[i]);
+				await IERC20.approve(eRC20Handler.address, DEPOSIT_AMOUNTS[i]);
 
 				// Collect previous balances to check later with
 				b4BalancesOwner.push(await IERC20.balanceOf(owner.address));
-				b4BalancesStrategyInteractor.push(await IERC20.balanceOf(strategyInteractor.address));
+				b4BalancesERC20Handler.push(await IERC20.balanceOf(eRC20Handler.address));
 			}
 
 			// DEPOSIT - ERC20 A and ERC20 B tokens into the strategy
@@ -297,9 +297,9 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 				// Expect balance of owner
 				expect(await IERC20.balanceOf(owner.address)).to.equal(b4BalancesOwner[i].sub(DEPOSIT_AMOUNTS[i]));
 
-				// Expect balance of strategy interactor
-				expect(await IERC20.balanceOf(strategyInteractor.address)).to.equal(
-					b4BalancesStrategyInteractor[i].add(DEPOSIT_AMOUNTS[i])
+				// Expect balance of erc20 handler
+				expect(await IERC20.balanceOf(eRC20Handler.address)).to.equal(
+					b4BalancesERC20Handler[i].add(DEPOSIT_AMOUNTS[i])
 				);
 			}
 

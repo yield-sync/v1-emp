@@ -35,7 +35,7 @@ type DeployEMP = {
 type DeployStrategy = {
 	strategyUtilizedERC20: string[],
 	strategyUtilization: [boolean, boolean, BigNumber][],
-	strategyInteractor?: string
+	eRC20Handler?: string
 };
 
 type TestEMP = {

@@ -99,8 +99,8 @@ export const ERROR = {
 		DEPOSIT_NOT_OPEN:
 			"!utilizedERC20DepositOpen"
 		,
-		INTERACTOR_NOT_SET:
-			"!(address(iV1EMPStrategyInteractor) != address(0))"
+		ERC20_HANDLER_NOT_SET:
+			"!(address(iERC20Handler) != address(0))"
 		,
 		INVALID_BALANCE:
 			"!(eMP_shares[msg.sender] >= _shares)"
@@ -120,11 +120,11 @@ export const ERROR = {
 		INVALID_PARAMS_UPDATE_LENGTHS:
 			"!(_utilizedERC20.length == _utilizationERC20.length)"
 		,
-		INVALID_PARAMS_UPDATE_CONTAINS_DUPLCIATES:
+		INVALID_PARAMS_UPDATE_CONTAINS_DUPLICATES:
 			"IV1EMPArrayUtility(_I_V1_EMP_REGISTRY.v1EMPArrayUtility()).containsDuplicates(_utilizedERC20)"
 		,
-		INVALID_STRATEGY_INTERACTOR:
-			"!_iStrategyInteractor"
+		INVALID_ERC20_HANDLER:
+			"!_iERC20Handler"
 		,
 		UTILIZED_ERC20_AMOUNT_NOT_ZERO:
 			"!(_utilizedERC20Amount[i] == 0)"

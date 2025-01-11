@@ -2,7 +2,8 @@
 pragma solidity ^0.8.18;
 
 
-import { IV1EMPStrategyInteractor } from "./IV1EMPStrategyInteractor.sol";
+import { IERC20Handler } from "@yield-sync/erc20-handler/contracts/interface/IERC20Handler.sol";
+
 import { UtilizationERC20 } from "../struct/UtilizationERC20.sol";
 
 
@@ -64,14 +65,14 @@ interface IV1EMPStrategy
 	;
 
 	/**
-	* @dev [view-IV1EMPStrategyInteractor]
-	* @notice Implemented IV1EMPStrategyInteractor
-	* @return {IV1EMPStrategyInteractor}
+	* @dev [view-IERC20Handler]
+	* @notice Implemented IERC20Handler
+	* @return {IERC20Handler}
 	*/
-	function iV1EMPStrategyInteractor()
+	function iERC20Handler()
 		external
 		view
-		returns (IV1EMPStrategyInteractor)
+		returns (IERC20Handler)
 	;
 
 
@@ -139,10 +140,10 @@ interface IV1EMPStrategy
 
 
 	/**
-	* @notice Update iV1EMPStrategyInteractor
-	* @param _iStrategyInteractor {address}
+	* @notice Update iERC20Handler
+	* @param _iERC20Handler {address}
 	*/
-	function iV1EMPStrategyInteractorUpdate(address _iStrategyInteractor)
+	function iV1EMPERC20HandlerUpdate(address _iERC20Handler)
 		external
 	;
 

@@ -35,6 +35,7 @@
 		"typescript": "^5.4.5"
 	},
 	"dependencies": {
+		"@yield-sync/erc20-handler": "^0.0.1",
 		"@yield-sync/governance": "^0.0.39",
 		"hardhat-contract-sizer": "^2.10.0"
 	}
