@@ -99,7 +99,7 @@ describe("[5.3] V1EMPStrategy.sol - Edge-cases", async () => {
 		eRC20Handler = await deployContract("@yield-sync/erc20-handler/contracts/Holder.sol:Holder", [strategy.address]);
 
 		// Set the ERC20 Handler
-		await strategy.iV1EMPERC20HandlerUpdate(eRC20Handler.address);
+		await strategy.iERC20HandlerUpdate(eRC20Handler.address);
 
 		await strategy.utilizedERC20DepositOpenUpdate(true);
 

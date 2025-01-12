@@ -143,7 +143,7 @@ interface IV1EMPStrategy
 	* @notice Update iERC20Handler
 	* @param _iERC20Handler {address}
 	*/
-	function iV1EMPERC20HandlerUpdate(address _iERC20Handler)
+	function iERC20HandlerUpdate(address _iERC20Handler)
 		external
 	;
 

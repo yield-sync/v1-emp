@@ -146,7 +146,7 @@ describe("[5.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 				await strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]])
 
 				// Set SI
-				await strategy.iV1EMPERC20HandlerUpdate(eRC20Handler.address);
+				await strategy.iERC20HandlerUpdate(eRC20Handler.address);
 
 				await strategy.utilizedERC20DepositOpenUpdate(true);
 
@@ -177,7 +177,7 @@ describe("[5.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 				await strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
 
 				// Set SI
-				await strategy.iV1EMPERC20HandlerUpdate(eRC20Handler.address);
+				await strategy.iERC20HandlerUpdate(eRC20Handler.address);
 
 				await strategy.utilizedERC20DepositOpenUpdate(true);
 
@@ -331,7 +331,7 @@ describe("[5.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 				);
 
 				// Set SI
-				await strategy.iV1EMPERC20HandlerUpdate(eRC20Handler.address);
+				await strategy.iERC20HandlerUpdate(eRC20Handler.address);
 
 				await strategy.utilizedERC20DepositOpenUpdate(true);
 

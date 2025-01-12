@@ -177,7 +177,7 @@ contract V1EMPStrategy is
 
 
 	/// @inheritdoc IV1EMPStrategy
-	function iV1EMPERC20HandlerUpdate(address _iERC20Handler)
+	function iERC20HandlerUpdate(address _iERC20Handler)
 		public
 		override
 		authManager()

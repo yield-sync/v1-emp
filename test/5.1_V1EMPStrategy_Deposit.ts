@@ -111,7 +111,7 @@ describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 				// Set strategy ERC20 tokens
 				await strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
 
-				await strategy.iV1EMPERC20HandlerUpdate(eRC20Handler.address);
+				await strategy.iERC20HandlerUpdate(eRC20Handler.address);
 
 				await expect(strategy.connect(badActor).utilizedERC20Deposit([])).to.be.rejectedWith(
 					ERROR.NOT_AUTHORIZED
@@ -124,7 +124,7 @@ describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 				// Set strategy ERC20 tokens
 				await strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
 
-				await strategy.iV1EMPERC20HandlerUpdate(eRC20Handler.address);
+				await strategy.iERC20HandlerUpdate(eRC20Handler.address);
 
 				const DEPOSIT_AMOUNT: BigNumber = ethers.utils.parseUnits("1", 18);
 
@@ -141,7 +141,7 @@ describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 				// Set strategy ERC20 tokens
 				await strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
 
-				await strategy.iV1EMPERC20HandlerUpdate(eRC20Handler.address);
+				await strategy.iERC20HandlerUpdate(eRC20Handler.address);
 
 				await strategy.utilizedERC20DepositOpenUpdate(true);
 
@@ -154,7 +154,7 @@ describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 				// Set strategy ERC20 tokens
 				await strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
 
-				await strategy.iV1EMPERC20HandlerUpdate(eRC20Handler.address);
+				await strategy.iERC20HandlerUpdate(eRC20Handler.address);
 
 				await strategy.utilizedERC20DepositOpenUpdate(true);
 
@@ -175,7 +175,7 @@ describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 					[[true, true, PERCENT.HUNDRED], [false, true, PERCENT.HUNDRED]]
 				);
 
-				await strategy.iV1EMPERC20HandlerUpdate(eRC20Handler.address);
+				await strategy.iERC20HandlerUpdate(eRC20Handler.address);
 
 				await strategy.utilizedERC20DepositOpenUpdate(true);
 
@@ -195,7 +195,7 @@ describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 					[[true, true, PERCENT.FIFTY], [true, true, PERCENT.FIFTY]]
 				);
 
-				await strategy.iV1EMPERC20HandlerUpdate(eRC20Handler.address);
+				await strategy.iERC20HandlerUpdate(eRC20Handler.address);
 
 				await strategy.utilizedERC20DepositOpenUpdate(true);
 
@@ -219,7 +219,7 @@ describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 				utilizedERC20 = await strategy.utilizedERC20();
 
 				// Set SI
-				await strategy.iV1EMPERC20HandlerUpdate(eRC20Handler.address);
+				await strategy.iERC20HandlerUpdate(eRC20Handler.address);
 
 				await strategy.utilizedERC20DepositOpenUpdate(true);
 			});
@@ -301,7 +301,7 @@ describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 				utilizedERC20 = await strategy.utilizedERC20();
 
 				// Set SI
-				await strategy.iV1EMPERC20HandlerUpdate(eRC20Handler.address);
+				await strategy.iERC20HandlerUpdate(eRC20Handler.address);
 
 				await strategy.utilizedERC20DepositOpenUpdate(true);
 			});

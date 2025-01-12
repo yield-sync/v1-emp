@@ -253,7 +253,7 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 		});
 	});
 
-	describe("function iV1EMPERC20HandlerUpdate() (1/2)", async () => {
+	describe("function iERC20HandlerUpdate() (1/2)", async () => {
 
 		/**
 		 * @notice
@@ -266,7 +266,7 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 				"[auth] Should revert when unauthorized msg.sender calls..",
 				async () => {
 					await expect(
-						strategy.connect(badActor).iV1EMPERC20HandlerUpdate(eRC20Handler.address)
+						strategy.connect(badActor).iERC20HandlerUpdate(eRC20Handler.address)
 					).to.be.rejectedWith(
 						ERROR.NOT_AUTHORIZED
 					);
@@ -277,7 +277,7 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 				"Should revert if address(0) passed..",
 				async () => {
 					await expect(
-						strategy.iV1EMPERC20HandlerUpdate(ethers.constants.AddressZero)
+						strategy.iERC20HandlerUpdate(ethers.constants.AddressZero)
 					).to.be.rejectedWith(
 						ERROR.STRATEGY.INVALID_ERC20_HANDLER
 					);
@@ -289,7 +289,7 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 			it(
 				"Should be able to set iERC20Handler..",
 				async () => {
-					await strategy.iV1EMPERC20HandlerUpdate(eRC20Handler.address);
+					await strategy.iERC20HandlerUpdate(eRC20Handler.address);
 
 					expect(await strategy.iERC20Handler()).to.be.equal(eRC20Handler.address);
 				}
@@ -313,7 +313,7 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 			await strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
 
 			// Set SI
-			await strategy.iV1EMPERC20HandlerUpdate(eRC20Handler.address);
+			await strategy.iERC20HandlerUpdate(eRC20Handler.address);
 
 			expect(await strategy.utilizedERC20DepositOpen()).to.be.false;
 
@@ -341,7 +341,7 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 			await strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
 
 			// Set SI
-			await strategy.iV1EMPERC20HandlerUpdate(eRC20Handler.address);
+			await strategy.iERC20HandlerUpdate(eRC20Handler.address);
 
 			expect(await strategy.utilizedERC20WithdrawOpen()).to.be.false;
 
@@ -357,7 +357,7 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 			await strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
 
 			// Set SI
-			await strategy.iV1EMPERC20HandlerUpdate(eRC20Handler.address);
+			await strategy.iERC20HandlerUpdate(eRC20Handler.address);
 
 			expect(await strategy.utilizedERC20DepositOpen()).to.be.false;
 
@@ -376,13 +376,13 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 		});
 	});
 
-	describe("function iV1EMPERC20HandlerUpdate() (2/2)", async () => {
+	describe("function iERC20HandlerUpdate() (2/2)", async () => {
 		beforeEach(async () => {
 			// Set strategy ERC20 tokens
 			await strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
 
 			// Set SI
-			await strategy.iV1EMPERC20HandlerUpdate(eRC20Handler.address);
+			await strategy.iERC20HandlerUpdate(eRC20Handler.address);
 
 			expect(await strategy.utilizedERC20DepositOpen()).to.be.false;
 
@@ -393,7 +393,7 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 		it("Should not be able to set iERC20Handler when utilizedERC20DepositOpen is true..", async () => {
 			await expect(strategy.utilizedERC20DepositOpenUpdate(true)).to.be.not.rejected;
 
-			await expect(strategy.iV1EMPERC20HandlerUpdate(eRC20Handler.address)).to.be.rejectedWith(
+			await expect(strategy.iERC20HandlerUpdate(eRC20Handler.address)).to.be.rejectedWith(
 				ERROR.STRATEGY.UTILIZED_ERC20_TRANSFERS_OPEN
 			);
 		});
@@ -403,7 +403,7 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 
 			expect(await strategy.utilizedERC20WithdrawOpen()).to.be.true;
 
-			await expect(strategy.iV1EMPERC20HandlerUpdate(eRC20Handler.address)).to.be.rejectedWith(
+			await expect(strategy.iERC20HandlerUpdate(eRC20Handler.address)).to.be.rejectedWith(
 				ERROR.STRATEGY.UTILIZED_ERC20_TRANSFERS_OPEN
 			);
 		});

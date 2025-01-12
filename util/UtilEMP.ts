@@ -83,7 +83,7 @@ export async function deployStrategies(
 
 		if (deployStrategies[i].eRC20Handler)
 		{
-			await deployedV1EMPStrategy.iV1EMPERC20HandlerUpdate(deployStrategies[i].eRC20Handler);
+			await deployedV1EMPStrategy.iERC20HandlerUpdate(deployStrategies[i].eRC20Handler);
 		}
 
 		await deployedV1EMPStrategy.utilizedERC20Update(
