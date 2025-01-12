@@ -2,7 +2,9 @@
 pragma solidity ^0.8.18;
 
 
-import { IERC20ETHValueProvider } from "@yield-sync/erc20-eth-value-provider/contracts/interface/IERC20ETHValueProvider.sol";
+import {
+	IERC20ETHValueProvider
+} from "@yield-sync/erc20-eth-value-provider/contracts/interface/IERC20ETHValueProvider.sol";
 
 
 /**

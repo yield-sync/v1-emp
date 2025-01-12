@@ -4,7 +4,9 @@ pragma solidity ^0.8.18;
 
 
 import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import { IERC20ETHValueProvider } from "@yield-sync/erc20-eth-value-provider/contracts/interface/IERC20ETHValueProvider.sol";
+import {
+	IERC20ETHValueProvider
+} from "@yield-sync/erc20-eth-value-provider/contracts/interface/IERC20ETHValueProvider.sol";
 
 import { IV1EMPArrayUtility } from "./interface/IV1EMPArrayUtility.sol";
 import { IV1EMPRegistry } from "./interface/IV1EMPRegistry.sol";
