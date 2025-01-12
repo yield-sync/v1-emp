@@ -15,6 +15,8 @@
 	"author": "",
 	"license": "ISC",
 	"devDependencies": {
+	},
+	"dependencies": {
 		"@chainlink/contracts": "^0.8.0",
 		"@eth-optimism/plugins": "^1.0.0-alpha.3",
 		"@nomicfoundation/hardhat-chai-matchers": "^1.0.5",
@@ -26,17 +28,15 @@
 		"@types/chai": "^4.3.16",
 		"@types/mocha": "^10.0.6",
 		"@types/node": "^20.12.12",
+		"@yield-sync/erc20-handler": "^0.0.1",
+		"@yield-sync/governance": "^0.0.39",
 		"chai": "^4.4.1",
 		"dotenv": "^16.0.3",
 		"ethers": "^5.7.2",
 		"hardhat": "^2.12.6",
+		"hardhat-contract-sizer": "^2.10.0",
 		"soltypes": "^2.0.0",
 		"ts-node": "^10.9.2",
 		"typescript": "^5.4.5"
-	},
-	"dependencies": {
-		"@yield-sync/erc20-handler": "^0.0.1",
-		"@yield-sync/governance": "^0.0.39",
-		"hardhat-contract-sizer": "^2.10.0"
 	}
 }
