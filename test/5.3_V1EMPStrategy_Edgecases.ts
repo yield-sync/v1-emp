@@ -14,8 +14,8 @@ const LOCATION_IERC20: string = "@openzeppelin/contracts/token/ERC20/IERC20.sol:
 describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 	let arrayUtility: Contract;
 	let governance: Contract;
-	let eTHValueFeed: Contract;
-	let eTHValueFeedC: Contract;
+	let eTHValueProvider: Contract;
+	let eTHValueProviderC: Contract;
 	let eRC20Handler: Contract;
 	let registry: Contract;
 	let strategy: Contract;
@@ -51,7 +51,7 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 		const V1EMPStrategyUtility: ContractFactory = await ethers.getContractFactory("V1EMPStrategyUtility");
 
 		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
-		const ETHValueFeedDummy: ContractFactory = await ethers.getContractFactory("ETHValueFeedDummy");
+		const ETHValueProviderDummy: ContractFactory = await ethers.getContractFactory("ETHValueProviderDummy");
 		const Holder: ContractFactory = await ethers.getContractFactory("@yield-sync/erc20-handler/contracts/Holder.sol:Holder");
 
 
@@ -78,12 +78,12 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 		mockERC20B = await (await MockERC20.deploy("Mock B", "B", 18)).deployed();
 		mockERC20C = await (await MockERC20.deploy("Mock C", "C", 6)).deployed();
 
-		eTHValueFeed = await (await ETHValueFeedDummy.deploy(18)).deployed();
-		eTHValueFeedC = await (await ETHValueFeedDummy.deploy(6)).deployed();
+		eTHValueProvider = await (await ETHValueProviderDummy.deploy(18)).deployed();
+		eTHValueProviderC = await (await ETHValueProviderDummy.deploy(6)).deployed();
 
-		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20A.address, eTHValueFeed.address);
-		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20B.address, eTHValueFeed.address);
-		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20C.address, eTHValueFeedC.address);
+		await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20A.address, eTHValueProvider.address);
+		await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20B.address, eTHValueProvider.address);
+		await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20C.address, eTHValueProviderC.address);
 
 
 		/**
@@ -157,13 +157,13 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 
 				let BalanceStrategyOwner = await strategy.eMP_shares(owner.address);
 
-				const feed = await ethers.getContractAt(
-					"ETHValueFeedDummy",
-					await registry.eRC20_v1EMPERC20ETHValueFeed(mockERC20A.address)
+				const provider = await ethers.getContractAt(
+					"ETHValueProviderDummy",
+					await registry.eRC20_eRC20ETHValueProvider(mockERC20A.address)
 				);
 
 				// Get the ETH value of each tokens in ETH
-				let ethValueMockA: BigNumber = await feed.utilizedERC20ETHValue();
+				let ethValueMockA: BigNumber = await provider.utilizedERC20ETHValue();
 
 				// [calculate] Deposit ETH Value
 				let totalEthValue: BigNumber = DEPOSIT_AMOUNT.mul(ethValueMockA).div(D_18);
@@ -172,7 +172,7 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 				expect(BalanceStrategyOwner).to.be.equal(totalEthValue);
 
 				// [PRICE-UPDATE] Update Ether value of MockERC20A
-				await eTHValueFeed.updateETHValue(ethers.utils.parseUnits("2", 18));
+				await eTHValueProvider.updateETHValue(ethers.utils.parseUnits("2", 18));
 
 				// APPROVE - SI contract to spend tokens on behalf of owner
 				await mockERC20A.approve(eRC20Handler.address, DEPOSIT_AMOUNT_2);
@@ -185,7 +185,7 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 				expect(BalanceStrategyOwner).to.be.equal(ethers.utils.parseUnits("3", 18));
 
 				// Get the ETH value of each tokens in ETH
-				ethValueMockA = await feed.utilizedERC20ETHValue();
+				ethValueMockA = await provider.utilizedERC20ETHValue();
 
 				let totalDeposited: BigNumber = DEPOSIT_AMOUNT.add(DEPOSIT_AMOUNT_2);
 
@@ -213,7 +213,7 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 				await strategy.utilizedERC20Withdraw(await strategy.eMP_shares(owner.address));
 
 				// [PRICE-UPDATE] Update Ether value of MockERC20A
-				await eTHValueFeed.updateETHValue(ethers.utils.parseUnits("2", 18));
+				await eTHValueProvider.updateETHValue(ethers.utils.parseUnits("2", 18));
 
 				// Strategy token burned
 				expect(await strategy.eMP_shares(owner.address)).to.be.equal(B4_BALANCE_MOCK_A_SI);

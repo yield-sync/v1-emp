@@ -10,8 +10,8 @@ import { ERROR, PERCENT } from "../const";
 describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 	let arrayUtility: Contract;
 	let governance: Contract;
-	let eTHValueFeed: Contract;
-	let eTHValueFeedC: Contract;
+	let eTHValueProvider: Contract;
+	let eTHValueProviderC: Contract;
 	let eRC20Handler: Contract;
 	let registry: Contract;
 	let strategy: Contract;
@@ -38,7 +38,7 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 		const V1EMPStrategyDeployer: ContractFactory = await ethers.getContractFactory("V1EMPStrategyDeployer");
 
 		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
-		const ETHValueFeedDummy: ContractFactory = await ethers.getContractFactory("ETHValueFeedDummy");
+		const ETHValueProviderDummy: ContractFactory = await ethers.getContractFactory("ETHValueProviderDummy");
 		const V1EMPStrategy: ContractFactory = await ethers.getContractFactory("V1EMPStrategy");
 		const Holder: ContractFactory = await ethers.getContractFactory("@yield-sync/erc20-handler/contracts/Holder.sol:Holder");
 
@@ -65,12 +65,12 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 		mockERC20B = await (await MockERC20.deploy("Mock B", "B", 18)).deployed();
 		mockERC20C = await (await MockERC20.deploy("Mock C", "C", 6)).deployed();
 
-		eTHValueFeed = await (await ETHValueFeedDummy.deploy(18)).deployed();
-		eTHValueFeedC = await (await ETHValueFeedDummy.deploy(6)).deployed();
+		eTHValueProvider = await (await ETHValueProviderDummy.deploy(18)).deployed();
+		eTHValueProviderC = await (await ETHValueProviderDummy.deploy(6)).deployed();
 
-		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20A.address, eTHValueFeed.address);
-		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20B.address, eTHValueFeed.address);
-		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20C.address, eTHValueFeedC.address);
+		await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20A.address, eTHValueProvider.address);
+		await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20B.address, eTHValueProvider.address);
+		await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20C.address, eTHValueProviderC.address);
 
 
 		/**
@@ -143,14 +143,14 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 				);
 			});
 
-			it("Should revert if no ETH Value feed set for the utilized ERC20..", async () => {
+			it("Should revert if no ETH Value provider set for the utilized ERC20..", async () => {
 				const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
 
 				let mockERC20D: Contract = await (await MockERC20.deploy("Mock D", "D", 18)).deployed();
 
 				await expect(
 					strategy.utilizedERC20Update([mockERC20D.address], [[true, true, PERCENT.HUNDRED]])
-				).to.be.rejectedWith(ERROR.STRATEGY.ERC20_NO_ETH_VALUE_FEED_AVAILABLE);
+				).to.be.rejectedWith(ERROR.STRATEGY.ERC20_NO_ETH_VALUE_PROVIDER_AVAILABLE);
 			});
 
 			it("Should revert when INVALID allocation passed..", async () => {

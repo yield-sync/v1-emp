@@ -80,13 +80,13 @@ export default class UtilStrategyTransfer
 			// Get balance of each token
 			const BALANCE: BigNumber = await _utilizedERC20[i].balanceOf(_address);
 
-			const feed = await ethers.getContractAt(
-				"ETHValueFeedDummy",
-				await this._registry.eRC20_v1EMPERC20ETHValueFeed(_utilizedERC20[i])
+			const provider = await ethers.getContractAt(
+				"ETHValueProviderDummy",
+				await this._registry.eRC20_eRC20ETHValueProvider(_utilizedERC20[i])
 			);
 
 			// Get value of each token in ETH
-			const ETH_VALUE: BigNumber = await feed.utilizedERC20ETHValue();
+			const ETH_VALUE: BigNumber = await provider.utilizedERC20ETHValue();
 
 			// total value = balance * eth value
 			totalEthValue = totalEthValue.add(BALANCE.mul(ETH_VALUE).div(D_18));
@@ -118,16 +118,16 @@ export default class UtilStrategyTransfer
 		// Calculate how much of each utilized tokens are being used
 		for (let i: number = 0; i < UTILIZED_ERC20S.length; i++)
 		{
-			const ETH_VALUE_FEED = await ethers.getContractAt(
-				"ETHValueFeedDummy",
-				await this._registry.eRC20_v1EMPERC20ETHValueFeed(UTILIZED_ERC20S[i])
+			const ETH_VALUE_PROVIDER = await ethers.getContractAt(
+				"ETHValueProviderDummy",
+				await this._registry.eRC20_eRC20ETHValueProvider(UTILIZED_ERC20S[i])
 			);
 
 			// Value of the each token denominated in ETH
-			const ETH_VALUE_PER_TOKEN: BigNumber = await ETH_VALUE_FEED.utilizedERC20ETHValue();
+			const ETH_VALUE_PER_TOKEN: BigNumber = await ETH_VALUE_PROVIDER.utilizedERC20ETHValue();
 
 			// 10 ** eRC20Decimals
-			const ERC20_DECIMALS: BigNumber = BigNumber.from(10).pow(await ETH_VALUE_FEED.eRC20Decimals());
+			const ERC20_DECIMALS: BigNumber = BigNumber.from(10).pow(await ETH_VALUE_PROVIDER.eRC20Decimals());
 
 			const TOTAL_ETH_VALUE = _utilizedERC20Deposits[i].mul(ETH_VALUE_PER_TOKEN).div(ERC20_DECIMALS);
 

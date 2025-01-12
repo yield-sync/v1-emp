@@ -14,8 +14,8 @@ const LOCATION_IERC20: string = "@openzeppelin/contracts/token/ERC20/IERC20.sol:
 describe("[5.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 	let arrayUtility: Contract;
 	let governance: Contract;
-	let eTHValueFeed: Contract;
-	let eTHValueFeedC: Contract;
+	let eTHValueProvider: Contract;
+	let eTHValueProviderC: Contract;
 	let eRC20Handler: Contract;
 	let registry: Contract;
 	let strategy: Contract;
@@ -61,7 +61,7 @@ describe("[5.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 		const V1EMPStrategyUtility: ContractFactory = await ethers.getContractFactory("V1EMPStrategyUtility");
 
 		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
-		const ETHValueFeedDummy: ContractFactory = await ethers.getContractFactory("ETHValueFeedDummy");
+		const ETHValueProviderDummy: ContractFactory = await ethers.getContractFactory("ETHValueProviderDummy");
 		const Holder: ContractFactory = await ethers.getContractFactory("@yield-sync/erc20-handler/contracts/Holder.sol:Holder");
 
 
@@ -86,13 +86,13 @@ describe("[5.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 		mockERC20C = await (await MockERC20.deploy("Mock C", "C", 6)).deployed();
 		mockERC20D = await (await MockERC20.deploy("Mock D", "D", 18)).deployed();
 
-		eTHValueFeed = await (await ETHValueFeedDummy.deploy(18)).deployed();
-		eTHValueFeedC = await (await ETHValueFeedDummy.deploy(6)).deployed();
+		eTHValueProvider = await (await ETHValueProviderDummy.deploy(18)).deployed();
+		eTHValueProviderC = await (await ETHValueProviderDummy.deploy(6)).deployed();
 
-		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20A.address, eTHValueFeed.address);
-		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20B.address, eTHValueFeed.address);
-		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20C.address, eTHValueFeedC.address);
-		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20D.address, eTHValueFeed.address);
+		await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20A.address, eTHValueProvider.address);
+		await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20B.address, eTHValueProvider.address);
+		await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20C.address, eTHValueProviderC.address);
+		await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20D.address, eTHValueProvider.address);
 
 		/**
 		* @notice The owner has to be registered as the EMP deployer so that it can authorize itself as an EMP to access the

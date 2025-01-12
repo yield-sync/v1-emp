@@ -38,14 +38,14 @@ interface IV1EMPRegistry
 	;
 
 	/**
-	* @notice ERC20 -> V1EMPERC20ETHValueFeed
+	* @notice ERC20 -> ERC20ETHValueProvider
 	* @param eRC20 {address}
-	* @return v1EMPERC20ETHValueFeed_ {address}
+	* @return eRC20ETHValueProvider_ {address}
 	*/
-	function eRC20_v1EMPERC20ETHValueFeed(address eRC20)
+	function eRC20_eRC20ETHValueProvider(address eRC20)
 		external
 		view
-		returns (address v1EMPERC20ETHValueFeed_)
+		returns (address eRC20ETHValueProvider_)
 	;
 
 	/**
@@ -171,11 +171,11 @@ interface IV1EMPRegistry
 
 
 	/**
-	* @notice Update eRC20 -> iV1EMPERC20ETHValueFeed
+	* @notice Update eRC20 -> iERC20ETHValueProvider
 	* @param _eRC20 {address}
-	* @param _v1EMPERC20ETHValueFeed {address}
+	* @param _eRC20ETHValueProvider {address}
 	*/
-	function eRC20_v1EMPERC20ETHValueFeedUpdate(address _eRC20, address _v1EMPERC20ETHValueFeed)
+	function eRC20_eRC20ETHValueProviderUpdate(address _eRC20, address _eRC20ETHValueProvider)
 		external
 	;
 

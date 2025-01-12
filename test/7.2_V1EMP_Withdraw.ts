@@ -25,8 +25,8 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 
 	let arrayUtility: Contract;
 	let governance: Contract;
-	let eTHValueFeed: Contract;
-	let eTHValueFeedC: Contract;
+	let eTHValueProvider: Contract;
+	let eTHValueProviderC: Contract;
 	let eMPDeployer: Contract;
 	let eMPUtility: Contract;
 	let registry: Contract;
@@ -82,12 +82,12 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 		mockERC20B = await deployContract("MockERC20", ["Mock B", "B", 18]);
 		mockERC20C = await deployContract("MockERC20", ["Mock C", "C", 6]);
 
-		eTHValueFeed = await deployContract("ETHValueFeedDummy", [18]);
-		eTHValueFeedC = await deployContract("ETHValueFeedDummy", [6]);
+		eTHValueProvider = await deployContract("ETHValueProviderDummy", [18]);
+		eTHValueProviderC = await deployContract("ETHValueProviderDummy", [6]);
 
-		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20A.address, eTHValueFeed.address);
-		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20B.address, eTHValueFeed.address);
-		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20C.address, eTHValueFeedC.address);
+		await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20A.address, eTHValueProvider.address);
+		await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20B.address, eTHValueProvider.address);
+		await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20C.address, eTHValueProviderC.address);
 
 		// Deploy Strategies
 		strategies = await deployStrategies(

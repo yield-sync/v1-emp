@@ -4,10 +4,10 @@ pragma solidity ^0.8.18;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import { IERC20ETHValueProvider } from "@yield-sync/erc20-eth-value-provider/contracts/interface/IERC20ETHValueProvider.sol";
 
 import { IV1EMP } from "./interface/IV1EMP.sol";
 import { IV1EMPArrayUtility } from "./interface/IV1EMPArrayUtility.sol";
-import { IV1EMPETHValueFeed } from "./interface/IV1EMPETHValueFeed.sol";
 import { IV1EMPRegistry } from "./interface/IV1EMPRegistry.sol";
 import { IV1EMPStrategy } from "./interface/IV1EMPStrategy.sol";
 import { IV1EMPUtility, UtilizationERC20 } from "./interface/IV1EMPUtility.sol";
@@ -117,9 +117,9 @@ contract V1EMPUtility is
 		for (uint256 i = 0; i < utilizedERC20.length; i++)
 		{
 			eRC20AmountETHValue[i] = _utilizedERC20Amount[i].mul(
-				IV1EMPETHValueFeed(_I_V1_EMP_REGISTRY.eRC20_v1EMPERC20ETHValueFeed(utilizedERC20[i])).utilizedERC20ETHValue()
+				IERC20ETHValueProvider(_I_V1_EMP_REGISTRY.eRC20_eRC20ETHValueProvider(utilizedERC20[i])).utilizedERC20ETHValue()
 			).div(
-				10 ** IV1EMPETHValueFeed(_I_V1_EMP_REGISTRY.eRC20_v1EMPERC20ETHValueFeed(utilizedERC20[i])).eRC20Decimals()
+				10 ** IERC20ETHValueProvider(_I_V1_EMP_REGISTRY.eRC20_eRC20ETHValueProvider(utilizedERC20[i])).eRC20Decimals()
 			);
 
 			utilizedERC20AmountTotalETHValue_ += eRC20AmountETHValue[i];

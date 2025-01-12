@@ -17,11 +17,11 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 	let manager: VoidSigner;
 	let treasury: VoidSigner;
 	let fakeERC20: VoidSigner;
-	let fakeEthValueFeed: VoidSigner;
+	let fakeEthValueProvider: VoidSigner;
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
-		[owner, manager, treasury, fakeERC20, fakeEthValueFeed] = await ethers.getSigners();
+		[owner, manager, treasury, fakeERC20, fakeEthValueProvider] = await ethers.getSigners();
 
 		governance = await deployContract("@yield-sync/governance/contracts/YieldSyncGovernance.sol:YieldSyncGovernance");
 		arrayUtility = await deployContract("V1EMPArrayUtility");
@@ -290,7 +290,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 		});
 	});
 
-	describe("function eRC20_v1EMPERC20ETHValueFeedUpdate()", async () => {
+	describe("function eRC20_eRC20ETHValueProviderUpdate()", async () => {
 		beforeEach(async () => {
 			await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
 
@@ -301,7 +301,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 
 		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
 			await expect(
-				registry.connect(manager).eRC20_v1EMPERC20ETHValueFeedUpdate(fakeERC20.address, fakeEthValueFeed.address)
+				registry.connect(manager).eRC20_eRC20ETHValueProviderUpdate(fakeERC20.address, fakeEthValueProvider.address)
 			).to.be.rejectedWith(
 				ERROR.NOT_AUTHORIZED
 			);
@@ -309,26 +309,26 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 
 		it("Should not allow _erc20 parameter to be address(0)..", async () => {
 			await expect(
-				registry.eRC20_v1EMPERC20ETHValueFeedUpdate(ethers.constants.AddressZero, fakeEthValueFeed.address)
+				registry.eRC20_eRC20ETHValueProviderUpdate(ethers.constants.AddressZero, fakeEthValueProvider.address)
 			).to.be.rejectedWith(
 				ERROR.REGISTRY.ERC20_ADDRESS_ZERO
 			);
 		});
 
-		it("Should not allow _v1EMPERC20ETHValueFeed parameter to be address(0)..", async () => {
+		it("Should not allow _eRC20ETHValueProvider parameter to be address(0)..", async () => {
 			await expect(
-				registry.eRC20_v1EMPERC20ETHValueFeedUpdate(fakeERC20.address, ethers.constants.AddressZero)
+				registry.eRC20_eRC20ETHValueProviderUpdate(fakeERC20.address, ethers.constants.AddressZero)
 			).to.be.rejectedWith(
-				ERROR.REGISTRY.ETH_VALUE_FEED_ADDRESS_ZERO
+				ERROR.REGISTRY.ETH_VALUE_PROVIDER_ADDRESS_ZERO
 			);
 		});
 
 		it("Should allow authorized caller to register an ETH Value Feed..", async () => {
 			await expect(
-				registry.eRC20_v1EMPERC20ETHValueFeedUpdate(fakeERC20.address, fakeEthValueFeed.address)
+				registry.eRC20_eRC20ETHValueProviderUpdate(fakeERC20.address, fakeEthValueProvider.address)
 			).to.be.not.rejected;
 
-			expect(await registry.eRC20_v1EMPERC20ETHValueFeed(fakeERC20.address)).to.be.equal(fakeEthValueFeed.address);
+			expect(await registry.eRC20_eRC20ETHValueProvider(fakeERC20.address)).to.be.equal(fakeEthValueProvider.address);
 		});
 	});
 });

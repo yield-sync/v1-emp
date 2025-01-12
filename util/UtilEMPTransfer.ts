@@ -68,9 +68,9 @@ export default class UtilEMPTransfer
 
 		for (let i: number = 0; i < UTILIZED_ERC20S.length; i++)
 		{
-			const ETH_VALUE_FEED = await ethers.getContractAt(
-				"IV1EMPETHValueFeed",
-				await this._registry.eRC20_v1EMPERC20ETHValueFeed(UTILIZED_ERC20S[i])
+			const ETH_VALUE_PROVIDER = await ethers.getContractAt(
+				"@yield-sync/erc20-eth-value-provider/contracts/interface/IERC20ETHValueProvider.sol:IERC20ETHValueProvider",
+				await this._registry.eRC20_eRC20ETHValueProvider(UTILIZED_ERC20S[i])
 			);
 
 			const UTILIZATION = await this._eMPUtility.v1EMP_utilizedERC20_utilizationERC20(
@@ -84,9 +84,9 @@ export default class UtilEMPTransfer
 			{
 				let ETHValuePortion = ETHValue.mul(UTILIZATION.allocation).div(ethers.utils.parseUnits("1", 18));
 
-				const erc20Decimals = BigNumber.from(10).pow(await ETH_VALUE_FEED.eRC20Decimals());
+				const erc20Decimals = BigNumber.from(10).pow(await ETH_VALUE_PROVIDER.eRC20Decimals());
 
-				const utilizedERC20ETHValue = await ETH_VALUE_FEED.utilizedERC20ETHValue();
+				const utilizedERC20ETHValue = await ETH_VALUE_PROVIDER.utilizedERC20ETHValue();
 
 				tokenAmount = ETHValuePortion.mul(erc20Decimals).div(utilizedERC20ETHValue);
 			}
@@ -158,9 +158,9 @@ export default class UtilEMPTransfer
 
 			const UTILIZATION = await this._eMPUtility.v1EMP_utilizedERC20_utilizationERC20(this._eMP.address, ERC20);
 
-			const ETH_VALUE_FEED = await ethers.getContractAt(
-				"IV1EMPETHValueFeed",
-				await this._registry.eRC20_v1EMPERC20ETHValueFeed(ERC20)
+			const ETH_VALUE_PROVIDER = await ethers.getContractAt(
+				"@yield-sync/erc20-eth-value-provider/contracts/interface/IERC20ETHValueProvider.sol:IERC20ETHValueProvider",
+				await this._registry.eRC20_eRC20ETHValueProvider(ERC20)
 			);
 
 			let tokenAmount: BigNumber = ethers.utils.parseUnits("0", 18);
@@ -169,9 +169,9 @@ export default class UtilEMPTransfer
 			{
 				let ETHValuePortion = depositAmountEthValue.mul(ALLOCATION).div(ethers.utils.parseUnits("1", 18));
 
-				const erc20Decimals = BigNumber.from(10).pow(await ETH_VALUE_FEED.eRC20Decimals());
+				const erc20Decimals = BigNumber.from(10).pow(await ETH_VALUE_PROVIDER.eRC20Decimals());
 
-				const utilizedERC20ETHValue = await ETH_VALUE_FEED.utilizedERC20ETHValue();
+				const utilizedERC20ETHValue = await ETH_VALUE_PROVIDER.utilizedERC20ETHValue();
 
 				tokenAmount = ETHValuePortion.mul(erc20Decimals).div(utilizedERC20ETHValue);
 			}
@@ -201,16 +201,16 @@ export default class UtilEMPTransfer
 		// Calculate how much of each utilized tokens are being used
 		for (let i: number = 0; i < UTILIZED_ERC20S.length; i++)
 		{
-			const ETH_VALUE_FEED = await ethers.getContractAt(
-				"ETHValueFeedDummy",
-				await this._registry.eRC20_v1EMPERC20ETHValueFeed(UTILIZED_ERC20S[i])
+			const ETH_VALUE_PROVIDER = await ethers.getContractAt(
+				"ETHValueProviderDummy",
+				await this._registry.eRC20_eRC20ETHValueProvider(UTILIZED_ERC20S[i])
 			);
 
 			// Value of the each token denominated in ETH
-			const ETH_VALUE_PER_TOKEN: BigNumber = await ETH_VALUE_FEED.utilizedERC20ETHValue();
+			const ETH_VALUE_PER_TOKEN: BigNumber = await ETH_VALUE_PROVIDER.utilizedERC20ETHValue();
 
 			// 10 ** eRC20Decimals
-			const ERC20_DECIMALS: BigNumber = BigNumber.from(10).pow(await ETH_VALUE_FEED.eRC20Decimals());
+			const ERC20_DECIMALS: BigNumber = BigNumber.from(10).pow(await ETH_VALUE_PROVIDER.eRC20Decimals());
 
 			const TOTAL_ETH_VALUE = _utilizedERC20Deposits[i].mul(ETH_VALUE_PER_TOKEN).div(ERC20_DECIMALS);
 

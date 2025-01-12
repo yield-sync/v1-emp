@@ -32,8 +32,8 @@ export const ERROR = {
 		ERC20_ADDRESS_ZERO:
 			"!(_eRC20 != address(0))"
 		,
-		ETH_VALUE_FEED_ADDRESS_ZERO:
-			"!(_v1EMPERC20ETHValueFeed != address(0))"
+		ETH_VALUE_PROVIDER_ADDRESS_ZERO:
+			"!(_eRC20ETHValueProvider != address(0))"
 		,
 		GOVERNANCE_IS_ADDRESS_ZERO:
 			"!(__governance != address(0))"
@@ -64,7 +64,7 @@ export const ERROR = {
 		INVALID_UTILIZED_ERC20_AMOUNT_LENGTH:
 			"!(utilizedV1EMPStrategy.length == _v1EMPStrategyUtilizedERC20Amount.length)"
 		,
-		INVALID_UTILIZED_STRATEGY_ALLOCAITON:
+		INVALID_UTILIZED_STRATEGY_ALLOCATION:
 			"!(utilizedERC20AmountAllocationActual == iV1EMP.utilizedV1EMPStrategy_allocation(utilizedV1EMPStrategy[i]))"
 		,
 		INVALID_STRATEGY_ERC20_AMOUNTS_LENGTH:
@@ -114,7 +114,7 @@ export const ERROR = {
 		INVALID_UTILIZED_ERC20_AMOUNT:
 			"!(iV1EMPStrategy.utilizedERC20_utilizationERC20(utilizedERC20[i]).allocation == utilizedERC20AmountAllocationActual)"
 		,
-		INVAILD_PARAMS_DEPOSIT_LENGTH:
+		INVALID_PARAMS_DEPOSIT_LENGTH:
 			"!(utilizedERC20.length == _utilizedERC20Amount.length)"
 		,
 		INVALID_PARAMS_UPDATE_LENGTHS:
@@ -135,8 +135,8 @@ export const ERROR = {
 		WITHDRAW_NOT_OPEN:
 			"!utilizedERC20WithdrawOpen"
 		,
-		ERC20_NO_ETH_VALUE_FEED_AVAILABLE:
-			"!(_I_V1_EMP_REGISTRY.eRC20_v1EMPERC20ETHValueFeed(_utilizedERC20[i]) != address(0))"
+		ERC20_NO_ETH_VALUE_PROVIDER_AVAILABLE:
+			"!(_I_V1_EMP_REGISTRY.eRC20_eRC20ETHValueProvider(_utilizedERC20[i]) != address(0))"
 		,
 	},
 	STRATEGY_UTILITY: {

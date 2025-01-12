@@ -4,9 +4,9 @@ pragma solidity ^0.8.18;
 
 
 import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import { IERC20ETHValueProvider } from "@yield-sync/erc20-eth-value-provider/contracts/interface/IERC20ETHValueProvider.sol";
 
 import { IV1EMPArrayUtility } from "./interface/IV1EMPArrayUtility.sol";
-import { IV1EMPETHValueFeed } from "./interface/IV1EMPETHValueFeed.sol";
 import { IV1EMPRegistry } from "./interface/IV1EMPRegistry.sol";
 import { IV1EMPStrategy } from "./interface/IV1EMPStrategy.sol";
 import { IV1EMPStrategyUtility, UtilizationERC20 } from "./interface/IV1EMPStrategyUtility.sol";
@@ -125,9 +125,9 @@ contract V1EMPStrategyUtility is
 			if (iV1EMPStrategy.utilizedERC20_utilizationERC20(utilizedERC20[i]).deposit)
 			{
 				utilizedERC20AmountETHValue_[i] = _utilizedERC20Amount[i].mul(
-					IV1EMPETHValueFeed(_I_V1_EMP_REGISTRY.eRC20_v1EMPERC20ETHValueFeed(utilizedERC20[i])).utilizedERC20ETHValue()
+					IERC20ETHValueProvider(_I_V1_EMP_REGISTRY.eRC20_eRC20ETHValueProvider(utilizedERC20[i])).utilizedERC20ETHValue()
 				).div(
-					10 ** IV1EMPETHValueFeed(_I_V1_EMP_REGISTRY.eRC20_v1EMPERC20ETHValueFeed(utilizedERC20[i])).eRC20Decimals()
+					10 ** IERC20ETHValueProvider(_I_V1_EMP_REGISTRY.eRC20_eRC20ETHValueProvider(utilizedERC20[i])).eRC20Decimals()
 				);
 
 				utilizedERC20AmountETHValueTotal_ += utilizedERC20AmountETHValue_[i];
@@ -181,9 +181,9 @@ contract V1EMPStrategyUtility is
 				return (false, "!(_utilizedERC20[i] != address(0))");
 			}
 
-			if (_I_V1_EMP_REGISTRY.eRC20_v1EMPERC20ETHValueFeed(_utilizedERC20[i]) == address(0))
+			if (_I_V1_EMP_REGISTRY.eRC20_eRC20ETHValueProvider(_utilizedERC20[i]) == address(0))
 			{
-				return (false, "!(_I_V1_EMP_REGISTRY.eRC20_v1EMPERC20ETHValueFeed(_utilizedERC20[i]) != address(0))");
+				return (false, "!(_I_V1_EMP_REGISTRY.eRC20_eRC20ETHValueProvider(_utilizedERC20[i]) != address(0))");
 			}
 
 			if (_utilizationERC20[i].deposit)

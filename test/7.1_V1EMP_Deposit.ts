@@ -17,8 +17,8 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 
 	let arrayUtility: Contract;
 	let governance: Contract;
-	let eTHValueFeed: Contract;
-	let eTHValueFeedC: Contract;
+	let eTHValueProvider: Contract;
+	let eTHValueProviderC: Contract;
 	let eMPDeployer: Contract;
 	let eMPUtility: Contract;
 	let registry: Contract;
@@ -71,12 +71,12 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 		mockERC20B = await deployContract("MockERC20", ["Mock B", "B", 18]);
 		mockERC20C = await deployContract("MockERC20", ["Mock C", "C", 6]);
 
-		eTHValueFeed = await deployContract("ETHValueFeedDummy", [18]);
-		eTHValueFeedC = await deployContract("ETHValueFeedDummy", [6]);
+		eTHValueProvider = await deployContract("ETHValueProviderDummy", [18]);
+		eTHValueProviderC = await deployContract("ETHValueProviderDummy", [6]);
 
-		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20A.address, eTHValueFeed.address);
-		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20B.address, eTHValueFeed.address);
-		await registry.eRC20_v1EMPERC20ETHValueFeedUpdate(mockERC20C.address, eTHValueFeedC.address);
+		await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20A.address, eTHValueProvider.address);
+		await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20B.address, eTHValueProvider.address);
+		await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20C.address, eTHValueProviderC.address);
 
 		/**
 		* EMP Strategies
@@ -576,7 +576,7 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 				await expect(
 					eMPs[0].contract.utilizedV1EMPStrategyDeposit([depositAmount[0], depositAmount[1]])
 				).to.be.revertedWith(
-					ERROR.EMP.INVALID_UTILIZED_STRATEGY_ALLOCAITON
+					ERROR.EMP.INVALID_UTILIZED_STRATEGY_ALLOCATION
 				);
 			});
 		});

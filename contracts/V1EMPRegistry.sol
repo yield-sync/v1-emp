@@ -22,7 +22,7 @@ contract V1EMPRegistry is
 	uint256 public override v1EMPIdTracker;
 	uint256 public override v1EMPStrategyIdTracker;
 
-	mapping (address eRC20 => address v1EMPERC20ETHValueFeed) public override eRC20_v1EMPERC20ETHValueFeed;
+	mapping (address eRC20 => address eRC20ETHValueProvider) public override eRC20_eRC20ETHValueProvider;
 
 	mapping (address v1EMP => uint256 v1EMPId) public override v1EMP_v1EMPId;
 
@@ -135,16 +135,16 @@ contract V1EMPRegistry is
 
 
 	/// @inheritdoc IV1EMPRegistry
-	function eRC20_v1EMPERC20ETHValueFeedUpdate(address _eRC20, address _v1EMPERC20ETHValueFeed)
+	function eRC20_eRC20ETHValueProviderUpdate(address _eRC20, address _eRC20ETHValueProvider)
 		public
 		override
 		authGovernance()
 	{
 		require(_eRC20 != address(0), "!(_eRC20 != address(0))");
 
-		require(_v1EMPERC20ETHValueFeed != address(0), "!(_v1EMPERC20ETHValueFeed != address(0))");
+		require(_eRC20ETHValueProvider != address(0), "!(_eRC20ETHValueProvider != address(0))");
 
-		eRC20_v1EMPERC20ETHValueFeed[_eRC20] = _v1EMPERC20ETHValueFeed;
+		eRC20_eRC20ETHValueProvider[_eRC20] = _eRC20ETHValueProvider;
 	}
 
 	/// @inheritdoc IV1EMPRegistry
