@@ -202,7 +202,7 @@ export default class UtilEMPTransfer
 		for (let i: number = 0; i < UTILIZED_ERC20S.length; i++)
 		{
 			const ETH_VALUE_PROVIDER = await ethers.getContractAt(
-				"ETHValueProviderDummy",
+				"ERC20ETHValueProviderDummy",
 				await this._registry.eRC20_eRC20ETHValueProvider(UTILIZED_ERC20S[i])
 			);
 

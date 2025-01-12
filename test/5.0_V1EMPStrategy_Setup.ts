@@ -57,8 +57,8 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 		mockERC20B = await deployContract("MockERC20", ["Mock B", "B", 18]);
 		mockERC20C = await deployContract("MockERC20", ["Mock C", "C", 6]);
 
-		eTHValueProvider = await deployContract("ETHValueProviderDummy", [18]);
-		eTHValueProviderC = await deployContract("ETHValueProviderDummy", [6]);
+		eTHValueProvider = await deployContract("ERC20ETHValueProviderDummy", [18]);
+		eTHValueProviderC = await deployContract("ERC20ETHValueProviderDummy", [6]);
 
 		await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20A.address, eTHValueProvider.address);
 		await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20B.address, eTHValueProvider.address);

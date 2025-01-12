@@ -70,8 +70,8 @@ describe("[5.3] V1EMPStrategy.sol - Edge-cases", async () => {
 		mockERC20B = await deployContract("MockERC20", ["Mock B", "B", 18]);
 		mockERC20C = await deployContract("MockERC20", ["Mock C", "C", 6]);
 
-		eTHValueProvider = await deployContract("ETHValueProviderDummy", [18]);
-		eTHValueProviderC = await deployContract("ETHValueProviderDummy", [6]);
+		eTHValueProvider = await deployContract("ERC20ETHValueProviderDummy", [18]);
+		eTHValueProviderC = await deployContract("ERC20ETHValueProviderDummy", [6]);
 
 		await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20A.address, eTHValueProvider.address);
 		await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20B.address, eTHValueProvider.address);
@@ -150,7 +150,7 @@ describe("[5.3] V1EMPStrategy.sol - Edge-cases", async () => {
 				let BalanceStrategyOwner = await strategy.eMP_shares(owner.address);
 
 				const provider = await ethers.getContractAt(
-					"ETHValueProviderDummy",
+					"ERC20ETHValueProviderDummy",
 					await registry.eRC20_eRC20ETHValueProvider(mockERC20A.address)
 				);
 
