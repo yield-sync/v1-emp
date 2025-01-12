@@ -6,12 +6,13 @@ import { BigNumber, Contract, ContractFactory, VoidSigner } from "ethers";
 
 import { ERROR, PERCENT, D_18 } from "../const";
 import UtilStrategyTransfer from "../util/UtilStrategyTransfer";
+import { deployContract } from "../util/UtilEMP";
 
 
 const LOCATION_IERC20: string = "@openzeppelin/contracts/token/ERC20/IERC20.sol:IERC20";
 
 
-describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
+describe("[5.3] V1EMPStrategy.sol - Edge-cases", async () => {
 	let arrayUtility: Contract;
 	let governance: Contract;
 	let eTHValueProvider: Contract;
@@ -37,49 +38,40 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 	beforeEach("[beforeEach] Set up contracts..", async () => {
 		/**
 		* @dev It is important to utilize the UtilStrategyTransfer for multiple ERC20 based strategies because they get
-		* reordred when setup. The strategyUtil will return the deposit amounts in the order of the what the conctract
+		* reordered when setup. The strategyUtil will return the deposit amounts in the order of the what the contract
 		* returns for the Utilized ERC20s
 		*/
 		[owner, manager, treasury] = await ethers.getSigners();
 
 
-		const YieldSyncGovernance: ContractFactory = await ethers.getContractFactory("YieldSyncGovernance");
-		const V1EMPArrayUtility: ContractFactory = await ethers.getContractFactory("V1EMPArrayUtility");
-		const V1EMPRegistry: ContractFactory = await ethers.getContractFactory("V1EMPRegistry");
 		const V1EMPStrategy: ContractFactory = await ethers.getContractFactory("V1EMPStrategy");
-		const V1EMPStrategyDeployer: ContractFactory = await ethers.getContractFactory("V1EMPStrategyDeployer");
-		const V1EMPStrategyUtility: ContractFactory = await ethers.getContractFactory("V1EMPStrategyUtility");
-
-		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
-		const ETHValueProviderDummy: ContractFactory = await ethers.getContractFactory("ETHValueProviderDummy");
-		const Holder: ContractFactory = await ethers.getContractFactory("@yield-sync/erc20-handler/contracts/Holder.sol:Holder");
 
 
 		// Core contracts
-		governance = await (await YieldSyncGovernance.deploy()).deployed();
+		governance = await deployContract("@yield-sync/governance/contracts/YieldSyncGovernance.sol:YieldSyncGovernance");
 
 		await governance.payToUpdate(treasury.address);
 
-		arrayUtility = await (await V1EMPArrayUtility.deploy()).deployed();
+		arrayUtility = await deployContract("V1EMPArrayUtility");
 
-		registry = await (await V1EMPRegistry.deploy(governance.address)).deployed();
+		registry = await deployContract("V1EMPRegistry", [governance.address]);
 
 		await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
 
-		strategyUtility = await (await V1EMPStrategyUtility.deploy(registry.address)).deployed();
+		strategyUtility = await deployContract("V1EMPStrategyUtility", [registry.address]);
 
 		await registry.v1EMPStrategyUtilityUpdate(strategyUtility.address);
 
-		strategyDeployer = await (await V1EMPStrategyDeployer.deploy(registry.address)).deployed();
+		strategyDeployer = await deployContract("V1EMPStrategyDeployer", [registry.address]);
 
 
 		// Testing contracts
-		mockERC20A = await (await MockERC20.deploy("Mock A", "A", 18)).deployed();
-		mockERC20B = await (await MockERC20.deploy("Mock B", "B", 18)).deployed();
-		mockERC20C = await (await MockERC20.deploy("Mock C", "C", 6)).deployed();
+		mockERC20A = await deployContract("MockERC20", ["Mock A", "A", 18]);
+		mockERC20B = await deployContract("MockERC20", ["Mock B", "B", 18]);
+		mockERC20C = await deployContract("MockERC20", ["Mock C", "C", 6]);
 
-		eTHValueProvider = await (await ETHValueProviderDummy.deploy(18)).deployed();
-		eTHValueProviderC = await (await ETHValueProviderDummy.deploy(6)).deployed();
+		eTHValueProvider = await deployContract("ETHValueProviderDummy", [18]);
+		eTHValueProviderC = await deployContract("ETHValueProviderDummy", [6]);
 
 		await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20A.address, eTHValueProvider.address);
 		await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20B.address, eTHValueProvider.address);
@@ -104,7 +96,7 @@ describe("[5.3] V1EMPStrategy.sol - Edgecases", async () => {
 		// Attach the deployed V1EMPStrategy address
 		strategy = await V1EMPStrategy.attach(String(await registry.v1EMPStrategyId_v1EMPStrategy(1)));
 
-		eRC20Handler = await (await Holder.deploy(strategy.address)).deployed();
+		eRC20Handler = await deployContract("@yield-sync/erc20-handler/contracts/Holder.sol:Holder", [strategy.address]);
 
 		// Set the ERC20 Handler
 		await strategy.iV1EMPERC20HandlerUpdate(eRC20Handler.address);

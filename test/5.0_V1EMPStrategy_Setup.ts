@@ -5,6 +5,7 @@ import { expect } from "chai";
 import { Contract, ContractFactory, VoidSigner } from "ethers";
 
 import { ERROR, PERCENT } from "../const";
+import { deployContract } from "../util/UtilEMP";
 
 
 describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
@@ -31,42 +32,33 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 		[owner, manager, treasury, badActor] = await ethers.getSigners();
 
 
-		const YieldSyncGovernance: ContractFactory = await ethers.getContractFactory("YieldSyncGovernance");
-		const V1EMPArrayUtility: ContractFactory = await ethers.getContractFactory("V1EMPArrayUtility");
-		const V1EMPStrategyUtility: ContractFactory = await ethers.getContractFactory("V1EMPStrategyUtility");
-		const V1EMPRegistry: ContractFactory = await ethers.getContractFactory("V1EMPRegistry");
-		const V1EMPStrategyDeployer: ContractFactory = await ethers.getContractFactory("V1EMPStrategyDeployer");
-
-		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
-		const ETHValueProviderDummy: ContractFactory = await ethers.getContractFactory("ETHValueProviderDummy");
 		const V1EMPStrategy: ContractFactory = await ethers.getContractFactory("V1EMPStrategy");
-		const Holder: ContractFactory = await ethers.getContractFactory("@yield-sync/erc20-handler/contracts/Holder.sol:Holder");
 
 
 		// Core contracts
-		governance = await (await YieldSyncGovernance.deploy()).deployed();
+		governance = await deployContract("@yield-sync/governance/contracts/YieldSyncGovernance.sol:YieldSyncGovernance");
 
 		await governance.payToUpdate(treasury.address);
 
-		arrayUtility = await (await V1EMPArrayUtility.deploy()).deployed();
+		arrayUtility = await deployContract("V1EMPArrayUtility");
 
-		registry = await (await V1EMPRegistry.deploy(governance.address)).deployed();
+		registry = await deployContract("V1EMPRegistry", [governance.address]);
 
 		await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
 
-		strategyUtility = await (await V1EMPStrategyUtility.deploy(registry.address)).deployed();
+		strategyUtility = await deployContract("V1EMPStrategyUtility", [registry.address]);
 
 		await registry.v1EMPStrategyUtilityUpdate(strategyUtility.address);
 
-		strategyDeployer = await (await V1EMPStrategyDeployer.deploy(registry.address)).deployed();
+		strategyDeployer = await deployContract("V1EMPStrategyDeployer", [registry.address]);
 
 		// Testing contracts
-		mockERC20A = await (await MockERC20.deploy("Mock A", "A", 18)).deployed();
-		mockERC20B = await (await MockERC20.deploy("Mock B", "B", 18)).deployed();
-		mockERC20C = await (await MockERC20.deploy("Mock C", "C", 6)).deployed();
+		mockERC20A = await deployContract("MockERC20", ["Mock A", "A", 18]);
+		mockERC20B = await deployContract("MockERC20", ["Mock B", "B", 18]);
+		mockERC20C = await deployContract("MockERC20", ["Mock C", "C", 6]);
 
-		eTHValueProvider = await (await ETHValueProviderDummy.deploy(18)).deployed();
-		eTHValueProviderC = await (await ETHValueProviderDummy.deploy(6)).deployed();
+		eTHValueProvider = await deployContract("ETHValueProviderDummy", [18]);
+		eTHValueProviderC = await deployContract("ETHValueProviderDummy", [6]);
 
 		await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20A.address, eTHValueProvider.address);
 		await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20B.address, eTHValueProvider.address);
@@ -91,7 +83,7 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 		// Attach the deployed V1EMPStrategy address
 		strategy = await V1EMPStrategy.attach(String(await registry.v1EMPStrategyId_v1EMPStrategy(1)));
 
-		eRC20Handler = await (await Holder.deploy(strategy.address)).deployed();
+		eRC20Handler = await deployContract("@yield-sync/erc20-handler/contracts/Holder.sol:Holder", [strategy.address]);
 	});
 
 
