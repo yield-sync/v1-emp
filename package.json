@@ -14,8 +14,6 @@
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
-	"devDependencies": {
-	},
 	"dependencies": {
 		"@chainlink/contracts": "^0.8.0",
 		"@eth-optimism/plugins": "^1.0.0-alpha.3",
@@ -28,7 +26,8 @@
 		"@types/chai": "^4.3.16",
 		"@types/mocha": "^10.0.6",
 		"@types/node": "^20.12.12",
-		"@yield-sync/erc20-handler": "^0.0.1",
+		"@yield-sync/erc20-eth-value-provider": "^0.0.1",
+		"@yield-sync/erc20-handler": "^0.0.2",
 		"@yield-sync/governance": "^0.0.39",
 		"chai": "^4.4.1",
 		"dotenv": "^16.0.3",
