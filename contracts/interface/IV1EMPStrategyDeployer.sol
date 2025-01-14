@@ -13,6 +13,10 @@ interface IV1EMPStrategyDeployer
 		returns (bool)
 	;
 
+
+	/// @notice mutative
+
+
 	/**
 	* @notice Deploy V1 EMP Strategy
 	*/

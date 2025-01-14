@@ -6,7 +6,7 @@ import { ERC721 } from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 
 /**
- * @notice WARNING: This contract is ONLY for TESTING.
+* @notice WARNING: This contract is ONLY for TESTING.
 */
 contract MockERC721 is ERC721
 {

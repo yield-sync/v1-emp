@@ -6,7 +6,7 @@ import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 
 /**
- * @notice WARNING: This contract is ONLY for TESTING.
+* @notice WARNING: This contract is ONLY for TESTING.
 */
 contract MockERC20 is ERC20
 {

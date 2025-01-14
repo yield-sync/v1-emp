@@ -8,8 +8,8 @@ import {
 
 
 /**
- * @notice WARNING: This contract is ONLY for TESTING.
- */
+* @notice WARNING: This contract is ONLY for TESTING.
+*/
 contract MockERC20ETHValueProvider is
 	IERC20ETHValueProvider
 {

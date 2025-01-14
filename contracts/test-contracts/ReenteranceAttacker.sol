@@ -7,7 +7,7 @@ import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 
 
 /**
- * @notice WARNING: This contract is ONLY for TESTING.
+* @notice WARNING: This contract is ONLY for TESTING.
 */
 contract ReenteranceAttacker is Ownable
 {

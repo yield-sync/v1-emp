@@ -15,6 +15,9 @@ interface IV1EMPArrayUtility
 	;
 
 
+	/// @notice pure
+
+
 	/**
 	* @notice Sort
 	* @param _array {address[]}
@@ -25,6 +28,9 @@ interface IV1EMPArrayUtility
 		pure
 		returns (address[] memory)
 	;
+
+
+	/// @notice mutative
 
 
 	/**
