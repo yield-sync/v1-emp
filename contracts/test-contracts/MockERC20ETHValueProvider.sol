@@ -10,7 +10,7 @@ import {
 /**
  * @notice WARNING: This contract is ONLY for TESTING.
  */
-contract ERC20ETHValueProviderDummy is
+contract MockERC20ETHValueProvider is
 	IERC20ETHValueProvider
 {
 	uint256 public eTHValue = 1e18;

@@ -81,7 +81,7 @@ export default class UtilStrategyTransfer
 			const BALANCE: BigNumber = await _utilizedERC20[i].balanceOf(_address);
 
 			const provider = await ethers.getContractAt(
-				"ERC20ETHValueProviderDummy",
+				"MockERC20ETHValueProvider",
 				await this._registry.eRC20_eRC20ETHValueProvider(_utilizedERC20[i])
 			);
 
@@ -119,7 +119,7 @@ export default class UtilStrategyTransfer
 		for (let i: number = 0; i < UTILIZED_ERC20S.length; i++)
 		{
 			const ETH_VALUE_PROVIDER = await ethers.getContractAt(
-				"ERC20ETHValueProviderDummy",
+				"MockERC20ETHValueProvider",
 				await this._registry.eRC20_eRC20ETHValueProvider(UTILIZED_ERC20S[i])
 			);
 
