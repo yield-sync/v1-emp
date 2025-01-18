@@ -279,8 +279,8 @@ contract V1EMPUtility is
 			}
 		}
 
-		utilizedERC20 = IV1EMPArrayUtility(_I_V1_EMP_REGISTRY.v1EMPArrayUtility()).removeDuplicates(utilizedERC20);
-		utilizedERC20 = IV1EMPArrayUtility(_I_V1_EMP_REGISTRY.v1EMPArrayUtility()).sort(utilizedERC20);
+		utilizedERC20 = IV1EMPArrayUtility(_I_V1_EMP_REGISTRY.arrayUtility()).removeDuplicates(utilizedERC20);
+		utilizedERC20 = IV1EMPArrayUtility(_I_V1_EMP_REGISTRY.arrayUtility()).sort(utilizedERC20);
 
 		uint256 utilizedERC20AllocationTotal;
 

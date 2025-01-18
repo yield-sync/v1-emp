@@ -41,15 +41,15 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 		const V1EMP: ContractFactory = await ethers.getContractFactory("V1EMP");
 
 		// Core contracts
-		governance = await deployContract("@yield-sync/governance/contracts/YieldSyncGovernance.sol:YieldSyncGovernance");
+		governance = await deployContract("YieldSyncGovernance");
 
 		await governance.payToUpdate(treasury.address);
 
-		arrayUtility = await deployContract("V1EMPArrayUtility");
+		arrayUtility = await deployContract("ArrayUtility");
 
 		registry = await deployContract("V1EMPRegistry", [governance.address]);
 
-		await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
+		await registry.arrayUtilityUpdate(arrayUtility.address);
 
 		strategyUtility = await deployContract("V1EMPStrategyUtility", [registry.address]);
 
@@ -96,8 +96,8 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 			],
 		);
 
-		const eRC20Handler = await deployContract("@yield-sync/erc20-handler/contracts/Holder.sol:Holder", [strategies[0].contract.address]);
-		const eRC20Handler2 = await deployContract("@yield-sync/erc20-handler/contracts/Holder.sol:Holder", [strategies[1].contract.address]);
+		const eRC20Handler = await deployContract("Holder", [strategies[0].contract.address]);
+		const eRC20Handler2 = await deployContract("Holder", [strategies[1].contract.address]);
 
 		await strategies[0].contract.iERC20HandlerUpdate(eRC20Handler.address);
 		await strategies[1].contract.iERC20HandlerUpdate(eRC20Handler2.address);

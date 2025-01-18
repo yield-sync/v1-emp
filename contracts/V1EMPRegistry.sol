@@ -10,9 +10,9 @@ import { IV1EMPRegistry } from "./interface/IV1EMPRegistry.sol";
 contract V1EMPRegistry is
 	IV1EMPRegistry
 {
+	address internal _arrayUtility;
 	address internal _governance;
 	address internal _v1EMPUtility;
-	address internal _v1EMPArrayUtility;
 	address internal _v1EMPDeployer;
 	address internal _v1EMPStrategyDeployer;
 	address internal _v1EMPStrategyUtility;
@@ -62,6 +62,16 @@ contract V1EMPRegistry is
 
 
 	/// @inheritdoc IV1EMPRegistry
+	function arrayUtility()
+		public
+		view
+		override
+		returns(address)
+	{
+		return _arrayUtility;
+	}
+
+	/// @inheritdoc IV1EMPRegistry
 	function governancePayTo()
 		public
 		view
@@ -90,15 +100,6 @@ contract V1EMPRegistry is
 		return _v1EMPUtility;
 	}
 
-	/// @inheritdoc IV1EMPRegistry
-	function v1EMPArrayUtility()
-		public
-		view
-		override
-		returns(address)
-	{
-		return _v1EMPArrayUtility;
-	}
 
 	/// @inheritdoc IV1EMPRegistry
 	function v1EMPDeployer()
@@ -135,6 +136,19 @@ contract V1EMPRegistry is
 
 
 	/// @inheritdoc IV1EMPRegistry
+	function arrayUtilityUpdate(address __arrayUtility)
+		public
+		override
+		authGovernance()
+	{
+		require(__arrayUtility != address(0), "!(__arrayUtility != address(0))");
+
+		require(_arrayUtility == address(0), "!(_arrayUtility == address(0))");
+
+		_arrayUtility = __arrayUtility;
+	}
+
+	/// @inheritdoc IV1EMPRegistry
 	function eRC20_eRC20ETHValueProviderUpdate(address _eRC20, address _eRC20ETHValueProvider)
 		public
 		override
@@ -158,18 +172,6 @@ contract V1EMPRegistry is
 		_governance = __governance;
 	}
 
-	/// @inheritdoc IV1EMPRegistry
-	function v1EMPArrayUtilityUpdate(address __v1EMPArrayUtility)
-		public
-		override
-		authGovernance()
-	{
-		require(__v1EMPArrayUtility != address(0), "!(__v1EMPArrayUtility != address(0))");
-
-		require(_v1EMPArrayUtility == address(0), "!(_v1EMPArrayUtility == address(0))");
-
-		_v1EMPArrayUtility = __v1EMPArrayUtility;
-	}
 
 
 	/// @inheritdoc IV1EMPRegistry
@@ -234,7 +236,7 @@ contract V1EMPRegistry is
 	{
 		require(__v1EMPStrategyUtility != address(0), "!(__v1EMPStrategyUtility != address(0))");
 
-		require(_v1EMPArrayUtility != address(0), "!(_v1EMPArrayUtility != address(0))");
+		require(_arrayUtility != address(0), "!(_arrayUtility != address(0))");
 
 		require(_v1EMPStrategyUtility == address(0), "!(_v1EMPStrategyUtility == address(0))");
 
@@ -249,7 +251,7 @@ contract V1EMPRegistry is
 	{
 		require(__v1EMPUtility != address(0), "!(__v1EMPUtility != address(0))");
 
-		require(_v1EMPArrayUtility != address(0), "!(_v1EMPArrayUtility != address(0))");
+		require(_arrayUtility != address(0), "!(_arrayUtility != address(0))");
 
 		require(_v1EMPUtility == address(0), "!(_v1EMPUtility == address(0))");
 

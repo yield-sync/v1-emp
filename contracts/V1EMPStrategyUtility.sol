@@ -144,7 +144,7 @@ contract V1EMPStrategyUtility is
 		override
 		returns (address[] memory)
 	{
-		return IV1EMPArrayUtility(_I_V1_EMP_REGISTRY.v1EMPArrayUtility()).sort(_utilizedERC20);
+		return IV1EMPArrayUtility(_I_V1_EMP_REGISTRY.arrayUtility()).sort(_utilizedERC20);
 	}
 
 
@@ -169,9 +169,9 @@ contract V1EMPStrategyUtility is
 			return (false, "!(_utilizedERC20.length == _utilizationERC20.length)");
 		}
 
-		if (IV1EMPArrayUtility(_I_V1_EMP_REGISTRY.v1EMPArrayUtility()).containsDuplicates(_utilizedERC20))
+		if (IV1EMPArrayUtility(_I_V1_EMP_REGISTRY.arrayUtility()).containsDuplicates(_utilizedERC20))
 		{
-			return (false, "IV1EMPArrayUtility(_I_V1_EMP_REGISTRY.v1EMPArrayUtility()).containsDuplicates(_utilizedERC20)");
+			return (false, "IV1EMPArrayUtility(_I_V1_EMP_REGISTRY.arrayUtility()).containsDuplicates(_utilizedERC20)");
 		}
 
 		uint256 utilizedERC20AllocationTotal;

@@ -18,6 +18,7 @@ async function main()
 	console.log("Attempting Deployment..");
 
 	let governanceContract: string;
+	let arrayUtilityContract: string;
 
 	switch (network.name)
 	{
@@ -31,6 +32,15 @@ async function main()
 
 			governanceContract = process.env.YIELD_SYNC_GOVERNANCE_ADDRESS_SEPOLIA;
 
+			if (!process.env.YIELD_SYNC_UTILITY_ARRAY_UTILITY_SEPOLIA)
+			{
+				console.error("Error: No Yield Sync arrayUtility contract set for Sepolia.");
+
+				process.exit(2);
+			}
+
+			arrayUtilityContract = process.env.YIELD_SYNC_UTILITY_ARRAY_UTILITY_SEPOLIA;
+
 			break;
 
 		case "base-sepolia":
@@ -42,6 +52,15 @@ async function main()
 			}
 
 			governanceContract = process.env.YIELD_SYNC_GOVERNANCE_ADDRESS_BASE_SEPOLIA;
+
+			if (!process.env.YIELD_SYNC_UTILITY_ARRAY_UTILITY_BASE_SEPOLIA)
+			{
+				console.error("Error: No Yield Sync arrayUtility contract set for Sepolia.");
+
+				process.exit(2);
+			}
+
+			arrayUtilityContract = process.env.YIELD_SYNC_UTILITY_ARRAY_UTILITY_BASE_SEPOLIA;
 
 			break;
 
@@ -59,14 +78,6 @@ async function main()
 	writeFileSync(filePath, notice, { flag: "a" });
 
 	console.log(notice);
-
-
-	// Array Utility
-	const arrayUtility = await deployContract("V1EMPArrayUtility");
-
-	writeFileSync(filePath, `V1EMPArrayUtility: ${arrayUtility.address}\n`, { flag: "a" });
-
-	console.log("arrayUtility contract address:", arrayUtility.address);
 
 
 	// Registry
@@ -110,7 +121,7 @@ async function main()
 
 
 	// Register the contract on the register contract
-	await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
+	await registry.arrayUtilityUpdate(arrayUtilityContract);
 
 	await registry.v1EMPStrategyUtilityUpdate(eMPStrategyUtility.address);
 
@@ -133,9 +144,9 @@ async function main()
 		await run(
 			"verify:verify",
 			{
-				address: arrayUtility.address,
+				address: arrayUtilityContract,
 				constructorArguments: [],
-				contract: "contracts/V1EMPArrayUtility.sol:V1EMPArrayUtility"
+				contract: "contracts/ArrayUtility.sol:ArrayUtility"
 			}
 		);
 

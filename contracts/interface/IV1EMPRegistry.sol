@@ -98,6 +98,16 @@ interface IV1EMPRegistry
 
 	/**
 	* @dev [view-address]
+	* @return {address}
+	*/
+	function arrayUtility()
+		external
+		view
+		returns (address)
+	;
+
+	/**
+	* @dev [view-address]
 	* @notice Governance Pay To
 	* @return {address}
 	*/
@@ -117,15 +127,6 @@ interface IV1EMPRegistry
 		returns (address)
 	;
 
-	/**
-	* @dev [view-address]
-	* @return {address}
-	*/
-	function v1EMPArrayUtility()
-		external
-		view
-		returns (address)
-	;
 
 	/**
 	* @dev [view-address]
@@ -188,10 +189,10 @@ interface IV1EMPRegistry
 	;
 
 	/**
-	* @notice V1EMPArrayUtility Update
-	* @param __v1EMPArrayUtility {address}
+	* @notice ArrayUtility Update
+	* @param __arrayUtility {address}
 	*/
-	function v1EMPArrayUtilityUpdate(address __v1EMPArrayUtility)
+	function arrayUtilityUpdate(address __arrayUtility)
 		external
 	;
 

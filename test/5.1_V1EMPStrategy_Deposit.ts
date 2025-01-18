@@ -42,15 +42,15 @@ describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 		const V1EMPStrategy: ContractFactory = await ethers.getContractFactory("V1EMPStrategy");
 
 
-		governance = await deployContract("@yield-sync/governance/contracts/YieldSyncGovernance.sol:YieldSyncGovernance");
+		governance = await deployContract("YieldSyncGovernance");
 
 		await governance.payToUpdate(treasury.address);
 
-		arrayUtility = await deployContract("V1EMPArrayUtility");
+		arrayUtility = await deployContract("ArrayUtility");
 
 		registry = await deployContract("V1EMPRegistry", [governance.address]);
 
-		await registry.v1EMPArrayUtilityUpdate(arrayUtility.address);
+		await registry.arrayUtilityUpdate(arrayUtility.address);
 
 		strategyUtility = await deployContract("V1EMPStrategyUtility", [registry.address]);
 
@@ -91,7 +91,7 @@ describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 
 		utilStrategyTransfer = new UtilStrategyTransfer(strategy, registry);
 
-		eRC20Handler = await deployContract("@yield-sync/erc20-handler/contracts/Holder.sol:Holder", [strategy.address]);
+		eRC20Handler = await deployContract("Holder", [strategy.address]);
 	});
 
 

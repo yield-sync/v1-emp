@@ -145,7 +145,7 @@ export default class UtilEMPTransfer
 			}
 		}
 
-		const ARRAY_UTILITY = await ethers.getContractAt("V1EMPArrayUtility", await this._registry.v1EMPArrayUtility());
+		const ARRAY_UTILITY = await ethers.getContractAt("ArrayUtility", await this._registry.arrayUtility());
 
 		// Reorder the ERC20
 		updatedUtilizedERC20 = await ARRAY_UTILITY.sort(updatedUtilizedERC20);
