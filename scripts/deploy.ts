@@ -140,16 +140,6 @@ async function main()
 	// verify
 	try
 	{
-		// V1 EMP Array Utility
-		await run(
-			"verify:verify",
-			{
-				address: arrayUtilityContract,
-				constructorArguments: [],
-				contract: "contracts/ArrayUtility.sol:ArrayUtility"
-			}
-		);
-
 		// V1 EMP Registry
 		await run(
 			"verify:verify",
