@@ -20,6 +20,11 @@ npm install
 npx hardhat test
 ```
 
+## Get Contract Sizes
+```shell
+npx hardhat size-contracts
+```
+
 ## `.env` example
 
 ```shell

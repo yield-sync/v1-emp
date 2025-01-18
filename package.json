@@ -1,18 +1,20 @@
 {
 	"name": "@yield-sync/v1-emp",
 	"version": "0.0.1",
-	"description": "",
+	"description": "Refer to README.md",
 	"main": "scripts/deploy.js",
 	"scripts": {
-		"deploy-to-base-sepolia": "npx hardhat run scripts/Deploy.ts --network base-sepolia",
-		"deploy-to-sepolia": "npx hardhat run scripts/Deploy.ts --network sepolia"
+		"deploy-to-base-sepolia": "npx hardhat run scripts/depoly.ts --network base-sepolia",
+		"deploy-to-sepolia": "npx hardhat run scripts/deploy.ts --network sepolia",
+		"execute-deploy-v1-emp-base-sepolia": "npx hardhat run scripts/execute-deploy-v1-emp.ts --network base-sepolia",
+		"execute-deploy-v1-emp-sepolia": "npx hardhat run scripts/execute-deploy-v1-emp.ts --network sepolia"
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/yield-sync/v1-vaults.git"
+		"url": "git+https://github.com/yield-sync/v1-emp.git"
 	},
 	"keywords": [],
-	"author": "",
+	"author": "harpoonjs.eth",
 	"license": "ISC",
 	"dependencies": {
 		"@eth-optimism/plugins": "^1.0.0-alpha.3",
