@@ -15,7 +15,6 @@
 	"author": "",
 	"license": "ISC",
 	"dependencies": {
-		"@chainlink/contracts": "^0.8.0",
 		"@eth-optimism/plugins": "^1.0.0-alpha.3",
 		"@nomicfoundation/hardhat-chai-matchers": "^1.0.5",
 		"@nomicfoundation/hardhat-toolbox": "^2.0.1",
