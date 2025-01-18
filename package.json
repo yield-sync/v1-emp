@@ -1,6 +1,6 @@
 {
 	"name": "@yield-sync/v1-emp",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"description": "Refer to README.md",
 	"main": "scripts/deploy.js",
 	"scripts": {
