@@ -30,7 +30,7 @@
 		"@yield-sync/erc20-eth-value-provider": "^0.0.4",
 		"@yield-sync/erc20-handler": "^0.0.5",
 		"@yield-sync/governance": "^0.0.41",
-		"@yield-sync/utility": "^0.0.9",
+		"@yield-sync/utility": "^0.0.10",
 		"chai": "^4.4.1",
 		"dotenv": "^16.0.3",
 		"ethers": "^5.7.2",

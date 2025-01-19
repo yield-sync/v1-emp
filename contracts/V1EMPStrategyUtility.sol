@@ -169,9 +169,9 @@ contract V1EMPStrategyUtility is
 			return (false, "!(_utilizedERC20.length == _utilizationERC20.length)");
 		}
 
-		if (IAddressArrayUtility(_I_V1_EMP_REGISTRY.addressArrayUtility()).containsDuplicates(_utilizedERC20))
+		if (IAddressArrayUtility(_I_V1_EMP_REGISTRY.addressArrayUtility()).isUnique(_utilizedERC20))
 		{
-			return (false, "IAddressArrayUtility(_I_V1_EMP_REGISTRY.addressArrayUtility()).containsDuplicates(_utilizedERC20)");
+			return (false, "IAddressArrayUtility(_I_V1_EMP_REGISTRY.addressArrayUtility()).isUnique(_utilizedERC20)");
 		}
 
 		uint256 utilizedERC20AllocationTotal;
