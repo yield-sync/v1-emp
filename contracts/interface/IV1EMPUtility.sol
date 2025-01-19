@@ -8,9 +8,9 @@ import { UtilizationERC20 } from "../struct/UtilizationERC20.sol";
 interface IV1EMPUtility
 {
 	/**
-	* @dev [view-IV1EMPArrayUtility]
-	* @notice Implemented IV1EMPArrayUtility
-	* @return {IV1EMPArrayUtility}
+	* @dev [view-address[]]
+	* @notice Implemented v1EMP_utilizedERC20
+	* @return {address[]}
 	*/
 	function v1EMP_utilizedERC20(address _v1EMP)
 		external

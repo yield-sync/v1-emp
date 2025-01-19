@@ -7,9 +7,9 @@ import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import {
 	IERC20ETHValueProvider
 } from "@yield-sync/erc20-eth-value-provider/contracts/interface/IERC20ETHValueProvider.sol";
+import { IArrayUtility } from "@yield-sync/utility/contracts/interface/IArrayUtility.sol";
 
 import { IV1EMP } from "./interface/IV1EMP.sol";
-import { IV1EMPArrayUtility } from "./interface/IV1EMPArrayUtility.sol";
 import { IV1EMPRegistry } from "./interface/IV1EMPRegistry.sol";
 import { IV1EMPStrategy } from "./interface/IV1EMPStrategy.sol";
 import { IV1EMPUtility, UtilizationERC20 } from "./interface/IV1EMPUtility.sol";
@@ -279,8 +279,8 @@ contract V1EMPUtility is
 			}
 		}
 
-		utilizedERC20 = IV1EMPArrayUtility(_I_V1_EMP_REGISTRY.arrayUtility()).removeDuplicates(utilizedERC20);
-		utilizedERC20 = IV1EMPArrayUtility(_I_V1_EMP_REGISTRY.arrayUtility()).sort(utilizedERC20);
+		utilizedERC20 = IArrayUtility(_I_V1_EMP_REGISTRY.arrayUtility()).removeDuplicates(utilizedERC20);
+		utilizedERC20 = IArrayUtility(_I_V1_EMP_REGISTRY.arrayUtility()).sort(utilizedERC20);
 
 		uint256 utilizedERC20AllocationTotal;
 

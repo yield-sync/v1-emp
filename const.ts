@@ -121,7 +121,7 @@ export const ERROR = {
 			"!(_utilizedERC20.length == _utilizationERC20.length)"
 		,
 		INVALID_PARAMS_UPDATE_CONTAINS_DUPLICATES:
-			"IV1EMPArrayUtility(_I_V1_EMP_REGISTRY.arrayUtility()).containsDuplicates(_utilizedERC20)"
+			"IArrayUtility(_I_V1_EMP_REGISTRY.arrayUtility()).containsDuplicates(_utilizedERC20)"
 		,
 		INVALID_ERC20_HANDLER:
 			"!_iERC20Handler"
