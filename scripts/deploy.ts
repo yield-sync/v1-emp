@@ -54,7 +54,7 @@ async function main()
 
 			if (!process.env.YIELD_SYNC_UTILITY_ARRAY_UTILITY_BASE_SEPOLIA)
 			{
-				console.error("Error: No Yield Sync arrayUtility contract set for Sepolia.");
+				console.error("Error: No Yield Sync arrayUtility contract set for Base Sepolia.");
 
 				process.exit(2);
 			}
@@ -224,12 +224,9 @@ async function main()
 }
 
 
-main()
-	.then(() => {
-		process.exit(0);
-	})
-	.catch((error) => {
-		console.error(error);
-		process.exit(1);
-	})
-;
+main().then(() => {
+	process.exit(0);
+}).catch((error) => {
+	console.error(error);
+	process.exit(1);
+});

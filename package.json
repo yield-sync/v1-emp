@@ -1,10 +1,10 @@
 {
 	"name": "@yield-sync/v1-emp",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"description": "Refer to README.md",
 	"main": "scripts/deploy.js",
 	"scripts": {
-		"deploy-to-base-sepolia": "npx hardhat run scripts/depoly.ts --network base-sepolia",
+		"deploy-to-base-sepolia": "npx hardhat run scripts/deploy.ts --network base-sepolia",
 		"deploy-to-sepolia": "npx hardhat run scripts/deploy.ts --network sepolia",
 		"execute-deploy-v1-emp-base-sepolia": "npx hardhat run scripts/execute-deploy-v1-emp.ts --network base-sepolia",
 		"execute-deploy-v1-emp-sepolia": "npx hardhat run scripts/execute-deploy-v1-emp.ts --network sepolia"
