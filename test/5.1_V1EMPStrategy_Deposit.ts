@@ -13,7 +13,7 @@ const LOCATION_IERC20: string = "@openzeppelin/contracts/token/ERC20/IERC20.sol:
 
 
 describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
-	let arrayUtility: Contract;
+	let addressArrayUtility: Contract;
 	let governance: Contract;
 	let eTHValueProvider: Contract;
 	let eTHValueProviderC: Contract;
@@ -46,11 +46,11 @@ describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 
 		await governance.payToUpdate(treasury.address);
 
-		arrayUtility = await deployContract("ArrayUtility");
+		addressArrayUtility = await deployContract("AddressArrayUtility");
 
 		registry = await deployContract("V1EMPRegistry", [governance.address]);
 
-		await registry.arrayUtilityUpdate(arrayUtility.address);
+		await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
 
 		strategyUtility = await deployContract("V1EMPStrategyUtility", [registry.address]);
 

@@ -10,7 +10,7 @@ import { IV1EMPRegistry } from "./interface/IV1EMPRegistry.sol";
 contract V1EMPRegistry is
 	IV1EMPRegistry
 {
-	address internal _arrayUtility;
+	address internal _addressArrayUtility;
 	address internal _governance;
 	address internal _v1EMPUtility;
 	address internal _v1EMPDeployer;
@@ -62,13 +62,13 @@ contract V1EMPRegistry is
 
 
 	/// @inheritdoc IV1EMPRegistry
-	function arrayUtility()
+	function addressArrayUtility()
 		public
 		view
 		override
 		returns(address)
 	{
-		return _arrayUtility;
+		return _addressArrayUtility;
 	}
 
 	/// @inheritdoc IV1EMPRegistry
@@ -136,16 +136,16 @@ contract V1EMPRegistry is
 
 
 	/// @inheritdoc IV1EMPRegistry
-	function arrayUtilityUpdate(address __arrayUtility)
+	function addressArrayUtilityUpdate(address __addressArrayUtility)
 		public
 		override
 		authGovernance()
 	{
-		require(__arrayUtility != address(0), "!(__arrayUtility != address(0))");
+		require(__addressArrayUtility != address(0), "!(__addressArrayUtility != address(0))");
 
-		require(_arrayUtility == address(0), "!(_arrayUtility == address(0))");
+		require(_addressArrayUtility == address(0), "!(_addressArrayUtility == address(0))");
 
-		_arrayUtility = __arrayUtility;
+		_addressArrayUtility = __addressArrayUtility;
 	}
 
 	/// @inheritdoc IV1EMPRegistry
@@ -236,7 +236,7 @@ contract V1EMPRegistry is
 	{
 		require(__v1EMPStrategyUtility != address(0), "!(__v1EMPStrategyUtility != address(0))");
 
-		require(_arrayUtility != address(0), "!(_arrayUtility != address(0))");
+		require(_addressArrayUtility != address(0), "!(_addressArrayUtility != address(0))");
 
 		require(_v1EMPStrategyUtility == address(0), "!(_v1EMPStrategyUtility == address(0))");
 
@@ -251,7 +251,7 @@ contract V1EMPRegistry is
 	{
 		require(__v1EMPUtility != address(0), "!(__v1EMPUtility != address(0))");
 
-		require(_arrayUtility != address(0), "!(_arrayUtility != address(0))");
+		require(_addressArrayUtility != address(0), "!(_addressArrayUtility != address(0))");
 
 		require(_v1EMPUtility == address(0), "!(_v1EMPUtility == address(0))");
 

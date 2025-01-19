@@ -6,10 +6,10 @@ export const D_18 = ethers.utils.parseUnits('1', 18);
 export const ERROR = {
 	REGISTRY: {
 		ARRAY_UTILITY_NOT_SET:
-			"!(_arrayUtility != address(0))"
+			"!(_addressArrayUtility != address(0))"
 		,
 		ARRAY_UTILITY_IS_ADDRESS_ZERO:
-			"!(__arrayUtility != address(0))"
+			"!(__addressArrayUtility != address(0))"
 		,
 		EMP_UTILITY_NOT_SET:
 			"!(_v1EMPUtility != address(0))"
@@ -121,7 +121,7 @@ export const ERROR = {
 			"!(_utilizedERC20.length == _utilizationERC20.length)"
 		,
 		INVALID_PARAMS_UPDATE_CONTAINS_DUPLICATES:
-			"IArrayUtility(_I_V1_EMP_REGISTRY.arrayUtility()).containsDuplicates(_utilizedERC20)"
+			"IAddressArrayUtility(_I_V1_EMP_REGISTRY.addressArrayUtility()).containsDuplicates(_utilizedERC20)"
 		,
 		INVALID_ERC20_HANDLER:
 			"!_iERC20Handler"

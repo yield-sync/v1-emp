@@ -7,7 +7,7 @@ import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import {
 	IERC20ETHValueProvider
 } from "@yield-sync/erc20-eth-value-provider/contracts/interface/IERC20ETHValueProvider.sol";
-import { IArrayUtility } from "@yield-sync/utility/contracts/interface/IArrayUtility.sol";
+import { IAddressArrayUtility } from "@yield-sync/utility/contracts/interface/IAddressArrayUtility.sol";
 
 import { IV1EMPRegistry } from "./interface/IV1EMPRegistry.sol";
 import { IV1EMPStrategy } from "./interface/IV1EMPStrategy.sol";
@@ -144,7 +144,7 @@ contract V1EMPStrategyUtility is
 		override
 		returns (address[] memory)
 	{
-		return IArrayUtility(_I_V1_EMP_REGISTRY.arrayUtility()).sort(_utilizedERC20);
+		return IAddressArrayUtility(_I_V1_EMP_REGISTRY.addressArrayUtility()).sort(_utilizedERC20);
 	}
 
 
@@ -169,9 +169,9 @@ contract V1EMPStrategyUtility is
 			return (false, "!(_utilizedERC20.length == _utilizationERC20.length)");
 		}
 
-		if (IArrayUtility(_I_V1_EMP_REGISTRY.arrayUtility()).containsDuplicates(_utilizedERC20))
+		if (IAddressArrayUtility(_I_V1_EMP_REGISTRY.addressArrayUtility()).containsDuplicates(_utilizedERC20))
 		{
-			return (false, "IArrayUtility(_I_V1_EMP_REGISTRY.arrayUtility()).containsDuplicates(_utilizedERC20)");
+			return (false, "IAddressArrayUtility(_I_V1_EMP_REGISTRY.addressArrayUtility()).containsDuplicates(_utilizedERC20)");
 		}
 
 		uint256 utilizedERC20AllocationTotal;

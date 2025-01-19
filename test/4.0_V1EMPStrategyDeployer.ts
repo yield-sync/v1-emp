@@ -7,7 +7,7 @@ import { approveTokens, deployContract, deployEMP, deployStrategies } from "../u
 
 
 describe("[4.0] V1EMPStrategyDeployer.sol", async () => {
-	let arrayUtility: Contract;
+	let addressArrayUtility: Contract;
 	let governance: Contract;
 	let registry: Contract;
 	let strategyDeployer: Contract;
@@ -20,12 +20,12 @@ describe("[4.0] V1EMPStrategyDeployer.sol", async () => {
 		[, , treasury, badActor] = await ethers.getSigners();
 
 		governance = await deployContract("YieldSyncGovernance");
-		arrayUtility = await deployContract("ArrayUtility");
+		addressArrayUtility = await deployContract("AddressArrayUtility");
 		registry = await deployContract("V1EMPRegistry", [governance.address]);
 		strategyDeployer = await deployContract("V1EMPStrategyDeployer", [registry.address]);
 
 		await governance.payToUpdate(treasury.address);
-		await registry.arrayUtilityUpdate(arrayUtility.address);
+		await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
 		await registry.v1EMPStrategyDeployerUpdate(strategyDeployer.address);
 	});
 

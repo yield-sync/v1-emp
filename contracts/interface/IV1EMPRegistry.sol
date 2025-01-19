@@ -100,7 +100,7 @@ interface IV1EMPRegistry
 	* @dev [view-address]
 	* @return {address}
 	*/
-	function arrayUtility()
+	function addressArrayUtility()
 		external
 		view
 		returns (address)
@@ -189,10 +189,10 @@ interface IV1EMPRegistry
 	;
 
 	/**
-	* @notice ArrayUtility Update
-	* @param __arrayUtility {address}
+	* @notice AddressArrayUtility Update
+	* @param __addressArrayUtility {address}
 	*/
-	function arrayUtilityUpdate(address __arrayUtility)
+	function addressArrayUtilityUpdate(address __addressArrayUtility)
 		external
 	;
 

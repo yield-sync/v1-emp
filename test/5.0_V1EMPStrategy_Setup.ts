@@ -9,7 +9,7 @@ import { deployContract } from "../util/UtilEMP";
 
 
 describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
-	let arrayUtility: Contract;
+	let addressArrayUtility: Contract;
 	let governance: Contract;
 	let eTHValueProvider: Contract;
 	let eTHValueProviderC: Contract;
@@ -40,11 +40,11 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 
 		await governance.payToUpdate(treasury.address);
 
-		arrayUtility = await deployContract("ArrayUtility");
+		addressArrayUtility = await deployContract("AddressArrayUtility");
 
 		registry = await deployContract("V1EMPRegistry", [governance.address]);
 
-		await registry.arrayUtilityUpdate(arrayUtility.address);
+		await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
 
 		strategyUtility = await deployContract("V1EMPStrategyUtility", [registry.address]);
 

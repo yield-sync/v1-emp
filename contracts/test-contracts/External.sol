@@ -7,4 +7,4 @@ pragma solidity ^0.8.18;
 */
 import "@yield-sync/governance/contracts/YieldSyncGovernance.sol";
 import "@yield-sync/erc20-handler/contracts/Holder.sol";
-import "@yield-sync/utility/contracts/ArrayUtility.sol";
+import "@yield-sync/utility/contracts/AddressArrayUtility.sol";

@@ -15,7 +15,7 @@ const LOCATION_STRATGY: string = "V1EMPStrategy";
 describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 	let eTHValueEMPDepositAmount: BigNumber = ethers.utils.parseUnits("1", 18);
 
-	let arrayUtility: Contract;
+	let addressArrayUtility: Contract;
 	let governance: Contract;
 	let eTHValueProvider: Contract;
 	let eTHValueProviderC: Contract;
@@ -45,11 +45,11 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 
 		await governance.payToUpdate(treasury.address);
 
-		arrayUtility = await deployContract("ArrayUtility");
+		addressArrayUtility = await deployContract("AddressArrayUtility");
 
 		registry = await deployContract("V1EMPRegistry", [governance.address]);
 
-		await registry.arrayUtilityUpdate(arrayUtility.address);
+		await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
 
 		strategyUtility = await deployContract("V1EMPStrategyUtility", [registry.address]);
 
@@ -180,7 +180,7 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 		it("Should allow setting utilizedERC20 on EMP..", async () => {
 			let utilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(_eMPs[0].contract.address);
 
-			let myUtilizedERC20 = await arrayUtility.sort([mockERC20A.address, mockERC20B.address, mockERC20C.address])
+			let myUtilizedERC20 = await addressArrayUtility.sort([mockERC20A.address, mockERC20B.address, mockERC20C.address])
 
 			for (let i = 0; i < utilizedERC20.length; i++)
 			{

@@ -9,7 +9,7 @@ import { deployContract } from "../util/UtilEMP";
 
 
 describe("[1.0] V1EMPRegistry.sol", async () => {
-	let arrayUtility: Contract;
+	let addressArrayUtility: Contract;
 	let governance: Contract;
 	let registry: Contract;
 
@@ -24,7 +24,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 		[owner, manager, treasury, fakeERC20, fakeEthValueProvider] = await ethers.getSigners();
 
 		governance = await deployContract("YieldSyncGovernance");
-		arrayUtility = await deployContract("ArrayUtility");
+		addressArrayUtility = await deployContract("AddressArrayUtility");
 		registry = await deployContract("V1EMPRegistry", [governance.address]);
 
 		await governance.payToUpdate(treasury.address);
@@ -38,7 +38,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 			);
 		});
 
-		it("Should not allow invalid arrayUtility to be set..", async () => {
+		it("Should not allow invalid addressArrayUtility to be set..", async () => {
 			await expect(registry.governanceUpdate(ethers.constants.AddressZero)).to.be.rejectedWith(
 				ERROR.REGISTRY.GOVERNANCE_IS_ADDRESS_ZERO
 			);
@@ -52,23 +52,23 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 	});
 
 
-	describe("function arrayUtilityUpdate()", async () => {
+	describe("function addressArrayUtilityUpdate()", async () => {
 		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
-			await expect(registry.connect(manager).arrayUtilityUpdate(arrayUtility.address)).to.be.rejectedWith(
+			await expect(registry.connect(manager).addressArrayUtilityUpdate(addressArrayUtility.address)).to.be.rejectedWith(
 				ERROR.NOT_AUTHORIZED
 			);
 		});
 
-		it("Should not allow invalid arrayUtility to be set..", async () => {
-			await expect(registry.arrayUtilityUpdate(ethers.constants.AddressZero)).to.be.rejectedWith(
+		it("Should not allow invalid addressArrayUtility to be set..", async () => {
+			await expect(registry.addressArrayUtilityUpdate(ethers.constants.AddressZero)).to.be.rejectedWith(
 				ERROR.REGISTRY.ARRAY_UTILITY_IS_ADDRESS_ZERO
 			);
 		});
 
 		it("Should allow authorized caller to update EMP Deployer..", async () => {
-			await expect(registry.arrayUtilityUpdate(arrayUtility.address)).to.be.not.rejected;
+			await expect(registry.addressArrayUtilityUpdate(addressArrayUtility.address)).to.be.not.rejected;
 
-			expect(await registry.arrayUtility()).to.be.equal(arrayUtility.address);
+			expect(await registry.addressArrayUtility()).to.be.equal(addressArrayUtility.address);
 		});
 	});
 
@@ -86,7 +86,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 		});
 
 		it("Should not allow invalid v1EMPUtility to be set..", async () => {
-			await registry.arrayUtilityUpdate(arrayUtility.address);
+			await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
 
 			await expect(registry.v1EMPUtilityUpdate(ethers.constants.AddressZero)).to.be.rejectedWith(
 				ERROR.REGISTRY.EMP_UTILITY_IS_ADDRESS_ZERO
@@ -94,7 +94,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 		});
 
 		it("Should allow authorized caller to update EMP Utility..", async () => {
-			await registry.arrayUtilityUpdate(arrayUtility.address);
+			await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
 
 			await expect(registry.v1EMPUtilityUpdate(owner.address)).to.be.not.rejected;
 
@@ -116,7 +116,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 		});
 
 		it("Should not allow invalid __v1EMPStrategyUtility to be set..", async () => {
-			await registry.arrayUtilityUpdate(arrayUtility.address);
+			await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
 
 			await expect(registry.v1EMPStrategyUtilityUpdate(ethers.constants.AddressZero)).to.be.rejectedWith(
 				ERROR.REGISTRY.STRATEGY_UTILITY_IS_ADDRESS_ZERO
@@ -124,7 +124,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 		});
 
 		it("Should allow authorized caller to update EMP Strategy Utility..", async () => {
-			await registry.arrayUtilityUpdate(arrayUtility.address);
+			await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
 
 			await expect(registry.v1EMPStrategyUtilityUpdate(owner.address)).to.be.not.rejected;
 
@@ -134,7 +134,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 
 	describe("function v1EMPDeployerUpdate()", async () => {
 		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
-			await registry.arrayUtilityUpdate(arrayUtility.address);
+			await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
 
 			await registry.v1EMPUtilityUpdate(owner.address);
 
@@ -144,7 +144,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 		});
 
 		it("Should not allow to set the EMP Deployer until the EMP Utility is set..", async () => {
-			await registry.arrayUtilityUpdate(arrayUtility.address);
+			await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
 
 			await expect(registry.v1EMPDeployerUpdate(owner.address)).to.be.rejectedWith(
 				ERROR.REGISTRY.EMP_UTILITY_NOT_SET
@@ -152,7 +152,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 		});
 
 		it("Should not allow invalid EMPDeployer to be set..", async () => {
-			await registry.arrayUtilityUpdate(arrayUtility.address);
+			await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
 
 			await registry.v1EMPUtilityUpdate(owner.address);
 
@@ -162,7 +162,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 		});
 
 		it("Should allow authorized caller to update EMP Deployer..", async () => {
-			await registry.arrayUtilityUpdate(arrayUtility.address);
+			await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
 
 			await registry.v1EMPUtilityUpdate(owner.address);
 
@@ -173,7 +173,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 
 		it("Should NOT allow EMP Deployer to updated again after being set..", async () => {
 			// Set prerequisites
-			await registry.arrayUtilityUpdate(arrayUtility.address);
+			await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
 			await registry.v1EMPUtilityUpdate(owner.address);
 
 			// Set EMP Deployer for the first time
@@ -194,7 +194,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 
 	describe("function v1EMPRegister()", async () => {
 		beforeEach(async () => {
-			await registry.arrayUtilityUpdate(arrayUtility.address);
+			await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
 
 			await registry.v1EMPUtilityUpdate(owner.address);
 
@@ -220,7 +220,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 
 	describe("function v1EMPStrategyDeployerUpdate()", async () => {
 		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
-			await registry.arrayUtilityUpdate(arrayUtility.address);
+			await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
 
 			await expect(registry.connect(manager).v1EMPStrategyDeployerUpdate(manager.address)).to.be.rejectedWith(
 				ERROR.NOT_AUTHORIZED
@@ -228,7 +228,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 		});
 
 		it("Should not allow invalid EMPStrategyDeployer to be set..", async () => {
-			await registry.arrayUtilityUpdate(arrayUtility.address);
+			await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
 
 			await expect(registry.v1EMPStrategyDeployerUpdate(ethers.constants.AddressZero)).to.be.rejectedWith(
 				ERROR.REGISTRY.EMP_STRATEGY_DEPLOYER_IS_ADDRESS_ZERO
@@ -236,7 +236,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 		});
 
 		it("Should allow authorized caller to update EMP Strategy Deployer..", async () => {
-			await registry.arrayUtilityUpdate(arrayUtility.address);
+			await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
 
 			await expect(registry.v1EMPStrategyDeployerUpdate(owner.address)).to.be.not.rejected;
 
@@ -245,7 +245,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 
 		it("Should NOT allow EMP Strategy Deployer to updated again after being set..", async () => {
 			// Set prerequisites
-			await registry.arrayUtilityUpdate(arrayUtility.address);
+			await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
 
 			// Set EMP Strategy Deployer for the first time
 			await registry.v1EMPStrategyDeployerUpdate(owner.address);
@@ -266,7 +266,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 
 	describe("function v1EMPStrategyRegister()", async () => {
 		beforeEach(async () => {
-			await registry.arrayUtilityUpdate(arrayUtility.address);
+			await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
 
 			await registry.v1EMPStrategyDeployerUpdate(owner.address);
 
@@ -292,7 +292,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 
 	describe("function eRC20_eRC20ETHValueProviderUpdate()", async () => {
 		beforeEach(async () => {
-			await registry.arrayUtilityUpdate(arrayUtility.address);
+			await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
 
 			await registry.v1EMPStrategyDeployerUpdate(owner.address);
 

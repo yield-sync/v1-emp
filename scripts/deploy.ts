@@ -17,7 +17,7 @@ async function main()
 	console.log("Attempting Deployment..");
 
 	let governanceContract: string;
-	let arrayUtilityContract: string;
+	let addressArrayUtilityContract: string;
 
 	switch (network.name)
 	{
@@ -33,12 +33,12 @@ async function main()
 
 			if (!process.env.YIELD_SYNC_UTILITY_ARRAY_UTILITY_SEPOLIA)
 			{
-				console.error("Error: No Yield Sync arrayUtility contract set for Sepolia.");
+				console.error("Error: No Yield Sync addressArrayUtility contract set for Sepolia.");
 
 				process.exit(2);
 			}
 
-			arrayUtilityContract = process.env.YIELD_SYNC_UTILITY_ARRAY_UTILITY_SEPOLIA;
+			addressArrayUtilityContract = process.env.YIELD_SYNC_UTILITY_ARRAY_UTILITY_SEPOLIA;
 
 			break;
 
@@ -54,12 +54,12 @@ async function main()
 
 			if (!process.env.YIELD_SYNC_UTILITY_ARRAY_UTILITY_BASE_SEPOLIA)
 			{
-				console.error("Error: No Yield Sync arrayUtility contract set for Base Sepolia.");
+				console.error("Error: No Yield Sync addressArrayUtility contract set for Base Sepolia.");
 
 				process.exit(2);
 			}
 
-			arrayUtilityContract = process.env.YIELD_SYNC_UTILITY_ARRAY_UTILITY_BASE_SEPOLIA;
+			addressArrayUtilityContract = process.env.YIELD_SYNC_UTILITY_ARRAY_UTILITY_BASE_SEPOLIA;
 
 			break;
 
@@ -129,7 +129,7 @@ async function main()
 
 
 	// Register the contract on the register contract
-	await registry.arrayUtilityUpdate(arrayUtilityContract);
+	await registry.addressArrayUtilityUpdate(addressArrayUtilityContract);
 
 	await registry.v1EMPStrategyUtilityUpdate(eMPStrategyUtility.address);
 
