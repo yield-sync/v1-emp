@@ -8,7 +8,6 @@ require("dotenv").config();
 const path = require('path');
 
 
-// [const]
 const filePath = path.join(__dirname, '..', 'deployed.txt');
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
@@ -73,11 +72,20 @@ async function main()
 
 	writeFileSync(filePath, `Attempted Deployment Timestamp: ${Date.now()}\n`, { flag: "a" });
 
-	const notice: string = `Network: ${network.name}\nAccount: ${DEPLOYER.address}\nBalance: ${await DEPLOYER.getBalance()}\n`;
+	const notice_network: string = `Network: ${network.name}\n`;
 
-	writeFileSync(filePath, notice, { flag: "a" });
+	writeFileSync(filePath, notice_network, { flag: "a" });
+	console.log(notice_network);
 
-	console.log(notice);
+	const notice_account: string = `Account: ${DEPLOYER.address}\n`;
+
+	writeFileSync(filePath, notice_account, { flag: "a" });
+	console.log(notice_account);
+
+	const notice_balance: string = `Balance: ${await DEPLOYER.getBalance()}\n`;
+
+	writeFileSync(filePath, notice_balance, { flag: "a" });
+	console.log(notice_balance);
 
 
 	// Registry
