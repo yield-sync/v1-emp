@@ -8,5 +8,19 @@
 		"skipLibCheck": true
 	},
 	"files": ["./hardhat.config.ts"],
-	"include": ["./src", "util", "util/*", "./test/*", "global.d.ts", "const.ts", "scripts", "scripts", "scripts/*"]
+	"include": [
+		"./src",
+		"util",
+		"util/*",
+		"./test/*",
+		"global.d.ts",
+		"const.ts",
+		"scripts",
+		"scripts/*",
+		"test/1-EMPRegistry/*",
+		"test/2-EMPStrategyUtility/*",
+		"test/3-EMPUtility/*",
+		"test/4-EMPStrategy/*",
+		"test/5-EMPStrategy/*"
+	],
 }

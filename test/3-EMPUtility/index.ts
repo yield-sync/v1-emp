@@ -3,8 +3,8 @@ const { ethers } = require("hardhat");
 
 import { expect } from "chai";
 import { Contract, VoidSigner } from "ethers";
-import { ERROR } from "../const";
-import { deployContract } from "../util/UtilEMP";
+import { ERROR } from "../../const";
+import { deployContract } from "../../util/UtilEMP";
 
 
 describe("[3.0] V1EMPUtility.sol", async () => {

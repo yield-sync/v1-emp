@@ -4,8 +4,8 @@ const { ethers } = require("hardhat");
 import { expect } from "chai";
 import { Contract, ContractFactory, VoidSigner } from "ethers";
 
-import { ERROR, PERCENT } from "../const";
-import { deployContract } from "../util/UtilEMP";
+import { ERROR, PERCENT } from "../../const";
+import { deployContract } from "../../util/UtilEMP";
 
 
 describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
