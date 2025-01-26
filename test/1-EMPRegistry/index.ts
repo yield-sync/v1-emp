@@ -343,9 +343,9 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 			it("Should update _v1EMPUtility with valid params..", async () => {
 				await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
 
-				await expect(registry.v1EMPUtilityUpdate(owner.address)).to.be.not.rejected;
+				await expect(registry.v1EMPUtilityUpdate(fakeEMPUtility.address)).to.be.not.rejected;
 
-				expect(await registry.v1EMPUtility()).to.be.equal(owner.address);
+				expect(await registry.v1EMPUtility()).to.be.equal(fakeEMPUtility.address);
 			});
 		});
 	});
