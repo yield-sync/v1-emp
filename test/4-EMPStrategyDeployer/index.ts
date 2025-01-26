@@ -31,7 +31,7 @@ describe("[4.0] V1EMPStrategyDeployer.sol", async () => {
 
 
 	describe("function deployV1EMPStrategyOpenUpdate()", async () => {
-		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
+		it("[auth] Should revert if an unauthorized sender calls..", async () => {
 			// Deploy an EMP
 			await expect(strategyDeployer.connect(badActor).deployV1EMPStrategyOpenUpdate(true)).to.be.rejectedWith(
 				"!authorized"
@@ -48,7 +48,7 @@ describe("[4.0] V1EMPStrategyDeployer.sol", async () => {
 	});
 
 	describe("function deployV1EMPStrategy()", async () => {
-		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
+		it("[auth] Should revert if an unauthorized sender calls..", async () => {
 			await expect(strategyDeployer.connect(badActor).deployV1EMPStrategy()).to.be.rejectedWith(
 				"!authorized"
 			);

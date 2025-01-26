@@ -174,7 +174,7 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 
 	describe("function utilizedV1EMPStrategyWithdraw()", async () => {
 		describe("Modifier", async () => {
-			it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
+			it("[auth] Should revert if an unauthorized sender calls..", async () => {
 				await expect(eMPs[0].contract.connect(badActor).utilizedV1EMPStrategyWithdraw([])).to.be.rejectedWith(
 					ERROR.NOT_AUTHORIZED
 				);
@@ -348,7 +348,7 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 
 	describe("function utilizedERC20WithdrawFullUpdate()", async () => {
 		describe("Expected Failure", async () => {
-			it("[modifier][auth] Should revert when unauthorized msg.sender calls..", async () => {
+			it("[modifier][auth] Should revert if an unauthorized sender calls..", async () => {
 				await expect(eMPs[0].contract.connect(badActor).utilizedERC20WithdrawFullUpdate(true)).to.be.rejectedWith(
 					ERROR.NOT_AUTHORIZED
 				);

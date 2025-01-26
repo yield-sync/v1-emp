@@ -123,7 +123,7 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 
 	describe("function managerUpdate()", async () => {
 		describe("Expected Failure", async () => {
-			it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
+			it("[auth] Should revert if an unauthorized sender calls..", async () => {
 				await expect(eMP.connect(outsider).managerUpdate(outsider.address)).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
 			});
 		});
@@ -139,7 +139,7 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 
 	describe("function feeRateManagerUpdate() (1/2)", async () => {
 		describe("Expected Failure", async () => {
-			it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
+			it("[auth] Should revert if an unauthorized sender calls..", async () => {
 				await expect(eMP.connect(outsider).feeRateManagerUpdate(outsider.address)).to.be.rejectedWith(
 					ERROR.NOT_AUTHORIZED
 				);
@@ -167,7 +167,7 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 
 	describe("function feeRateGovernanceUpdate() (1/2)", async () => {
 		describe("Expected Failure", async () => {
-			it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
+			it("[auth] Should revert if an unauthorized sender calls..", async () => {
 				await expect(eMP.connect(outsider).feeRateGovernanceUpdate(outsider.address)).to.be.rejectedWith(
 					ERROR.NOT_AUTHORIZED
 				);
@@ -223,7 +223,7 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 
 	describe("function utilizedV1EMPStrategyUpdate() (1/2)", async () => {
 		describe("Expected Failure", async () => {
-			it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
+			it("[auth] Should revert if an unauthorized sender calls..", async () => {
 				await expect(eMP.connect(outsider).utilizedV1EMPStrategyUpdate([], [])).to.be.rejectedWith(
 					ERROR.NOT_AUTHORIZED
 				);

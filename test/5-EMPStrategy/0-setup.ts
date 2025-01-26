@@ -88,7 +88,7 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 
 
 	describe("function managerUpdate()", async () => {
-		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
+		it("[auth] Should revert if an unauthorized sender calls..", async () => {
 			await expect(strategy.connect(badActor).managerUpdate(badActor.address)).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
 		});
 
@@ -101,7 +101,7 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 
 	describe("function utilizedERC20Update() (1/2)", async () => {
 		describe("Expected Failure", async () => {
-			it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
+			it("[auth] Should revert if an unauthorized sender calls..", async () => {
 				await expect(
 					strategy.connect(badActor).utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]])
 				).to.be.rejectedWith(
@@ -263,7 +263,7 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 
 		describe("Expected Failure", async () => {
 			it(
-				"[auth] Should revert when unauthorized msg.sender calls..",
+				"[auth] Should revert if an unauthorized sender calls..",
 				async () => {
 					await expect(
 						strategy.connect(badActor).iERC20HandlerUpdate(eRC20Handler.address)
@@ -298,7 +298,7 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 	});
 
 	describe("function utilizedERC20DepositOpenUpdate()", async () => {
-		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
+		it("[auth] Should revert if an unauthorized sender calls..", async () => {
 			await expect(strategy.connect(badActor).utilizedERC20DepositOpenUpdate(true)).to.be.rejectedWith(
 				ERROR.NOT_AUTHORIZED
 			);
@@ -324,7 +324,7 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 	});
 
 	describe("function utilizedERC20WithdrawOpenUpdate()", async () => {
-		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
+		it("[auth] Should revert if an unauthorized sender calls..", async () => {
 			await expect(
 				strategy.connect(badActor).utilizedERC20WithdrawOpenUpdate(true)
 			).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
