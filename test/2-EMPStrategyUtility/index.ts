@@ -34,7 +34,7 @@ describe("[2.0] V1EMPStrategyUtility.sol", async () => {
 	describe("view", async () => {
 		describe("function depositAmountsValid()", async () => {
 			describe("Expected Failure", async () => {
-				it("[modifier] Should only be able to pass a valid EMP STRATEGY address..", async () => {
+				it("[modifier] Should only be able to pass a valid _v1EMPStrategy address..", async () => {
 					await expect(
 						utility.depositAmountsValid(ethers.constants.AddressZero, [])
 					).to.be.rejectedWith(
@@ -46,7 +46,7 @@ describe("[2.0] V1EMPStrategyUtility.sol", async () => {
 
 		describe("function utilizedERC20AmountETHValue()", async () => {
 			describe("Expected Failure", async () => {
-				it("[modifier] Should only be able to pass a valid EMP STRATEGY address..", async () => {
+				it("[modifier] Should only be able to pass a valid _v1EMPStrategy address..", async () => {
 					await expect(
 						utility.utilizedERC20AmountETHValue(ethers.constants.AddressZero, [])
 					).to.be.rejectedWith(
@@ -60,7 +60,7 @@ describe("[2.0] V1EMPStrategyUtility.sol", async () => {
 	describe("mutatitive", async () => {
 		describe("function utilizedERC20UpdateValid()", async () => {
 			describe("Expected Failure", async () => {
-				it("[modifier] Should only be able to pass a valid EMP STRATEGY address..", async () => {
+				it("[modifier] Should only be able to pass a valid _v1EMPStrategy address..", async () => {
 					await expect(
 						utility.utilizedERC20UpdateValid(ethers.constants.AddressZero, [], [])
 					).to.be.rejectedWith(
