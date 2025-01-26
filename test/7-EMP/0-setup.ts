@@ -4,9 +4,9 @@ const { ethers } = require("hardhat");
 import { expect } from "chai";
 import { Contract, ContractFactory, VoidSigner } from "ethers";
 
-import { ERROR, PERCENT } from "../const";
-import UtilStrategyTransfer from "../util/UtilStrategyTransfer";
-import { approveTokens, deployContract, deployEMP, deployStrategies } from "../util/UtilEMP";
+import { ERROR, PERCENT } from "../../const";
+import UtilStrategyTransfer from "../../util/UtilStrategyTransfer";
+import { deployContract, deployStrategies } from "../../util/UtilEMP";
 
 
 describe("[7.0] V1EMP.sol - Setup", async () => {
@@ -20,7 +20,6 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 	let registry: Contract;
 	let strategyDeployer: Contract;
 	let strategyUtility: Contract;
-	let eRC20Handler: Contract;
 
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;
