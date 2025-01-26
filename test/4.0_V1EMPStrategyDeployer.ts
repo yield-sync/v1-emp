@@ -2,8 +2,8 @@ const { ethers } = require("hardhat");
 
 
 import { expect } from "chai";
-import { Contract, ContractFactory, VoidSigner } from "ethers";
-import { approveTokens, deployContract, deployEMP, deployStrategies } from "../util/UtilEMP";
+import { Contract, VoidSigner } from "ethers";
+import { deployContract } from "../util/UtilEMP";
 
 
 describe("[4.0] V1EMPStrategyDeployer.sol", async () => {
@@ -28,6 +28,7 @@ describe("[4.0] V1EMPStrategyDeployer.sol", async () => {
 		await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
 		await registry.v1EMPStrategyDeployerUpdate(strategyDeployer.address);
 	});
+
 
 	describe("function deployV1EMPStrategyOpenUpdate()", async () => {
 		it("[auth] Should revert when unauthorized msg.sender calls..", async () => {
