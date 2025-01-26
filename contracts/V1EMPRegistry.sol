@@ -90,16 +90,6 @@ contract V1EMPRegistry is
 		return _governance;
 	}
 
-	/// @inheritdoc IV1EMPRegistry
-	function v1EMPUtility()
-		public
-		view
-		override
-		returns(address)
-	{
-		return _v1EMPUtility;
-	}
-
 
 	/// @inheritdoc IV1EMPRegistry
 	function v1EMPDeployer()
@@ -129,6 +119,16 @@ contract V1EMPRegistry is
 		returns(address)
 	{
 		return _v1EMPStrategyUtility;
+	}
+
+	/// @inheritdoc IV1EMPRegistry
+	function v1EMPUtility()
+		public
+		view
+		override
+		returns(address)
+	{
+		return _v1EMPUtility;
 	}
 
 
@@ -171,8 +171,6 @@ contract V1EMPRegistry is
 
 		_governance = __governance;
 	}
-
-
 
 	/// @inheritdoc IV1EMPRegistry
 	function v1EMPDeployerUpdate(address __v1EMPDeployer)

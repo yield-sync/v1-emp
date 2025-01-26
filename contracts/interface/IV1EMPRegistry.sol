@@ -142,9 +142,8 @@ interface IV1EMPRegistry
 	* @dev [view-address]
 	* @return {address}
 	*/
-	function v1EMPStrategyUtility()
+	function v1EMPStrategyDeployer()
 		external
-		view
 		returns (address)
 	;
 
@@ -152,8 +151,9 @@ interface IV1EMPRegistry
 	* @dev [view-address]
 	* @return {address}
 	*/
-	function v1EMPStrategyDeployer()
+	function v1EMPStrategyUtility()
 		external
+		view
 		returns (address)
 	;
 
@@ -172,6 +172,14 @@ interface IV1EMPRegistry
 
 
 	/**
+	* @notice AddressArrayUtility Update
+	* @param __addressArrayUtility {address}
+	*/
+	function addressArrayUtilityUpdate(address __addressArrayUtility)
+		external
+	;
+
+	/**
 	* @notice Update eRC20 -> iERC20ETHValueProvider
 	* @param _eRC20 {address}
 	* @param _eRC20ETHValueProvider {address}
@@ -187,15 +195,6 @@ interface IV1EMPRegistry
 	function governanceUpdate(address __governance)
 		external
 	;
-
-	/**
-	* @notice AddressArrayUtility Update
-	* @param __addressArrayUtility {address}
-	*/
-	function addressArrayUtilityUpdate(address __addressArrayUtility)
-		external
-	;
-
 
 	/**
 	* @notice V1EMPDeployer Update
