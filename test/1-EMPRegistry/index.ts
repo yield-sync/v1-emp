@@ -49,8 +49,8 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 	});
 
 
-	describe("mutative", async () => {
-		describe("function addressArrayUtilityUpdate()", async () => {
+	describe("mutative", () => {
+		describe("function addressArrayUtilityUpdate()", () => {
 			it("[auth] Should revert if an unauthorized sender calls..", async () => {
 				await expect(
 					registry.connect(badActor).addressArrayUtilityUpdate(addressArrayUtility.address)
@@ -72,7 +72,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 			});
 		});
 
-		describe("function v1EMPDeployerUpdate()", async () => {
+		describe("function v1EMPDeployerUpdate()", () => {
 			beforeEach(async () => {
 				await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
 			});
@@ -123,7 +123,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 			});
 		});
 
-		describe("function v1EMPStrategyDeployerUpdate()", async () => {
+		describe("function v1EMPStrategyDeployerUpdate()", () => {
 			beforeEach(async () => {
 				await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
 			});
@@ -163,7 +163,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 
 		});
 
-		describe("function eRC20_eRC20ETHValueProviderUpdate()", async () => {
+		describe("function eRC20_eRC20ETHValueProviderUpdate()", () => {
 			beforeEach(async () => {
 				await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
 				await registry.v1EMPStrategyDeployerUpdate(fakeStrategyDeployer.address);
@@ -217,7 +217,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 			});
 		});
 
-		describe("function governanceUpdate()", async () => {
+		describe("function governanceUpdate()", () => {
 			it("[auth] Should revert if an unauthorized sender calls..", async () => {
 				await expect(registry.connect(badActor).governanceUpdate(owner.address)).to.be.rejectedWith(
 					ERROR.NOT_AUTHORIZED
@@ -237,7 +237,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 			});
 		});
 
-		describe("function v1EMPRegister()", async () => {
+		describe("function v1EMPRegister()", () => {
 			beforeEach(async () => {
 				await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
 				await registry.v1EMPUtilityUpdate(owner.address);
@@ -261,7 +261,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 			});
 		});
 
-		describe("function v1EMPStrategyRegister()", async () => {
+		describe("function v1EMPStrategyRegister()", () => {
 			beforeEach(async () => {
 				await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
 				await registry.v1EMPStrategyDeployerUpdate(fakeStrategyDeployer.address);
@@ -289,7 +289,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 			});
 		});
 
-		describe("function v1EMPStrategyUtilityUpdate()", async () => {
+		describe("function v1EMPStrategyUtilityUpdate()", () => {
 			it("[auth] Should revert if an unauthorized sender calls..", async () => {
 				await expect(registry.connect(badActor).v1EMPStrategyUtilityUpdate(badActor.address)).to.be.rejectedWith(
 					ERROR.NOT_AUTHORIZED
@@ -319,7 +319,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 			});
 		});
 
-		describe("function v1EMPUtilityUpdate()", async () => {
+		describe("function v1EMPUtilityUpdate()", () => {
 			it("[auth] Should revert if an unauthorized sender calls..", async () => {
 				await expect(registry.connect(badActor).v1EMPUtilityUpdate(badActor.address)).to.be.rejectedWith(
 					ERROR.NOT_AUTHORIZED
