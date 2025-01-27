@@ -232,7 +232,7 @@ contract V1EMPUtility is
 
 
 	/// @inheritdoc IV1EMPUtility
-	function utilizedStrategySync()
+	function utilizedV1EMPStrategySync()
 		public
 		override
 	{

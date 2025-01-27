@@ -176,7 +176,7 @@ contract V1EMP is
 		nonReentrant()
 		utilizedERC20DepositOpenRequired()
 	{
-		utilizedStrategySync();
+		utilizedV1EMPStrategySync();
 
 		(
 			bool valid,
@@ -214,34 +214,6 @@ contract V1EMP is
 	}
 
 	/// @inheritdoc IV1EMP
-	function utilizedStrategySync()
-		public
-		override
-	{
-		_I_V1_EMP_UTILITY().utilizedStrategySync();
-
-		address[] memory utilizedERC20 = _I_V1_EMP_UTILITY().v1EMP_utilizedERC20(address(this));
-
-		for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
-		{
-			for (uint256 ii = 0; ii < utilizedERC20.length; ii++)
-			{
-				address eRC20Handler = address(IV1EMPStrategy(_utilizedV1EMPStrategy[i]).iERC20Handler());
-
-				if (eRC20Handler == address(0))
-				{
-					continue;
-				}
-
-				if (IERC20(utilizedERC20[ii]).allowance(address(this), eRC20Handler) != type(uint256).max)
-				{
-					IERC20(utilizedERC20[ii]).approve(eRC20Handler, type(uint256).max);
-				}
-			}
-		}
-	}
-
-	/// @inheritdoc IV1EMP
 	function utilizedERC20Withdraw(uint256 _eRC20Amount)
 		public
 		override
@@ -251,7 +223,7 @@ contract V1EMP is
 
 		require(balanceOf(msg.sender) >= _eRC20Amount, "!(balanceOf(msg.sender) >= _eRC20Amount)");
 
-		utilizedStrategySync();
+		utilizedV1EMPStrategySync();
 
 		address[] memory _utilizedERC20 = _I_V1_EMP_UTILITY().v1EMP_utilizedERC20(address(this));
 
@@ -372,7 +344,35 @@ contract V1EMP is
 			utilizedV1EMPStrategy_allocation[_v1EMPStrategy[i]] = _allocation[i];
 		}
 
-		utilizedStrategySync();
+		utilizedV1EMPStrategySync();
+	}
+
+	/// @inheritdoc IV1EMP
+	function utilizedV1EMPStrategySync()
+		public
+		override
+	{
+		_I_V1_EMP_UTILITY().utilizedV1EMPStrategySync();
+
+		address[] memory utilizedERC20 = _I_V1_EMP_UTILITY().v1EMP_utilizedERC20(address(this));
+
+		for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
+		{
+			for (uint256 ii = 0; ii < utilizedERC20.length; ii++)
+			{
+				address eRC20Handler = address(IV1EMPStrategy(_utilizedV1EMPStrategy[i]).iERC20Handler());
+
+				if (eRC20Handler == address(0))
+				{
+					continue;
+				}
+
+				if (IERC20(utilizedERC20[ii]).allowance(address(this), eRC20Handler) != type(uint256).max)
+				{
+					IERC20(utilizedERC20[ii]).approve(eRC20Handler, type(uint256).max);
+				}
+			}
+		}
 	}
 
 	/// @inheritdoc IV1EMP
@@ -386,7 +386,7 @@ contract V1EMP is
 			"!(_v1EMPStrategyERC20Amount.length == _utilizedV1EMPStrategy.length)"
 		);
 
-		utilizedStrategySync();
+		utilizedV1EMPStrategySync();
 
 		for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
 		{

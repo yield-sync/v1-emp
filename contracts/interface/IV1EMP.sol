@@ -156,13 +156,6 @@ interface IV1EMP is
 	;
 
 	/**
-	* @notice Utilized Strategy Sync
-	*/
-	function utilizedStrategySync()
-		external
-	;
-
-	/**
 	* @notice Utilized ERC20 Withdraw
 	* @param _eRC20Amount {uint256}
 	*/
@@ -202,6 +195,14 @@ interface IV1EMP is
 	function utilizedV1EMPStrategyUpdate(address[] memory _v1EMPStrategy, uint256[] memory _allocation)
 		external
 	;
+
+	/**
+	* @notice Utilized V1 EMP Strategy Sync
+	*/
+	function utilizedV1EMPStrategySync()
+		external
+	;
+
 
 	/**
 	* @notice Withdraw utilized ERC20s from strategy

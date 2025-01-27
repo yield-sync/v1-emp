@@ -70,6 +70,14 @@ describe("[3.0] V1EMPUtility.sol", async () => {
 					ERROR.EMP.ADDRESS_NOT_EMP
 				);
 			});
+
+			it("Should not allow passing _utilizedERC20Amount with invalid length..", async () => {
+				await expect(
+					utility.utilizedERC20AmountValid(fakeEMP.address, [1])
+				).to.be.rejectedWith(
+					ERROR.EMP_UTILITY.INVALID_UTILIZED_ERC20_LENGTH
+				);
+			});
 		});
 
 		describe("function utilizedV1EMPStrategyValid()", async () => {
@@ -94,9 +102,9 @@ describe("[3.0] V1EMPUtility.sol", async () => {
 	});
 
 	describe("mutative", async () => {
-		describe("function utilizedStrategySync()", async () => {
+		describe("function utilizedV1EMPStrategySync()", async () => {
 			it("[modifier][auth] Should only be able to called by EMP..", async () => {
-				await expect(utility.utilizedStrategySync()).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
+				await expect(utility.utilizedV1EMPStrategySync()).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
 			});
 		});
 

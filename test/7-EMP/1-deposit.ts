@@ -264,7 +264,7 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 				const INVALID: UtilizedERC20Amount = [];
 
 				await expect(eMPs[0].contract.utilizedERC20Deposit(INVALID)).to.be.rejectedWith(
-					ERROR.EMP.INVALID_UTILIZED_ERC20_LENGTH
+					ERROR.EMP_UTILITY.INVALID_UTILIZED_ERC20_LENGTH
 				);
 			});
 
@@ -453,7 +453,7 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 
 				it("Should be reverted if using old eMPDepositAmounts..", async () => {
 					await expect(eMPs[0].contract.utilizedERC20Deposit(eMPDepositAmounts)).to.be.revertedWith(
-						ERROR.EMP.INVALID_UTILIZED_ERC20_LENGTH
+						ERROR.EMP_UTILITY.INVALID_UTILIZED_ERC20_LENGTH
 					);
 				});
 

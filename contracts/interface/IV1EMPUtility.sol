@@ -95,7 +95,7 @@ interface IV1EMPUtility
 	/**
 	* @notice Utilized Strategy Sync
 	*/
-	function utilizedStrategySync()
+	function utilizedV1EMPStrategySync()
 		external
 	;
 }
