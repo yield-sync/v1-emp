@@ -27,29 +27,9 @@ contract V1EMPUtility is
 
 	mapping (address v1EMP => address[] utilizedERC20) internal _v1EMP_utilizedERC20;
 
-	/// @inheritdoc IV1EMPUtility
-	function v1EMP_utilizedERC20(address _v1EMP)
-		public
-		view
-		override
-		returns (address[] memory)
-	{
-		return _v1EMP_utilizedERC20[_v1EMP];
-	}
-
 	mapping (
 		address v1EMP => mapping(address utilizedERC20 => UtilizationERC20 utilizationERC20)
 	) internal _v1EMP_utilizedERC20_utilizationERC20;
-
-	/// @inheritdoc IV1EMPUtility
-	function v1EMP_utilizedERC20_utilizationERC20(address _v1EMP, address utilizedERC20)
-		public
-		view
-		override
-		returns (UtilizationERC20 memory)
-	{
-		return _v1EMP_utilizedERC20_utilizationERC20[_v1EMP][utilizedERC20];
-	}
 
 	mapping (
 		address v1EMP => mapping(address v1EMPStrategy => uint256 utilizedERC20UpdateTracker)
@@ -176,6 +156,26 @@ contract V1EMPUtility is
 		{
 			return (false, "!(utilizedV1EMPStrategyAllocationTotal == _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT())");
 		}
+	}
+
+	/// @inheritdoc IV1EMPUtility
+	function v1EMP_utilizedERC20(address _v1EMP)
+		public
+		view
+		override
+		returns (address[] memory)
+	{
+		return _v1EMP_utilizedERC20[_v1EMP];
+	}
+
+	/// @inheritdoc IV1EMPUtility
+	function v1EMP_utilizedERC20_utilizationERC20(address _v1EMP, address utilizedERC20)
+		public
+		view
+		override
+		returns (UtilizationERC20 memory)
+	{
+		return _v1EMP_utilizedERC20_utilizationERC20[_v1EMP][utilizedERC20];
 	}
 
 	/// @inheritdoc IV1EMPUtility
