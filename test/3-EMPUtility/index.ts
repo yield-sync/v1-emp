@@ -9,15 +9,20 @@ import { deployContract } from "../../util/UtilEMP";
 
 describe("[3.0] V1EMPUtility.sol", async () => {
 	let addressArrayUtility: Contract;
+	let fakeEMP: Contract;
 	let governance: Contract;
+	let mockERC20A: Contract;
+	let owner: Contract;
 	let registry: Contract;
 	let utility: Contract;
 
+	let fakeEMPUtility: VoidSigner;
+	let fakeEMPDeployer: VoidSigner;
 	let treasury: VoidSigner;
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
-		[, , treasury] = await ethers.getSigners();
+		[owner, , treasury, fakeEMPDeployer, fakeEMPDeployer, fakeEMPUtility, fakeEMP] = await ethers.getSigners();
 
 		governance = await deployContract("YieldSyncGovernance");
 		addressArrayUtility = await deployContract("AddressArrayUtility");
@@ -27,6 +32,12 @@ describe("[3.0] V1EMPUtility.sol", async () => {
 		await governance.payToUpdate(treasury.address);
 		await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
 		await registry.v1EMPStrategyDeployerUpdate(utility.address);
+
+		await registry.v1EMPUtilityUpdate(fakeEMPUtility.address);
+		await registry.v1EMPDeployerUpdate(fakeEMPDeployer.address);
+		await registry.connect(fakeEMPDeployer).v1EMPRegister(fakeEMP.address);
+
+		mockERC20A = await deployContract("MockERC20", ["Mock A", "A", 18]);
 	});
 
 
@@ -38,6 +49,18 @@ describe("[3.0] V1EMPUtility.sol", async () => {
 				).to.be.rejectedWith(
 					ERROR.EMP.ADDRESS_NOT_EMP
 				);
+			});
+
+			it("Should return TOLERATED transferAmount if EMP balance less than transferAmount..", async () => {
+				const AMOUNT = 100;
+
+				const toleratedAmount = await utility.optimizedTransferAmount(
+					fakeEMP.address,
+					mockERC20A.address,
+					AMOUNT
+				);
+
+				expect(toleratedAmount).to.be.equal(AMOUNT - await utility.TOLERANCE());
 			});
 		});
 
