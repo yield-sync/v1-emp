@@ -57,7 +57,7 @@ describe("[2.0] V1EMPStrategyUtility.sol", async () => {
 		});
 	});
 
-	describe("mutatitive", async () => {
+	describe("mutative", async () => {
 		describe("function utilizedERC20UpdateValid()", async () => {
 			describe("Expected Failure", async () => {
 				it("[modifier] Should only be able to pass a valid _v1EMPStrategy address..", async () => {

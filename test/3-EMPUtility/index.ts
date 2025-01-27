@@ -41,7 +41,9 @@ describe("[3.0] V1EMPUtility.sol", async () => {
 
 		describe("function utilizedV1EMPStrategyValid()", async () => {
 			it("[modifier] Should only be able to pass a valid EMP address..", async () => {
-				await expect(utility.utilizedV1EMPStrategyValid(ethers.constants.AddressZero, [], [])).to.be.rejectedWith(
+				await expect(
+					utility.utilizedV1EMPStrategyValid(ethers.constants.AddressZero, [], [])
+				).to.be.rejectedWith(
 					ERROR.EMP.ADDRESS_NOT_EMP
 				);
 			});
@@ -58,7 +60,7 @@ describe("[3.0] V1EMPUtility.sol", async () => {
 		});
 	});
 
-	describe("mutatitive", async () => {
+	describe("mutative", async () => {
 		describe("function utilizedStrategySync()", async () => {
 			it("[modifier][auth] Should only be able to called by EMP..", async () => {
 				await expect(utility.utilizedStrategySync()).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
