@@ -62,10 +62,10 @@ export const ERROR = {
 			"!(balanceOf(msg.sender) >= _eRC20Amount)"
 		,
 		INVALID_UTILIZED_ERC20_AMOUNT_LENGTH:
-			"!(utilizedV1EMPStrategy.length == _v1EMPStrategyUtilizedERC20Amount.length)"
+			"utilizedV1EMPStrategy.length != _v1EMPStrategyUtilizedERC20Amount.length"
 		,
 		INVALID_UTILIZED_STRATEGY_ALLOCATION:
-			"!(utilizedERC20AmountAllocationActual == iV1EMP.utilizedV1EMPStrategy_allocation(utilizedV1EMPStrategy[i]))"
+			"utilizedERC20AmountAllocationActual != iV1EMP.utilizedV1EMPStrategy_allocation(utilizedV1EMPStrategy[i])"
 		,
 		INVALID_STRATEGY_ERC20_AMOUNTS_LENGTH:
 			"!(_v1EMPStrategyERC20Amount.length == _utilizedV1EMPStrategy.length)"

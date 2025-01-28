@@ -199,7 +199,7 @@ contract V1EMPUtility is
 
 		if (utilizedV1EMPStrategy.length != _v1EMPStrategyUtilizedERC20Amount.length)
 		{
-			return (false, "!(utilizedV1EMPStrategy.length == _v1EMPStrategyUtilizedERC20Amount.length)");
+			return (false, "utilizedV1EMPStrategy.length != _v1EMPStrategyUtilizedERC20Amount.length");
 		}
 
 		uint256 utilizedV1EMPStrategyERC20AmountETHValueTotal_ = 0;
@@ -226,7 +226,7 @@ contract V1EMPUtility is
 			{
 				return (
 					false,
-					"!(utilizedERC20AmountAllocationActual == iV1EMP.utilizedV1EMPStrategy_allocation(utilizedV1EMPStrategy[i]))"
+					"utilizedERC20AmountAllocationActual != iV1EMP.utilizedV1EMPStrategy_allocation(utilizedV1EMPStrategy[i])"
 				);
 			}
 		}
