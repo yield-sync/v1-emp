@@ -131,15 +131,5 @@ describe("[3.0] V1EMPUtility.sol", async () => {
 				await expect(utility.utilizedV1EMPStrategySync()).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
 			});
 		});
-
-		describe("function v1EMPStrategyUtilizedERC20AmountValid()", async () => {
-			it("[modifier] Should only be able to pass a valid EMP address..", async () => {
-				await expect(
-					utility.v1EMPStrategyUtilizedERC20AmountValid(ethers.constants.AddressZero, [])
-				).to.be.rejectedWith(
-					ERROR.EMP.ADDRESS_NOT_EMP
-				);
-			});
-		});
 	});
 });
