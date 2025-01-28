@@ -88,6 +88,30 @@ describe("[3.0] V1EMPUtility.sol", async () => {
 					ERROR.EMP.ADDRESS_NOT_EMP
 				);
 			});
+
+			it("Should not allow passing _v1EMPStrategy with invalid length..", async () => {
+				const payload = await utility.utilizedV1EMPStrategyValid(
+					fakeEMP.address,
+					[ethers.constants.AddressZero],
+					[]
+				);
+
+				expect(payload.valid_).to.be.false;
+
+				expect(payload.message_).to.be.equal(ERROR.EMP_UTILITY.INVALID_STRATEGY_LENTH);
+			});
+
+			it("Should catch invalid _v1EMPStrategy..", async () => {
+				const payload = await utility.utilizedV1EMPStrategyValid(
+					fakeEMP.address,
+					[ethers.constants.AddressZero],
+					[0]
+				);
+
+				expect(payload.valid_).to.be.false;
+
+				expect(payload.message_).to.be.equal(ERROR.EMP_UTILITY.INVALID_V1_EMP_STRATEGY);
+			});
 		});
 
 		describe("function v1EMPStrategyUtilizedERC20AmountValid()", async () => {

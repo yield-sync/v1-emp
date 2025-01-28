@@ -88,39 +88,44 @@ contract V1EMPUtility is
 		existantV1EMP(_v1EMP)
 		returns (bool valid_, uint256 utilizedERC20AmountTotalETHValue_, string memory message_)
 	{
-		address[] memory utilizedERC20 = _v1EMP_utilizedERC20[_v1EMP];
-
-		require(_utilizedERC20Amount.length == utilizedERC20.length, "!(_utilizedERC20Amount.length == utilizedERC20.length)");
+		require(
+			_utilizedERC20Amount.length == _v1EMP_utilizedERC20[_v1EMP].length,
+			"!(_utilizedERC20Amount.length == _v1EMP_utilizedERC20[_v1EMP].length)"
+		);
 
 		valid_ = true;
 
-		uint256[] memory eRC20AmountETHValue = new uint256[](utilizedERC20.length);
+		uint256[] memory eRC20AmountETHValue = new uint256[](_v1EMP_utilizedERC20[_v1EMP].length);
 
-		for (uint256 i = 0; i < utilizedERC20.length; i++)
+		for (uint256 i = 0; i < _v1EMP_utilizedERC20[_v1EMP].length; i++)
 		{
 			eRC20AmountETHValue[i] = _utilizedERC20Amount[i].mul(
-				IERC20ETHValueProvider(_I_V1_EMP_REGISTRY.eRC20_eRC20ETHValueProvider(utilizedERC20[i])).utilizedERC20ETHValue()
+				IERC20ETHValueProvider(
+					_I_V1_EMP_REGISTRY.eRC20_eRC20ETHValueProvider(_v1EMP_utilizedERC20[_v1EMP][i])
+				).utilizedERC20ETHValue()
 			).div(
-				10 ** IERC20ETHValueProvider(_I_V1_EMP_REGISTRY.eRC20_eRC20ETHValueProvider(utilizedERC20[i])).eRC20Decimals()
+				10 ** IERC20ETHValueProvider(
+					_I_V1_EMP_REGISTRY.eRC20_eRC20ETHValueProvider(_v1EMP_utilizedERC20[_v1EMP][i])
+				).eRC20Decimals()
 			);
 
 			utilizedERC20AmountTotalETHValue_ += eRC20AmountETHValue[i];
 		}
 
-		for (uint256 i = 0; i < utilizedERC20.length; i++)
+		for (uint256 i = 0; i < _v1EMP_utilizedERC20[_v1EMP].length; i++)
 		{
 			uint256 utilizedERC20AllocationActual = eRC20AmountETHValue[i].mul(1e18).div(
 				utilizedERC20AmountTotalETHValue_,
 				"!computed"
 			);
 
-			if (_v1EMP_utilizedERC20_utilizationERC20[_v1EMP][utilizedERC20[i]].allocation != utilizedERC20AllocationActual)
+			if (
+				_v1EMP_utilizedERC20_utilizationERC20[_v1EMP][
+					_v1EMP_utilizedERC20[_v1EMP][i]
+				].allocation != utilizedERC20AllocationActual
+			)
 			{
-				return (
-					false,
-					utilizedERC20AmountTotalETHValue_,
-					"!(_v1EMP_utilizedERC20_utilizationERC20[_v1EMP][utilizedERC20[i]].allocation == utilizedERC20AllocationActual)"
-				);
+				return (false, utilizedERC20AmountTotalETHValue_, "!(utilizedERC20AllocationActual)");
 			}
 		}
 	}
@@ -137,24 +142,24 @@ contract V1EMPUtility is
 
 		if (_v1EMPStrategy.length != _allocation.length)
 		{
-			return (false, "!(_v1EMPStrategy.length == _allocation.length)");
+			return (false, "_v1EMPStrategy.length != _allocation.length");
 		}
 
 		uint256 utilizedV1EMPStrategyAllocationTotal;
 
 		for (uint256 i = 0; i < _v1EMPStrategy.length; i++)
 		{
-			require(
-				_I_V1_EMP_REGISTRY.v1EMPStrategy_v1EMPStrategyId(_v1EMPStrategy[i]) > 0,
-				"!(_I_V1_EMP_REGISTRY.v1EMPStrategy_v1EMPStrategyId(_v1EMPStrategy[i]) > 0)"
-			);
+			if (_I_V1_EMP_REGISTRY.v1EMPStrategy_v1EMPStrategyId(_v1EMPStrategy[i]) == 0)
+			{
+				return (false, "_I_V1_EMP_REGISTRY.v1EMPStrategy_v1EMPStrategyId(_v1EMPStrategy[i]) == 0");
+			}
 
 			utilizedV1EMPStrategyAllocationTotal += _allocation[i];
 		}
 
 		if (utilizedV1EMPStrategyAllocationTotal != _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT())
 		{
-			return (false, "!(utilizedV1EMPStrategyAllocationTotal == _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT())");
+			return (false, "utilizedV1EMPStrategyAllocationTotal != _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT()");
 		}
 	}
 
