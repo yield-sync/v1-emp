@@ -33,16 +33,6 @@ contract V1EMPStrategy is
 
 	mapping (address utilizedERC20 => UtilizationERC20 utilizationERC20) internal _utilizedERC20_utilizationERC20;
 
-	/// @inheritdoc IV1EMPStrategy
-	function utilizedERC20_utilizationERC20(address __utilizedERC20)
-		public
-		view
-		override
-		returns (UtilizationERC20 memory)
-	{
-		return _utilizedERC20_utilizationERC20[__utilizedERC20];
-	}
-
 	mapping (address eMP => uint256 shares) public override eMP_shares;
 
 
@@ -142,6 +132,16 @@ contract V1EMPStrategy is
 		returns (address[] memory utilizedERC20_)
 	{
 		return _utilizedERC20;
+	}
+
+	/// @inheritdoc IV1EMPStrategy
+	function utilizedERC20_utilizationERC20(address __utilizedERC20)
+		public
+		view
+		override
+		returns (UtilizationERC20 memory)
+	{
+		return _utilizedERC20_utilizationERC20[__utilizedERC20];
 	}
 
 	/// @inheritdoc IV1EMPStrategy
