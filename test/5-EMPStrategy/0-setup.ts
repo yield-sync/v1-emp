@@ -1,11 +1,10 @@
-const { ethers } = require("hardhat");
-
-
 import { expect } from "chai";
 import { Contract, ContractFactory, VoidSigner } from "ethers";
 
 import { ERROR, PERCENT } from "../../const";
 import { deployContract } from "../../util/UtilEMP";
+
+const { ethers } = require("hardhat");
 
 
 describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
@@ -31,11 +30,8 @@ describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
 	beforeEach("[beforeEach] Set up contracts..", async () => {
 		[owner, manager, treasury, badActor] = await ethers.getSigners();
 
-
 		const V1EMPStrategy: ContractFactory = await ethers.getContractFactory("V1EMPStrategy");
 
-
-		// Core contracts
 		governance = await deployContract("YieldSyncGovernance");
 
 		await governance.payToUpdate(treasury.address);
