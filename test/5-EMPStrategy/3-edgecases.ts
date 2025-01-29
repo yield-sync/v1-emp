@@ -1,12 +1,12 @@
-const { ethers } = require("hardhat");
-
-
 import { expect } from "chai";
 import { BigNumber, Contract, ContractFactory, VoidSigner } from "ethers";
 
 import { ERROR, PERCENT, D_18 } from "../../const";
 import UtilStrategyTransfer from "../../util/UtilStrategyTransfer";
 import { deployContract } from "../../util/UtilEMP";
+
+
+const { ethers } = require("hardhat");
 
 
 const LOCATION_IERC20: string = "@openzeppelin/contracts/token/ERC20/IERC20.sol:IERC20";

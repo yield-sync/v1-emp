@@ -1,11 +1,11 @@
-const { ethers } = require("hardhat");
-
-
 import { expect } from "chai";
 import { BigNumber, Contract, VoidSigner } from "ethers";
 
 import { approveTokens, deployContract, deployEMP, deployStrategies } from "../../util/UtilEMP";
 import { D_18, ERROR, PERCENT } from "../../const";
+
+
+const { ethers } = require("hardhat");
 
 
 const LOCATION_MOCKERC20: string = "MockERC20";

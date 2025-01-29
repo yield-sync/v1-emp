@@ -1,9 +1,9 @@
-const { ethers } = require("hardhat");
-
-
 import { expect } from "chai";
 import { Contract, VoidSigner } from "ethers";
 import { deployContract } from "../../util/UtilEMP";
+
+
+const { ethers } = require("hardhat");
 
 
 describe("[4.0] V1EMPStrategyDeployer.sol", async () => {

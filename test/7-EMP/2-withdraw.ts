@@ -1,6 +1,3 @@
-const { ethers } = require("hardhat");
-
-
 import { expect } from "chai";
 import { BigNumber, Contract, VoidSigner } from "ethers";
 
@@ -8,7 +5,7 @@ import { approveTokens, deployContract, deployEMP, deployStrategies } from "../.
 import { D_18, ERROR, PERCENT } from "../../const";
 
 
-const LOCATION_MOCKERC20: string = "MockERC20";
+const { ethers } = require("hardhat");
 
 
 describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
