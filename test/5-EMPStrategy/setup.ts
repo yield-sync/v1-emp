@@ -110,4 +110,4 @@ export default async () => {
 		treasury,
 		badActor,
 	};
-}
+};
