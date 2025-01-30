@@ -5,6 +5,8 @@ import { ERROR, PERCENT, D_18 } from "../../const";
 import UtilStrategyTransfer from "../../util/UtilStrategyTransfer";
 import { deployContract } from "../../util/UtilEMP";
 
+import setup from "./setup";
+
 
 const { ethers } = require("hardhat");
 
@@ -37,63 +39,26 @@ describe("[5.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
-		[owner, manager, treasury, badActor] = await ethers.getSigners();
-
-
-		const V1EMPStrategy: ContractFactory = await ethers.getContractFactory("V1EMPStrategy");
-		const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
-
-
-		governance = await deployContract("YieldSyncGovernance");
-
-		await governance.payToUpdate(treasury.address);
-
-		addressArrayUtility = await deployContract("AddressArrayUtility");
-
-		registry = await deployContract("V1EMPRegistry", [governance.address]);
-
-		await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
-
-		strategyUtility = await deployContract("V1EMPStrategyUtility", [registry.address]);
-
-		await registry.v1EMPStrategyUtilityUpdate(strategyUtility.address);
-
-		strategyDeployer = await deployContract("V1EMPStrategyDeployer", [registry.address]);
-
-		mockERC20A = await deployContract("MockERC20", ["Mock A", "A", 18]);
-		mockERC20B = await deployContract("MockERC20", ["Mock B", "B", 18]);
-		mockERC20C = await deployContract("MockERC20", ["Mock C", "C", 6]);
-		mockERC20D = await (await MockERC20.deploy("Mock D", "D", 18)).deployed();
-
-		eTHValueProvider = await deployContract("MockERC20ETHValueProvider", [18]);
-		eTHValueProviderC = await deployContract("MockERC20ETHValueProvider", [6]);
-
-		await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20A.address, eTHValueProvider.address);
-		await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20B.address, eTHValueProvider.address);
-		await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20C.address, eTHValueProviderC.address);
-		await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20D.address, eTHValueProvider.address);
-
-		/**
-		* @notice The owner has to be registered as the EMP deployer so that it can authorize itself as an EMP to access the
-		* functions available on the strategy.
-		*/
-		await registry.v1EMPUtilityUpdate(owner.address);
-		await registry.v1EMPDeployerUpdate(owner.address);
-		await registry.v1EMPRegister(owner.address);
-
-
-		// Set EMP Strategy Deployer on registry
-		await registry.v1EMPStrategyDeployerUpdate(strategyDeployer.address);
-
-		// Deploy EMP Strategy
-		await strategyDeployer.deployV1EMPStrategy();
-
-		// Attach the deployed V1EMPStrategy address
-		strategy = await V1EMPStrategy.attach(String(await registry.v1EMPStrategyId_v1EMPStrategy(1)));
-
-		utilStrategyTransfer = new UtilStrategyTransfer(strategy, registry);
-
-		eRC20Handler = await deployContract("Holder", [strategy.address]);
+		({
+			addressArrayUtility,
+			governance,
+			eTHValueProvider,
+			eTHValueProviderC,
+			eRC20Handler,
+			registry,
+			strategy,
+			strategyDeployer,
+			strategyUtility,
+			mockERC20A,
+			mockERC20B,
+			mockERC20C,
+			mockERC20D,
+			utilStrategyTransfer,
+			owner,
+			manager,
+			treasury,
+			badActor,
+		} = await setup());
 	});
 
 
