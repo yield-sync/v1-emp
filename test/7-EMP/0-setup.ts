@@ -26,7 +26,7 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 	let mockERC20C: Contract;
 
 	let treasury: VoidSigner;
-	let outsider: VoidSigner;
+	let badActor: VoidSigner;
 
 	let strategies: {
 		contract: Contract,
@@ -35,7 +35,7 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
-		[, , treasury, outsider] = await ethers.getSigners();
+		[, , treasury, badActor] = await ethers.getSigners();
 
 		const V1EMP: ContractFactory = await ethers.getContractFactory("V1EMP");
 
@@ -124,15 +124,15 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 	describe("function managerUpdate()", async () => {
 		describe("Expected Failure", async () => {
 			it("[auth] Should revert if an unauthorized sender calls..", async () => {
-				await expect(eMP.connect(outsider).managerUpdate(outsider.address)).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
+				await expect(eMP.connect(badActor).managerUpdate(badActor.address)).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
 			});
 		});
 
 		describe("Expected Success", async () => {
 			it("Should update manager..", async () => {
-				await expect(eMP.managerUpdate(outsider.address)).to.be.not.rejected;
+				await expect(eMP.managerUpdate(badActor.address)).to.be.not.rejected;
 
-				expect(await eMP.manager()).to.be.equal(outsider.address);
+				expect(await eMP.manager()).to.be.equal(badActor.address);
 			});
 		});
 	});
@@ -140,7 +140,7 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 	describe("function feeRateManagerUpdate() (1/2)", async () => {
 		describe("Expected Failure", async () => {
 			it("[auth] Should revert if an unauthorized sender calls..", async () => {
-				await expect(eMP.connect(outsider).feeRateManagerUpdate(outsider.address)).to.be.rejectedWith(
+				await expect(eMP.connect(badActor).feeRateManagerUpdate(badActor.address)).to.be.rejectedWith(
 					ERROR.NOT_AUTHORIZED
 				);
 			});
@@ -168,7 +168,7 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 	describe("function feeRateGovernanceUpdate() (1/2)", async () => {
 		describe("Expected Failure", async () => {
 			it("[auth] Should revert if an unauthorized sender calls..", async () => {
-				await expect(eMP.connect(outsider).feeRateGovernanceUpdate(outsider.address)).to.be.rejectedWith(
+				await expect(eMP.connect(badActor).feeRateGovernanceUpdate(badActor.address)).to.be.rejectedWith(
 					ERROR.NOT_AUTHORIZED
 				);
 			});
@@ -224,7 +224,7 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 	describe("function utilizedV1EMPStrategyUpdate() (1/2)", async () => {
 		describe("Expected Failure", async () => {
 			it("[auth] Should revert if an unauthorized sender calls..", async () => {
-				await expect(eMP.connect(outsider).utilizedV1EMPStrategyUpdate([], [])).to.be.rejectedWith(
+				await expect(eMP.connect(badActor).utilizedV1EMPStrategyUpdate([], [])).to.be.rejectedWith(
 					ERROR.NOT_AUTHORIZED
 				);
 			});
@@ -233,7 +233,7 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 				const V1EMPStrategy: ContractFactory = await ethers.getContractFactory("V1EMPStrategy");
 
 				// Deploy a temporary contract
-				const invalidStrategy = await V1EMPStrategy.deploy(outsider.address, registry.address);
+				const invalidStrategy = await V1EMPStrategy.deploy(badActor.address, registry.address);
 
 				await expect(
 					eMP.utilizedV1EMPStrategyUpdate(
