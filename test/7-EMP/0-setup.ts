@@ -28,10 +28,7 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 	let treasury: VoidSigner;
 	let badActor: VoidSigner;
 
-	let strategies: {
-		contract: Contract,
-		UtilStrategyTransfer: UtilStrategyTransfer
-	}[] = [];
+	let strategies: TestStrategy[] = [];
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
