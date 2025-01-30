@@ -110,11 +110,11 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 		// Deploy an EMP
 		await eMPDeployer.deployV1EMP(false, "EMP Name", "EMP");
 
-		// Verify that a EMP has been registered
-		expect(await registry.v1EMPId_v1EMP(1)).to.be.not.equal(ethers.constants.AddressZero);
-
 		// Attach the deployed EMP address to a variable
 		eMP = await V1EMP.attach(String(await registry.v1EMPId_v1EMP(1)));
+
+		// Verify that a EMP has been registered
+		expect(await registry.v1EMPId_v1EMP(1)).to.be.not.equal(ethers.constants.AddressZero);
 	});
 
 
