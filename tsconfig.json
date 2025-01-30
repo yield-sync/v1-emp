@@ -20,7 +20,7 @@
 		"test/1-EMPRegistry/*",
 		"test/2-EMPStrategyUtility/*",
 		"test/3-EMPUtility/*",
-		"test/4-EMPStrategy/*",
+		"test/4-EMPStrategyDeployer/*",
 		"test/5-EMPStrategy/*",
 		"test/6-EMPDeployer/*",
 		"test/7-EMP/*"
