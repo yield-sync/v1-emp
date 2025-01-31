@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { BigNumber, Contract, ContractFactory, VoidSigner } from "ethers";
 
-import setup from "./setup";
+import setup, { suiteSpecificSetup } from "./setup";
 import { ERROR, PERCENT, D_18 } from "../../const";
 import UtilStrategyTransfer from "../../util/UtilStrategyTransfer";
 
@@ -21,6 +21,7 @@ describe("[5.3] V1EMPStrategy.sol - Edge-cases", async () => {
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;
 	let mockERC20C: Contract;
+	let strategyDeployer: Contract;
 
 	let utilStrategyTransfer: UtilStrategyTransfer;
 
@@ -31,15 +32,21 @@ describe("[5.3] V1EMPStrategy.sol - Edge-cases", async () => {
 		(
 			{
 				eTHValueProvider,
-				eRC20Handler,
 				registry,
-				strategy,
 				mockERC20A,
 				mockERC20B,
 				mockERC20C,
-				utilStrategyTransfer,
 				owner,
+				strategyDeployer
 			} = await setup()
+		);
+
+		(
+			{
+				eRC20Handler,
+				strategy,
+				utilStrategyTransfer,
+			} = await suiteSpecificSetup(registry, strategyDeployer, owner)
 		);
 
 		await strategy.iERC20HandlerUpdate(eRC20Handler.address);

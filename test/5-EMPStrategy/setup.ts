@@ -2,112 +2,91 @@ import { Contract, ContractFactory, VoidSigner } from "ethers";
 
 import UtilStrategyTransfer from "../../util/UtilStrategyTransfer";
 import { deployContract } from "../../util/UtilEMP";
+import setup, { SetUpContracts4 } from "../4-EMPStrategyDeployer/setup";
+
+
+export type SetUpContracts5 = SetUpContracts4 & {
+	eTHValueProvider: Contract;
+	eTHValueProviderC: Contract;
+};
 
 
 const { ethers } = require("hardhat");
 
 
-/**
-* @dev It is important to utilize the UtilStrategyTransfer for multiple ERC20 based strategies because they get reordered
-* when setup. The strategyUtil will return the deposit amounts in the order of the what the contract returns for the
-* Utilized ERC20s
-*/
-export default async () => {
-	let addressArrayUtility: Contract;
-	let governance: Contract;
-	let eTHValueProvider: Contract;
-	let eTHValueProviderC: Contract;
-	let eRC20Handler: Contract;
-	let registry: Contract;
-	let strategy: Contract;
-	let strategyDeployer: Contract;
-	let strategyUtility: Contract;
+export default async (): Promise<SetUpContracts5> => {
+	const {
+		owner,
+		manager,
+		treasury,
+		badActor,
+		eMPUtility,
+		mockERC20A,
+		mockERC20B,
+		mockERC20C,
+		mockERC20D,
+		governance,
+		addressArrayUtility,
+		registry,
+		strategyDeployer,
+		strategyUtility,
+	}: SetUpContracts4 = await setup();
 
-	let mockERC20A: Contract;
-	let mockERC20B: Contract;
-	let mockERC20C: Contract;
-	let mockERC20D: Contract;
-
-	let utilStrategyTransfer: UtilStrategyTransfer;
-
-	let owner: VoidSigner;
-	let manager: VoidSigner;
-	let treasury: VoidSigner;
-	let badActor: VoidSigner;
-
-	[owner, manager, treasury, badActor] = await ethers.getSigners();
-
-	const V1EMPStrategy: ContractFactory = await ethers.getContractFactory("V1EMPStrategy");
-
-	governance = await deployContract("YieldSyncGovernance");
-
-	await governance.payToUpdate(treasury.address);
-
-	addressArrayUtility = await deployContract("AddressArrayUtility");
-
-	registry = await deployContract("V1EMPRegistry", [governance.address]);
-
-	await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
-
-	strategyUtility = await deployContract("V1EMPStrategyUtility", [registry.address]);
-
-	await registry.v1EMPStrategyUtilityUpdate(strategyUtility.address);
-
-	strategyDeployer = await deployContract("V1EMPStrategyDeployer", [registry.address]);
-
-	mockERC20A = await deployContract("MockERC20", ["Mock A", "A", 18]);
-	mockERC20B = await deployContract("MockERC20", ["Mock B", "B", 18]);
-	mockERC20C = await deployContract("MockERC20", ["Mock C", "C", 6]);
-	mockERC20D = await deployContract("MockERC20", ["Mock D", "D", 18]);
-
-	eTHValueProvider = await deployContract("MockERC20ETHValueProvider", [18]);
-	eTHValueProviderC = await deployContract("MockERC20ETHValueProvider", [6]);
+	const eTHValueProvider: Contract = await deployContract("MockERC20ETHValueProvider", [18]);
+	const eTHValueProviderC: Contract = await deployContract("MockERC20ETHValueProvider", [6]);
 
 	await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20A.address, eTHValueProvider.address);
 	await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20B.address, eTHValueProvider.address);
 	await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20C.address, eTHValueProviderC.address);
 	await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20D.address, eTHValueProvider.address);
 
-	/**
-	* @notice The owner has to be registered as the EMP deployer so that it can authorize itself as an EMP to access the
-	* functions available on the strategy.
-	*/
-	await registry.v1EMPUtilityUpdate(owner.address);
-	await registry.v1EMPDeployerUpdate(owner.address);
-	await registry.v1EMPRegister(owner.address);
-
-
-	// Set EMP Strategy Deployer on registry
-	await registry.v1EMPStrategyDeployerUpdate(strategyDeployer.address);
-
-	// Deploy EMP Strategy
-	await strategyDeployer.deployV1EMPStrategy();
-
-	// Attach the deployed V1EMPStrategy address
-	strategy = await V1EMPStrategy.attach(String(await registry.v1EMPStrategyId_v1EMPStrategy(1)));
-
-	utilStrategyTransfer = new UtilStrategyTransfer(strategy, registry);
-
-	eRC20Handler = await deployContract("Holder", [strategy.address]);
-
 	return {
 		addressArrayUtility,
 		governance,
 		eTHValueProvider,
 		eTHValueProviderC,
-		eRC20Handler,
+		eMPUtility,
 		registry,
-		strategy,
 		strategyDeployer,
 		strategyUtility,
 		mockERC20A,
 		mockERC20B,
 		mockERC20C,
 		mockERC20D,
-		utilStrategyTransfer,
 		owner,
 		manager,
 		treasury,
 		badActor,
 	};
 };
+
+
+export async function suiteSpecificSetup(registry: Contract, strategyDeployer: Contract, owner: VoidSigner)
+{
+	/**
+	* @notice The owner has to be registered as the EMP deployer so that it can authorize itself as an EMP to access the
+	* functions available on the strategy.
+	*/
+	await registry.v1EMPDeployerUpdate(owner.address);
+
+	await registry.v1EMPRegister(owner.address);
+
+	// Deploy EMP Strategy
+	await strategyDeployer.deployV1EMPStrategy();
+
+	const V1EMPStrategy: ContractFactory = await ethers.getContractFactory("V1EMPStrategy");
+
+	// Attach the deployed V1EMPStrategy address
+	const strategy: Contract = await V1EMPStrategy.attach(String(await registry.v1EMPStrategyId_v1EMPStrategy(1)));
+
+	/**
+	* @dev It is important to utilize the UtilStrategyTransfer for multiple ERC20 based strategies because they get reordered
+	* when setup. The strategyUtil will return the deposit amounts in the order of the what the contract returns for the
+	* Utilized ERC20s
+	*/
+	const utilStrategyTransfer: UtilStrategyTransfer = new UtilStrategyTransfer(strategy, registry);
+
+	const eRC20Handler: Contract = await deployContract("Holder", [strategy.address]);
+
+	return { eRC20Handler, strategy, utilStrategyTransfer }
+}

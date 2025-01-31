@@ -1,8 +1,8 @@
 import { expect } from "chai";
 import { Contract, VoidSigner } from "ethers";
 
+import setup, { suiteSpecificSetup } from "./setup";
 import { ERROR } from "../../const";
-import { deployContract } from "../../util/UtilEMP";
 
 
 const { ethers } = require("hardhat");
@@ -10,12 +10,10 @@ const { ethers } = require("hardhat");
 
 describe("[1.0] V1EMPRegistry.sol", async () => {
 	let addressArrayUtility: Contract;
-	let governance: Contract;
 	let registry: Contract;
 
 	let owner: VoidSigner;
 	let badActor: VoidSigner;
-	let treasury: VoidSigner;
 	let fakeERC20: VoidSigner;
 	let fakeEthValueProvider: VoidSigner;
 	let fakeStrategyDeployer: VoidSigner;
@@ -27,25 +25,27 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
-		[
-			owner,
-			badActor,
-			treasury,
-			fakeERC20,
-			fakeEthValueProvider,
-			fakeStrategyDeployer,
-			fakeStrategyUtility,
-			fakeEMPDeployer,
-			fakeEMPUtility,
-			fakeEMP,
-			fakeEMPStrategy,
-		] = await ethers.getSigners();
+		(
+			{
+				owner,
+				badActor,
+				addressArrayUtility,
+				registry,
+			} = await setup()
+		);
 
-		governance = await deployContract("YieldSyncGovernance");
-		addressArrayUtility = await deployContract("AddressArrayUtility");
-		registry = await deployContract("V1EMPRegistry", [governance.address]);
-
-		await governance.payToUpdate(treasury.address);
+		(
+			{
+				fakeERC20,
+				fakeEthValueProvider,
+				fakeStrategyDeployer,
+				fakeStrategyUtility,
+				fakeEMPDeployer,
+				fakeEMPUtility,
+				fakeEMP,
+				fakeEMPStrategy,
+			} = await suiteSpecificSetup()
+		);
 	});
 
 

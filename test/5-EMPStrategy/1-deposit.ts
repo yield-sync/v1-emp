@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { BigNumber, Contract, ContractFactory, VoidSigner } from "ethers";
 
-import setup from "./setup";
+import setup, { suiteSpecificSetup } from "./setup";
 import { ERROR, PERCENT, D_18 } from "../../const";
 import UtilStrategyTransfer from "../../util/UtilStrategyTransfer";
 
@@ -15,7 +15,9 @@ const LOCATION_IERC20: string = "@openzeppelin/contracts/token/ERC20/IERC20.sol:
 describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 	let eTHValueProvider: Contract;
 	let eRC20Handler: Contract;
+	let registry: Contract;
 	let strategy: Contract;
+	let strategyDeployer: Contract;
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;
 	let mockERC20C: Contract;
@@ -30,17 +32,24 @@ describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 	beforeEach("[beforeEach] Set up contracts..", async () => {
 		(
 			{
+				registry,
 				eTHValueProvider,
-				eRC20Handler,
-				strategy,
+				strategyDeployer,
 				mockERC20A,
 				mockERC20B,
 				mockERC20C,
 				mockERC20D,
-				utilStrategyTransfer,
 				owner,
 				badActor,
 			} = await setup()
+		);
+
+		(
+			{
+				eRC20Handler,
+				strategy,
+				utilStrategyTransfer,
+			} = await suiteSpecificSetup(registry, strategyDeployer, owner)
 		);
 	});
 

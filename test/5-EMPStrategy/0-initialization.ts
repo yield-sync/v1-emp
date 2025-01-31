@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { Contract, ContractFactory, VoidSigner } from "ethers";
 
-import setup from "./setup";
+import setup, { suiteSpecificSetup } from "./setup";
 import { ERROR, PERCENT } from "../../const";
 
 
@@ -12,11 +12,13 @@ describe("[5.0] V1EMPStrategy.sol - Initialization", async () => {
 	let eRC20Handler: Contract;
 	let registry: Contract;
 	let strategy: Contract;
+	let strategyDeployer: Contract;
 
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;
 	let mockERC20C: Contract;
 
+	let owner: VoidSigner;
 	let manager: VoidSigner;
 	let badActor: VoidSigner;
 
@@ -24,15 +26,22 @@ describe("[5.0] V1EMPStrategy.sol - Initialization", async () => {
 	beforeEach("[beforeEach] Set up contracts..", async () => {
 		(
 			{
-				eRC20Handler,
 				registry,
-				strategy,
 				mockERC20A,
 				mockERC20B,
 				mockERC20C,
+				strategyDeployer,
+				owner,
 				manager,
 				badActor,
 			} = await setup()
+		);
+
+		(
+			{
+				eRC20Handler,
+				strategy,
+			} = await suiteSpecificSetup(registry, strategyDeployer, owner)
 		);
 	});
 
