@@ -9,8 +9,6 @@ const { ethers } = require("hardhat");
 
 
 describe("[7.0] V1EMP.sol - Setup", async () => {
-	let eMP: Contract;
-	let eMPDeployer: Contract;
 	let eMPUtility: Contract;
 	let registry: Contract;
 
@@ -19,13 +17,14 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 
 	let badActor: VoidSigner;
 
+	let eMPs: TestEMP[] = [];
 	let strategies: TestStrategy[] = [];
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
 		(
 			{
-				eMPDeployer,
+				eMPs,
 				eMPUtility,
 				mockERC20A,
 				mockERC20C,
@@ -35,36 +34,26 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 			} = await setup()
 		);
 
-		const V1EMP: ContractFactory = await ethers.getContractFactory("V1EMP");
+		// Open deposits
+		await eMPs[2].contract.utilizedERC20DepositOpenUpdate(false);
 
-		/**
-		* EMP
-		*/
-		// Deploy an EMP
-		await eMPDeployer.deployV1EMP(false, "EMP Name", "EMP");
-
-		const latestEMPId = await registry.v1EMPIdTracker();
-
-		// Attach the deployed EMP address to a variable
-		eMP = await V1EMP.attach(String(await registry.v1EMPId_v1EMP(latestEMPId)));
-
-		// Verify that a EMP has been registered
-		expect(await registry.v1EMPId_v1EMP(latestEMPId)).to.be.not.equal(ethers.constants.AddressZero);
+		// Open withdrawals
+		await eMPs[2].contract.utilizedERC20WithdrawOpenUpdate(false);
 	});
 
 
 	describe("function managerUpdate()", async () => {
 		describe("Expected Failure", async () => {
 			it("[auth] Should revert if an unauthorized sender calls..", async () => {
-				await expect(eMP.connect(badActor).managerUpdate(badActor.address)).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
+				await expect(eMPs[2].contract.connect(badActor).managerUpdate(badActor.address)).to.be.rejectedWith(ERROR.NOT_AUTHORIZED);
 			});
 		});
 
 		describe("Expected Success", async () => {
 			it("Should update manager..", async () => {
-				await expect(eMP.managerUpdate(badActor.address)).to.be.not.rejected;
+				await expect(eMPs[2].contract.managerUpdate(badActor.address)).to.be.not.rejected;
 
-				expect(await eMP.manager()).to.be.equal(badActor.address);
+				expect(await eMPs[2].contract.manager()).to.be.equal(badActor.address);
 			});
 		});
 	});
@@ -72,7 +61,7 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 	describe("function feeRateManagerUpdate() (1/2)", async () => {
 		describe("Expected Failure", async () => {
 			it("[auth] Should revert if an unauthorized sender calls..", async () => {
-				await expect(eMP.connect(badActor).feeRateManagerUpdate(badActor.address)).to.be.rejectedWith(
+				await expect(eMPs[2].contract.connect(badActor).feeRateManagerUpdate(badActor.address)).to.be.rejectedWith(
 					ERROR.NOT_AUTHORIZED
 				);
 			});
@@ -81,7 +70,7 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 				const ONE_HUNDRED_PERCENT = await registry.ONE_HUNDRED_PERCENT();
 
 				await expect(
-					eMP.feeRateManagerUpdate(ONE_HUNDRED_PERCENT.add(ethers.utils.parseUnits("1", 18)))
+					eMPs[2].contract.feeRateManagerUpdate(ONE_HUNDRED_PERCENT.add(ethers.utils.parseUnits("1", 18)))
 				).to.be.rejectedWith(
 					ERROR.EMP.FEE_RATE_MANAGER_GREATER_THAN_100_PERCENT
 				);
@@ -90,9 +79,9 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 
 		describe("Expected Success", async () => {
 			it("Should allow feeRateManager to be changed..", async () => {
-				await expect(eMP.feeRateManagerUpdate(1)).to.be.not.rejected;
+				await expect(eMPs[2].contract.feeRateManagerUpdate(1)).to.be.not.rejected;
 
-				expect(await eMP.feeRateManager()).to.be.equal(1);
+				expect(await eMPs[2].contract.feeRateManager()).to.be.equal(1);
 			});
 		});
 	});
@@ -100,7 +89,7 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 	describe("function feeRateGovernanceUpdate() (1/2)", async () => {
 		describe("Expected Failure", async () => {
 			it("[auth] Should revert if an unauthorized sender calls..", async () => {
-				await expect(eMP.connect(badActor).feeRateGovernanceUpdate(badActor.address)).to.be.rejectedWith(
+				await expect(eMPs[2].contract.connect(badActor).feeRateGovernanceUpdate(badActor.address)).to.be.rejectedWith(
 					ERROR.NOT_AUTHORIZED
 				);
 			});
@@ -109,7 +98,7 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 				const ONE_HUNDRED_PERCENT = await registry.ONE_HUNDRED_PERCENT();
 
 				await expect(
-					eMP.feeRateGovernanceUpdate(ONE_HUNDRED_PERCENT.add(ethers.utils.parseUnits("1", 18)))
+					eMPs[2].contract.feeRateGovernanceUpdate(ONE_HUNDRED_PERCENT.add(ethers.utils.parseUnits("1", 18)))
 				).to.be.rejectedWith(
 					ERROR.EMP.FEE_RATE_GOVERNANCE_GREATER_THAN_100_PERCENT
 				);
@@ -118,9 +107,9 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 
 		describe("Expected Success", async () => {
 			it("Should allow feeRateManager to be changed..", async () => {
-				await expect(eMP.feeRateGovernanceUpdate(1)).to.be.not.rejected;
+				await expect(eMPs[2].contract.feeRateGovernanceUpdate(1)).to.be.not.rejected;
 
-				expect(await eMP.feeRateGovernance()).to.be.equal(1);
+				expect(await eMPs[2].contract.feeRateGovernance()).to.be.equal(1);
 			});
 		});
 	});
@@ -128,10 +117,10 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 	describe("function feeRateManagerUpdate() (2/2)", async () => {
 		describe("Expected Failure", async () => {
 			it("Should NOT allow combined fees to be greater than 100% fee rate..", async () => {
-				await eMP.feeRateGovernanceUpdate(ethers.utils.parseUnits(".5", 18));
+				await eMPs[2].contract.feeRateGovernanceUpdate(ethers.utils.parseUnits(".5", 18));
 
 				await expect(
-					eMP.feeRateManagerUpdate(ethers.utils.parseUnits("1", 18))
+					eMPs[2].contract.feeRateManagerUpdate(ethers.utils.parseUnits("1", 18))
 				).to.be.rejectedWith(
 					ERROR.EMP.FEE_RATE_MANAGER_GREATER_THAN_100_PERCENT
 				);
@@ -142,10 +131,10 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 	describe("function feeRateGovernanceUpdate() (2/2)", async () => {
 		describe("Expected Failure", async () => {
 			it("Should NOT allow combined fees to be greater than 100% fee rate..", async () => {
-				await eMP.feeRateManagerUpdate(ethers.utils.parseUnits(".5", 18));
+				await eMPs[2].contract.feeRateManagerUpdate(ethers.utils.parseUnits(".5", 18));
 
 				await expect(
-					eMP.feeRateGovernanceUpdate(ethers.utils.parseUnits("1", 18))
+					eMPs[2].contract.feeRateGovernanceUpdate(ethers.utils.parseUnits("1", 18))
 				).to.be.rejectedWith(
 					ERROR.EMP.FEE_RATE_GOVERNANCE_GREATER_THAN_100_PERCENT
 				);
@@ -156,7 +145,7 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 	describe("function utilizedV1EMPStrategyUpdate() (1/2)", async () => {
 		describe("Expected Failure", async () => {
 			it("[auth] Should revert if an unauthorized sender calls..", async () => {
-				await expect(eMP.connect(badActor).utilizedV1EMPStrategyUpdate([], [])).to.be.rejectedWith(
+				await expect(eMPs[2].contract.connect(badActor).utilizedV1EMPStrategyUpdate([], [])).to.be.rejectedWith(
 					ERROR.NOT_AUTHORIZED
 				);
 			});
@@ -168,7 +157,7 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 				const invalidStrategy = await V1EMPStrategy.deploy(badActor.address, registry.address);
 
 				await expect(
-					eMP.utilizedV1EMPStrategyUpdate(
+					eMPs[2].contract.utilizedV1EMPStrategyUpdate(
 						[invalidStrategy.address] as UtilizedEMPStrategyUpdate,
 						[PERCENT.HUNDRED] as UtilizedEMPStrategyAllocationUpdate
 					)
@@ -177,7 +166,7 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 
 			it("Should NOT allow strategies that add up to more than 100% to EMP..", async () => {
 				await expect(
-					eMP.utilizedV1EMPStrategyUpdate(
+					eMPs[2].contract.utilizedV1EMPStrategyUpdate(
 						[strategies[0].contract.address, strategies[1].contract.address] as UtilizedEMPStrategyUpdate,
 						[PERCENT.HUNDRED, PERCENT.FIFTY] as UtilizedEMPStrategyAllocationUpdate
 					)
@@ -193,9 +182,9 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 
 				const UtilizedEMPStrategyAllocation: UtilizedEMPStrategyAllocationUpdate = [PERCENT.HUNDRED];
 
-				await eMP.utilizedV1EMPStrategyUpdate(UtilizedEMPStrategy, UtilizedEMPStrategyAllocation);
+				await eMPs[2].contract.utilizedV1EMPStrategyUpdate(UtilizedEMPStrategy, UtilizedEMPStrategyAllocation);
 
-				const _strategies: UtilizedEMPStrategy[] = await eMP.utilizedV1EMPStrategy();
+				const _strategies: UtilizedEMPStrategy[] = await eMPs[2].contract.utilizedV1EMPStrategy();
 
 				expect(_strategies.length).to.be.equal(UtilizedEMPStrategy.length);
 
@@ -203,7 +192,7 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 
 				for (let i: number = 0; i < UtilizedEMPStrategy.length; i++)
 				{
-					expect(await eMP.utilizedV1EMPStrategy_allocation(UtilizedEMPStrategy[i])).to.be.equal(
+					expect(await eMPs[2].contract.utilizedV1EMPStrategy_allocation(UtilizedEMPStrategy[i])).to.be.equal(
 						UtilizedEMPStrategyAllocation[i]
 					);
 
@@ -227,9 +216,9 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 
 				const UtilizedEMPStrategyAllocation: UtilizedEMPStrategyAllocationUpdate = [PERCENT.FIFTY, PERCENT.FIFTY];
 
-				await eMP.utilizedV1EMPStrategyUpdate(UtilizedEMPStrategy, UtilizedEMPStrategyAllocation);
+				await eMPs[2].contract.utilizedV1EMPStrategyUpdate(UtilizedEMPStrategy, UtilizedEMPStrategyAllocation);
 
-				const _strategies: UtilizedEMPStrategy[] = await eMP.utilizedV1EMPStrategy();
+				const _strategies: UtilizedEMPStrategy[] = await eMPs[2].contract.utilizedV1EMPStrategy();
 
 				expect(_strategies.length).to.be.equal(UtilizedEMPStrategy.length);
 
@@ -237,7 +226,7 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 
 				for (let i: number = 0; i < UtilizedEMPStrategy.length; i++)
 				{
-					expect(await eMP.utilizedV1EMPStrategy_allocation(UtilizedEMPStrategy[i])).to.be.equal(
+					expect(await eMPs[2].contract.utilizedV1EMPStrategy_allocation(UtilizedEMPStrategy[i])).to.be.equal(
 						UtilizedEMPStrategyAllocation[i]
 					);
 
@@ -261,12 +250,12 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 
 		beforeEach(async () => {
 			// Set the utilzation to 2 different strategies
-			await eMP.utilizedV1EMPStrategyUpdate(
+			await eMPs[2].contract.utilizedV1EMPStrategyUpdate(
 				[strategies[0].contract.address, strategies[1].contract.address] as UtilizedEMPStrategyUpdate,
 				[PERCENT.FIFTY, PERCENT.FIFTY] as UtilizedEMPStrategyAllocationUpdate
 			);
 
-			eMPUtilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMP.address);
+			eMPUtilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMPs[2].contract.address);
 
 			expect(eMPUtilizedERC20.length).to.be.equal(3);
 
@@ -276,25 +265,25 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 
 			await strategies[0].contract.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
 
-			await expect(eMP.utilizedV1EMPStrategySync()).to.be.not.reverted;
+			await expect(eMPs[2].contract.utilizedV1EMPStrategySync()).to.be.not.reverted;
 		});
 
 		describe("Expected Success", async () => {
 			it("Should update the utilized ERC20..", async () => {
-				await expect(eMP.utilizedV1EMPStrategySync()).to.be.not.reverted;
+				await expect(eMPs[2].contract.utilizedV1EMPStrategySync()).to.be.not.reverted;
 
-				eMPUtilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMP.address);
+				eMPUtilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMPs[2].contract.address);
 
 				expect(eMPUtilizedERC20.length).to.be.equal(2);
 
 				expect(
-					(await eMPUtility.v1EMP_utilizedERC20_utilizationERC20(eMP.address, mockERC20A.address)).allocation
+					(await eMPUtility.v1EMP_utilizedERC20_utilizationERC20(eMPs[2].contract.address, mockERC20A.address)).allocation
 				).to.be.equal(
 					PERCENT.FIFTY
 				);
 
 				expect(
-					(await eMPUtility.v1EMP_utilizedERC20_utilizationERC20(eMP.address, mockERC20C.address)).allocation
+					(await eMPUtility.v1EMP_utilizedERC20_utilizationERC20(eMPs[2].contract.address, mockERC20C.address)).allocation
 				).to.be.equal(
 					PERCENT.FIFTY
 				);
@@ -308,19 +297,19 @@ describe("[7.0] V1EMP.sol - Setup", async () => {
 
 
 			beforeEach(async () => {
-				eMPUtilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMP.address);
+				eMPUtilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMPs[2].contract.address);
 
 				// Expect that there are no utilized ERC20 tokens
 				expect(eMPUtilizedERC20.length).to.be.equal(0);
 
 				// Set the utilzation to 2 different strategies
-				await eMP.utilizedV1EMPStrategyUpdate(
+				await eMPs[2].contract.utilizedV1EMPStrategyUpdate(
 					[strategies[0].contract.address, strategies[1].contract.address] as UtilizedEMPStrategyUpdate,
 					[PERCENT.FIFTY, PERCENT.FIFTY] as UtilizedEMPStrategyAllocationUpdate
 				);
 
 				// Store the utilized ERC20 tokens
-				eMPUtilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMP.address);
+				eMPUtilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMPs[2].contract.address);
 			});
 
 

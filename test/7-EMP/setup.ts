@@ -120,6 +120,12 @@ export default async () => {
 				utilizedEMPStrategyUpdate: [strategies[0].contract.address, strategies[1].contract.address],
 				utilizedEMPStrategyAllocationUpdate: [PERCENT.SEVENTY_FIVE, PERCENT.TWENTY_FIVE],
 			},
+			{
+				name: "EMP 3",
+				ticker: "EMP3",
+				utilizedEMPStrategyUpdate: [],
+				utilizedEMPStrategyAllocationUpdate: [],
+			},
 		]
 	);
 
