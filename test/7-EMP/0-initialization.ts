@@ -34,10 +34,7 @@ describe("[7.0] V1EMP.sol - Initialization", async () => {
 			} = await setup()
 		);
 
-		// Open deposits
 		await eMPs[2].contract.utilizedERC20DepositOpenUpdate(false);
-
-		// Open withdrawals
 		await eMPs[2].contract.utilizedERC20WithdrawOpenUpdate(false);
 	});
 

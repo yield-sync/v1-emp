@@ -8,62 +8,41 @@ const { ethers } = require("hardhat");
 
 
 export default async () => {
-	let addressArrayUtility: Contract;
-	let governance: Contract;
-	let eMPDeployer: Contract;
-	let eMPUtility: Contract;
-	let eTHValueProvider: Contract;
-	let eTHValueProviderC: Contract;
-	let mockERC20A: Contract;
-	let mockERC20B: Contract;
-	let mockERC20C: Contract;
-	let registry: Contract;
-	let strategyDeployer: Contract;
-	let strategyUtility: Contract;
+	const [owner, manager, treasury, badActor]: VoidSigner[] = await ethers.getSigners();
 
-	let manager: VoidSigner;
-	let badActor: VoidSigner;
-	let owner: VoidSigner;
-	let treasury: VoidSigner;
 
-	let eMPs: TestEMP[] = [];
-	let strategies: TestStrategy[] = [];
-
-	[owner, manager, treasury, badActor] = await ethers.getSigners();
-
-	// Core contracts
-	governance = await deployContract("YieldSyncGovernance");
+	const governance: Contract = await deployContract("YieldSyncGovernance");
 
 	await governance.payToUpdate(treasury.address);
 
-	addressArrayUtility = await deployContract("AddressArrayUtility");
+	const addressArrayUtility: Contract = await deployContract("AddressArrayUtility");
 
-	registry = await deployContract("V1EMPRegistry", [governance.address]);
+	const registry: Contract = await deployContract("V1EMPRegistry", [governance.address]);
 
 	await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
 
-	strategyUtility = await deployContract("V1EMPStrategyUtility", [registry.address]);
+	const strategyUtility: Contract = await deployContract("V1EMPStrategyUtility", [registry.address]);
 
 	await registry.v1EMPStrategyUtilityUpdate(strategyUtility.address);
 
-	strategyDeployer = await deployContract("V1EMPStrategyDeployer", [registry.address]);
+	const strategyDeployer: Contract = await deployContract("V1EMPStrategyDeployer", [registry.address]);
 
 	await registry.v1EMPStrategyDeployerUpdate(strategyDeployer.address);
 
-	eMPUtility = await deployContract("V1EMPUtility", [registry.address]);
+	const eMPUtility: Contract = await deployContract("V1EMPUtility", [registry.address]);
 
 	await registry.v1EMPUtilityUpdate(eMPUtility.address);
 
-	eMPDeployer = await deployContract("V1EMPDeployer", [registry.address]);
+	const eMPDeployer: Contract = await deployContract("V1EMPDeployer", [registry.address]);
 
 	await registry.v1EMPDeployerUpdate(eMPDeployer.address);
 
-	mockERC20A = await deployContract("MockERC20", ["Mock A", "A", 18]);
-	mockERC20B = await deployContract("MockERC20", ["Mock B", "B", 18]);
-	mockERC20C = await deployContract("MockERC20", ["Mock C", "C", 6]);
+	const mockERC20A: Contract = await deployContract("MockERC20", ["Mock A", "A", 18]);
+	const mockERC20B: Contract = await deployContract("MockERC20", ["Mock B", "B", 18]);
+	const mockERC20C: Contract = await deployContract("MockERC20", ["Mock C", "C", 6]);
 
-	eTHValueProvider = await deployContract("MockERC20ETHValueProvider", [18]);
-	eTHValueProviderC = await deployContract("MockERC20ETHValueProvider", [6]);
+	const eTHValueProvider: Contract = await deployContract("MockERC20ETHValueProvider", [18]);
+	const eTHValueProviderC: Contract = await deployContract("MockERC20ETHValueProvider", [6]);
 
 	await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20A.address, eTHValueProvider.address);
 	await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20B.address, eTHValueProvider.address);
@@ -72,7 +51,7 @@ export default async () => {
 	/**
 	* EMP Strategies
 	*/
-	strategies = await deployStrategies(
+	const strategies: TestStrategy[] = await deployStrategies(
 		registry,
 		strategyDeployer,
 		[
@@ -102,7 +81,7 @@ export default async () => {
 	/**
 	* EMP
 	*/
-	eMPs = await deployEMP(
+	const eMPs: TestEMP[] = await deployEMP(
 		manager.address,
 		registry,
 		eMPDeployer,
