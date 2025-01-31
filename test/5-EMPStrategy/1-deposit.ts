@@ -13,15 +13,9 @@ const LOCATION_IERC20: string = "@openzeppelin/contracts/token/ERC20/IERC20.sol:
 
 
 describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
-	let addressArrayUtility: Contract;
-	let governance: Contract;
 	let eTHValueProvider: Contract;
-	let eTHValueProviderC: Contract;
 	let eRC20Handler: Contract;
-	let registry: Contract;
 	let strategy: Contract;
-	let strategyDeployer: Contract;
-	let strategyUtility: Contract;
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;
 	let mockERC20C: Contract;
@@ -30,32 +24,24 @@ describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 	let utilStrategyTransfer: UtilStrategyTransfer;
 
 	let owner: VoidSigner;
-	let manager: VoidSigner;
-	let treasury: VoidSigner;
 	let badActor: VoidSigner;
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
-		({
-			addressArrayUtility,
-			governance,
-			eTHValueProvider,
-			eTHValueProviderC,
-			eRC20Handler,
-			registry,
-			strategy,
-			strategyDeployer,
-			strategyUtility,
-			mockERC20A,
-			mockERC20B,
-			mockERC20C,
-			mockERC20D,
-			utilStrategyTransfer,
-			owner,
-			manager,
-			treasury,
-			badActor,
-		} = await setup());
+		(
+			{
+				eTHValueProvider,
+				eRC20Handler,
+				strategy,
+				mockERC20A,
+				mockERC20B,
+				mockERC20C,
+				mockERC20D,
+				utilStrategyTransfer,
+				owner,
+				badActor,
+			} = await setup()
+		);
 	});
 
 

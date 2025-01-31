@@ -13,15 +13,10 @@ const LOCATION_IERC20: string = "@openzeppelin/contracts/token/ERC20/IERC20.sol:
 
 
 describe("[5.3] V1EMPStrategy.sol - Edge-cases", async () => {
-	let addressArrayUtility: Contract;
-	let governance: Contract;
 	let eTHValueProvider: Contract;
-	let eTHValueProviderC: Contract;
 	let eRC20Handler: Contract;
 	let registry: Contract;
 	let strategy: Contract;
-	let strategyDeployer: Contract;
-	let strategyUtility: Contract;
 
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;
@@ -30,42 +25,29 @@ describe("[5.3] V1EMPStrategy.sol - Edge-cases", async () => {
 	let utilStrategyTransfer: UtilStrategyTransfer;
 
 	let owner: VoidSigner;
-	let manager: VoidSigner;
-	let treasury: VoidSigner;
-	let badActor: VoidSigner;
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
-		({
-			addressArrayUtility,
-			governance,
-			eTHValueProvider,
-			eTHValueProviderC,
-			eRC20Handler,
-			registry,
-			strategy,
-			strategyDeployer,
-			strategyUtility,
-			mockERC20A,
-			mockERC20B,
-			mockERC20C,
-			utilStrategyTransfer,
-			owner,
-			manager,
-			treasury,
-			badActor,
-		} = await setup());
+		(
+			{
+				eTHValueProvider,
+				eRC20Handler,
+				registry,
+				strategy,
+				mockERC20A,
+				mockERC20B,
+				mockERC20C,
+				utilStrategyTransfer,
+				owner,
+			} = await setup()
+		);
 
-		// Set the ERC20 Handler
 		await strategy.iERC20HandlerUpdate(eRC20Handler.address);
-
 		await strategy.utilizedERC20DepositOpenUpdate(true);
-
 		await strategy.utilizedERC20WithdrawOpenUpdate(true);
 
+		expect(await strategy.utilizedERC20DepositOpen()).to.be.true;
 		expect(await strategy.utilizedERC20WithdrawOpen()).to.be.true;
-
-		utilStrategyTransfer = new UtilStrategyTransfer(strategy, registry);
 	});
 
 	describe("Utilized ERC20 price change", async () => {

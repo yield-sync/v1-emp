@@ -39,26 +39,28 @@ describe("[5.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
-		({
-			addressArrayUtility,
-			governance,
-			eTHValueProvider,
-			eTHValueProviderC,
-			eRC20Handler,
-			registry,
-			strategy,
-			strategyDeployer,
-			strategyUtility,
-			mockERC20A,
-			mockERC20B,
-			mockERC20C,
-			mockERC20D,
-			utilStrategyTransfer,
-			owner,
-			manager,
-			treasury,
-			badActor,
-		} = await setup());
+		(
+			{
+				addressArrayUtility,
+				governance,
+				eTHValueProvider,
+				eTHValueProviderC,
+				eRC20Handler,
+				registry,
+				strategy,
+				strategyDeployer,
+				strategyUtility,
+				mockERC20A,
+				mockERC20B,
+				mockERC20C,
+				mockERC20D,
+				utilStrategyTransfer,
+				owner,
+				manager,
+				treasury,
+				badActor,
+			} = await setup()
+		);
 	});
 
 

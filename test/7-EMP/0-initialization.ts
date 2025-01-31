@@ -8,7 +8,7 @@ import { ERROR, PERCENT } from "../../const";
 const { ethers } = require("hardhat");
 
 
-describe("[7.0] V1EMP.sol - Setup", async () => {
+describe("[7.0] V1EMP.sol - Initialization", async () => {
 	let eMPUtility: Contract;
 	let registry: Contract;
 

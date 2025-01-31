@@ -21,15 +21,12 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 	let BeforeBalanceMockBEMP: BigNumber;
 	let BeforeBalanceMockCEMP: BigNumber;
 
-	let eMPDeployer: Contract;
 	let eMPUtility: Contract;
-	let registry: Contract;
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;
 	let mockERC20C: Contract;
 
 	let owner: VoidSigner;
-	let manager: VoidSigner;
 	let badActor: VoidSigner;
 
 	let eMPs: TestEMP[] = [];
@@ -42,15 +39,12 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 	beforeEach("[beforeEach] Set up contracts..", async () => {
 		(
 			{
-				eMPDeployer,
 				eMPs,
 				eMPUtility,
-				registry,
 				mockERC20A,
 				mockERC20B,
 				mockERC20C,
 				owner,
-				manager,
 				badActor,
 				strategies,
 			} = await setup()

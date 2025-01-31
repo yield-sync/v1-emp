@@ -3,57 +3,37 @@ import { Contract, ContractFactory, VoidSigner } from "ethers";
 
 import setup from "./setup";
 import { ERROR, PERCENT } from "../../const";
-import UtilStrategyTransfer from "../../util/UtilStrategyTransfer";
 
 
 const { ethers } = require("hardhat");
 
 
-describe("[5.0] V1EMPStrategy.sol - Setup", async () => {
-	let addressArrayUtility: Contract;
-	let governance: Contract;
-	let eTHValueProvider: Contract;
-	let eTHValueProviderC: Contract;
+describe("[5.0] V1EMPStrategy.sol - Initialization", async () => {
 	let eRC20Handler: Contract;
 	let registry: Contract;
 	let strategy: Contract;
-	let strategyDeployer: Contract;
-	let strategyUtility: Contract;
 
 	let mockERC20A: Contract;
 	let mockERC20B: Contract;
 	let mockERC20C: Contract;
-	let mockERC20D: Contract;
 
-	let utilStrategyTransfer: UtilStrategyTransfer;
-
-	let owner: VoidSigner;
 	let manager: VoidSigner;
-	let treasury: VoidSigner;
 	let badActor: VoidSigner;
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
-		({
-			addressArrayUtility,
-			governance,
-			eTHValueProvider,
-			eTHValueProviderC,
-			eRC20Handler,
-			registry,
-			strategy,
-			strategyDeployer,
-			strategyUtility,
-			mockERC20A,
-			mockERC20B,
-			mockERC20C,
-			mockERC20D,
-			utilStrategyTransfer,
-			owner,
-			manager,
-			treasury,
-			badActor,
-		} = await setup());
+		(
+			{
+				eRC20Handler,
+				registry,
+				strategy,
+				mockERC20A,
+				mockERC20B,
+				mockERC20C,
+				manager,
+				badActor,
+			} = await setup()
+		);
 	});
 
 
