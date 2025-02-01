@@ -1,10 +1,10 @@
 import { Contract, VoidSigner } from "ethers";
 
 import { deployContract } from "../../util/UtilEMP";
-import setup, { SetUpContracts2 } from "../2-EMPStrategyUtility/setup";
+import setup, { SetUpContractsStage2 } from "../2-EMPStrategyUtility/setup";
 
 
-export type SetUpContracts3 = SetUpContracts2 & {
+export type SetUpContractsStage3 = SetUpContractsStage2 & {
 	eMPUtility: Contract;
 };
 
@@ -12,7 +12,7 @@ export type SetUpContracts3 = SetUpContracts2 & {
 const { ethers } = require("hardhat");
 
 
-export default async (): Promise<SetUpContracts3> => {
+export default async (): Promise<SetUpContractsStage3> => {
 	const {
 		owner,
 		manager,
@@ -26,7 +26,7 @@ export default async (): Promise<SetUpContracts3> => {
 		addressArrayUtility,
 		registry,
 		strategyUtility,
-	}: SetUpContracts2 = await setup();
+	}: SetUpContractsStage2 = await setup();
 
 	const eMPUtility: Contract = await deployContract("V1EMPUtility", [registry.address]);
 

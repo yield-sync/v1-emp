@@ -2,10 +2,10 @@ import { Contract, ContractFactory, VoidSigner } from "ethers";
 
 import UtilStrategyTransfer from "../../util/UtilStrategyTransfer";
 import { deployContract } from "../../util/UtilEMP";
-import setup, { SetUpContracts4 } from "../4-EMPStrategyDeployer/setup";
+import setup, { SetUpContractsStage4 } from "../4-EMPStrategyDeployer/setup";
 
 
-export type SetUpContracts5 = SetUpContracts4 & {
+export type SetUpContractsStage5 = SetUpContractsStage4 & {
 	eTHValueProvider: Contract;
 	eTHValueProviderC: Contract;
 };
@@ -14,7 +14,7 @@ export type SetUpContracts5 = SetUpContracts4 & {
 const { ethers } = require("hardhat");
 
 
-export default async (): Promise<SetUpContracts5> => {
+export default async (): Promise<SetUpContractsStage5> => {
 	const {
 		owner,
 		manager,
@@ -30,7 +30,7 @@ export default async (): Promise<SetUpContracts5> => {
 		registry,
 		strategyDeployer,
 		strategyUtility,
-	}: SetUpContracts4 = await setup();
+	}: SetUpContractsStage4 = await setup();
 
 	const eTHValueProvider: Contract = await deployContract("MockERC20ETHValueProvider", [18]);
 	const eTHValueProviderC: Contract = await deployContract("MockERC20ETHValueProvider", [6]);
