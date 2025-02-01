@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { Contract, VoidSigner } from "ethers";
 
-import setup, { SetUpContractsStage6 } from "./setup";
+import stageContracts, { StageContracts6 } from "./stage-contracts";
 import { deployContract } from "../../util/UtilEMP";
 
 
@@ -21,7 +21,7 @@ describe("[6.0] V1EMPDeployer.sol - Setup", async () => {
 				badActor,
 				registry,
 				eMPDeployer,
-			} = await setup()
+			} = await stageContracts()
 		);
 
 	});

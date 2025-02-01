@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { Contract, ContractFactory, VoidSigner } from "ethers";
 
-import setup, { suiteSpecificSetup } from "./setup";
+import stageContracts, { suiteSpecificSetup } from "./stage-contracts";
 import { ERROR, PERCENT } from "../../const";
 
 
@@ -34,7 +34,7 @@ describe("[5.0] V1EMPStrategy.sol - Initialization", async () => {
 				owner,
 				manager,
 				badActor,
-			} = await setup()
+			} = await stageContracts()
 		);
 
 		(

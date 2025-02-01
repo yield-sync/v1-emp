@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { BigNumber, Contract, VoidSigner } from "ethers";
 
-import setup from "./setup";
+import stageContracts from "./stage-contracts";
 import { approveTokens } from "../../util/UtilEMP";
 import { D_18, ERROR, PERCENT } from "../../const";
 
@@ -47,7 +47,7 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 				owner,
 				badActor,
 				strategies,
-			} = await setup()
+			} = await stageContracts()
 		);
 
 		BeforeBalanceEMPOwner = await eMPs[0].contract.balanceOf(owner.address);

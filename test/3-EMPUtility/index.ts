@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { Contract, VoidSigner } from "ethers";
 
-import setup, { suiteSpecificSetup } from "./setup";
+import stageContracts, { suiteSpecificSetup } from "./stage-contracts";
 import { ERROR } from "../../const";
 import { deployContract } from "../../util/UtilEMP";
 
@@ -18,7 +18,7 @@ describe("[3.0] V1EMPUtility.sol", async () => {
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
-		({ registry, eMPUtility, mockERC20A } = await setup());
+		({ registry, eMPUtility, mockERC20A } = await stageContracts());
 
 		({ fakeEMP } = await suiteSpecificSetup(registry));
 	});

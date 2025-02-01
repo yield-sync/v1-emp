@@ -2,17 +2,17 @@ import { Contract } from "ethers";
 
 import { PERCENT } from "../../const";
 import { deployContract, deployEMP, deployStrategies } from "../../util/UtilEMP";
-import setup, { SetUpContractsStage6 } from "../6-EMPDeployer/setup";
+import stageContracts, { StageContracts6 } from "../6-EMPDeployer/stage-contracts";
 
 
-export type SetUpContractsStage7 = SetUpContractsStage6 & {
+export type StageContracts7 = StageContracts6 & {
 	eMPDeployer: Contract
 	eMPs: TestEMP[],
 	strategies: TestStrategy[],
 };
 
 
-export default async (): Promise<SetUpContractsStage7> => {
+export default async (): Promise<StageContracts7> => {
 	const {
 		addressArrayUtility,
 		governance,
@@ -31,7 +31,7 @@ export default async (): Promise<SetUpContractsStage7> => {
 		manager,
 		treasury,
 		badActor,
-	}: SetUpContractsStage6 = await setup();
+	}: StageContracts6 = await stageContracts();
 
 	/**
 	* EMP Strategies

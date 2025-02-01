@@ -1,15 +1,15 @@
 import { Contract } from "ethers";
 
 import { deployContract } from "../../util/UtilEMP";
-import setup, { SetUpContractsStage5 } from "../5-EMPStrategy/setup";
+import stageContracts, { StageContracts5 } from "../5-EMPStrategy/stage-contracts";
 
 
-export type SetUpContractsStage6 = SetUpContractsStage5 & {
+export type StageContracts6 = StageContracts5 & {
 	eMPDeployer: Contract
 };
 
 
-export default async (): Promise<SetUpContractsStage6> => {
+export default async (): Promise<StageContracts6> => {
 	const {
 		owner,
 		manager,
@@ -27,7 +27,7 @@ export default async (): Promise<SetUpContractsStage6> => {
 		strategyUtility,
 		eTHValueProvider,
 		eTHValueProviderC,
-	}: SetUpContractsStage5 = await setup();
+	}: StageContracts5 = await stageContracts();
 
 	const eMPDeployer: Contract = await deployContract("V1EMPDeployer", [registry.address]);
 

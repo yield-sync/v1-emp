@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { Contract, VoidSigner } from "ethers";
 
-import setup from "./setup";
+import stageContracts from "./stage-contracts";
 
 
 const { ethers } = require("hardhat");
@@ -20,7 +20,7 @@ describe("[4.0] V1EMPStrategyDeployer.sol", async () => {
 				badActor,
 				registry,
 				strategyDeployer,
-			} = await setup()
+			} = await stageContracts()
 		);
 	});
 

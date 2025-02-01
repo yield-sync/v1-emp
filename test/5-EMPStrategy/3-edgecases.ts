@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { BigNumber, Contract, ContractFactory, VoidSigner } from "ethers";
 
-import setup, { suiteSpecificSetup } from "./setup";
+import stageContracts, { suiteSpecificSetup } from "./stage-contracts";
 import { ERROR, PERCENT, D_18 } from "../../const";
 import UtilStrategyTransfer from "../../util/UtilStrategyTransfer";
 
@@ -38,7 +38,7 @@ describe("[5.3] V1EMPStrategy.sol - Edge-cases", async () => {
 				mockERC20C,
 				owner,
 				strategyDeployer
-			} = await setup()
+			} = await stageContracts()
 		);
 
 		(

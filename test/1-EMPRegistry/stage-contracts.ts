@@ -1,10 +1,10 @@
 import { Contract, VoidSigner } from "ethers";
 
-import setup, { SetUpContractsStage0 } from "../setup";
+import stageContracts, { StageContracts0 } from "../stage-contracts";
 import { deployContract } from "../../util/UtilEMP";
 
 
-export type SetUpContractsStage1 = SetUpContractsStage0 & {
+export type StageContracts1 = StageContracts0 & {
 	registry: Contract;
 };
 
@@ -12,7 +12,7 @@ export type SetUpContractsStage1 = SetUpContractsStage0 & {
 const { ethers } = require("hardhat");
 
 
-export default async (): Promise<SetUpContractsStage1> => {
+export default async (): Promise<StageContracts1> => {
 	const {
 		owner,
 		manager,
@@ -24,7 +24,7 @@ export default async (): Promise<SetUpContractsStage1> => {
 		mockERC20D,
 		governance,
 		addressArrayUtility,
-	}: SetUpContractsStage0 = await setup();
+	}: StageContracts0 = await stageContracts();
 
 	const registry: Contract = await deployContract("V1EMPRegistry", [governance.address]);
 

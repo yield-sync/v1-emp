@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { BigNumber, Contract, VoidSigner } from "ethers";
 
-import setup from "./setup";
+import stageContracts from "./stage-contracts";
 import { approveTokens, deployEMP, deployStrategies } from "../../util/UtilEMP";
 import { D_18, ERROR, PERCENT } from "../../const";
 
@@ -50,7 +50,7 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 				manager,
 				treasury,
 				strategies,
-			} = await setup()
+			} = await stageContracts()
 		);
 	});
 

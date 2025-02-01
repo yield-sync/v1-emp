@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { Contract, ContractFactory, VoidSigner } from "ethers";
 
-import setup from "./setup";
+import stageContracts from "./stage-contracts";
 import { ERROR, PERCENT } from "../../const";
 
 
@@ -31,7 +31,7 @@ describe("[7.0] V1EMP.sol - Initialization", async () => {
 				badActor,
 				registry,
 				strategies,
-			} = await setup()
+			} = await stageContracts()
 		);
 
 		await eMPs[2].contract.utilizedERC20DepositOpenUpdate(false);

@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { Contract, VoidSigner } from "ethers";
 
-import setup from "./setup";
+import stageContracts from "./stage-contracts";
 import { ERROR } from "../../const";
 
 
@@ -13,7 +13,7 @@ describe("[2.0] V1EMPStrategyUtility.sol", async () => {
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
-		({ strategyUtility } = await setup());
+		({ strategyUtility } = await stageContracts());
 	});
 
 

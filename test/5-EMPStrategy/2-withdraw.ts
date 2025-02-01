@@ -5,7 +5,7 @@ import { ERROR, PERCENT, D_18 } from "../../const";
 import UtilStrategyTransfer from "../../util/UtilStrategyTransfer";
 import { deployContract } from "../../util/UtilEMP";
 
-import setup, { suiteSpecificSetup } from "./setup";
+import stageContracts, { suiteSpecificSetup } from "./stage-contracts";
 
 
 const { ethers } = require("hardhat");
@@ -42,7 +42,7 @@ describe("[5.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 				mockERC20D,
 				owner,
 				badActor,
-			} = await setup()
+			} = await stageContracts()
 		);
 
 		(

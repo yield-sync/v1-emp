@@ -3,7 +3,7 @@ import { Contract, VoidSigner } from "ethers";
 import { deployContract } from "../util/UtilEMP";
 
 
-export type SetUpContractsStage0 = {
+export type StageContracts0 = {
 	owner: VoidSigner,
 	manager: VoidSigner,
 	treasury: VoidSigner,
@@ -20,7 +20,7 @@ export type SetUpContractsStage0 = {
 const { ethers } = require("hardhat");
 
 
-export default async (): Promise<SetUpContractsStage0> => {
+export default async (): Promise<StageContracts0> => {
 	const [owner, manager, treasury, badActor,]: VoidSigner[] = await ethers.getSigners();
 
 	const mockERC20A: Contract = await deployContract("MockERC20", ["Mock A", "A", 18]);
