@@ -6,7 +6,6 @@ import stageContracts, { StageContracts6 } from "../6-EMPDeployer/stage-contract
 
 
 export type StageContracts7 = StageContracts6 & {
-	eMPDeployer: Contract
 	eMPs: TestEMP[],
 	strategies: TestStrategy[],
 };

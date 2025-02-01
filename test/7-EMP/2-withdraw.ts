@@ -87,8 +87,8 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 		expect(await eMPs[0].contract.balanceOf(owner.address)).to.be.greaterThan(0);
 	});
 
-	// TODO make tests for withdrawing from the EMP without every investing into the strategies
 
+	// TODO make tests for withdrawing from the EMP without every investing into the strategies
 	describe("function utilizedV1EMPStrategyWithdraw()", async () => {
 		describe("Modifier", async () => {
 			it("[auth] Should revert if an unauthorized sender calls..", async () => {
