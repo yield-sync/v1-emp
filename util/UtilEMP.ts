@@ -150,14 +150,11 @@ export async function deployEMP(
 			throw new TransferOpenError("Deposits or withdraw is open");
 		}
 
-		if (0 < deployEMPs[i].utilizedEMPStrategyUpdate.length)
-		{
-			// Set the utilzation to 2 different strategies
-			await testEMPs[i].contract.utilizedV1EMPStrategyUpdate(
-				deployEMPs[i].utilizedEMPStrategyUpdate,
-				deployEMPs[i].utilizedEMPStrategyAllocationUpdate
-			);
-		}
+		// Set the utilzation to 2 different strategies
+		await testEMPs[i].contract.utilizedV1EMPStrategyUpdate(
+			deployEMPs[i].utilizedEMPStrategyUpdate,
+			deployEMPs[i].utilizedEMPStrategyAllocationUpdate
+		);
 
 		// Open deposits
 		await testEMPs[i].contract.utilizedERC20DepositOpenUpdate(true);

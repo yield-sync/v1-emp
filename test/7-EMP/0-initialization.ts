@@ -238,6 +238,23 @@ describe("[7.0] V1EMP.sol - Initialization", async () => {
 
 				expect(found).to.be.equal(_strategies.length);
 			});
+
+			it("Should allow EMP to have zero strategies again after settings before..", async () => {
+				const UtilizedEMPStrategy: UtilizedEMPStrategyUpdate = [
+					strategies[0].contract.address,
+					strategies[1].contract.address,
+				];
+
+				const UtilizedEMPStrategyAllocation: UtilizedEMPStrategyAllocationUpdate = [PERCENT.FIFTY, PERCENT.FIFTY];
+
+				await eMPs[2].contract.utilizedV1EMPStrategyUpdate(UtilizedEMPStrategy, UtilizedEMPStrategyAllocation);
+
+				await eMPs[2].contract.utilizedV1EMPStrategyUpdate([], []);
+
+				const _strategiesAfter: UtilizedEMPStrategy[] = await eMPs[2].contract.utilizedV1EMPStrategy();
+
+				expect(_strategiesAfter.length).to.be.equal(0);
+			});
 		});
 	});
 

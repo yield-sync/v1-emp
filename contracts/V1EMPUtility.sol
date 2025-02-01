@@ -157,9 +157,12 @@ contract V1EMPUtility is
 			utilizedV1EMPStrategyAllocationTotal += _allocation[i];
 		}
 
-		if (utilizedV1EMPStrategyAllocationTotal != _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT())
+		if (_v1EMPStrategy.length != 0)
 		{
-			return (false, "utilizedV1EMPStrategyAllocationTotal != _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT()");
+			if (utilizedV1EMPStrategyAllocationTotal != _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT())
+			{
+				return (false, "utilizedV1EMPStrategyAllocationTotal != _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT()");
+			}
 		}
 	}
 
