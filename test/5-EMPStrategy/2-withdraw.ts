@@ -45,13 +45,7 @@ describe("[5.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 			} = await stageContracts()
 		);
 
-		(
-			{
-				eRC20Handler,
-				strategy,
-				utilStrategyTransfer,
-			} = await suiteSpecificSetup(registry, strategyDeployer, owner)
-		);
+		({ eRC20Handler, strategy, utilStrategyTransfer, } = await suiteSpecificSetup(registry, strategyDeployer, owner));
 	});
 
 

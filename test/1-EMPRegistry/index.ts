@@ -25,14 +25,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
-		(
-			{
-				owner,
-				badActor,
-				addressArrayUtility,
-				registry,
-			} = await stageContracts()
-		);
+		({ owner, badActor, addressArrayUtility, registry, } = await stageContracts());
 
 		(
 			{

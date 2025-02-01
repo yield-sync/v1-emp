@@ -44,13 +44,7 @@ describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 			} = await stageContracts()
 		);
 
-		(
-			{
-				eRC20Handler,
-				strategy,
-				utilStrategyTransfer,
-			} = await suiteSpecificSetup(registry, strategyDeployer, owner)
-		);
+		({ eRC20Handler, strategy, utilStrategyTransfer, } = await suiteSpecificSetup(registry, strategyDeployer, owner));
 	});
 
 

@@ -41,13 +41,7 @@ describe("[5.3] V1EMPStrategy.sol - Edge-cases", async () => {
 			} = await stageContracts()
 		);
 
-		(
-			{
-				eRC20Handler,
-				strategy,
-				utilStrategyTransfer,
-			} = await suiteSpecificSetup(registry, strategyDeployer, owner)
-		);
+		({ eRC20Handler, strategy, utilStrategyTransfer,}  = await suiteSpecificSetup(registry, strategyDeployer, owner));
 
 		await strategy.iERC20HandlerUpdate(eRC20Handler.address);
 		await strategy.utilizedERC20DepositOpenUpdate(true);

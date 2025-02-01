@@ -37,12 +37,7 @@ describe("[5.0] V1EMPStrategy.sol - Initialization", async () => {
 			} = await stageContracts()
 		);
 
-		(
-			{
-				eRC20Handler,
-				strategy,
-			} = await suiteSpecificSetup(registry, strategyDeployer, owner)
-		);
+		({ eRC20Handler, strategy, } = await suiteSpecificSetup(registry, strategyDeployer, owner));
 	});
 
 

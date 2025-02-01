@@ -16,13 +16,7 @@ describe("[6.0] V1EMPDeployer.sol - Setup", async () => {
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
-		(
-			{
-				badActor,
-				registry,
-				eMPDeployer,
-			} = await stageContracts()
-		);
+		({ badActor, registry, eMPDeployer, } = await stageContracts());
 
 	});
 

@@ -22,17 +22,7 @@ describe("[7.0] V1EMP.sol - Initialization", async () => {
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
-		(
-			{
-				eMPs,
-				eMPUtility,
-				mockERC20A,
-				mockERC20C,
-				badActor,
-				registry,
-				strategies,
-			} = await stageContracts()
-		);
+		({ eMPs, eMPUtility, mockERC20A, mockERC20C, badActor, registry, strategies,} = await stageContracts());
 
 		await eMPs[2].contract.utilizedERC20DepositOpenUpdate(false);
 		await eMPs[2].contract.utilizedERC20WithdrawOpenUpdate(false);
