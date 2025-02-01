@@ -5,7 +5,7 @@ import { ERROR, PERCENT, D_18 } from "../../const";
 import UtilStrategyTransfer from "../../util/UtilStrategyTransfer";
 import { deployContract } from "../../util/UtilEMP";
 
-import stageContracts, { suiteSpecificSetup } from "./stage-contracts";
+import stageContracts, { suiteSpecificSetup } from "./stage-contracts-5";
 
 
 const { ethers } = require("hardhat");

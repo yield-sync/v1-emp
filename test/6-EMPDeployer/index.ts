@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { Contract, VoidSigner } from "ethers";
 
-import stageContracts, { StageContracts6 } from "./stage-contracts";
+import stageContracts, { StageContracts6 } from "./stage-contracts-6";
 import { deployContract } from "../../util/UtilEMP";
 
 

@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { Contract, VoidSigner } from "ethers";
 
-import stageContracts from "./stage-contracts";
+import stageContracts from "./stage-contracts-4";
 
 
 const { ethers } = require("hardhat");

@@ -2,7 +2,7 @@ import { Contract } from "ethers";
 
 import { PERCENT } from "../../const";
 import { deployContract, deployEMP, deployStrategies } from "../../util/UtilEMP";
-import stageContracts, { StageContracts6 } from "../6-EMPDeployer/stage-contracts";
+import stageContracts, { StageContracts6 } from "../6-EMPDeployer/stage-contracts-6";
 
 
 export type StageContracts7 = StageContracts6 & {

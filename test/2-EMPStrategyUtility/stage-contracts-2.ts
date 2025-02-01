@@ -1,7 +1,7 @@
 import { Contract, VoidSigner } from "ethers";
 
 import { deployContract } from "../../util/UtilEMP";
-import stageContracts, { StageContracts1 } from "../1-EMPRegistry/stage-contracts";
+import stageContracts, { StageContracts1 } from "../1-EMPRegistry/stage-contracts-1";
 
 
 export type StageContracts2 = StageContracts1 & {

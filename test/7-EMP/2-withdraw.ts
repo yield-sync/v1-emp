@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { BigNumber, Contract, VoidSigner } from "ethers";
 
-import stageContracts from "./stage-contracts";
+import stageContracts from "./stage-contracts-7";
 import { approveTokens } from "../../util/UtilEMP";
 import { D_18, ERROR, PERCENT } from "../../const";
 

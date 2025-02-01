@@ -1,6 +1,6 @@
 import { Contract, VoidSigner } from "ethers";
 
-import stageContracts, { StageContracts0 } from "../stage-contracts";
+import stageContracts, { StageContracts0 } from "../stage-contracts-0";
 import { deployContract } from "../../util/UtilEMP";
 
 

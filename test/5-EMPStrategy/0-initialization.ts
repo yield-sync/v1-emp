@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { Contract, ContractFactory, VoidSigner } from "ethers";
 
-import stageContracts, { suiteSpecificSetup } from "./stage-contracts";
+import stageContracts, { suiteSpecificSetup } from "./stage-contracts-5";
 import { ERROR, PERCENT } from "../../const";
 
 
