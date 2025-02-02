@@ -14,9 +14,9 @@ describe("[5.0] V1EMPStrategy.sol - Initialization", async () => {
 	let strategy: Contract;
 	let strategyDeployer: Contract;
 
-	let mockERC20A: Contract;
-	let mockERC20B: Contract;
-	let mockERC20C: Contract;
+	let eRC20A: Contract;
+	let eRC20B: Contract;
+	let eRC20C: Contract;
 
 	let owner: VoidSigner;
 	let manager: VoidSigner;
@@ -27,9 +27,9 @@ describe("[5.0] V1EMPStrategy.sol - Initialization", async () => {
 		(
 			{
 				registry,
-				mockERC20A,
-				mockERC20B,
-				mockERC20C,
+				eRC20A,
+				eRC20B,
+				eRC20C,
 				strategyDeployer,
 				owner,
 				manager,
@@ -57,14 +57,14 @@ describe("[5.0] V1EMPStrategy.sol - Initialization", async () => {
 		describe("Expected Failure", async () => {
 			it("[auth] Should revert if an unauthorized sender calls..", async () => {
 				await expect(
-					strategy.connect(badActor).utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]])
+					strategy.connect(badActor).utilizedERC20Update([eRC20A.address], [[true, true, PERCENT.HUNDRED]])
 				).to.be.rejectedWith(
 					ERROR.NOT_AUTHORIZED
 				);
 			});
 
 			it("Should revert if different lengths for __utilizedERC20 and _utilizationERC2 passed..", async () => {
-				await expect(strategy.utilizedERC20Update([mockERC20A.address], [])).to.be.rejectedWith(
+				await expect(strategy.utilizedERC20Update([eRC20A.address], [])).to.be.rejectedWith(
 					ERROR.STRATEGY.INVALID_PARAMS_UPDATE_LENGTHS
 				);
 			});
@@ -78,7 +78,7 @@ describe("[5.0] V1EMPStrategy.sol - Initialization", async () => {
 			it("Should revert if array contains duplicates..", async () => {
 				await expect(
 					strategy.utilizedERC20Update(
-						[mockERC20A.address, mockERC20A.address],
+						[eRC20A.address, eRC20A.address],
 						[
 							[true, true, PERCENT.FIFTY],
 							[true, true, PERCENT.FIFTY],
@@ -92,41 +92,41 @@ describe("[5.0] V1EMPStrategy.sol - Initialization", async () => {
 			it("Should revert if no ETH Value provider set for the utilized ERC20..", async () => {
 				const MockERC20: ContractFactory = await ethers.getContractFactory("MockERC20");
 
-				let mockERC20D: Contract = await (await MockERC20.deploy("Mock D", "D", 18)).deployed();
+				let eRC20D: Contract = await (await MockERC20.deploy("Mock D", "D", 18)).deployed();
 
 				await expect(
-					strategy.utilizedERC20Update([mockERC20D.address], [[true, true, PERCENT.HUNDRED]])
+					strategy.utilizedERC20Update([eRC20D.address], [[true, true, PERCENT.HUNDRED]])
 				).to.be.rejectedWith(ERROR.STRATEGY.ERC20_NO_ETH_VALUE_PROVIDER_AVAILABLE);
 			});
 
 			it("Should revert when INVALID allocation passed..", async () => {
 				const INVALID_ALLOCATION: StrategyUtilizedERC20Update[] = [
 					{
-						utilizedERC20: [mockERC20A.address],
+						utilizedERC20: [eRC20A.address],
 						utilization: [[true, true, PERCENT.FIFTY]]
 					},
 					{
-						utilizedERC20: [mockERC20A.address],
+						utilizedERC20: [eRC20A.address],
 						utilization: [[true, false, PERCENT.FIFTY]]
 					},
 					{
-						utilizedERC20: [mockERC20A.address],
+						utilizedERC20: [eRC20A.address],
 						utilization: [[false, false, PERCENT.FIFTY]]
 					},
 					{
-						utilizedERC20: [mockERC20A.address],
+						utilizedERC20: [eRC20A.address],
 						utilization: [[false, true, PERCENT.HUNDRED]]
 					},
 					{
-						utilizedERC20: [mockERC20A.address],
+						utilizedERC20: [eRC20A.address],
 						utilization: [[false, false, PERCENT.HUNDRED]]
 					},
 					{
-						utilizedERC20: [mockERC20A.address, mockERC20B.address],
+						utilizedERC20: [eRC20A.address, eRC20B.address],
 						utilization: [[true, true, PERCENT.FIFTY], [true, true, PERCENT.TWENTY_FIVE]],
 					},
 					{
-						utilizedERC20: [mockERC20A.address, mockERC20B.address],
+						utilizedERC20: [eRC20A.address, eRC20B.address],
 						utilization: [[false, true, PERCENT.FIFTY], [true, true, PERCENT.FIFTY]]
 					},
 				];
@@ -152,16 +152,16 @@ describe("[5.0] V1EMPStrategy.sol - Initialization", async () => {
 			it("Should not revert when VALID allocation passed..", async () => {
 				const VALID_INPUTS: StrategyUtilizedERC20Update[] = [
 					{
-						utilizedERC20: [mockERC20A.address],
+						utilizedERC20: [eRC20A.address],
 						utilization: [[true, true, PERCENT.HUNDRED]]
 					},
 					{
-						utilizedERC20: [mockERC20A.address, mockERC20B.address, mockERC20C.address],
+						utilizedERC20: [eRC20A.address, eRC20B.address, eRC20C.address],
 						utilization: [[false, true, PERCENT.ZERO], [true, true, PERCENT.FIFTY], [true, true, PERCENT.FIFTY]],
 					},
 					// Even if withdraw token is set to 100% it should be accepted
 					{
-						utilizedERC20: [mockERC20A.address, mockERC20B.address, mockERC20C.address],
+						utilizedERC20: [eRC20A.address, eRC20B.address, eRC20C.address],
 						utilization: [
 							[false, true, PERCENT.HUNDRED],
 							[true, true, PERCENT.FIFTY],
@@ -211,7 +211,7 @@ describe("[5.0] V1EMPStrategy.sol - Initialization", async () => {
 
 		/**
 		 * @notice
-		 * This is split up because the next tests for Deposits/Withdrawals update FNs is dependant on the SI to be
+		 * This is split up because the next tests for Deposits/Withdrawals update FNs is dependant on the ERC20Handler to be
 		 * set. Part 2 is dependant the Deposits/Withdrawals update to be functional.
 		*/
 
@@ -264,9 +264,9 @@ describe("[5.0] V1EMPStrategy.sol - Initialization", async () => {
 
 		it("Should set utilizedERC20DepositOpen to true..", async () => {
 			// Set strategy ERC20 tokens
-			await strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
+			await strategy.utilizedERC20Update([eRC20A.address], [[true, true, PERCENT.HUNDRED]]);
 
-			// Set SI
+			// Set ERC20Handler
 			await strategy.iERC20HandlerUpdate(eRC20Handler.address);
 
 			expect(await strategy.utilizedERC20DepositOpen()).to.be.false;
@@ -292,9 +292,9 @@ describe("[5.0] V1EMPStrategy.sol - Initialization", async () => {
 
 		it("Should set utilizedERC20WithdrawOpen to true..", async () => {
 			// Set strategy ERC20 tokens
-			await strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
+			await strategy.utilizedERC20Update([eRC20A.address], [[true, true, PERCENT.HUNDRED]]);
 
-			// Set SI
+			// Set ERC20Handler
 			await strategy.iERC20HandlerUpdate(eRC20Handler.address);
 
 			expect(await strategy.utilizedERC20WithdrawOpen()).to.be.false;
@@ -308,9 +308,9 @@ describe("[5.0] V1EMPStrategy.sol - Initialization", async () => {
 	describe("function utilizedERC20Update() (2/2)", async () => {
 		beforeEach(async () => {
 			// Set strategy ERC20 tokens
-			await strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
+			await strategy.utilizedERC20Update([eRC20A.address], [[true, true, PERCENT.HUNDRED]]);
 
-			// Set SI
+			// Set ERC20Handler
 			await strategy.iERC20HandlerUpdate(eRC20Handler.address);
 
 			expect(await strategy.utilizedERC20DepositOpen()).to.be.false;
@@ -323,7 +323,7 @@ describe("[5.0] V1EMPStrategy.sol - Initialization", async () => {
 			await strategy.utilizedERC20DepositOpenUpdate(true);
 
 			await expect(
-				strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]])
+				strategy.utilizedERC20Update([eRC20A.address], [[true, true, PERCENT.HUNDRED]])
 			).to.be.rejectedWith(
 				ERROR.STRATEGY.UTILIZED_ERC20_TRANSFERS_OPEN
 			);
@@ -333,9 +333,9 @@ describe("[5.0] V1EMPStrategy.sol - Initialization", async () => {
 	describe("function iERC20HandlerUpdate() (2/2)", async () => {
 		beforeEach(async () => {
 			// Set strategy ERC20 tokens
-			await strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
+			await strategy.utilizedERC20Update([eRC20A.address], [[true, true, PERCENT.HUNDRED]]);
 
-			// Set SI
+			// Set ERC20Handler
 			await strategy.iERC20HandlerUpdate(eRC20Handler.address);
 
 			expect(await strategy.utilizedERC20DepositOpen()).to.be.false;

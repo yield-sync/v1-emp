@@ -1,8 +1,7 @@
 import { expect } from "chai";
 import { Contract, VoidSigner } from "ethers";
 
-import stageContracts, { StageContracts6 } from "./stage-contracts-6";
-import { deployContract } from "../../util/UtilEMP";
+import stageContracts from "./stage-contracts-6";
 
 
 const { ethers } = require("hardhat");
@@ -17,8 +16,8 @@ describe("[6.0] V1EMPDeployer.sol - Setup", async () => {
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
 		({ badActor, registry, eMPDeployer, } = await stageContracts());
-
 	});
+
 
 	describe("function deployV1EMPOpenUpdate()", async () => {
 		it("[auth] Should revert if an unauthorized sender calls..", async () => {

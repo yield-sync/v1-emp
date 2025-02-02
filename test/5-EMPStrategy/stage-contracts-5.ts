@@ -5,13 +5,13 @@ import { deployContract } from "../../util/UtilEMP";
 import stageContracts, { StageContracts4 } from "../4-EMPStrategyDeployer/stage-contracts-4";
 
 
-export type StageContracts5 = StageContracts4 & {
-	eTHValueProvider: Contract;
-	eTHValueProviderC: Contract;
-};
-
-
 const { ethers } = require("hardhat");
+
+
+export type StageContracts5 = StageContracts4 & {
+	eTHValueProvider: Contract,
+	eTHValueProviderC: Contract,
+};
 
 
 export default async (): Promise<StageContracts5> => {
@@ -21,10 +21,10 @@ export default async (): Promise<StageContracts5> => {
 		treasury,
 		badActor,
 		eMPUtility,
-		mockERC20A,
-		mockERC20B,
-		mockERC20C,
-		mockERC20D,
+		eRC20A,
+		eRC20B,
+		eRC20C,
+		eRC20D,
 		governance,
 		addressArrayUtility,
 		registry,
@@ -35,10 +35,10 @@ export default async (): Promise<StageContracts5> => {
 	const eTHValueProvider: Contract = await deployContract("MockERC20ETHValueProvider", [18]);
 	const eTHValueProviderC: Contract = await deployContract("MockERC20ETHValueProvider", [6]);
 
-	await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20A.address, eTHValueProvider.address);
-	await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20B.address, eTHValueProvider.address);
-	await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20C.address, eTHValueProviderC.address);
-	await registry.eRC20_eRC20ETHValueProviderUpdate(mockERC20D.address, eTHValueProvider.address);
+	await registry.eRC20_eRC20ETHValueProviderUpdate(eRC20A.address, eTHValueProvider.address);
+	await registry.eRC20_eRC20ETHValueProviderUpdate(eRC20B.address, eTHValueProvider.address);
+	await registry.eRC20_eRC20ETHValueProviderUpdate(eRC20C.address, eTHValueProviderC.address);
+	await registry.eRC20_eRC20ETHValueProviderUpdate(eRC20D.address, eTHValueProvider.address);
 
 	return {
 		addressArrayUtility,
@@ -49,10 +49,10 @@ export default async (): Promise<StageContracts5> => {
 		registry,
 		strategyDeployer,
 		strategyUtility,
-		mockERC20A,
-		mockERC20B,
-		mockERC20C,
-		mockERC20D,
+		eRC20A,
+		eRC20B,
+		eRC20C,
+		eRC20D,
 		owner,
 		manager,
 		treasury,

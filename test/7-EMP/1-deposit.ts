@@ -17,13 +17,14 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 	let eTHValueEMPDepositAmount: BigNumber = ethers.utils.parseUnits("1", 18);
 
 	let addressArrayUtility: Contract;
+	let eMP: Contract;
 	let eMPDeployer: Contract;
 	let eMPUtility: Contract;
 	let registry: Contract;
 	let strategyDeployer: Contract;
-	let mockERC20A: Contract;
-	let mockERC20B: Contract;
-	let mockERC20C: Contract;
+	let eRC20A: Contract;
+	let eRC20B: Contract;
+	let eRC20C: Contract;
 
 	let owner: VoidSigner;
 	let manager: VoidSigner;
@@ -43,16 +44,19 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 				eMPUtility,
 				registry,
 				strategyDeployer,
-				mockERC20A,
-				mockERC20B,
-				mockERC20C,
+				eRC20A,
+				eRC20B,
+				eRC20C,
 				owner,
 				manager,
 				treasury,
 				strategies,
 			} = await stageContracts()
 		);
+
+		eMP = eMPs[0].contract;
 	});
+
 
 	describe("EMP with uninitialized Strategies", async () => {
 		let eMPDepositAmounts: UtilizedERC20Amount;
@@ -70,11 +74,11 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 				strategyDeployer,
 				[
 					{
-						strategyUtilizedERC20: [mockERC20A.address, mockERC20B.address],
+						strategyUtilizedERC20: [eRC20A.address, eRC20B.address],
 						strategyUtilization: [[true, true, PERCENT.FIFTY], [true, true, PERCENT.FIFTY]]
 					},
 					{
-						strategyUtilizedERC20: [mockERC20C.address],
+						strategyUtilizedERC20: [eRC20C.address],
 						strategyUtilization: [[true, true, PERCENT.HUNDRED]]
 					},
 				]
@@ -101,7 +105,7 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 		it("Should allow setting utilizedERC20 on EMP..", async () => {
 			let utilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(_eMPs[0].contract.address);
 
-			let myUtilizedERC20 = await addressArrayUtility.sort([mockERC20A.address, mockERC20B.address, mockERC20C.address])
+			let myUtilizedERC20 = await addressArrayUtility.sort([eRC20A.address, eRC20B.address, eRC20C.address])
 
 			for (let i = 0; i < utilizedERC20.length; i++)
 			{
@@ -118,13 +122,13 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 
 				switch (utilizedERC20[i])
 				{
-					case mockERC20A.address:
+					case eRC20A.address:
 						expect(utilization.allocation).to.be.equal(PERCENT.TWENTY_FIVE);
 						break;
-					case mockERC20B.address:
+					case eRC20B.address:
 						expect(utilization.allocation).to.be.equal(PERCENT.TWENTY_FIVE);
 						break;
-					case mockERC20C.address:
+					case eRC20C.address:
 						expect(utilization.allocation).to.be.equal(PERCENT.FIFTY);
 						break;
 					default:
@@ -169,10 +173,10 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 				*/
 
 				// Close deposits
-				await eMPs[0].contract.utilizedERC20DepositOpenUpdate(false);
+				await eMP.utilizedERC20DepositOpenUpdate(false);
 
 				// Even if utilizedERC20Amounts, the function should revert with reason that deposits are NOT open
-				await expect(eMPs[0].contract.utilizedERC20Deposit([])).to.be.rejectedWith(ERROR.STRATEGY.DEPOSIT_NOT_OPEN);
+				await expect(eMP.utilizedERC20Deposit([])).to.be.rejectedWith(ERROR.STRATEGY.DEPOSIT_NOT_OPEN);
 			});
 
 			it("Should NOT allow invalid lengthed _utilizedERC20Amount to be passed..", async () => {
@@ -184,7 +188,7 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 				// Pass in value for 0 strategies
 				const INVALID: UtilizedERC20Amount = [];
 
-				await expect(eMPs[0].contract.utilizedERC20Deposit(INVALID)).to.be.rejectedWith(
+				await expect(eMP.utilizedERC20Deposit(INVALID)).to.be.rejectedWith(
 					ERROR.EMP_UTILITY.INVALID_UTILIZED_ERC20_LENGTH
 				);
 			});
@@ -195,14 +199,14 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 
 				eMPDepositAmounts = await eMPs[0].UtilEMPTransfer.calculatedUtilizedERC20Amount(eTHValueEMPDepositAmount);
 
-				const utilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMPs[0].contract.address);
+				const utilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMP.address);
 
-				await approveTokens(eMPs[0].contract.address, utilizedERC20, eMPDepositAmounts);
+				await approveTokens(eMP.address, utilizedERC20, eMPDepositAmounts);
 
 				// Make invalid for expected failure
 				eMPDepositAmounts[0] = eMPDepositAmounts[0].sub(eMPDepositAmounts[0]);
 
-				await expect(eMPs[0].contract.utilizedERC20Deposit(eMPDepositAmounts)).to.be.revertedWith(
+				await expect(eMP.utilizedERC20Deposit(eMPDepositAmounts)).to.be.revertedWith(
 					ERROR.EMP_UTILITY.INVALID_ALLOCATION
 				);
 			});
@@ -222,9 +226,9 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 
 				eMPDepositAmounts = await eMPs[0].UtilEMPTransfer.calculatedUtilizedERC20Amount(eTHValueEMPDepositAmount);
 
-				const utilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMPs[0].contract.address);
+				const utilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMP.address);
 
-				await approveTokens(eMPs[0].contract.address, utilizedERC20, eMPDepositAmounts);
+				await approveTokens(eMP.address, utilizedERC20, eMPDepositAmounts);
 			});
 
 
@@ -235,7 +239,7 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 					* 1) Deposit ERC20 tokens into EMP
 					*/
 
-					await eMPs[0].contract.utilizedERC20Deposit(eMPDepositAmounts);
+					await eMP.utilizedERC20Deposit(eMPDepositAmounts);
 				});
 
 
@@ -244,14 +248,14 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 					* @notice This test should test that depositing correct amounts should work.
 					*/
 
-					const utilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMPs[0].contract.address);
-					// Test SI balances
+					const utilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMP.address);
+					// Test ERC20Handler balances
 					for (let i: number = 0; i < utilizedERC20.length; i++)
 					{
 						const IERC20 = await ethers.getContractAt(LOCATION_MOCKERC20, utilizedERC20[i]);
 
 						// [main-test]
-						expect(await IERC20.balanceOf(eMPs[0].contract.address)).to.be.equal(eMPDepositAmounts[i]);
+						expect(await IERC20.balanceOf(eMP.address)).to.be.equal(eMPDepositAmounts[i]);
 					}
 				});
 
@@ -262,13 +266,13 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 					*/
 
 					// Expect that the owner address received something
-					expect(await eMPs[0].contract.balanceOf(owner.address)).to.be.greaterThan(0);
+					expect(await eMP.balanceOf(owner.address)).to.be.greaterThan(0);
 
 					// Get the total ETH Value of the deposited amount
 					const { totalEthValue } = await eMPs[0].UtilEMPTransfer.valueOfERC20Deposits(eMPDepositAmounts);
 
 					// Expect that the EMP address received correct amount of Strategy tokens
-					expect(await eMPs[0].contract.balanceOf(owner.address)).to.be.equal(totalEthValue);
+					expect(await eMP.balanceOf(owner.address)).to.be.equal(totalEthValue);
 				});
 			});
 
@@ -324,30 +328,30 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 				for (let i = 0; i < feeRateTests.length; i++) {
 					it(`Fee Rate Test ${i + 1} - ` + feeRateTests[i].description, async () => {
 						// Set manager fee to 2%
-						await eMPs[0].contract.feeRateManagerUpdate(feeRateTests[i].managerFee);
+						await eMP.feeRateManagerUpdate(feeRateTests[i].managerFee);
 
-						expect(await eMPs[0].contract.feeRateManager()).to.be.equal(feeRateTests[i].managerFee);
+						expect(await eMP.feeRateManager()).to.be.equal(feeRateTests[i].managerFee);
 
 						// Set YS Gov fee to 2%
-						await eMPs[0].contract.feeRateGovernanceUpdate(feeRateTests[i].governanceFee);
+						await eMP.feeRateGovernanceUpdate(feeRateTests[i].governanceFee);
 
-						expect(await eMPs[0].contract.feeRateGovernance()).to.be.equal(feeRateTests[i].governanceFee);
+						expect(await eMP.feeRateGovernance()).to.be.equal(feeRateTests[i].governanceFee);
 
 						// Deposit the tokens
-						await eMPs[0].contract.utilizedERC20Deposit(eMPDepositAmounts);
+						await eMP.utilizedERC20Deposit(eMPDepositAmounts);
 
 						// Expect that the owner recieved 98% of the deposit value
-						expect(await eMPs[0].contract.balanceOf(owner.address)).to.be.equal(
+						expect(await eMP.balanceOf(owner.address)).to.be.equal(
 							feeRateTests[i].expectedOwnerAmount
 						);
 
 						// Expect that the owner recieved 2% of the deposit value
-						expect(await eMPs[0].contract.balanceOf(manager.address)).to.be.equal(
+						expect(await eMP.balanceOf(manager.address)).to.be.equal(
 							feeRateTests[i].expectedAmountManager
 						);
 
 						// Expect that the owner recieved 2% of the deposit value
-						expect(await eMPs[0].contract.balanceOf(treasury.address)).to.be.equal(
+						expect(await eMP.balanceOf(treasury.address)).to.be.equal(
 							feeRateTests[i].expectedAmountGovernance
 						);
 					});
@@ -359,7 +363,7 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 
 
 				beforeEach(async () => {
-					utilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMPs[0].contract.address);
+					utilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMP.address);
 
 					expect(utilizedERC20.length).to.be.equal(3);
 
@@ -368,12 +372,12 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 					await strategies[0].contract.utilizedERC20WithdrawOpenUpdate(false);
 
 					// Update the utilized tokens for the first strategy..
-					await strategies[0].contract.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]]);
+					await strategies[0].contract.utilizedERC20Update([eRC20A.address], [[true, true, PERCENT.HUNDRED]]);
 				});
 
 
 				it("Should be reverted if using old eMPDepositAmounts..", async () => {
-					await expect(eMPs[0].contract.utilizedERC20Deposit(eMPDepositAmounts)).to.be.revertedWith(
+					await expect(eMP.utilizedERC20Deposit(eMPDepositAmounts)).to.be.revertedWith(
 						ERROR.EMP_UTILITY.INVALID_UTILIZED_ERC20_LENGTH
 					);
 				});
@@ -391,11 +395,11 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 					utilizedERC20 = result.updatedUtilizedERC20;
 					eMPDepositAmounts = result.calculatedERC20Required;
 
-					await approveTokens(eMPs[0].contract.address, utilizedERC20, eMPDepositAmounts);
+					await approveTokens(eMP.address, utilizedERC20, eMPDepositAmounts);
 
-					await expect(eMPs[0].contract.utilizedERC20Deposit(eMPDepositAmounts)).to.be.not.reverted;
+					await expect(eMP.utilizedERC20Deposit(eMPDepositAmounts)).to.be.not.reverted;
 
-					utilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMPs[0].contract.address);
+					utilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMP.address);
 
 					expect(utilizedERC20.length).to.be.equal(2);
 				});
@@ -419,16 +423,16 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 
 			eMPDepositAmounts = await eMPs[0].UtilEMPTransfer.calculatedUtilizedERC20Amount(eTHValueEMPDepositAmount);
 
-			utilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMPs[0].contract.address);
+			utilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMP.address);
 
-			await approveTokens(eMPs[0].contract.address, utilizedERC20, eMPDepositAmounts);
+			await approveTokens(eMP.address, utilizedERC20, eMPDepositAmounts);
 
-			await eMPs[0].contract.utilizedERC20Deposit(eMPDepositAmounts);
+			await eMP.utilizedERC20Deposit(eMPDepositAmounts);
 		});
 
 
 		it("Should return the holdings of the EMP..", async () => {
-			const EMP_ERC20_BALANCES = await eMPs[0].contract.utilizedERC20TotalBalance();
+			const EMP_ERC20_BALANCES = await eMP.utilizedERC20TotalBalance();
 
 			for (let i = 0; i < utilizedERC20.length; i++)
 			{
@@ -453,29 +457,29 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 
 			eMPDepositAmounts = await eMPs[0].UtilEMPTransfer.calculatedUtilizedERC20Amount(eTHValueEMPDepositAmount);
 
-			utilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMPs[0].contract.address);
+			utilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMP.address);
 
-			await approveTokens(eMPs[0].contract.address, utilizedERC20, eMPDepositAmounts);
+			await approveTokens(eMP.address, utilizedERC20, eMPDepositAmounts);
 
 			// Deposit the utilized ERC20 tokens into EMP
-			await eMPs[0].contract.utilizedERC20Deposit(eMPDepositAmounts);
+			await eMP.utilizedERC20Deposit(eMPDepositAmounts);
 		});
 
 
 		describe("Expected Failure", async () => {
 			it("Should NOT allow depositing into strategies if not open..", async () => {
 				// Close deposits
-				await eMPs[0].contract.utilizedERC20DepositOpenUpdate(false);
+				await eMP.utilizedERC20DepositOpenUpdate(false);
 
 				// Attempt to deposit the tokens
-				await expect(eMPs[0].contract.utilizedV1EMPStrategyDeposit([])).to.be.rejectedWith(
+				await expect(eMP.utilizedV1EMPStrategyDeposit([])).to.be.rejectedWith(
 					ERROR.EMP.DEPOSIT_NOT_OPEN
 				);
 			});
 
 			it("Should revert if invalid lengthed _v1EMPStrategyUtilizedERC20Amount passed..", async () => {
 				// Pass incorrect length of deposit amounts
-				await expect(eMPs[0].contract.utilizedV1EMPStrategyDeposit([])).to.be.rejectedWith(
+				await expect(eMP.utilizedV1EMPStrategyDeposit([])).to.be.rejectedWith(
 					ERROR.EMP.INVALID_UTILIZED_ERC20_AMOUNT_LENGTH
 				);
 			});
@@ -495,7 +499,7 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 				depositAmount[0][0] = depositAmount[0][0].add(ethers.utils.parseUnits("1", 18)),
 
 				await expect(
-					eMPs[0].contract.utilizedV1EMPStrategyDeposit([depositAmount[0], depositAmount[1]])
+					eMP.utilizedV1EMPStrategyDeposit([depositAmount[0], depositAmount[1]])
 				).to.be.revertedWith(
 					ERROR.EMP.INVALID_UTILIZED_STRATEGY_ALLOCATION
 				);
@@ -522,7 +526,7 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 					eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(D_18)
 				);
 
-				await eMPs[0].contract.utilizedV1EMPStrategyDeposit([depositAmount[0], depositAmount[1]]);
+				await eMP.utilizedV1EMPStrategyDeposit([depositAmount[0], depositAmount[1]]);
 			});
 
 
@@ -531,14 +535,14 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 				{
 					const strategy = strategies[i].contract;
 
-					expect(await strategy.eMP_shares(eMPs[0].contract.address)).to.be.equal(
+					expect(await strategy.eMP_shares(eMP.address)).to.be.equal(
 						eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(D_18)
 					);
 				}
 			});
 
 			it("Should deposit correct amount of ERC20 tokens into ERC20 Handlers..", async () => {
-				const STRATEGIES: string[] = await eMPs[0].contract.utilizedV1EMPStrategy();
+				const STRATEGIES: string[] = await eMP.utilizedV1EMPStrategy();
 
 				// For each strategy..
 				for (let i = 0; i < STRATEGIES.length; i++)
@@ -588,11 +592,11 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 
 			eMPDepositAmounts = await eMPs[0].UtilEMPTransfer.calculatedUtilizedERC20Amount(eTHValueEMPDepositAmount);
 
-			utilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMPs[0].contract.address);
+			utilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMP.address);
 
-			await approveTokens(eMPs[0].contract.address, utilizedERC20, eMPDepositAmounts);
+			await approveTokens(eMP.address, utilizedERC20, eMPDepositAmounts);
 
-			await eMPs[0].contract.utilizedERC20Deposit(eMPDepositAmounts);
+			await eMP.utilizedERC20Deposit(eMPDepositAmounts);
 
 			depositAmount[0] = await strategies[0].UtilStrategyTransfer.calculateERC20Required(
 				eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(D_18)
@@ -602,12 +606,12 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 				eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(D_18)
 			);
 
-			await eMPs[0].contract.utilizedV1EMPStrategyDeposit([depositAmount[0], depositAmount[1]]);
+			await eMP.utilizedV1EMPStrategyDeposit([depositAmount[0], depositAmount[1]]);
 		});
 
 
 		it("Should return the holdings of the EMP..", async () => {
-			const EMP_ERC20_BALANCES = await eMPs[0].contract.utilizedERC20TotalBalance();
+			const EMP_ERC20_BALANCES = await eMP.utilizedERC20TotalBalance();
 
 			for (let i = 0; i < utilizedERC20.length; i++)
 			{
@@ -633,13 +637,13 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 				eMPDepositAmounts = await eMPs[0].UtilEMPTransfer.calculatedUtilizedERC20Amount(eTHValueEMPDepositAmount);
 				eMP2DepositAmounts = await eMPs[1].UtilEMPTransfer.calculatedUtilizedERC20Amount(eTHValueEMPDepositAmount);
 
-				utilizedERC20EMP1 = await eMPUtility.v1EMP_utilizedERC20(eMPs[0].contract.address);
+				utilizedERC20EMP1 = await eMPUtility.v1EMP_utilizedERC20(eMP.address);
 				utilizedERC20EMP2 = await eMPUtility.v1EMP_utilizedERC20(eMPs[1].contract.address);
 
-				await approveTokens(eMPs[0].contract.address, utilizedERC20EMP1, eMPDepositAmounts);
+				await approveTokens(eMP.address, utilizedERC20EMP1, eMPDepositAmounts);
 				await approveTokens(eMPs[1].contract.address, utilizedERC20EMP2, eMP2DepositAmounts);
 
-				await eMPs[0].contract.utilizedERC20Deposit(eMPDepositAmounts);
+				await eMP.utilizedERC20Deposit(eMPDepositAmounts);
 				await eMPs[1].contract.utilizedERC20Deposit(eMP2DepositAmounts);
 
 				depositAmountEMP[0] = await strategies[0].UtilStrategyTransfer.calculateERC20Required(
@@ -658,7 +662,7 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 					eTHValueEMPDepositAmount.mul(PERCENT.TWENTY_FIVE).div(D_18)
 				);
 
-				await eMPs[0].contract.utilizedV1EMPStrategyDeposit([depositAmountEMP[0], depositAmountEMP[1]]);
+				await eMP.utilizedV1EMPStrategyDeposit([depositAmountEMP[0], depositAmountEMP[1]]);
 				await eMPs[1].contract.utilizedV1EMPStrategyDeposit([depositAmounteMP2[0], depositAmounteMP2[1]]);
 			});
 
@@ -683,9 +687,9 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 
 			it("Should distribute the strategy tokens fairely to multiple EMP depositing into it..", async () => {
 				const TOTAL_STRATEGY_TOKENS = eTHValueEMPDepositAmount.mul(2).sub(
-					await strategies[0].contract.eMP_shares(eMPs[0].contract.address)
+					await strategies[0].contract.eMP_shares(eMP.address)
 				).sub(
-					await strategies[1].contract.eMP_shares(eMPs[0].contract.address)
+					await strategies[1].contract.eMP_shares(eMP.address)
 				).sub(
 					await strategies[0].contract.eMP_shares(eMPs[1].contract.address)
 				).sub(

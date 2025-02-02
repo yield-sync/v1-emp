@@ -8,13 +8,13 @@ export type StageContracts0 = {
 	manager: VoidSigner,
 	treasury: VoidSigner,
 	badActor: VoidSigner,
-	mockERC20A: Contract,
-	mockERC20B: Contract,
-	mockERC20C: Contract,
-	mockERC20D: Contract,
+	eRC20A: Contract,
+	eRC20B: Contract,
+	eRC20C: Contract,
+	eRC20D: Contract,
 	governance: Contract,
 	addressArrayUtility: Contract,
-}
+};
 
 
 const { ethers } = require("hardhat");
@@ -23,13 +23,13 @@ const { ethers } = require("hardhat");
 export default async (): Promise<StageContracts0> => {
 	const [owner, manager, treasury, badActor,]: VoidSigner[] = await ethers.getSigners();
 
-	const mockERC20A: Contract = await deployContract("MockERC20", ["Mock A", "A", 18]);
+	const eRC20A: Contract = await deployContract("MockERC20", ["ERC A", "A", 18]);
 
-	const mockERC20B: Contract = await deployContract("MockERC20", ["Mock B", "B", 18]);
+	const eRC20B: Contract = await deployContract("MockERC20", ["ERC B", "B", 18]);
 
-	const mockERC20C: Contract = await deployContract("MockERC20", ["Mock C", "C", 6]);
+	const eRC20C: Contract = await deployContract("MockERC20", ["ERC C", "C", 6]);
 
-	const mockERC20D: Contract = await deployContract("MockERC20", ["Mock D", "D", 18]);
+	const eRC20D: Contract = await deployContract("MockERC20", ["ERC D", "D", 18]);
 
 	const governance: Contract = await deployContract("YieldSyncGovernance");
 
@@ -42,10 +42,10 @@ export default async (): Promise<StageContracts0> => {
 		manager,
 		treasury,
 		badActor,
-		mockERC20A,
-		mockERC20B,
-		mockERC20C,
-		mockERC20D,
+		eRC20A,
+		eRC20B,
+		eRC20C,
+		eRC20D,
 		governance,
 		addressArrayUtility,
 	};

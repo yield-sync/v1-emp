@@ -4,12 +4,12 @@ import stageContracts, { StageContracts0 } from "../stage-contracts-0";
 import { deployContract } from "../../util/UtilEMP";
 
 
-export type StageContracts1 = StageContracts0 & {
-	registry: Contract;
-};
-
-
 const { ethers } = require("hardhat");
+
+
+export type StageContracts1 = StageContracts0 & {
+	registry: Contract,
+};
 
 
 export default async (): Promise<StageContracts1> => {
@@ -18,10 +18,10 @@ export default async (): Promise<StageContracts1> => {
 		manager,
 		treasury,
 		badActor,
-		mockERC20A,
-		mockERC20B,
-		mockERC20C,
-		mockERC20D,
+		eRC20A,
+		eRC20B,
+		eRC20C,
+		eRC20D,
 		governance,
 		addressArrayUtility,
 	}: StageContracts0 = await stageContracts();
@@ -33,10 +33,10 @@ export default async (): Promise<StageContracts1> => {
 		manager,
 		treasury,
 		badActor,
-		mockERC20A,
-		mockERC20B,
-		mockERC20C,
-		mockERC20D,
+		eRC20A,
+		eRC20B,
+		eRC20C,
+		eRC20D,
 		governance,
 		addressArrayUtility,
 		registry,

@@ -1,8 +1,8 @@
 import { expect } from "chai";
-import { BigNumber, Contract, ContractFactory, VoidSigner } from "ethers";
+import { BigNumber, Contract, VoidSigner } from "ethers";
 
 import stageContracts, { suiteSpecificSetup } from "./stage-contracts-5";
-import { ERROR, PERCENT, D_18 } from "../../const";
+import { PERCENT, D_18 } from "../../const";
 import UtilStrategyTransfer from "../../util/UtilStrategyTransfer";
 
 
@@ -17,10 +17,9 @@ describe("[5.3] V1EMPStrategy.sol - Edge-cases", async () => {
 	let eRC20Handler: Contract;
 	let registry: Contract;
 	let strategy: Contract;
-
-	let mockERC20A: Contract;
-	let mockERC20B: Contract;
-	let mockERC20C: Contract;
+	let eRC20A: Contract;
+	let eRC20B: Contract;
+	let eRC20C: Contract;
 	let strategyDeployer: Contract;
 
 	let utilStrategyTransfer: UtilStrategyTransfer;
@@ -33,9 +32,9 @@ describe("[5.3] V1EMPStrategy.sol - Edge-cases", async () => {
 			{
 				eTHValueProvider,
 				registry,
-				mockERC20A,
-				mockERC20B,
-				mockERC20C,
+				eRC20A,
+				eRC20B,
+				eRC20C,
 				owner,
 				strategyDeployer
 			} = await stageContracts()
@@ -63,7 +62,7 @@ describe("[5.3] V1EMPStrategy.sol - Edge-cases", async () => {
 
 			// Set strategy ERC20 tokens
 			await expect(
-				strategy.utilizedERC20Update([mockERC20A.address], [[true, true, PERCENT.HUNDRED]])
+				strategy.utilizedERC20Update([eRC20A.address], [[true, true, PERCENT.HUNDRED]])
 			).to.be.not.rejected;
 
 			await strategy.utilizedERC20DepositOpenUpdate(true);
@@ -83,7 +82,7 @@ describe("[5.3] V1EMPStrategy.sol - Edge-cases", async () => {
 
 			it("Should receive strategy tokens based on what market value is (denominated in ETH)..", async () => {
 				// Approve the SI to spend Mock A on behalf of owner
-				await mockERC20A.approve(eRC20Handler.address, DEPOSIT_AMOUNT);
+				await eRC20A.approve(eRC20Handler.address, DEPOSIT_AMOUNT);
 
 				// DEPOSIT - ERC20 tokens into the strategy
 				await strategy.utilizedERC20Deposit([DEPOSIT_AMOUNT])
@@ -92,14 +91,14 @@ describe("[5.3] V1EMPStrategy.sol - Edge-cases", async () => {
 
 				const provider = await ethers.getContractAt(
 					"MockERC20ETHValueProvider",
-					await registry.eRC20_eRC20ETHValueProvider(mockERC20A.address)
+					await registry.eRC20_eRC20ETHValueProvider(eRC20A.address)
 				);
 
 				// Get the ETH value of each tokens in ETH
-				let ethValueMockA: BigNumber = await provider.utilizedERC20ETHValue();
+				let ethValueA: BigNumber = await provider.utilizedERC20ETHValue();
 
 				// [calculate] Deposit ETH Value
-				let totalEthValue: BigNumber = DEPOSIT_AMOUNT.mul(ethValueMockA).div(D_18);
+				let totalEthValue: BigNumber = DEPOSIT_AMOUNT.mul(ethValueA).div(D_18);
 
 				// Expect that that amount of S tokens received
 				expect(BalanceStrategyOwner).to.be.equal(totalEthValue);
@@ -108,7 +107,7 @@ describe("[5.3] V1EMPStrategy.sol - Edge-cases", async () => {
 				await eTHValueProvider.updateETHValue(ethers.utils.parseUnits("2", 18));
 
 				// APPROVE - SI contract to spend tokens on behalf of owner
-				await mockERC20A.approve(eRC20Handler.address, DEPOSIT_AMOUNT_2);
+				await eRC20A.approve(eRC20Handler.address, DEPOSIT_AMOUNT_2);
 
 				// DEPOSIT - ERC20 tokens into the strategy
 				await strategy.utilizedERC20Deposit([DEPOSIT_AMOUNT_2])
@@ -118,12 +117,12 @@ describe("[5.3] V1EMPStrategy.sol - Edge-cases", async () => {
 				expect(BalanceStrategyOwner).to.be.equal(ethers.utils.parseUnits("3", 18));
 
 				// Get the ETH value of each tokens in ETH
-				ethValueMockA = await provider.utilizedERC20ETHValue();
+				ethValueA = await provider.utilizedERC20ETHValue();
 
 				let totalDeposited: BigNumber = DEPOSIT_AMOUNT.add(DEPOSIT_AMOUNT_2);
 
 				// [calculate] Deposit ETH Value
-				totalEthValue = totalDeposited.mul(ethValueMockA).div(D_18);
+				totalEthValue = totalDeposited.mul(ethValueA).div(D_18);
 
 				expect(totalEthValue).to.be.equal(ethers.utils.parseUnits("4", 18));
 			});
@@ -131,13 +130,13 @@ describe("[5.3] V1EMPStrategy.sol - Edge-cases", async () => {
 
 		describe("function utilizedERC20Withdraw()", async () => {
 			it("Should return same amount of ERC20 even if value of ERC20 changes..", async () => {
-				const B4_BALANCE_MOCK_A_SI: BigNumber = await mockERC20A.balanceOf(eRC20Handler.address);
-				const B4_BALANCE_MOCK_A_OWNER: BigNumber = await mockERC20A.balanceOf(owner.address);
+				const B4_BALANCE_A_SI: BigNumber = await eRC20A.balanceOf(eRC20Handler.address);
+				const B4_BALANCE_A_OWNER: BigNumber = await eRC20A.balanceOf(owner.address);
 				const DEPOSIT_AMOUNT_A: BigNumber = ethers.utils.parseUnits("1", 18);
 				const B4_TOTAL_SUPPLY_STRATEGY: BigNumber = await strategy.sharesTotal();
 
 				// APPROVE - SI contract to spend tokens on behalf of owner
-				await mockERC20A.approve(eRC20Handler.address, DEPOSIT_AMOUNT_A);
+				await eRC20A.approve(eRC20Handler.address, DEPOSIT_AMOUNT_A);
 
 				// DEPOSIT - ERC20 tokens into the strategy
 				await strategy.utilizedERC20Deposit([DEPOSIT_AMOUNT_A])
@@ -149,13 +148,13 @@ describe("[5.3] V1EMPStrategy.sol - Edge-cases", async () => {
 				await eTHValueProvider.updateETHValue(ethers.utils.parseUnits("2", 18));
 
 				// Strategy token burned
-				expect(await strategy.eMP_shares(owner.address)).to.be.equal(B4_BALANCE_MOCK_A_SI);
+				expect(await strategy.eMP_shares(owner.address)).to.be.equal(B4_BALANCE_A_SI);
 
 				// Supply put back to original
 				expect(await strategy.sharesTotal()).to.be.equal(B4_TOTAL_SUPPLY_STRATEGY);
 
 				// Expect that the balance been returned to original or greater
-				expect(await mockERC20A.balanceOf(owner.address)).to.be.equal(B4_BALANCE_MOCK_A_OWNER);
+				expect(await eRC20A.balanceOf(owner.address)).to.be.equal(B4_BALANCE_A_OWNER);
 			});
 		});
 	});
@@ -172,7 +171,7 @@ describe("[5.3] V1EMPStrategy.sol - Edge-cases", async () => {
 
 			// Set strategy ERC20 tokens
 			await strategy.utilizedERC20Update(
-				[mockERC20A.address, mockERC20B.address, mockERC20C.address],
+				[eRC20A.address, eRC20B.address, eRC20C.address],
 				[[true, false, PERCENT.FIFTY], [true, false, PERCENT.FIFTY], [false, false, PERCENT.ZERO]],
 			);
 
@@ -187,7 +186,7 @@ describe("[5.3] V1EMPStrategy.sol - Edge-cases", async () => {
 
 		it("Should fail to return C if withdraw is not set to true..", async () => {
 			// Give ERC20C to ERC20 Handler to mock rewards accrual
-			await mockERC20C.connect(owner).transfer(eRC20Handler.address, ethers.utils.parseUnits("1", 6));
+			await eRC20C.connect(owner).transfer(eRC20Handler.address, ethers.utils.parseUnits("1", 6));
 
 			const UTILIZED_ERC20: string[] = await strategy.utilizedERC20();
 
@@ -200,7 +199,7 @@ describe("[5.3] V1EMPStrategy.sol - Edge-cases", async () => {
 			// Capture balances
 			const B4_TOTAL_SUPPLY_STRATEGY: BigNumber = await strategy.sharesTotal();
 
-			const B4_BALANCE_MOCK_C_OWNER: BigNumber = await mockERC20C.balanceOf(owner.address);
+			const B4_BALANCE_C_OWNER: BigNumber = await eRC20C.balanceOf(owner.address);
 
 			let b4BalancesOwner: BigNumber[] = [];
 			let b4BalancesERC20Handler: BigNumber[] = [];
@@ -242,7 +241,7 @@ describe("[5.3] V1EMPStrategy.sol - Edge-cases", async () => {
 			// Supply put back to original
 			expect(await strategy.sharesTotal()).to.be.equal(B4_TOTAL_SUPPLY_STRATEGY);
 
-			expect(await mockERC20C.balanceOf(owner.address)).to.equal(B4_BALANCE_MOCK_C_OWNER);
+			expect(await eRC20C.balanceOf(owner.address)).to.equal(B4_BALANCE_C_OWNER);
 		});
 	});
 });

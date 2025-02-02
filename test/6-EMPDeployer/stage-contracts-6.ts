@@ -5,7 +5,7 @@ import stageContracts, { StageContracts5 } from "../5-EMPStrategy/stage-contract
 
 
 export type StageContracts6 = StageContracts5 & {
-	eMPDeployer: Contract
+	eMPDeployer: Contract,
 };
 
 
@@ -16,10 +16,10 @@ export default async (): Promise<StageContracts6> => {
 		treasury,
 		badActor,
 		eMPUtility,
-		mockERC20A,
-		mockERC20B,
-		mockERC20C,
-		mockERC20D,
+		eRC20A,
+		eRC20B,
+		eRC20C,
+		eRC20D,
 		governance,
 		addressArrayUtility,
 		registry,
@@ -42,10 +42,10 @@ export default async (): Promise<StageContracts6> => {
 		registry,
 		strategyDeployer,
 		strategyUtility,
-		mockERC20A,
-		mockERC20B,
-		mockERC20C,
-		mockERC20D,
+		eRC20A,
+		eRC20B,
+		eRC20C,
+		eRC20D,
 		owner,
 		manager,
 		treasury,

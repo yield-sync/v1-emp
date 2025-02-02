@@ -1,15 +1,15 @@
-import { Contract, VoidSigner } from "ethers";
+import { Contract } from "ethers";
 
 import { deployContract } from "../../util/UtilEMP";
 import stageContracts, { StageContracts2 } from "../2-EMPStrategyUtility/stage-contracts-2";
 
 
-export type StageContracts3 = StageContracts2 & {
-	eMPUtility: Contract;
-};
-
-
 const { ethers } = require("hardhat");
+
+
+export type StageContracts3 = StageContracts2 & {
+	eMPUtility: Contract,
+};
 
 
 export default async (): Promise<StageContracts3> => {
@@ -18,10 +18,10 @@ export default async (): Promise<StageContracts3> => {
 		manager,
 		treasury,
 		badActor,
-		mockERC20A,
-		mockERC20B,
-		mockERC20C,
-		mockERC20D,
+		eRC20A,
+		eRC20B,
+		eRC20C,
+		eRC20D,
 		governance,
 		addressArrayUtility,
 		registry,
@@ -37,10 +37,10 @@ export default async (): Promise<StageContracts3> => {
 		manager,
 		treasury,
 		badActor,
-		mockERC20A,
-		mockERC20B,
-		mockERC20C,
-		mockERC20D,
+		eRC20A,
+		eRC20B,
+		eRC20C,
+		eRC20D,
 		governance,
 		addressArrayUtility,
 		eMPUtility,
@@ -53,7 +53,6 @@ export default async (): Promise<StageContracts3> => {
 export async function suiteSpecificSetup(registry: Contract)
 {
 	const [, , , , _fakeEMPDeployer, fakeEMP] = await ethers.getSigners();
-
 
 	await registry.v1EMPDeployerUpdate(_fakeEMPDeployer.address);
 

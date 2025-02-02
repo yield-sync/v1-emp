@@ -1,5 +1,3 @@
-import { Contract } from "ethers";
-
 import { PERCENT } from "../../const";
 import { deployContract, deployEMP, deployStrategies } from "../../util/UtilEMP";
 import stageContracts, { StageContracts6 } from "../6-EMPDeployer/stage-contracts-6";
@@ -22,10 +20,10 @@ export default async (): Promise<StageContracts7> => {
 		registry,
 		strategyDeployer,
 		strategyUtility,
-		mockERC20A,
-		mockERC20B,
-		mockERC20C,
-		mockERC20D,
+		eRC20A,
+		eRC20B,
+		eRC20C,
+		eRC20D,
 		owner,
 		manager,
 		treasury,
@@ -40,11 +38,11 @@ export default async (): Promise<StageContracts7> => {
 		strategyDeployer,
 		[
 			{
-				strategyUtilizedERC20: [mockERC20A.address, mockERC20B.address],
+				strategyUtilizedERC20: [eRC20A.address, eRC20B.address],
 				strategyUtilization: [[true, true, PERCENT.FIFTY], [true, true, PERCENT.FIFTY]],
 			},
 			{
-				strategyUtilizedERC20: [mockERC20C.address],
+				strategyUtilizedERC20: [eRC20C.address],
 				strategyUtilization: [[true, true, PERCENT.HUNDRED]],
 			},
 		],
@@ -101,10 +99,10 @@ export default async (): Promise<StageContracts7> => {
 		eMPs,
 		eMPUtility,
 		manager,
-		mockERC20A,
-		mockERC20B,
-		mockERC20C,
-		mockERC20D,
+		eRC20A,
+		eRC20B,
+		eRC20C,
+		eRC20D,
 		badActor,
 		owner,
 		registry,

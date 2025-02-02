@@ -3,14 +3,13 @@ import { Contract, VoidSigner } from "ethers";
 
 import stageContracts, { suiteSpecificSetup } from "./stage-contracts-3";
 import { ERROR } from "../../const";
-import { deployContract } from "../../util/UtilEMP";
 
 
 const { ethers } = require("hardhat");
 
 
 describe("[3.0] V1EMPUtility.sol", async () => {
-	let mockERC20A: Contract;
+	let eRC20A: Contract;
 	let registry: Contract;
 	let eMPUtility: Contract;
 
@@ -18,7 +17,7 @@ describe("[3.0] V1EMPUtility.sol", async () => {
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
-		({ registry, eMPUtility, mockERC20A } = await stageContracts());
+		({ registry, eMPUtility, eRC20A } = await stageContracts());
 
 		({ fakeEMP } = await suiteSpecificSetup(registry));
 	});
@@ -39,7 +38,7 @@ describe("[3.0] V1EMPUtility.sol", async () => {
 
 				const toleratedAmount = await eMPUtility.optimizedTransferAmount(
 					fakeEMP.address,
-					mockERC20A.address,
+					eRC20A.address,
 					AMOUNT
 				);
 
@@ -55,9 +54,7 @@ describe("[3.0] V1EMPUtility.sol", async () => {
 			});
 
 			it("Should not allow passing _utilizedERC20Amount with invalid length..", async () => {
-				await expect(
-					eMPUtility.utilizedERC20AmountValid(fakeEMP.address, [1])
-				).to.be.rejectedWith(
+				await expect(eMPUtility.utilizedERC20AmountValid(fakeEMP.address, [1])).to.be.rejectedWith(
 					ERROR.EMP_UTILITY.INVALID_UTILIZED_ERC20_LENGTH
 				);
 			});

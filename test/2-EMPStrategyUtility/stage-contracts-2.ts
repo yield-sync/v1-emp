@@ -1,11 +1,11 @@
-import { Contract, VoidSigner } from "ethers";
+import { Contract } from "ethers";
 
 import { deployContract } from "../../util/UtilEMP";
 import stageContracts, { StageContracts1 } from "../1-EMPRegistry/stage-contracts-1";
 
 
 export type StageContracts2 = StageContracts1 & {
-	strategyUtility: Contract;
+	strategyUtility: Contract,
 };
 
 
@@ -15,10 +15,10 @@ export default async (): Promise<StageContracts2> => {
 		manager,
 		treasury,
 		badActor,
-		mockERC20A,
-		mockERC20B,
-		mockERC20C,
-		mockERC20D,
+		eRC20A,
+		eRC20B,
+		eRC20C,
+		eRC20D,
 		governance,
 		addressArrayUtility,
 		registry,
@@ -35,10 +35,10 @@ export default async (): Promise<StageContracts2> => {
 		manager,
 		treasury,
 		badActor,
-		mockERC20A,
-		mockERC20B,
-		mockERC20C,
-		mockERC20D,
+		eRC20A,
+		eRC20B,
+		eRC20C,
+		eRC20D,
 		governance,
 		addressArrayUtility,
 		registry,
