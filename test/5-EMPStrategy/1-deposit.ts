@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { BigNumber, Contract, VoidSigner } from "ethers";
 
-import stageContracts, { suiteSpecificSetup } from "./stage-contracts-5";
+import stageContracts, { stageSpecificSetup } from "./stage-contracts-5";
 import { ERROR, PERCENT } from "../../const";
 import UtilStrategyTransfer from "../../util/UtilStrategyTransfer";
 
@@ -44,7 +44,7 @@ describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 			} = await stageContracts()
 		);
 
-		({ eRC20Handler, strategy, utilStrategyTransfer, } = await suiteSpecificSetup(registry, strategyDeployer, owner));
+		({ eRC20Handler, strategy, utilStrategyTransfer, } = await stageSpecificSetup(registry, strategyDeployer, owner));
 	});
 
 

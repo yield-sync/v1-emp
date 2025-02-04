@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { Contract, ContractFactory, VoidSigner } from "ethers";
 
-import stageContracts, { suiteSpecificSetup } from "./stage-contracts-5";
+import stageContracts, { stageSpecificSetup } from "./stage-contracts-5";
 import { ERROR, PERCENT } from "../../const";
 
 
@@ -37,7 +37,7 @@ describe("[5.0] V1EMPStrategy.sol - Initialization", async () => {
 			} = await stageContracts()
 		);
 
-		({ eRC20Handler, strategy, } = await suiteSpecificSetup(registry, strategyDeployer, owner));
+		({ eRC20Handler, strategy, } = await stageSpecificSetup(registry, strategyDeployer, owner));
 	});
 
 

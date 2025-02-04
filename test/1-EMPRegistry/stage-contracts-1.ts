@@ -21,7 +21,7 @@ export default async (): Promise<StageContracts1> => {
 };
 
 
-export async function suiteSpecificSetup()
+export async function stageSpecificSetup()
 {
 	const [
 		,

@@ -21,19 +21,23 @@ const { ethers } = require("hardhat");
 
 
 export default async (): Promise<StageContracts0> => {
-	const [owner, manager, treasury, badActor,]: VoidSigner[] = await ethers.getSigners();
+	const [owner, manager, treasury, badActor] = await ethers.getSigners();
 
-	const eRC20A: Contract = await deployContract("MockERC20", ["ERC A", "A", 18]);
-
-	const eRC20B: Contract = await deployContract("MockERC20", ["ERC B", "B", 18]);
-
-	const eRC20C: Contract = await deployContract("MockERC20", ["ERC C", "C", 6]);
-
-	const eRC20D: Contract = await deployContract("MockERC20", ["ERC D", "D", 18]);
-
-	const governance: Contract = await deployContract("YieldSyncGovernance");
-
-	const addressArrayUtility: Contract = await deployContract("AddressArrayUtility");
+	const [
+		eRC20A,
+		eRC20B,
+		eRC20C,
+		eRC20D,
+		governance,
+		addressArrayUtility,
+	] = await Promise.all([
+		deployContract("MockERC20", ["ERC A", "A", 18]),
+		deployContract("MockERC20", ["ERC B", "B", 18]),
+		deployContract("MockERC20", ["ERC C", "C", 6]),
+		deployContract("MockERC20", ["ERC D", "D", 18]),
+		deployContract("YieldSyncGovernance"),
+		deployContract("AddressArrayUtility"),
+	]);
 
 	await governance.payToUpdate(treasury.address);
 

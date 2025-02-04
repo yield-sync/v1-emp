@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { Contract, VoidSigner } from "ethers";
 
-import stageContracts, { suiteSpecificSetup } from "./stage-contracts-3";
+import stageContracts, { stageSpecificSetup } from "./stage-contracts-3";
 import { ERROR } from "../../const";
 
 
@@ -19,7 +19,7 @@ describe("[3.0] V1EMPUtility.sol", async () => {
 	beforeEach("[beforeEach] Set up contracts..", async () => {
 		({ registry, eMPUtility, eRC20A } = await stageContracts());
 
-		({ fakeEMP } = await suiteSpecificSetup(registry));
+		({ fakeEMP } = await stageSpecificSetup(registry));
 	});
 
 

@@ -22,7 +22,7 @@ export default async (): Promise<StageContracts3> => {
 };
 
 
-export async function suiteSpecificSetup(registry: Contract)
+export async function stageSpecificSetup(registry: Contract)
 {
 	const [, , , , _fakeEMPDeployer, fakeEMP] = await ethers.getSigners();
 

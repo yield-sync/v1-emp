@@ -29,7 +29,7 @@ export default async (): Promise<StageContracts5> => {
 };
 
 
-export async function suiteSpecificSetup(registry: Contract, strategyDeployer: Contract, owner: VoidSigner)
+export async function stageSpecificSetup(registry: Contract, strategyDeployer: Contract, owner: VoidSigner)
 {
 	/**
 	* @notice The owner has to be registered as the EMP deployer so that it can authorize itself as an EMP to access the

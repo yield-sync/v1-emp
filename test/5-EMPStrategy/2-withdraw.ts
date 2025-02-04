@@ -4,7 +4,7 @@ import { BigNumber, Contract, VoidSigner } from "ethers";
 import { ERROR, PERCENT, D_18 } from "../../const";
 import UtilStrategyTransfer from "../../util/UtilStrategyTransfer";
 
-import stageContracts, { suiteSpecificSetup } from "./stage-contracts-5";
+import stageContracts, { stageSpecificSetup } from "./stage-contracts-5";
 
 
 const { ethers } = require("hardhat");
@@ -43,7 +43,7 @@ describe("[5.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 			} = await stageContracts()
 		);
 
-		({ eRC20Handler, strategy, utilStrategyTransfer, } = await suiteSpecificSetup(registry, strategyDeployer, owner));
+		({ eRC20Handler, strategy, utilStrategyTransfer, } = await stageSpecificSetup(registry, strategyDeployer, owner));
 	});
 
 

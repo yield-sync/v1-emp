@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { Contract, VoidSigner } from "ethers";
 
-import stageContracts, { suiteSpecificSetup } from "./stage-contracts-1";
+import stageContracts, { stageSpecificSetup } from "./stage-contracts-1";
 import { ERROR } from "../../const";
 
 
@@ -37,7 +37,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 				fakeEMPUtility,
 				fakeEMP,
 				fakeEMPStrategy,
-			} = await suiteSpecificSetup()
+			} = await stageSpecificSetup()
 		);
 	});
 
