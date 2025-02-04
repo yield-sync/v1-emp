@@ -15,49 +15,17 @@ export type StageContracts5 = StageContracts4 & {
 
 
 export default async (): Promise<StageContracts5> => {
-	const {
-		owner,
-		manager,
-		treasury,
-		badActor,
-		eMPUtility,
-		eRC20A,
-		eRC20B,
-		eRC20C,
-		eRC20D,
-		governance,
-		addressArrayUtility,
-		registry,
-		strategyDeployer,
-		strategyUtility,
-	}: StageContracts4 = await stageContracts();
+	const CONTRACTS: StageContracts4 = await stageContracts();
 
 	const eTHValueProvider: Contract = await deployContract("MockERC20ETHValueProvider", [18]);
 	const eTHValueProviderC: Contract = await deployContract("MockERC20ETHValueProvider", [6]);
 
-	await registry.eRC20_eRC20ETHValueProviderUpdate(eRC20A.address, eTHValueProvider.address);
-	await registry.eRC20_eRC20ETHValueProviderUpdate(eRC20B.address, eTHValueProvider.address);
-	await registry.eRC20_eRC20ETHValueProviderUpdate(eRC20C.address, eTHValueProviderC.address);
-	await registry.eRC20_eRC20ETHValueProviderUpdate(eRC20D.address, eTHValueProvider.address);
+	await CONTRACTS.registry.eRC20_eRC20ETHValueProviderUpdate(CONTRACTS.eRC20A.address, eTHValueProvider.address);
+	await CONTRACTS.registry.eRC20_eRC20ETHValueProviderUpdate(CONTRACTS.eRC20B.address, eTHValueProvider.address);
+	await CONTRACTS.registry.eRC20_eRC20ETHValueProviderUpdate(CONTRACTS.eRC20C.address, eTHValueProviderC.address);
+	await CONTRACTS.registry.eRC20_eRC20ETHValueProviderUpdate(CONTRACTS.eRC20D.address, eTHValueProvider.address);
 
-	return {
-		addressArrayUtility,
-		governance,
-		eTHValueProvider,
-		eTHValueProviderC,
-		eMPUtility,
-		registry,
-		strategyDeployer,
-		strategyUtility,
-		eRC20A,
-		eRC20B,
-		eRC20C,
-		eRC20D,
-		owner,
-		manager,
-		treasury,
-		badActor,
-	};
+	return { ...CONTRACTS, eTHValueProvider, eTHValueProviderC, };
 };
 
 

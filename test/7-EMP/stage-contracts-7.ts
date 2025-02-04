@@ -10,39 +10,21 @@ export type StageContracts7 = StageContracts6 & {
 
 
 export default async (): Promise<StageContracts7> => {
-	const {
-		addressArrayUtility,
-		governance,
-		eTHValueProvider,
-		eTHValueProviderC,
-		eMPDeployer,
-		eMPUtility,
-		registry,
-		strategyDeployer,
-		strategyUtility,
-		eRC20A,
-		eRC20B,
-		eRC20C,
-		eRC20D,
-		owner,
-		manager,
-		treasury,
-		badActor,
-	}: StageContracts6 = await stageContracts();
+	const CONTRACTS: StageContracts6 = await stageContracts();
 
 	/**
 	* EMP Strategies
 	*/
 	const strategies: TestStrategy[] = await deployStrategies(
-		registry,
-		strategyDeployer,
+		CONTRACTS.registry,
+		CONTRACTS.strategyDeployer,
 		[
 			{
-				strategyUtilizedERC20: [eRC20A.address, eRC20B.address],
+				strategyUtilizedERC20: [CONTRACTS.eRC20A.address, CONTRACTS.eRC20B.address],
 				strategyUtilization: [[true, true, PERCENT.FIFTY], [true, true, PERCENT.FIFTY]],
 			},
 			{
-				strategyUtilizedERC20: [eRC20C.address],
+				strategyUtilizedERC20: [CONTRACTS.eRC20C.address],
 				strategyUtilization: [[true, true, PERCENT.HUNDRED]],
 			},
 		],
@@ -64,10 +46,10 @@ export default async (): Promise<StageContracts7> => {
 	* EMP
 	*/
 	const eMPs: TestEMP[] = await deployEMP(
-		manager.address,
-		registry,
-		eMPDeployer,
-		eMPUtility,
+		CONTRACTS.manager.address,
+		CONTRACTS.registry,
+		CONTRACTS.eMPDeployer,
+		CONTRACTS.eMPUtility,
 		[
 			{
 				name: "EMP 1",
@@ -90,25 +72,5 @@ export default async (): Promise<StageContracts7> => {
 		]
 	);
 
-	return {
-		addressArrayUtility,
-		governance,
-		eTHValueProvider,
-		eTHValueProviderC,
-		eMPDeployer,
-		eMPs,
-		eMPUtility,
-		manager,
-		eRC20A,
-		eRC20B,
-		eRC20C,
-		eRC20D,
-		badActor,
-		owner,
-		registry,
-		strategies,
-		strategyDeployer,
-		strategyUtility,
-		treasury,
-	};
+	return { ...CONTRACTS, eMPs, strategies };
 };

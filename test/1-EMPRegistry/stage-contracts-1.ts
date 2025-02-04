@@ -13,34 +13,11 @@ export type StageContracts1 = StageContracts0 & {
 
 
 export default async (): Promise<StageContracts1> => {
-	const {
-		owner,
-		manager,
-		treasury,
-		badActor,
-		eRC20A,
-		eRC20B,
-		eRC20C,
-		eRC20D,
-		governance,
-		addressArrayUtility,
-	}: StageContracts0 = await stageContracts();
+	const CONTRACTS: StageContracts0 = await stageContracts();
 
-	const registry: Contract = await deployContract("V1EMPRegistry", [governance.address]);
+	const registry: Contract = await deployContract("V1EMPRegistry", [CONTRACTS.governance.address]);
 
-	return {
-		owner,
-		manager,
-		treasury,
-		badActor,
-		eRC20A,
-		eRC20B,
-		eRC20C,
-		eRC20D,
-		governance,
-		addressArrayUtility,
-		registry,
-	};
+	return { ...CONTRACTS, registry, };
 };
 
 
