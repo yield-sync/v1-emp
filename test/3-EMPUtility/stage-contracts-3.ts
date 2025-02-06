@@ -16,6 +16,7 @@ export default async (): Promise<StageContracts3> => {
 	const CONTRACTS: StageContracts2 = await stageContracts();
 
 	const eMPUtility: Contract = await deployContract("V1EMPUtility", [CONTRACTS.registry.address]);
+
 	await CONTRACTS.registry.v1EMPUtilityUpdate(eMPUtility.address);
 
 	return { ...CONTRACTS, eMPUtility };
