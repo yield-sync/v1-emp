@@ -265,7 +265,13 @@ contract V1EMP is
 				);
 			}
 
-			utilizedV1EMPStrategyWithdraw(v1EMPStrategyERC20Amount);
+			for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
+			{
+				if (v1EMPStrategyERC20Amount[i] != 0)
+				{
+					IV1EMPStrategy(_utilizedV1EMPStrategy[i]).utilizedERC20Withdraw(v1EMPStrategyERC20Amount[i]);
+				}
+			}
 		}
 
 		for (uint256 i = 0; i < utilizedERC20.length; i++)
@@ -380,22 +386,21 @@ contract V1EMP is
 		public
 		override
 		authGovernanceOrManager()
+		nonReentrant()
 	{
 		require(
 			_v1EMPStrategyERC20Amount.length == _utilizedV1EMPStrategy.length,
-			"!(_v1EMPStrategyERC20Amount.length == _utilizedV1EMPStrategy.length)"
+			"_v1EMPStrategyERC20Amount.length != _utilizedV1EMPStrategy.length"
 		);
 
 		utilizedV1EMPStrategySync();
 
 		for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
 		{
-			if (_v1EMPStrategyERC20Amount[i] == 0)
+			if (_v1EMPStrategyERC20Amount[i] != 0)
 			{
-				continue;
+				IV1EMPStrategy(_utilizedV1EMPStrategy[i]).utilizedERC20Withdraw(_v1EMPStrategyERC20Amount[i]);
 			}
-
-			IV1EMPStrategy(_utilizedV1EMPStrategy[i]).utilizedERC20Withdraw(_v1EMPStrategyERC20Amount[i]);
 		}
 	}
 }

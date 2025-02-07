@@ -6,7 +6,7 @@ export const D_18 = ethers.utils.parseUnits('1', 18);
 export const ERROR = {
 	REGISTRY: {
 		ARRAY_UTILITY_NOT_SET:
-			"!(_addressArrayUtility != address(0))"
+			"_addressArrayUtility == address(0)"
 		,
 		ARRAY_UTILITY_IS_ADDRESS_ZERO:
 			"!(__addressArrayUtility != address(0))"
@@ -68,7 +68,7 @@ export const ERROR = {
 			"utilizedERC20AmountAllocationActual != iV1EMP.utilizedV1EMPStrategy_allocation(utilizedV1EMPStrategy[i])"
 		,
 		INVALID_STRATEGY_ERC20_AMOUNTS_LENGTH:
-			"!(_v1EMPStrategyERC20Amount.length == _utilizedV1EMPStrategy.length)"
+			"_v1EMPStrategyERC20Amount.length != _utilizedV1EMPStrategy.length"
 		,
 		WITHDRAW_NOT_OPEN:
 			"!utilizedERC20WithdrawOpen"

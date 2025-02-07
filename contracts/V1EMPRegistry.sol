@@ -234,7 +234,7 @@ contract V1EMPRegistry is
 	{
 		require(__v1EMPStrategyUtility != address(0), "!(__v1EMPStrategyUtility != address(0))");
 
-		require(_addressArrayUtility != address(0), "!(_addressArrayUtility != address(0))");
+		require(_addressArrayUtility != address(0), "_addressArrayUtility == address(0)");
 
 		require(_v1EMPStrategyUtility == address(0), "!(_v1EMPStrategyUtility == address(0))");
 
@@ -249,7 +249,7 @@ contract V1EMPRegistry is
 	{
 		require(__v1EMPUtility != address(0), "!(__v1EMPUtility != address(0))");
 
-		require(_addressArrayUtility != address(0), "!(_addressArrayUtility != address(0))");
+		require(_addressArrayUtility != address(0), "_addressArrayUtility == address(0)");
 
 		require(_v1EMPUtility == address(0), "!(_v1EMPUtility == address(0))");
 
