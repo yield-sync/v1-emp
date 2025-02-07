@@ -343,23 +343,24 @@ describe("[5.0] V1EMPStrategy.sol - Initialization", async () => {
 			expect(await strategy.utilizedERC20WithdrawOpen()).to.be.false;
 		});
 
+		describe("[modifier] utilizedERC20TransferClosed", async () => {
+			it("Should not be able to set iERC20Handler when utilizedERC20DepositOpen is true..", async () => {
+				await expect(strategy.utilizedERC20DepositOpenUpdate(true)).to.be.not.rejected;
 
-		it("Should not be able to set iERC20Handler when utilizedERC20DepositOpen is true..", async () => {
-			await expect(strategy.utilizedERC20DepositOpenUpdate(true)).to.be.not.rejected;
+				await expect(strategy.iERC20HandlerUpdate(eRC20Handler.address)).to.be.rejectedWith(
+					ERROR.STRATEGY.UTILIZED_ERC20_TRANSFERS_OPEN
+				);
+			});
 
-			await expect(strategy.iERC20HandlerUpdate(eRC20Handler.address)).to.be.rejectedWith(
-				ERROR.STRATEGY.UTILIZED_ERC20_TRANSFERS_OPEN
-			);
-		});
+			it("Should not be able to set iERC20Handler when utilizedERC20WithdrawOpen is true..", async () => {
+				await expect(strategy.utilizedERC20WithdrawOpenUpdate(true)).to.be.not.rejected;
 
-		it("Should not be able to set iERC20Handler when utilizedERC20WithdrawOpen is true..", async () => {
-			await expect(strategy.utilizedERC20WithdrawOpenUpdate(true)).to.be.not.rejected;
+				expect(await strategy.utilizedERC20WithdrawOpen()).to.be.true;
 
-			expect(await strategy.utilizedERC20WithdrawOpen()).to.be.true;
-
-			await expect(strategy.iERC20HandlerUpdate(eRC20Handler.address)).to.be.rejectedWith(
-				ERROR.STRATEGY.UTILIZED_ERC20_TRANSFERS_OPEN
-			);
+				await expect(strategy.iERC20HandlerUpdate(eRC20Handler.address)).to.be.rejectedWith(
+					ERROR.STRATEGY.UTILIZED_ERC20_TRANSFERS_OPEN
+				);
+			});
 		});
 	});
 });
