@@ -96,6 +96,18 @@ contract V1EMP is
 		return IV1EMPUtility(_I_V1_EMP_REGISTRY.v1EMPUtility());
 	}
 
+	function _utilizedV1EMPStrategyWithdraw(uint256[] memory _v1EMPStrategyERC20Amount)
+		internal
+	{
+		for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
+		{
+			if (_v1EMPStrategyERC20Amount[i] != 0)
+			{
+				IV1EMPStrategy(_utilizedV1EMPStrategy[i]).utilizedERC20Withdraw(_v1EMPStrategyERC20Amount[i]);
+			}
+		}
+	}
+
 
 	/// @notice view
 
@@ -265,13 +277,7 @@ contract V1EMP is
 				);
 			}
 
-			for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
-			{
-				if (v1EMPStrategyERC20Amount[i] != 0)
-				{
-					IV1EMPStrategy(_utilizedV1EMPStrategy[i]).utilizedERC20Withdraw(v1EMPStrategyERC20Amount[i]);
-				}
-			}
+			_utilizedV1EMPStrategyWithdraw(v1EMPStrategyERC20Amount);
 		}
 
 		for (uint256 i = 0; i < utilizedERC20.length; i++)
@@ -395,12 +401,6 @@ contract V1EMP is
 
 		utilizedV1EMPStrategySync();
 
-		for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
-		{
-			if (_v1EMPStrategyERC20Amount[i] != 0)
-			{
-				IV1EMPStrategy(_utilizedV1EMPStrategy[i]).utilizedERC20Withdraw(_v1EMPStrategyERC20Amount[i]);
-			}
-		}
+		_utilizedV1EMPStrategyWithdraw(_v1EMPStrategyERC20Amount);
 	}
 }

@@ -9,43 +9,43 @@ export const ERROR = {
 			"_addressArrayUtility == address(0)"
 		,
 		ARRAY_UTILITY_IS_ADDRESS_ZERO:
-			"!(__addressArrayUtility != address(0))"
+			"__addressArrayUtility == address(0)"
 		,
 		EMP_UTILITY_NOT_SET:
-			"!(_v1EMPUtility != address(0))"
+			"_v1EMPUtility == address(0)"
 		,
 		NOT_EMP_DEPLOYER:
-			"!(_v1EMPDeployer == msg.sender)"
+			"_v1EMPDeployer != msg.sender"
 		,
 		NOT_STRATEGY_DEPLOYER:
-			"!(_v1EMPStrategyDeployer == msg.sender)"
+			"_v1EMPStrategyDeployer != msg.sender"
 		,
 		EMP_STRATEGY_DEPLOYER_IS_ADDRESS_ZERO:
-			"!(__v1EMPStrategyDeployer != address(0))"
+			"__v1EMPStrategyDeployer == address(0)"
 		,
 		EMP_DEPLOYER_IS_ADDRESS_ZERO:
-			"!(__v1EMPDeployer != address(0))"
+			"__v1EMPDeployer == address(0)"
 		,
 		EMP_UTILITY_IS_ADDRESS_ZERO:
-			"!(__v1EMPUtility != address(0))"
+			"__v1EMPUtility == address(0)"
 		,
 		ERC20_ADDRESS_ZERO:
-			"!(_eRC20 != address(0))"
+			"_eRC20 == address(0)"
 		,
 		ETH_VALUE_PROVIDER_ADDRESS_ZERO:
-			"!(_eRC20ETHValueProvider != address(0))"
+			"_eRC20ETHValueProvider == address(0)"
 		,
 		GOVERNANCE_IS_ADDRESS_ZERO:
-			"!(__governance != address(0))"
+			"__governance == address(0)"
 		,
 		STRATEGY_UTILITY_IS_ADDRESS_ZERO:
-			"!(__v1EMPStrategyUtility != address(0))"
+			"__v1EMPStrategyUtility == address(0)"
 		,
 		EMP_DEPLOYER_ALREADY_SET:
-			"!(_v1EMPDeployer == address(0))"
+			"_v1EMPDeployer != address(0)"
 		,
 		EMP_STRATEGY_DEPLOYER_ALREADY_SET:
-			"!(_v1EMPStrategyDeployer == address(0))"
+			"_v1EMPStrategyDeployer != address(0)"
 		,
 	},
 	EMP: {
