@@ -99,6 +99,13 @@ contract V1EMP is
 	function _utilizedV1EMPStrategyWithdraw(uint256[] memory _v1EMPStrategyERC20Amount)
 		internal
 	{
+		require(
+			_v1EMPStrategyERC20Amount.length == _utilizedV1EMPStrategy.length,
+			"_v1EMPStrategyERC20Amount.length != _utilizedV1EMPStrategy.length"
+		);
+
+		utilizedV1EMPStrategySync();
+
 		for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
 		{
 			if (_v1EMPStrategyERC20Amount[i] != 0)
@@ -394,13 +401,6 @@ contract V1EMP is
 		authGovernanceOrManager()
 		nonReentrant()
 	{
-		require(
-			_v1EMPStrategyERC20Amount.length == _utilizedV1EMPStrategy.length,
-			"_v1EMPStrategyERC20Amount.length != _utilizedV1EMPStrategy.length"
-		);
-
-		utilizedV1EMPStrategySync();
-
 		_utilizedV1EMPStrategyWithdraw(_v1EMPStrategyERC20Amount);
 	}
 }
