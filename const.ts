@@ -53,13 +53,13 @@ export const ERROR = {
 			"!utilizedERC20DepositOpen"
 		,
 		FEE_RATE_GOVERNANCE_GREATER_THAN_100_PERCENT:
-			"!(_feeRateGovernance)"
+			"!_feeRateGovernance"
 		,
 		FEE_RATE_MANAGER_GREATER_THAN_100_PERCENT:
-			"!(_feeRateManager)"
+			"!_feeRateManager"
 		,
 		INVALID_BALANCE:
-			"!(balanceOf(msg.sender) >= _eRC20Amount)"
+			"balanceOf(msg.sender) < _eRC20Amount"
 		,
 		INVALID_UTILIZED_ERC20_AMOUNT_LENGTH:
 			"utilizedV1EMPStrategy.length != _v1EMPStrategyUtilizedERC20Amount.length"
@@ -74,13 +74,16 @@ export const ERROR = {
 			"!utilizedERC20WithdrawOpen"
 		,
 		UTILIZED_ERC20_NOT_AVAILABLE:
-			"!(utilizedERC20Available)"
+			"!utilizedERC20Available"
 		,
-		ADDRESS_NOT_EMP:
-			"!(_I_V1_EMP_REGISTRY.v1EMP_v1EMPId(_v1EMP) > 0)"
+		UTILIZED_ERC20_TRANSFERS_OPEN:
+			"utilizedERC20TransfersOpen || utilizedERC20WithdrawOpen"
 		,
 	},
 	EMP_UTILITY: {
+		ADDRESS_NOT_EMP:
+			"!(_I_V1_EMP_REGISTRY.v1EMP_v1EMPId(_v1EMP) > 0)"
+		,
 		INVALID_ALLOCATION:
 			"!(utilizedERC20AllocationActual)"
 		,
@@ -130,9 +133,6 @@ export const ERROR = {
 		,
 		UTILIZED_ERC20_AMOUNT_NOT_ZERO:
 			"!(_utilizedERC20Amount[i] == 0)"
-		,
-		UTILIZED_ERC20_TRANSFERS_OPEN:
-			"!(!utilizedERC20DepositOpen && !utilizedERC20WithdrawOpen)"
 		,
 		WITHDRAW_NOT_OPEN:
 			"!utilizedERC20WithdrawOpen"

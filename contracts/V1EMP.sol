@@ -155,7 +155,7 @@ contract V1EMP is
 		public
 		authGovernanceOrManager()
 	{
-		require(feeRateGovernance.add(_feeRateManager) <= _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT(), "!(_feeRateManager)");
+		require(feeRateGovernance.add(_feeRateManager) <= _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT(), "!_feeRateManager");
 
 		feeRateManager = _feeRateManager;
 	}
@@ -167,7 +167,7 @@ contract V1EMP is
 	{
 		require(IAccessControl(_I_V1_EMP_REGISTRY.governance()).hasRole(bytes32(0), msg.sender), "!authorized");
 
-		require(_feeRateGovernance.add(feeRateManager) <= _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT(), "!(_feeRateGovernance)");
+		require(_feeRateGovernance.add(feeRateManager) <= _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT(), "!_feeRateGovernance");
 
 		feeRateGovernance = _feeRateGovernance;
 	}
@@ -233,7 +233,7 @@ contract V1EMP is
 	{
 		require(utilizedERC20WithdrawOpen, "!utilizedERC20WithdrawOpen");
 
-		require(balanceOf(msg.sender) >= _eRC20Amount, "!(balanceOf(msg.sender) >= _eRC20Amount)");
+		require(balanceOf(msg.sender) >= _eRC20Amount, "balanceOf(msg.sender) < _eRC20Amount");
 
 		utilizedV1EMPStrategySync();
 
@@ -261,7 +261,7 @@ contract V1EMP is
 		{
 			if (!utilizedERC20WithdrawFull)
 			{
-				revert("!(utilizedERC20Available)");
+				revert("!utilizedERC20Available");
 			}
 
 			uint256[] memory v1EMPStrategyERC20Amount = new uint256[](_utilizedV1EMPStrategy.length);
@@ -336,7 +336,7 @@ contract V1EMP is
 	{
 		require(
 			!utilizedERC20DepositOpen && !utilizedERC20WithdrawOpen,
-			"!(!utilizedERC20DepositOpen && !utilizedERC20WithdrawOpen)"
+			"utilizedERC20DepositOpen || utilizedERC20WithdrawOpen"
 		);
 
 		(bool valid, string memory message) = _I_V1_EMP_UTILITY().utilizedV1EMPStrategyValid(
