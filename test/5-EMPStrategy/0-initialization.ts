@@ -85,7 +85,7 @@ describe("[5.0] V1EMPStrategy.sol - Initialization", async () => {
 						]
 					)
 				).to.be.rejectedWith(
-					ERROR.STRATEGY.INVALID_PARAMS_UPDATE_CONTAINS_DUPLICATES
+					ERROR.STRATEGY_UTILITY.INVALID_PARAMS_UPDATE_CONTAINS_DUPLICATES
 				);
 			});
 
@@ -96,7 +96,7 @@ describe("[5.0] V1EMPStrategy.sol - Initialization", async () => {
 
 				await expect(
 					strategy.utilizedERC20Update([eRC20D.address], [[true, true, PERCENT.HUNDRED]])
-				).to.be.rejectedWith(ERROR.STRATEGY.ERC20_NO_ETH_VALUE_PROVIDER_AVAILABLE);
+				).to.be.rejectedWith(ERROR.STRATEGY_UTILITY.ERC20_NO_ETH_VALUE_PROVIDER_AVAILABLE);
 			});
 
 			it("Should revert when INVALID allocation passed..", async () => {
@@ -142,7 +142,7 @@ describe("[5.0] V1EMPStrategy.sol - Initialization", async () => {
 					await expect(
 						_YSS.utilizedERC20Update(INVALID_ALLOCATION[i].utilizedERC20, INVALID_ALLOCATION[i].utilization)
 					).to.be.rejectedWith(
-						ERROR.STRATEGY.INVALID_ERC20_ALLOCATION_TOTAL
+						ERROR.STRATEGY_UTILITY.INVALID_ERC20_ALLOCATION_TOTAL
 					);
 				}
 			});
@@ -325,7 +325,7 @@ describe("[5.0] V1EMPStrategy.sol - Initialization", async () => {
 			await expect(
 				strategy.utilizedERC20Update([eRC20A.address], [[true, true, PERCENT.HUNDRED]])
 			).to.be.rejectedWith(
-				ERROR.STRATEGY.UTILIZED_ERC20_TRANSFERS_OPEN
+				ERROR.EMP.UTILIZED_ERC20_TRANSFERS_OPEN
 			);
 		});
 	});

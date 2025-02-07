@@ -99,7 +99,7 @@ contract V1EMPStrategy is
 		internal
 		view
 	{
-		require(address(iERC20Handler) != address(0), "!(address(iERC20Handler) != address(0))");
+		require(address(iERC20Handler) != address(0), "address(iERC20Handler) == address(0)");
 	}
 
 	function _utilizedERC20TransferClosed()
@@ -108,7 +108,7 @@ contract V1EMPStrategy is
 	{
 		require(
 			!utilizedERC20DepositOpen && !utilizedERC20WithdrawOpen,
-			"!(!utilizedERC20DepositOpen && !utilizedERC20WithdrawOpen)"
+			"utilizedERC20DepositOpen || utilizedERC20WithdrawOpen"
 		);
 	}
 
@@ -167,7 +167,7 @@ contract V1EMPStrategy is
 		override
 		returns (uint256 utilizedERC20TotalAmount_)
 	{
-		require(address(iERC20Handler) != address(0), "!(address(iERC20Handler) != address(0))");
+		require(address(iERC20Handler) != address(0), "address(iERC20Handler) == address(0)");
 
 		return iERC20Handler.utilizedERC20TotalBalance(__utilizedERC20);
 	}
@@ -279,7 +279,7 @@ contract V1EMPStrategy is
 	{
 		require(utilizedERC20WithdrawOpen, "!utilizedERC20WithdrawOpen");
 
-		require(eMP_shares[msg.sender] >= _shares, "!(eMP_shares[msg.sender] >= _shares)");
+		require(eMP_shares[msg.sender] >= _shares, "eMP_shares[msg.sender] < _shares");
 
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{

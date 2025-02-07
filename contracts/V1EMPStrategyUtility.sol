@@ -46,7 +46,7 @@ contract V1EMPStrategyUtility is
 	{
 		require(
 			_I_V1_EMP_REGISTRY.v1EMPStrategy_v1EMPStrategyId(_v1EMPStrategy) > 0,
-			"!(_I_V1_EMP_REGISTRY.v1EMPStrategy_v1EMPStrategyId(_v1EMPStrategy) > 0)"
+			"_I_V1_EMP_REGISTRY.v1EMPStrategy_v1EMPStrategyId(_v1EMPStrategy) == 0"
 		);
 	}
 
@@ -70,7 +70,7 @@ contract V1EMPStrategyUtility is
 
 		if (utilizedERC20.length != _utilizedERC20Amount.length)
 		{
-			return (false, "!(utilizedERC20.length == _utilizedERC20Amount.length)", utilizedERC20AmountETHValueTotal_);
+			return (false, "utilizedERC20.length != _utilizedERC20Amount.length", utilizedERC20AmountETHValueTotal_);
 		}
 
 		uint256[] memory utilizedERC20AmountETHValue_;
@@ -86,7 +86,7 @@ contract V1EMPStrategyUtility is
 			{
 				if (_utilizedERC20Amount[i] != 0)
 				{
-					return (false, "!(_utilizedERC20Amount[i] == 0)", utilizedERC20AmountETHValueTotal_);
+					return (false, "_utilizedERC20Amount[i] != 0", utilizedERC20AmountETHValueTotal_);
 				}
 			}
 
@@ -99,7 +99,7 @@ contract V1EMPStrategyUtility is
 			{
 				return (
 					false,
-					"!(iV1EMPStrategy.utilizedERC20_utilizationERC20(utilizedERC20[i]).allocation == utilizedERC20AmountAllocationActual)",
+					"iV1EMPStrategy.utilizedERC20_utilizationERC20(utilizedERC20[i]).allocation != utilizedERC20AmountAllocationActual",
 					utilizedERC20AmountETHValueTotal_
 				);
 			}
@@ -118,7 +118,7 @@ contract V1EMPStrategyUtility is
 
 		address[] memory utilizedERC20 = iV1EMPStrategy.utilizedERC20();
 
-		require(utilizedERC20.length == _utilizedERC20Amount.length, "!(utilizedERC20.length == _utilizedERC20Amount.length)");
+		require(utilizedERC20.length == _utilizedERC20Amount.length, "utilizedERC20.length != _utilizedERC20Amount.length");
 
 		utilizedERC20AmountETHValue_ = new uint256[](_utilizedERC20Amount.length);
 
@@ -166,12 +166,12 @@ contract V1EMPStrategyUtility is
 
 		if (_utilizedERC20.length != _utilizationERC20.length)
 		{
-			return (false, "!(_utilizedERC20.length == _utilizationERC20.length)");
+			return (false, "_utilizedERC20.length != _utilizationERC20.length");
 		}
 
 		if (!IAddressArrayUtility(_I_V1_EMP_REGISTRY.addressArrayUtility()).isUnique(_utilizedERC20))
 		{
-			return (false, "!(IAddressArrayUtility(_I_V1_EMP_REGISTRY.addressArrayUtility()).isUnique(_utilizedERC20))");
+			return (false, "!IAddressArrayUtility(_I_V1_EMP_REGISTRY.addressArrayUtility()).isUnique(_utilizedERC20)");
 		}
 
 		uint256 utilizedERC20AllocationTotal;
@@ -180,12 +180,12 @@ contract V1EMPStrategyUtility is
 		{
 			if (_utilizedERC20[i] == address(0))
 			{
-				return (false, "!(_utilizedERC20[i] != address(0))");
+				return (false, "_utilizedERC20[i] == address(0)");
 			}
 
 			if (_I_V1_EMP_REGISTRY.eRC20_eRC20ETHValueProvider(_utilizedERC20[i]) == address(0))
 			{
-				return (false, "!(_I_V1_EMP_REGISTRY.eRC20_eRC20ETHValueProvider(_utilizedERC20[i]) != address(0))");
+				return (false, "_I_V1_EMP_REGISTRY.eRC20_eRC20ETHValueProvider(_utilizedERC20[i]) == address(0)");
 			}
 
 			if (_utilizationERC20[i].deposit)
@@ -196,7 +196,7 @@ contract V1EMPStrategyUtility is
 
 		if (utilizedERC20AllocationTotal != _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT())
 		{
-			return (false, "!(utilizedERC20AllocationTotal == _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT())");
+			return (false, "utilizedERC20AllocationTotal != _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT()");
 		}
 	}
 }

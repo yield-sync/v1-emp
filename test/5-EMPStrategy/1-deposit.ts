@@ -155,7 +155,7 @@ describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 				const DEPOSIT_AMOUNT: BigNumber = ethers.utils.parseUnits("1", 18);
 
 				await expect(strategy.utilizedERC20Deposit([0, DEPOSIT_AMOUNT])).to.be.rejectedWith(
-					ERROR.STRATEGY.INVALID_UTILIZED_ERC20_AMOUNT
+					ERROR.STRATEGY_UTILITY.INVALID_UTILIZED_ERC20_AMOUNT
 				);
 			});
 		});
@@ -281,7 +281,7 @@ describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 							]
 						)
 					).to.be.rejectedWith(
-						ERROR.STRATEGY.INVALID_UTILIZED_ERC20_AMOUNT
+						ERROR.STRATEGY_UTILITY.INVALID_UTILIZED_ERC20_AMOUNT
 					);
 				});
 			});

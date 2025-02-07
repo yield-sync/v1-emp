@@ -77,7 +77,7 @@ export const ERROR = {
 			"!utilizedERC20Available"
 		,
 		UTILIZED_ERC20_TRANSFERS_OPEN:
-			"utilizedERC20TransfersOpen || utilizedERC20WithdrawOpen"
+			"utilizedERC20DepositOpen || utilizedERC20WithdrawOpen"
 		,
 	},
 	EMP_UTILITY: {
@@ -105,48 +105,48 @@ export const ERROR = {
 			"!utilizedERC20DepositOpen"
 		,
 		ERC20_HANDLER_NOT_SET:
-			"!(address(iERC20Handler) != address(0))"
-		,
-		INVALID_ALLOCATION:
-			"!(utilizedERC20AllocationActual)"
+			"address(iERC20Handler) == address(0)"
 		,
 		INVALID_BALANCE:
-			"!(eMP_shares[msg.sender] >= _shares)"
-		,
-		INVALID_ERC20_ALLOCATION_TOTAL:
-			"!(utilizedERC20AllocationTotal == _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT())"
+			"eMP_shares[msg.sender] < _shares"
 		,
 		INVALID_UTILIZED_ERC20:
-			"!(_utilizedERC20[i] != address(0))"
-		,
-		INVALID_UTILIZED_ERC20_AMOUNT:
-			"!(iV1EMPStrategy.utilizedERC20_utilizationERC20(utilizedERC20[i]).allocation == utilizedERC20AmountAllocationActual)"
+			"_utilizedERC20[i] == address(0)"
 		,
 		INVALID_PARAMS_DEPOSIT_LENGTH:
-			"!(utilizedERC20.length == _utilizedERC20Amount.length)"
+			"utilizedERC20.length != _utilizedERC20Amount.length"
 		,
 		INVALID_PARAMS_UPDATE_LENGTHS:
-			"!(_utilizedERC20.length == _utilizationERC20.length)"
-		,
-		INVALID_PARAMS_UPDATE_CONTAINS_DUPLICATES:
-			"!(IAddressArrayUtility(_I_V1_EMP_REGISTRY.addressArrayUtility()).isUnique(_utilizedERC20))"
+			"_utilizedERC20.length != _utilizationERC20.length"
 		,
 		INVALID_ERC20_HANDLER:
 			"!_iERC20Handler"
 		,
 		UTILIZED_ERC20_AMOUNT_NOT_ZERO:
-			"!(_utilizedERC20Amount[i] == 0)"
+			"_utilizedERC20Amount[i] != 0"
 		,
 		WITHDRAW_NOT_OPEN:
 			"!utilizedERC20WithdrawOpen"
 		,
-		ERC20_NO_ETH_VALUE_PROVIDER_AVAILABLE:
-			"!(_I_V1_EMP_REGISTRY.eRC20_eRC20ETHValueProvider(_utilizedERC20[i]) != address(0))"
+		UTILIZED_ERC20_TRANSFERS_OPEN:
+			"utilizedERC20DepositOpen || utilizedERC20WithdrawOpen"
 		,
 	},
 	STRATEGY_UTILITY: {
 		ADDRESS_NOT_STRATEGY:
-			"!(_I_V1_EMP_REGISTRY.v1EMPStrategy_v1EMPStrategyId(_v1EMPStrategy) > 0)"
+			"_I_V1_EMP_REGISTRY.v1EMPStrategy_v1EMPStrategyId(_v1EMPStrategy) == 0"
+		,
+		ERC20_NO_ETH_VALUE_PROVIDER_AVAILABLE:
+			"_I_V1_EMP_REGISTRY.eRC20_eRC20ETHValueProvider(_utilizedERC20[i]) == address(0)"
+		,
+		INVALID_ERC20_ALLOCATION_TOTAL:
+			"utilizedERC20AllocationTotal != _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT()"
+		,
+		INVALID_PARAMS_UPDATE_CONTAINS_DUPLICATES:
+			"!IAddressArrayUtility(_I_V1_EMP_REGISTRY.addressArrayUtility()).isUnique(_utilizedERC20)"
+		,
+		INVALID_UTILIZED_ERC20_AMOUNT:
+			"iV1EMPStrategy.utilizedERC20_utilizationERC20(utilizedERC20[i]).allocation != utilizedERC20AmountAllocationActual"
 		,
 	},
 	NOT_COMPUTED:
