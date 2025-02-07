@@ -29,7 +29,7 @@ describe("[3.0] V1EMPUtility.sol", async () => {
 				await expect(
 					eMPUtility.optimizedTransferAmount(ethers.constants.AddressZero, ethers.constants.AddressZero, 0)
 				).to.be.rejectedWith(
-					ERROR.EMP.ADDRESS_NOT_EMP
+					ERROR.EMP_UTILITY.ADDRESS_NOT_EMP
 				);
 			});
 
@@ -49,7 +49,7 @@ describe("[3.0] V1EMPUtility.sol", async () => {
 		describe("function utilizedERC20AmountValid()", async () => {
 			it("[modifier] Should only be able to pass a valid EMP address..", async () => {
 				await expect(eMPUtility.utilizedERC20AmountValid(ethers.constants.AddressZero, [])).to.be.rejectedWith(
-					ERROR.EMP.ADDRESS_NOT_EMP
+					ERROR.EMP_UTILITY.ADDRESS_NOT_EMP
 				);
 			});
 
@@ -65,7 +65,7 @@ describe("[3.0] V1EMPUtility.sol", async () => {
 				await expect(
 					eMPUtility.utilizedV1EMPStrategyValid(ethers.constants.AddressZero, [], [])
 				).to.be.rejectedWith(
-					ERROR.EMP.ADDRESS_NOT_EMP
+					ERROR.EMP_UTILITY.ADDRESS_NOT_EMP
 				);
 			});
 
@@ -99,7 +99,7 @@ describe("[3.0] V1EMPUtility.sol", async () => {
 				await expect(
 					eMPUtility.v1EMPStrategyUtilizedERC20AmountValid(ethers.constants.AddressZero, [])
 				).to.be.rejectedWith(
-					ERROR.EMP.ADDRESS_NOT_EMP
+					ERROR.EMP_UTILITY.ADDRESS_NOT_EMP
 				);
 			});
 		});

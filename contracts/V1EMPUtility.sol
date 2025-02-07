@@ -57,7 +57,7 @@ contract V1EMPUtility is
 		internal
 		view
 	{
-		require(_I_V1_EMP_REGISTRY.v1EMP_v1EMPId(_v1EMP) > 0, "!(_I_V1_EMP_REGISTRY.v1EMP_v1EMPId(_v1EMP) > 0)");
+		require(_I_V1_EMP_REGISTRY.v1EMP_v1EMPId(_v1EMP) > 0, "_I_V1_EMP_REGISTRY.v1EMP_v1EMPId(_v1EMP) == 0");
 	}
 
 
@@ -90,7 +90,7 @@ contract V1EMPUtility is
 	{
 		require(
 			_utilizedERC20Amount.length == _v1EMP_utilizedERC20[_v1EMP].length,
-			"!(_utilizedERC20Amount.length == _v1EMP_utilizedERC20[_v1EMP].length)"
+			"_utilizedERC20Amount.length != _v1EMP_utilizedERC20[_v1EMP].length"
 		);
 
 		valid_ = true;
@@ -125,7 +125,7 @@ contract V1EMPUtility is
 				].allocation != utilizedERC20AllocationActual
 			)
 			{
-				return (false, utilizedERC20AmountTotalETHValue_, "!(utilizedERC20AllocationActual)");
+				return (false, utilizedERC20AmountTotalETHValue_, "!utilizedERC20AllocationActual");
 			}
 		}
 	}
@@ -324,7 +324,7 @@ contract V1EMPUtility is
 
 		require(
 			utilizedERC20AllocationTotal == _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT(),
-			"!(utilizedERC20AllocationTotal == _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT())"
+			"utilizedERC20AllocationTotal != _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT()"
 		);
 
 		_v1EMP_utilizedERC20[msg.sender] = utilizedERC20;
