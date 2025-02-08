@@ -281,6 +281,10 @@ contract V1EMPStrategy is
 
 		require(eMP_shares[msg.sender] >= _shares, "eMP_shares[msg.sender] < _shares");
 
+		sharesTotal -= _shares;
+
+		eMP_shares[msg.sender] -= _shares;
+
 		for (uint256 i = 0; i < _utilizedERC20.length; i++)
 		{
 			if (_utilizedERC20_utilizationERC20[_utilizedERC20[i]].withdraw)
@@ -299,10 +303,6 @@ contract V1EMPStrategy is
 				);
 			}
 		}
-
-		sharesTotal -= _shares;
-
-		eMP_shares[msg.sender] -= _shares;
 	}
 
 	/// @inheritdoc IV1EMPStrategy
