@@ -129,7 +129,8 @@ contract V1EMPStrategyUtility is
 				utilizedERC20AmountETHValue_[i] = _utilizedERC20Amount[i].mul(
 					IERC20ETHValueProvider(_I_V1_EMP_REGISTRY.eRC20_eRC20ETHValueProvider(utilizedERC20[i])).utilizedERC20ETHValue()
 				).div(
-					10 ** IERC20ETHValueProvider(_I_V1_EMP_REGISTRY.eRC20_eRC20ETHValueProvider(utilizedERC20[i])).eRC20Decimals()
+					10 ** IERC20ETHValueProvider(_I_V1_EMP_REGISTRY.eRC20_eRC20ETHValueProvider(utilizedERC20[i])).eRC20Decimals(),
+					"!computed"
 				);
 
 				utilizedERC20AmountETHValueTotal_ += utilizedERC20AmountETHValue_[i];

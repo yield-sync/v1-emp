@@ -106,7 +106,8 @@ contract V1EMPUtility is
 			).div(
 				10 ** IERC20ETHValueProvider(
 					_I_V1_EMP_REGISTRY.eRC20_eRC20ETHValueProvider(_v1EMP_utilizedERC20[_v1EMP][i])
-				).eRC20Decimals()
+				).eRC20Decimals(),
+				"!computed"
 			);
 
 			utilizedERC20AmountTotalETHValue_ += eRC20AmountETHValue[i];
