@@ -20,6 +20,7 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 	let eMP: Contract;
 	let eMPDeployer: Contract;
 	let eMPUtility: Contract;
+	let eTHValueProvider: Contract;
 	let registry: Contract;
 	let strategyDeployer: Contract;
 	let eRC20A: Contract;
@@ -42,6 +43,7 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 				eMPDeployer,
 				eMPs,
 				eMPUtility,
+				eTHValueProvider,
 				registry,
 				strategyDeployer,
 				eRC20A,
@@ -210,6 +212,23 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 					ERROR.EMP_UTILITY.INVALID_ALLOCATION
 				);
 			});
+
+			it("Should revert if ERC20 ETH Value is 0..", async () => {
+					let eTHValueEMPDepositAmount: BigNumber = ethers.utils.parseUnits("2", 18);
+					let eMPDepositAmounts: UtilizedERC20Amount;
+
+					eMPDepositAmounts = await eMPs[0].UtilEMPTransfer.calculatedUtilizedERC20Amount(eTHValueEMPDepositAmount);
+
+					const utilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMP.address);
+
+					await approveTokens(eMP.address, utilizedERC20, eMPDepositAmounts);
+
+					await eTHValueProvider.updateETHValue(0);
+
+					await expect(eMP.utilizedERC20Deposit(eMPDepositAmounts)).to.be.revertedWith(
+						ERROR.REGISTRY.ERC20_PRICE_ZERO
+					);
+				});
 		});
 
 		describe("Expected Success", async () => {

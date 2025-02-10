@@ -117,7 +117,7 @@ describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 				const DEPOSIT_AMOUNT: BigNumber = ethers.utils.parseUnits("1", 18);
 
 				await expect(strategy.utilizedERC20Deposit([DEPOSIT_AMOUNT])).to.be.rejectedWith(
-					ERROR.NOT_COMPUTED
+					ERROR.REGISTRY.ERC20_PRICE_ZERO
 				);
 			});
 

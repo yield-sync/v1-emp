@@ -99,11 +99,13 @@ contract V1EMPUtility is
 
 		for (uint256 i = 0; i < _v1EMP_utilizedERC20[_v1EMP].length; i++)
 		{
-			eRC20AmountETHValue[i] = _utilizedERC20Amount[i].mul(
-				IERC20ETHValueProvider(
-					_I_V1_EMP_REGISTRY.eRC20_eRC20ETHValueProvider(_v1EMP_utilizedERC20[_v1EMP][i])
-				).utilizedERC20ETHValue()
-			).div(
+			uint256 utilizedERC20ETHValue = IERC20ETHValueProvider(
+				_I_V1_EMP_REGISTRY.eRC20_eRC20ETHValueProvider(_v1EMP_utilizedERC20[_v1EMP][i])
+			).utilizedERC20ETHValue();
+
+			require(utilizedERC20ETHValue > 0, "utilizedERC20ETHValue == 0");
+
+			eRC20AmountETHValue[i] = _utilizedERC20Amount[i].mul(utilizedERC20ETHValue).div(
 				10 ** IERC20ETHValueProvider(
 					_I_V1_EMP_REGISTRY.eRC20_eRC20ETHValueProvider(_v1EMP_utilizedERC20[_v1EMP][i])
 				).eRC20Decimals(),

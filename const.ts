@@ -32,6 +32,7 @@ export const ERROR = {
 		ERC20_ADDRESS_ZERO:
 			"_eRC20 == address(0)"
 		,
+		ERC20_PRICE_ZERO: "utilizedERC20ETHValue == 0",
 		ETH_VALUE_PROVIDER_ADDRESS_ZERO:
 			"_eRC20ETHValueProvider == address(0)"
 		,
