@@ -201,7 +201,10 @@ contract V1EMP is
 			bool valid,
 			uint256 utilizedERC20AmountTotalETHValue,
 			string memory message
-		) = _I_V1_EMP_UTILITY().utilizedERC20AmountValid(address(this), _utilizedERC20Amount);
+		) = _I_V1_EMP_UTILITY().utilizedERC20AmountValid(
+			address(this),
+			_utilizedERC20Amount
+		);
 
 		require(valid, message);
 
