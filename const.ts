@@ -1,5 +1,6 @@
 const { ethers } = require("hardhat");
 
+
 export const D_18 = ethers.utils.parseUnits("1", 18);
 
 export const ERROR = {
@@ -26,9 +27,7 @@ export const ERROR = {
 		FEE_RATE_MANAGER_GREATER_THAN_100_PERCENT: "!_feeRateManager",
 		INVALID_BALANCE: "balanceOf(msg.sender) < _eRC20Amount",
 		INVALID_UTILIZED_ERC20_AMOUNT_LENGTH: "utilizedV1EMPStrategy.length != _v1EMPStrategyUtilizedERC20Amount.length",
-		INVALID_UTILIZED_STRATEGY_ALLOCATION:
-			"utilizedERC20AmountAllocationActual != iV1EMP.utilizedV1EMPStrategy_allocation(utilizedV1EMPStrategy[i])"
-		,
+		INVALID_UTILIZED_STRATEGY_ALLOCATION: "utilizedERC20AmountAllocationActual != iV1EMP.utilizedV1EMPStrategy_allocation(utilizedV1EMPStrategy[i])",
 		INVALID_STRATEGY_ERC20_AMOUNTS_LENGTH: "_v1EMPStrategyERC20Amount.length != _utilizedV1EMPStrategy.length",
 		WITHDRAW_NOT_OPEN: "!utilizedERC20WithdrawOpen",
 		UTILIZED_ERC20_NOT_AVAILABLE: "!utilizedERC20Available",
@@ -37,9 +36,7 @@ export const ERROR = {
 	EMP_UTILITY: {
 		ADDRESS_NOT_EMP: "_I_V1_EMP_REGISTRY.v1EMP_v1EMPId(_v1EMP) == 0",
 		INVALID_ALLOCATION: "!utilizedERC20AllocationActual",
-		UTILIZED_V1_EMP_STRATEGY_INVALID_ALLOCATION:
-			"utilizedV1EMPStrategyAllocationTotal != _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT()"
-		,
+		UTILIZED_V1_EMP_STRATEGY_INVALID_ALLOCATION: "utilizedV1EMPStrategyAllocationTotal != _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT()",
 		INVALID_V1_EMP_STRATEGY: "_I_V1_EMP_REGISTRY.v1EMPStrategy_v1EMPStrategyId(_v1EMPStrategy[i]) == 0",
 		INVALID_UTILIZED_ERC20_LENGTH: "_utilizedERC20Amount.length != _v1EMP_utilizedERC20[_v1EMP].length",
 		INVALID_STRATEGY_LENTH: "_v1EMPStrategy.length != _allocation.length",
@@ -58,16 +55,10 @@ export const ERROR = {
 	},
 	STRATEGY_UTILITY: {
 		ADDRESS_NOT_STRATEGY: "_I_V1_EMP_REGISTRY.v1EMPStrategy_v1EMPStrategyId(_v1EMPStrategy) == 0",
-		ERC20_NO_ETH_VALUE_PROVIDER_AVAILABLE:
-			"_I_V1_EMP_REGISTRY.eRC20_eRC20ETHValueProvider(_utilizedERC20[i]) == address(0)"
-		,
+		ERC20_NO_ETH_VALUE_PROVIDER_AVAILABLE: "_I_V1_EMP_REGISTRY.eRC20_eRC20ETHValueProvider(_utilizedERC20[i]) == address(0)",
 		INVALID_ERC20_ALLOCATION_TOTAL: "utilizedERC20AllocationTotal != _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT()",
-		INVALID_PARAMS_UPDATE_CONTAINS_DUPLICATES:
-			"!IAddressArrayUtility(_I_V1_EMP_REGISTRY.addressArrayUtility()).isUnique(_utilizedERC20)"
-		,
-		INVALID_UTILIZED_ERC20_AMOUNT:
-			"iV1EMPStrategy.utilizedERC20_utilizationERC20(utilizedERC20[i]).allocation != utilizedERC20AmountAllocationActual"
-		,
+		INVALID_PARAMS_UPDATE_CONTAINS_DUPLICATES: "!IAddressArrayUtility(_I_V1_EMP_REGISTRY.addressArrayUtility()).isUnique(_utilizedERC20)",
+		INVALID_UTILIZED_ERC20_AMOUNT: "iV1EMPStrategy.utilizedERC20_utilizationERC20(utilizedERC20[i]).allocation != utilizedERC20AmountAllocationActual",
 	},
 	NOT_COMPUTED: "!computed",
 	NOT_AUTHORIZED: "!authorized",
