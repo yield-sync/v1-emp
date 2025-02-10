@@ -74,9 +74,36 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 		await eMP.utilizedERC20Deposit(eMPDepositAmounts);
 	});
 
-	// TODO make tests for withdrawing from the EMP without every investing into the strategies
 
-	describe("EMP invested into strategies..", async () => {
+	describe("function utilizedERC20Withdraw() (1/4) - EMP has not injected ERC20 into Strategies..", async () => {
+		describe("Expected Failure", async () => {
+			it("Should not allow msg.sender to withdraw with insufficient EMP balance..", async () => {
+				const INVALID_BALANCE = (await eMP.balanceOf(owner.address)).add(1);
+
+				await expect(eMP.utilizedERC20Withdraw(INVALID_BALANCE)).to.be.rejectedWith(
+					ERROR.EMP.INVALID_BALANCE
+				);
+			});
+		});
+
+		describe("Expected Success", async () => {
+			it("Should allow withdrawing tokens from EMP..", async () => {
+				const OWNER_EMP_BALANCE = await eMP.balanceOf(owner.address);
+
+				await eMP.utilizedERC20Withdraw(OWNER_EMP_BALANCE);
+
+				expect(await eMP.balanceOf(owner.address)).to.be.equal(0);
+
+				expect(await eRC20A.balanceOf(eMP.address)).to.be.equal(0);
+
+				expect(await eRC20B.balanceOf(eMP.address)).to.be.equal(0);
+
+				expect(await eRC20C.balanceOf(eMP.address)).to.be.equal(0);
+			});
+		});
+	});
+
+	describe("EMP injected ERC20 into strategies..", async () => {
 		beforeEach("[beforeEach] Set up contracts..", async () => {
 			depositAmount[0] = await strategies[0].UtilStrategyTransfer.calculateERC20Required(
 				eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(D_18)
@@ -91,6 +118,7 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 			// Expect that the owner address received something
 			expect(await eMP.balanceOf(owner.address)).to.be.greaterThan(0);
 		});
+
 
 		describe("function utilizedV1EMPStrategyWithdraw()", async () => {
 			describe("Modifier", async () => {
@@ -159,7 +187,7 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 			});
 		});
 
-		describe("function utilizedERC20Withdraw() (1/3) - utilizedV1EMPStrategyWithdraw() NOT called before", async () => {
+		describe("function utilizedERC20Withdraw() (2/4) - utilizedV1EMPStrategyWithdraw() NOT called before", async () => {
 			describe("Expected Failure", async () => {
 				it("Should fail to withdraw tokens from Strategy if not enough tokens available on EMP..", async () => {
 					const OWNER_EMP_BALANCE = await eMP.balanceOf(owner.address);
@@ -171,7 +199,7 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 			});
 		});
 
-		describe("function utilizedERC20Withdraw() (2/3) - Full Withdrawals Disabled", async () => {
+		describe("function utilizedERC20Withdraw() (3/4) - Full Withdrawals Disabled", async () => {
 			beforeEach(async () => {
 				await eMP.utilizedV1EMPStrategyWithdraw([
 					await strategies[0].contract.eMP_shares(eMP.address),
@@ -197,22 +225,10 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 						ERROR.EMP.WITHDRAW_NOT_OPEN
 					);
 				});
-
-				it("Should not allow msg.sender to withdraw with insufficient EMP balance..", async () => {
-					/**
-					* @notice This test should test that msg.sender cannot withdraw more than what they have.
-					*/
-
-					const INVALID_BALANCE = (await eMP.balanceOf(owner.address)).add(1);
-
-					await expect(eMP.utilizedERC20Withdraw(INVALID_BALANCE)).to.be.rejectedWith(
-						ERROR.EMP.INVALID_BALANCE
-					);
-				});
 			});
 
 			describe("Expected Success", async () => {
-				it("Should allow withdrawing tokens from Strategy..", async () => {
+				it("Should allow withdrawing tokens from EMP..", async () => {
 					/**
 					* @notice This test should test that msg.sender cannot withdraw more than what they have.
 					*/
@@ -282,7 +298,7 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 			});
 		});
 
-		describe("function utilizedERC20Withdraw() (3/3) - Full Withdrawals Enabled", async () => {
+		describe("function utilizedERC20Withdraw() (4/4) - Full Withdrawals Enabled", async () => {
 			describe("Expected Success", async () => {
 				beforeEach(async () => {
 					expect(await eMP.utilizedERC20WithdrawFull()).to.be.false;
