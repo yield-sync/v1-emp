@@ -34,7 +34,6 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 	let strategies: TestStrategy[] = [];
 
 	let eMPDepositAmounts: UtilizedERC20Amount;
-	let depositAmount: UtilizedERC20Amount = [];
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
@@ -104,6 +103,9 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 	});
 
 	describe("EMP injected ERC20 into strategies..", async () => {
+		let depositAmount: UtilizedERC20Amount = [];
+
+
 		beforeEach("[beforeEach] Set up contracts..", async () => {
 			depositAmount[0] = await strategies[0].UtilStrategyTransfer.calculateERC20Required(
 				eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(D_18)
