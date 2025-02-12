@@ -60,16 +60,16 @@ contract V1EMP is
 		_;
 	}
 
-	modifier utilizedERC20DepositOpenRequired()
+	modifier executeUtilizedV1EMPStrategySync()
 	{
-		_utilizedERC20DepositOpenRequired();
+		utilizedV1EMPStrategySync();
 
 		_;
 	}
 
-	modifier runUtilizedV1EMPStrategySync()
+	modifier utilizedERC20DepositOpenRequired()
 	{
-		utilizedV1EMPStrategySync();
+		_utilizedERC20DepositOpenRequired();
 
 		_;
 	}
@@ -105,7 +105,7 @@ contract V1EMP is
 
 	function _utilizedV1EMPStrategyWithdraw(uint256[] memory _v1EMPStrategyERC20Amount)
 		internal
-		runUtilizedV1EMPStrategySync()
+		executeUtilizedV1EMPStrategySync()
 	{
 		require(
 			_v1EMPStrategyERC20Amount.length == _utilizedV1EMPStrategy.length,
@@ -200,7 +200,7 @@ contract V1EMP is
 		override
 		nonReentrant()
 		utilizedERC20DepositOpenRequired()
-		runUtilizedV1EMPStrategySync()
+		executeUtilizedV1EMPStrategySync()
 	{
 		(
 			bool valid,
@@ -245,7 +245,7 @@ contract V1EMP is
 		public
 		override
 		nonReentrant()
-		runUtilizedV1EMPStrategySync()
+		executeUtilizedV1EMPStrategySync()
 	{
 		require(utilizedERC20WithdrawOpen, "!utilizedERC20WithdrawOpen");
 
