@@ -29,9 +29,9 @@ contract V1EMPStrategyUtility is
 	}
 
 
-	modifier existantV1EMPStrategy(address _v1EMPStrategy)
+	modifier requireExistantV1EMPStrategy(address _v1EMPStrategy)
 	{
-		_existantV1EMPStrategy(_v1EMPStrategy);
+		_requireExistantV1EMPStrategy(_v1EMPStrategy);
 
 		_;
 	}
@@ -40,7 +40,7 @@ contract V1EMPStrategyUtility is
 	/// @notice internal
 
 
-	function _existantV1EMPStrategy(address _v1EMPStrategy)
+	function _requireExistantV1EMPStrategy(address _v1EMPStrategy)
 		internal
 		view
 	{
@@ -59,7 +59,7 @@ contract V1EMPStrategyUtility is
 		public
 		view
 		override
-		existantV1EMPStrategy(_v1EMPStrategy)
+		requireExistantV1EMPStrategy(_v1EMPStrategy)
 		returns (bool valid_, string memory message_, uint256 utilizedERC20AmountETHValueTotal_)
 	{
 		valid_ = true;
@@ -111,7 +111,7 @@ contract V1EMPStrategyUtility is
 		public
 		view
 		override
-		existantV1EMPStrategy(_v1EMPStrategy)
+		requireExistantV1EMPStrategy(_v1EMPStrategy)
 		returns (uint256 utilizedERC20AmountETHValueTotal_, uint256[] memory utilizedERC20AmountETHValue_)
 	{
 		IV1EMPStrategy iV1EMPStrategy = IV1EMPStrategy(_v1EMPStrategy);
@@ -164,7 +164,7 @@ contract V1EMPStrategyUtility is
 	)
 		public
 		override
-		existantV1EMPStrategy(_v1EMPStrategy)
+		requireExistantV1EMPStrategy(_v1EMPStrategy)
 		returns (bool valid_, string memory message_)
 	{
 		valid_ = true;

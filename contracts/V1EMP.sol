@@ -67,9 +67,9 @@ contract V1EMP is
 		_;
 	}
 
-	modifier utilizedERC20DepositOpenRequired()
+	modifier requireUtilizedERC20DepositOpen()
 	{
-		_utilizedERC20DepositOpenRequired();
+		_requireUtilizedERC20DepositOpen();
 
 		_;
 	}
@@ -88,19 +88,11 @@ contract V1EMP is
 		);
 	}
 
-	function _utilizedERC20DepositOpenRequired()
+	function _requireUtilizedERC20DepositOpen()
 		internal
 		view
 	{
 		require(utilizedERC20DepositOpen, "!utilizedERC20DepositOpen");
-	}
-
-	function _I_V1_EMP_UTILITY()
-		internal
-		view
-		returns (IV1EMPUtility)
-	{
-		return IV1EMPUtility(_I_V1_EMP_REGISTRY.v1EMPUtility());
 	}
 
 	function _utilizedV1EMPStrategyWithdraw(uint256[] memory _v1EMPStrategyERC20Amount)
@@ -119,6 +111,14 @@ contract V1EMP is
 				IV1EMPStrategy(_utilizedV1EMPStrategy[i]).utilizedERC20Withdraw(_v1EMPStrategyERC20Amount[i]);
 			}
 		}
+	}
+
+	function _I_V1_EMP_UTILITY()
+		internal
+		view
+		returns (IV1EMPUtility)
+	{
+		return IV1EMPUtility(_I_V1_EMP_REGISTRY.v1EMPUtility());
 	}
 
 
@@ -199,7 +199,7 @@ contract V1EMP is
 		public
 		override
 		nonReentrant()
-		utilizedERC20DepositOpenRequired()
+		requireUtilizedERC20DepositOpen()
 		executeUtilizedV1EMPStrategySync()
 	{
 		(
@@ -327,7 +327,7 @@ contract V1EMP is
 	function utilizedV1EMPStrategyDeposit(uint256[][] memory _v1EMPStrategyUtilizedERC20Amount)
 		public
 		override
-		utilizedERC20DepositOpenRequired()
+		requireUtilizedERC20DepositOpen()
 	{
 		(bool valid, string memory message) = _I_V1_EMP_UTILITY().v1EMPStrategyUtilizedERC20AmountValid(
 			address(this),

@@ -63,9 +63,9 @@ contract V1EMPStrategy is
 		_;
 	}
 
-	modifier initialized()
+	modifier requireInitialized()
 	{
-		_initialized();
+		_requireInitialized();
 
 		_;
 	}
@@ -95,7 +95,7 @@ contract V1EMPStrategy is
 		require(manager == msg.sender, "!authorized");
 	}
 
-	function _initialized()
+	function _requireInitialized()
 		internal
 		view
 	{
@@ -234,7 +234,7 @@ contract V1EMPStrategy is
 		override
 		authEMP()
 		nonReentrant()
-		initialized()
+		requireInitialized()
 	{
 		require(utilizedERC20DepositOpen, "!utilizedERC20DepositOpen");
 
@@ -264,7 +264,7 @@ contract V1EMPStrategy is
 		public
 		override
 		authManager()
-		initialized()
+		requireInitialized()
 	{
 		utilizedERC20DepositOpen = _utilizedERC20DepositOpen;
 	}
@@ -275,7 +275,7 @@ contract V1EMPStrategy is
 		override
 		authEMP()
 		nonReentrant()
-		initialized()
+		requireInitialized()
 	{
 		require(utilizedERC20WithdrawOpen, "!utilizedERC20WithdrawOpen");
 
@@ -310,7 +310,7 @@ contract V1EMPStrategy is
 		public
 		override
 		authManager()
-		initialized()
+		requireInitialized()
 	{
 		utilizedERC20WithdrawOpen = _utilizedERC20WithdrawOpe;
 	}

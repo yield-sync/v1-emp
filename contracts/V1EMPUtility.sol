@@ -42,9 +42,9 @@ contract V1EMPUtility is
 	}
 
 
-	modifier existantV1EMP(address _v1EMP)
+	modifier requireExistantV1EMP(address _v1EMP)
 	{
-		_existantV1EMP(_v1EMP);
+		_requireExistantV1EMP(_v1EMP);
 
 		_;
 	}
@@ -53,7 +53,7 @@ contract V1EMPUtility is
 	/// @notice internal
 
 
-	function _existantV1EMP(address _v1EMP)
+	function _requireExistantV1EMP(address _v1EMP)
 		internal
 		view
 	{
@@ -69,7 +69,7 @@ contract V1EMPUtility is
 		public
 		view
 		override
-		existantV1EMP(_v1EMP)
+		requireExistantV1EMP(_v1EMP)
 		returns (uint256 optimizedTransferAmount_)
 	{
 		if (IERC20(utilizedERC20).balanceOf(_v1EMP) < transferAmount)
@@ -85,7 +85,7 @@ contract V1EMPUtility is
 		public
 		view
 		override
-		existantV1EMP(_v1EMP)
+		requireExistantV1EMP(_v1EMP)
 		returns (bool valid_, uint256 utilizedERC20AmountTotalETHValue_, string memory message_)
 	{
 		require(
@@ -138,7 +138,7 @@ contract V1EMPUtility is
 		public
 		view
 		override
-		existantV1EMP(_v1EMP)
+		requireExistantV1EMP(_v1EMP)
 		returns (bool valid_, string memory message_)
 	{
 		valid_ = true;
@@ -194,7 +194,7 @@ contract V1EMPUtility is
 		public
 		view
 		override
-		existantV1EMP(_v1EMP)
+		requireExistantV1EMP(_v1EMP)
 		returns (bool valid_, string memory message_)
 	{
 		valid_ = true;
