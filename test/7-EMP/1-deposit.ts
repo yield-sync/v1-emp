@@ -214,21 +214,55 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 			});
 
 			it("Should revert if ERC20 ETH Value is 0..", async () => {
-					let eTHValueEMPDepositAmount: BigNumber = ethers.utils.parseUnits("2", 18);
-					let eMPDepositAmounts: UtilizedERC20Amount;
+				let eTHValueEMPDepositAmount: BigNumber = ethers.utils.parseUnits("2", 18);
+				let eMPDepositAmounts: UtilizedERC20Amount;
 
-					eMPDepositAmounts = await eMPs[0].UtilEMPTransfer.calculatedUtilizedERC20Amount(eTHValueEMPDepositAmount);
+				eMPDepositAmounts = await eMPs[0].UtilEMPTransfer.calculatedUtilizedERC20Amount(eTHValueEMPDepositAmount);
 
-					const utilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMP.address);
+				const utilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMP.address);
 
-					await approveTokens(eMP.address, utilizedERC20, eMPDepositAmounts);
+				await approveTokens(eMP.address, utilizedERC20, eMPDepositAmounts);
 
-					await eTHValueProvider.updateETHValue(0);
+				await eTHValueProvider.updateETHValue(0);
 
-					await expect(eMP.utilizedERC20Deposit(eMPDepositAmounts)).to.be.revertedWith(
-						ERROR.REGISTRY.ERC20_PRICE_ZERO
+				await expect(eMP.utilizedERC20Deposit(eMPDepositAmounts)).to.be.revertedWith(
+					ERROR.REGISTRY.ERC20_PRICE_ZERO
+				);
+			});
+
+			describe("Strategy updated _utilizedERC20 but EMP.utilizedV1EMPStrategySync not ran yet", async () => {
+				let beforeUtilizedERC20UpdateDepositAmount: BigNumber[][] = [];
+
+
+				beforeEach(async () => {
+					beforeUtilizedERC20UpdateDepositAmount[0] = await strategies[0].UtilStrategyTransfer.calculateERC20Required(
+						eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(D_18)
 					);
+
+					beforeUtilizedERC20UpdateDepositAmount[1] = await strategies[1].UtilStrategyTransfer.calculateERC20Required(
+						eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(D_18)
+					);
+
+					let utilized_erc20 = await strategies[0].contract.utilizedERC20();
+
+					expect(utilized_erc20.length).to.not.equal(1);
+
+					await strategies[0].contract.utilizedERC20DepositOpenUpdate(false);
+
+					await strategies[0].contract.utilizedERC20WithdrawOpenUpdate(false);
+
+					await strategies[0].contract.utilizedERC20Update([eRC20A.address], [[true, true, PERCENT.HUNDRED]]);
+
+					await strategies[0].contract.utilizedERC20DepositOpenUpdate(true);
+
+					await strategies[0].contract.utilizedERC20WithdrawOpenUpdate(true);
+
+					expect(await eMPs[0].UtilEMPTransfer.utilizedV1EMPStrategySyncRequired()).to.be.true;
 				});
+
+
+				it("Should catch invalid lengthed _utilizedERC20Amount..");
+			});
 		});
 
 		describe("Expected Success", async () => {
