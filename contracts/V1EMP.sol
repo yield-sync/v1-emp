@@ -67,6 +67,13 @@ contract V1EMP is
 		_;
 	}
 
+	modifier runUtilizedV1EMPStrategy()
+	{
+		utilizedV1EMPStrategySync();
+
+		_;
+	}
+
 
 	/// @notice internal
 
@@ -98,13 +105,12 @@ contract V1EMP is
 
 	function _utilizedV1EMPStrategyWithdraw(uint256[] memory _v1EMPStrategyERC20Amount)
 		internal
+		runUtilizedV1EMPStrategy()
 	{
 		require(
 			_v1EMPStrategyERC20Amount.length == _utilizedV1EMPStrategy.length,
 			"_v1EMPStrategyERC20Amount.length != _utilizedV1EMPStrategy.length"
 		);
-
-		utilizedV1EMPStrategySync();
 
 		for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
 		{
@@ -194,9 +200,8 @@ contract V1EMP is
 		override
 		nonReentrant()
 		utilizedERC20DepositOpenRequired()
+		runUtilizedV1EMPStrategy()
 	{
-		utilizedV1EMPStrategySync();
-
 		(
 			bool valid,
 			uint256 utilizedERC20AmountTotalETHValue,
@@ -240,12 +245,11 @@ contract V1EMP is
 		public
 		override
 		nonReentrant()
+		runUtilizedV1EMPStrategy()
 	{
 		require(utilizedERC20WithdrawOpen, "!utilizedERC20WithdrawOpen");
 
 		require(balanceOf(msg.sender) >= _eRC20Amount, "balanceOf(msg.sender) < _eRC20Amount");
-
-		utilizedV1EMPStrategySync();
 
 		address[] memory _utilizedERC20 = _I_V1_EMP_UTILITY().v1EMP_utilizedERC20(address(this));
 
