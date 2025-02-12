@@ -523,6 +523,46 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 					ERROR.EMP.INVALID_UTILIZED_STRATEGY_ALLOCATION
 				);
 			});
+
+			describe("Strategy updated _utilizedERC20 but EMP.utilizedV1EMPStrategySync not ran yet", async () => {
+				let beforeUtilizedERC20UpdateDepositAmount: BigNumber[][] = [];
+
+
+				beforeEach(async () => {
+					beforeUtilizedERC20UpdateDepositAmount[0] = await strategies[0].UtilStrategyTransfer.calculateERC20Required(
+						eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(D_18)
+					);
+
+					beforeUtilizedERC20UpdateDepositAmount[1] = await strategies[1].UtilStrategyTransfer.calculateERC20Required(
+						eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(D_18)
+					);
+
+					let utilized_erc20 = await strategies[0].contract.utilizedERC20();
+
+					expect(utilized_erc20.length).to.not.equal(1);
+
+					await strategies[0].contract.utilizedERC20DepositOpenUpdate(false);
+
+					await strategies[0].contract.utilizedERC20WithdrawOpenUpdate(false);
+
+					await strategies[0].contract.utilizedERC20Update([eRC20A.address], [[true, true, PERCENT.HUNDRED]]);
+
+					await strategies[0].contract.utilizedERC20DepositOpenUpdate(true);
+
+					await strategies[0].contract.utilizedERC20WithdrawOpenUpdate(true);
+
+					expect(await eMPs[0].UtilEMPTransfer.utilizedV1EMPStrategySyncRequired()).to.be.true;
+				});
+
+
+				it("Should catch invalid lengthed of _v1EMPStrategyUtilizedERC20Amount[0] passed..", async () => {
+					await expect(
+						eMP.utilizedV1EMPStrategyDeposit(beforeUtilizedERC20UpdateDepositAmount)
+					).to.be.rejectedWith(
+						ERROR.STRATEGY.INVALID_PARAMS_DEPOSIT_LENGTH
+					);
+				});
+			});
 		});
 
 		describe("Expected Success", async () => {

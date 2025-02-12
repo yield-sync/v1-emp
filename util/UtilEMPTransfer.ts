@@ -25,7 +25,7 @@ export default class UtilEMPTransfer
 	* Determin if the utilized ERC20 on EMP needs to be resynced with the utilized ERC20 on the EMP's utilized strategies
 	* @returns {boolean} If the strategies utilized needs to be updated
 	*/
-	public async utilizedERC20UpdateRequiredStatus(): Promise<Boolean>
+	public async utilizedV1EMPStrategySyncRequired(): Promise<Boolean>
 	{
 		const strategies = await this._eMP.utilizedV1EMPStrategy()
 
@@ -57,7 +57,7 @@ export default class UtilEMPTransfer
 	 */
 	public async calculatedUtilizedERC20Amount(ETHValue: BigNumber): Promise<BigNumber[]>
 	{
-		if (await this.utilizedERC20UpdateRequiredStatus())
+		if (await this.utilizedV1EMPStrategySyncRequired())
 		{
 			throw new Error("EMP needs to synchronize new strategy utilized ERC20");
 		}

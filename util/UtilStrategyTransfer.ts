@@ -28,8 +28,6 @@ export default class UtilStrategyTransfer
 	 */
 	public async calculateERC20Required(ETHValue: BigNumber): Promise<BigNumber[]>
 	{
-		const ONE_HUNDRED_PERCENT = await this._registry.ONE_HUNDRED_PERCENT();
-
 		const UTILIZED_ERC20S = await this._v1EMPStrategy.utilizedERC20();
 
 		let utilizedERC20Amount: BigNumber[] = [];
@@ -47,7 +45,7 @@ export default class UtilStrategyTransfer
 				const ALLOCATION: BigNumber = UTILIZATION.allocation.mul(
 					ethers.utils.parseUnits("1", await MockERC20.decimals())
 				).div(
-					ONE_HUNDRED_PERCENT
+					await this._registry.ONE_HUNDRED_PERCENT()
 				);
 
 				tokenAmount = ETHValue.mul(ALLOCATION).div(D_18);
