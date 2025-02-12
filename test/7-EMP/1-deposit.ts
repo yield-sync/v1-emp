@@ -1,4 +1,4 @@
-import { expect } from "chai";
+import { expect, util } from "chai";
 import { BigNumber, Contract, VoidSigner } from "ethers";
 
 import stageContracts from "./stage-contracts-7";
@@ -26,6 +26,7 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 	let eRC20A: Contract;
 	let eRC20B: Contract;
 	let eRC20C: Contract;
+	let eRC20D: Contract;
 
 	let owner: VoidSigner;
 	let manager: VoidSigner;
@@ -49,6 +50,7 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 				eRC20A,
 				eRC20B,
 				eRC20C,
+				eRC20D,
 				owner,
 				manager,
 				treasury,
@@ -232,6 +234,8 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 
 			describe("Strategy updated _utilizedERC20 but EMP.utilizedV1EMPStrategySync not ran yet", async () => {
 				let beforeUtilizedERC20UpdateDepositAmount: BigNumber[][] = [];
+				let eTHValueEMPDepositAmount: BigNumber = ethers.utils.parseUnits("2", 18);
+				let eMPDepositAmounts: UtilizedERC20Amount;
 
 
 				beforeEach(async () => {
@@ -243,25 +247,34 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 						eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(D_18)
 					);
 
-					let utilized_erc20 = await strategies[0].contract.utilizedERC20();
-
-					expect(utilized_erc20.length).to.not.equal(1);
-
 					await strategies[0].contract.utilizedERC20DepositOpenUpdate(false);
 
 					await strategies[0].contract.utilizedERC20WithdrawOpenUpdate(false);
 
-					await strategies[0].contract.utilizedERC20Update([eRC20A.address], [[true, true, PERCENT.HUNDRED]]);
+					await strategies[0].contract.utilizedERC20Update([eRC20D.address], [[true, true, PERCENT.HUNDRED]]);
 
 					await strategies[0].contract.utilizedERC20DepositOpenUpdate(true);
 
 					await strategies[0].contract.utilizedERC20WithdrawOpenUpdate(true);
 
 					expect(await eMPs[0].UtilEMPTransfer.utilizedV1EMPStrategySyncRequired()).to.be.true;
+
+					eMPDepositAmounts = await eMPs[0].UtilEMPTransfer.calculatedUtilizedERC20Amount(
+						eTHValueEMPDepositAmount,
+						true
+					);
+
+					const utilizedERC20 = await eMPUtility.v1EMP_utilizedERC20(eMP.address);
+
+					await approveTokens(eMP.address, utilizedERC20, eMPDepositAmounts);
 				});
 
 
-				it("Should catch invalid lengthed _utilizedERC20Amount..");
+				it("Should catch invalid lengthed _utilizedERC20Amount..", async () => {
+					await expect(eMP.utilizedERC20Deposit(eMPDepositAmounts)).to.be.revertedWith(
+						ERROR.EMP_UTILITY.INVALID_UTILIZED_ERC20_LENGTH
+					);
+				});
 			});
 		});
 
@@ -579,7 +592,7 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 
 					await strategies[0].contract.utilizedERC20WithdrawOpenUpdate(false);
 
-					await strategies[0].contract.utilizedERC20Update([eRC20A.address], [[true, true, PERCENT.HUNDRED]]);
+					await strategies[0].contract.utilizedERC20Update([eRC20D.address], [[true, true, PERCENT.HUNDRED]]);
 
 					await strategies[0].contract.utilizedERC20DepositOpenUpdate(true);
 

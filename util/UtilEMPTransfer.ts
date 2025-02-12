@@ -5,6 +5,16 @@ import { BigNumber, Contract } from "ethers";
 import { D_18 } from "../const"
 
 
+class EMPSyncRequiredException extends
+	Error
+{
+	constructor(message?: string)
+	{
+		super(message);
+		this.name = "EMPSyncRequiredException";
+	}
+}
+
 
 export default class UtilEMPTransfer
 {
@@ -53,13 +63,14 @@ export default class UtilEMPTransfer
 	/**
 	 * Calculate ERC20 required by a total ETH Amount
 	 * @param ETHValue {BigNumber} Deposit ETH value
+	 * @param ignoreSync {BigNumber} (Optional) Ignore sync required check
 	 * @returns Object containing utilized ERC 20 amounts
 	 */
-	public async calculatedUtilizedERC20Amount(ETHValue: BigNumber): Promise<BigNumber[]>
+	public async calculatedUtilizedERC20Amount(ETHValue: BigNumber, ignoreSync: boolean = false): Promise<BigNumber[]>
 	{
-		if (await this.utilizedV1EMPStrategySyncRequired())
+		if (!ignoreSync && await this.utilizedV1EMPStrategySyncRequired())
 		{
-			throw new Error("EMP needs to synchronize new strategy utilized ERC20");
+			throw new EMPSyncRequiredException("EMP needs to synchronize new strategy utilized ERC20");
 		}
 
 		const UTILIZED_ERC20S = await this._eMPUtility.v1EMP_utilizedERC20(this._eMP.address);
