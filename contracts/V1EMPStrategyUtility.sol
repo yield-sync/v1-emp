@@ -20,12 +20,16 @@ contract V1EMPStrategyUtility is
 	using SafeMath for uint256;
 
 
+	uint256 internal immutable _PERCENT_ONE_HUNDRED;
+
 	IV1EMPRegistry internal immutable _I_V1_EMP_REGISTRY;
 
 
 	constructor (address _v1EMPRegistry)
 	{
 		_I_V1_EMP_REGISTRY = IV1EMPRegistry(_v1EMPRegistry);
+
+		_PERCENT_ONE_HUNDRED = _I_V1_EMP_REGISTRY.PERCENT_ONE_HUNDRED();
 	}
 
 
@@ -90,9 +94,7 @@ contract V1EMPStrategyUtility is
 				}
 			}
 
-			uint256 utilizedERC20AmountAllocationActual = utilizedERC20AmountETHValue_[i].mul(
-				_I_V1_EMP_REGISTRY.PERCENT_DIVISOR()
-			).div(
+			uint256 utilizedERC20AmountAllocationActual = utilizedERC20AmountETHValue_[i].mul(_PERCENT_ONE_HUNDRED).div(
 				utilizedERC20AmountETHValueTotal_,
 				"!computed"
 			);
@@ -201,9 +203,9 @@ contract V1EMPStrategyUtility is
 			}
 		}
 
-		if (utilizedERC20AllocationTotal != _I_V1_EMP_REGISTRY.PERCENT_ONE_HUNDRED())
+		if (utilizedERC20AllocationTotal != _PERCENT_ONE_HUNDRED)
 		{
-			return (false, "utilizedERC20AllocationTotal != _I_V1_EMP_REGISTRY.PERCENT_ONE_HUNDRED()");
+			return (false, "utilizedERC20AllocationTotal != _PERCENT_ONE_HUNDRED");
 		}
 	}
 }

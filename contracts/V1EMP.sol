@@ -29,6 +29,8 @@ contract V1EMP is
 	bool public override utilizedERC20WithdrawFull;
 	bool public override utilizedERC20WithdrawOpen;
 
+	uint256 internal immutable _PERCENT_ONE_HUNDRED;
+
 	uint256 public override feeRateGovernance;
 	uint256 public override feeRateManager;
 
@@ -50,6 +52,8 @@ contract V1EMP is
 		utilizedERC20WithdrawFull = _utilizedERC20WithdrawFull;
 
 		_I_V1_EMP_REGISTRY = IV1EMPRegistry(_v1EMPRegistry);
+
+		_PERCENT_ONE_HUNDRED = _I_V1_EMP_REGISTRY.PERCENT_ONE_HUNDRED();
 	}
 
 
@@ -168,7 +172,7 @@ contract V1EMP is
 		public
 		authGovernanceOrManager()
 	{
-		require(feeRateGovernance.add(_feeRateManager) <= _I_V1_EMP_REGISTRY.PERCENT_ONE_HUNDRED(), "!_feeRateManager");
+		require(feeRateGovernance.add(_feeRateManager) <= _PERCENT_ONE_HUNDRED, "!_feeRateManager");
 
 		feeRateManager = _feeRateManager;
 	}
@@ -180,7 +184,7 @@ contract V1EMP is
 	{
 		require(IAccessControl(_I_V1_EMP_REGISTRY.governance()).hasRole(bytes32(0), msg.sender), "!authorized");
 
-		require(_feeRateGovernance.add(feeRateManager) <= _I_V1_EMP_REGISTRY.PERCENT_ONE_HUNDRED(), "!_feeRateGovernance");
+		require(_feeRateGovernance.add(feeRateManager) <= _PERCENT_ONE_HUNDRED, "!_feeRateGovernance");
 
 		feeRateGovernance = _feeRateGovernance;
 	}
@@ -220,11 +224,9 @@ contract V1EMP is
 			IERC20(_utilizedERC20[i]).transferFrom(msg.sender, address(this), _utilizedERC20Amount[i]);
 		}
 
-		uint256 PERCENT_DIVISOR = _I_V1_EMP_REGISTRY.PERCENT_DIVISOR();
+		uint256 mintAmountManager = utilizedERC20AmountTotalETHValue.mul(feeRateManager).div(_PERCENT_ONE_HUNDRED);
 
-		uint256 mintAmountManager = utilizedERC20AmountTotalETHValue.mul(feeRateManager).div(PERCENT_DIVISOR);
-
-		uint256 mintAmountGovernancePayTo = utilizedERC20AmountTotalETHValue.mul(feeRateGovernance).div(PERCENT_DIVISOR);
+		uint256 mintAmountGovernancePayTo = utilizedERC20AmountTotalETHValue.mul(feeRateGovernance).div(_PERCENT_ONE_HUNDRED);
 
 		_mint(manager, mintAmountManager);
 
@@ -275,23 +277,18 @@ contract V1EMP is
 
 		if (!utilizedERC20Available)
 		{
-			if (!utilizedERC20WithdrawFull)
-			{
-				revert("!utilizedERC20Available");
-			}
+			require(utilizedERC20WithdrawFull, "!utilizedERC20WithdrawFull");
 
 			uint256[] memory v1EMPStrategyERC20Amount = new uint256[](_utilizedV1EMPStrategy.length);
 
-			uint256 PERCENT_DIVISOR = _I_V1_EMP_REGISTRY.PERCENT_DIVISOR();
-
-			uint256 _eRC20AmountPercentOfTotalSupply = _eRC20Amount.mul(PERCENT_DIVISOR).div(totalSupply());
+			uint256 _eRC20AmountPercentOfTotalSupply = _eRC20Amount.mul(_PERCENT_ONE_HUNDRED).div(totalSupply());
 
 			for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
 			{
 				v1EMPStrategyERC20Amount[i] = _eRC20AmountPercentOfTotalSupply.mul(
 					IV1EMPStrategy(_utilizedV1EMPStrategy[i]).eMP_shares(address(this))
 				).div(
-					PERCENT_DIVISOR
+					_PERCENT_ONE_HUNDRED
 				);
 			}
 

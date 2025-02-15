@@ -194,7 +194,7 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 					const OWNER_EMP_BALANCE = await eMP.balanceOf(owner.address);
 
 					await expect(eMP.utilizedERC20Withdraw(OWNER_EMP_BALANCE)).to.be.revertedWith(
-						ERROR.EMP.UTILIZED_ERC20_NOT_AVAILABLE
+						ERROR.EMP.UTILIZED_ERC20_WITHDRAW_FULL_CLOSED
 					);
 				});
 			});

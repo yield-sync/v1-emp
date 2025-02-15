@@ -21,6 +21,8 @@ contract V1EMPUtility is
 	using SafeMath for uint256;
 
 
+	uint256 internal immutable _PERCENT_ONE_HUNDRED;
+
 	uint8 public constant TOLERANCE = 10;
 
 	IV1EMPRegistry internal immutable _I_V1_EMP_REGISTRY;
@@ -39,6 +41,8 @@ contract V1EMPUtility is
 	constructor (address _v1EMPRegistry)
 	{
 		_I_V1_EMP_REGISTRY = IV1EMPRegistry(_v1EMPRegistry);
+
+		_PERCENT_ONE_HUNDRED = _I_V1_EMP_REGISTRY.PERCENT_ONE_HUNDRED();
 	}
 
 
@@ -58,7 +62,7 @@ contract V1EMPUtility is
 		view
 		returns (uint256)
 	{
-		return _a.mul(_I_V1_EMP_REGISTRY.PERCENT_DIVISOR()).div(_b, "!computed");
+		return _a.mul(_PERCENT_ONE_HUNDRED).div(_b, "!computed");
 	}
 
 
@@ -168,9 +172,9 @@ contract V1EMPUtility is
 
 		if (_v1EMPStrategy.length != 0)
 		{
-			if (utilizedV1EMPStrategyAllocationTotal != _I_V1_EMP_REGISTRY.PERCENT_ONE_HUNDRED())
+			if (utilizedV1EMPStrategyAllocationTotal != _PERCENT_ONE_HUNDRED)
 			{
-				return (false, "utilizedV1EMPStrategyAllocationTotal != _I_V1_EMP_REGISTRY.PERCENT_ONE_HUNDRED()");
+				return (false, "utilizedV1EMPStrategyAllocationTotal != _PERCENT_ONE_HUNDRED");
 			}
 		}
 	}
@@ -318,7 +322,7 @@ contract V1EMPUtility is
 					utilizationERC20[ii].allocation += uERC20.allocation.mul(
 						iV1EMP.utilizedV1EMPStrategy_allocation(_utilizedV1EMPStrategy[i])
 					).div(
-						_I_V1_EMP_REGISTRY.PERCENT_DIVISOR()
+						_PERCENT_ONE_HUNDRED
 					);
 
 					utilizedERC20AllocationTotal += utilizationERC20[ii].allocation;
@@ -331,10 +335,7 @@ contract V1EMPUtility is
 			}
 		}
 
-		require(
-			utilizedERC20AllocationTotal == _I_V1_EMP_REGISTRY.PERCENT_ONE_HUNDRED(),
-			"utilizedERC20AllocationTotal != _I_V1_EMP_REGISTRY.PERCENT_ONE_HUNDRED()"
-		);
+		require(utilizedERC20AllocationTotal == _PERCENT_ONE_HUNDRED, "utilizedERC20AllocationTotal != _PERCENT_ONE_HUNDRED");
 
 		_v1EMP_utilizedERC20[msg.sender] = utilizedERC20;
 
