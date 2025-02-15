@@ -2,6 +2,7 @@ const { ethers } = require("hardhat");
 
 
 export const D_18 = ethers.utils.parseUnits("1", 18);
+export const D_4 = ethers.utils.parseUnits("4", 18);
 
 export const ERROR = {
 	REGISTRY: {
@@ -65,11 +66,12 @@ export const ERROR = {
 };
 
 export const PERCENT = {
-	HUNDRED: ethers.utils.parseUnits("1", 18),
-	FIFTY: ethers.utils.parseUnits(".5", 18),
-	FORTY: ethers.utils.parseUnits(".4", 18),
-	TEN: ethers.utils.parseUnits(".1", 18),
-	TWENTY_FIVE: ethers.utils.parseUnits(".25", 18),
-	SEVENTY_FIVE: ethers.utils.parseUnits(".75", 18),
-	ZERO: ethers.utils.parseUnits("0", 18),
+	DIVISOR: ethers.utils.parseUnits("1", 4),
+	HUNDRED: ethers.utils.parseUnits("1", 4),
+	FIFTY: ethers.utils.parseUnits(".5", 4),
+	FORTY: ethers.utils.parseUnits(".4", 4),
+	TEN: ethers.utils.parseUnits(".1", 4),
+	TWENTY_FIVE: ethers.utils.parseUnits(".25", 4),
+	SEVENTY_FIVE: ethers.utils.parseUnits(".75", 4),
+	ZERO: ethers.utils.parseUnits("0", 4),
 };

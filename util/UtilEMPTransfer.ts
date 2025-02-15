@@ -2,7 +2,7 @@ const { ethers } = require("hardhat");
 
 import { BigNumber, Contract } from "ethers";
 
-import { D_18 } from "../const"
+import { PERCENT } from "../const"
 
 
 class EMPSyncRequiredException extends
@@ -93,7 +93,7 @@ export default class UtilEMPTransfer
 
 			if (UTILIZATION.deposit)
 			{
-				let ETHValuePortion = ETHValue.mul(UTILIZATION.allocation).div(ethers.utils.parseUnits("1", 18));
+				let ETHValuePortion = ETHValue.mul(UTILIZATION.allocation).div(ethers.utils.parseUnits("1", 4));
 
 				const erc20Decimals = BigNumber.from(10).pow(await ETH_VALUE_PROVIDER.eRC20Decimals());
 
@@ -140,7 +140,7 @@ export default class UtilEMPTransfer
 				const EMP_STRATEGY_ALLOC: BigNumber = await this._eMP.utilizedV1EMPStrategy_allocation(STRATEGIES[i]);
 
 				// Calculate EMP's ERC20 allocation
-				const EMP_ERC20_ALLOC: BigNumber = STRATEGY_ERC20_ALLOC.mul(EMP_STRATEGY_ALLOC).div(D_18);
+				const EMP_ERC20_ALLOC: BigNumber = STRATEGY_ERC20_ALLOC.mul(EMP_STRATEGY_ALLOC).div(PERCENT.DIVISOR);
 
 				if (!UTILIZED_ERC20[ERC20])
 				{
@@ -178,7 +178,7 @@ export default class UtilEMPTransfer
 
 			if (UTILIZATION.deposit)
 			{
-				let ETHValuePortion = depositAmountEthValue.mul(ALLOCATION).div(ethers.utils.parseUnits("1", 18));
+				let ETHValuePortion = depositAmountEthValue.mul(ALLOCATION).div(ethers.utils.parseUnits("1", 4));
 
 				const erc20Decimals = BigNumber.from(10).pow(await ETH_VALUE_PROVIDER.eRC20Decimals());
 

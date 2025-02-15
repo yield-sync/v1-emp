@@ -59,7 +59,7 @@ describe("[7.0] V1EMP.sol - Initialization", async () => {
 				const ONE_HUNDRED_PERCENT = await registry.ONE_HUNDRED_PERCENT();
 
 				await expect(
-					eMP.feeRateManagerUpdate(ONE_HUNDRED_PERCENT.add(ethers.utils.parseUnits("1", 18)))
+					eMP.feeRateManagerUpdate(ONE_HUNDRED_PERCENT.add(1))
 				).to.be.rejectedWith(
 					ERROR.EMP.FEE_RATE_MANAGER_GREATER_THAN_100_PERCENT
 				);
@@ -87,7 +87,7 @@ describe("[7.0] V1EMP.sol - Initialization", async () => {
 				const ONE_HUNDRED_PERCENT = await registry.ONE_HUNDRED_PERCENT();
 
 				await expect(
-					eMP.feeRateGovernanceUpdate(ONE_HUNDRED_PERCENT.add(ethers.utils.parseUnits("1", 18)))
+					eMP.feeRateGovernanceUpdate(ONE_HUNDRED_PERCENT.add(1))
 				).to.be.rejectedWith(
 					ERROR.EMP.FEE_RATE_GOVERNANCE_GREATER_THAN_100_PERCENT
 				);
@@ -106,9 +106,9 @@ describe("[7.0] V1EMP.sol - Initialization", async () => {
 	describe("function feeRateManagerUpdate() (2/2)", async () => {
 		describe("Expected Failure", async () => {
 			it("Should NOT allow combined fees to be greater than 100% fee rate..", async () => {
-				await eMP.feeRateGovernanceUpdate(ethers.utils.parseUnits(".5", 18));
+				await eMP.feeRateGovernanceUpdate(ethers.utils.parseUnits(".5", 4));
 
-				await expect(eMP.feeRateManagerUpdate(ethers.utils.parseUnits("1", 18))).to.be.rejectedWith(
+				await expect(eMP.feeRateManagerUpdate(ethers.utils.parseUnits("1", 4))).to.be.rejectedWith(
 					ERROR.EMP.FEE_RATE_MANAGER_GREATER_THAN_100_PERCENT
 				);
 			});
@@ -118,9 +118,9 @@ describe("[7.0] V1EMP.sol - Initialization", async () => {
 	describe("function feeRateGovernanceUpdate() (2/2)", async () => {
 		describe("Expected Failure", async () => {
 			it("Should NOT allow combined fees to be greater than 100% fee rate..", async () => {
-				await eMP.feeRateManagerUpdate(ethers.utils.parseUnits(".5", 18));
+				await eMP.feeRateManagerUpdate(ethers.utils.parseUnits(".5", 4));
 
-				await expect(eMP.feeRateGovernanceUpdate(ethers.utils.parseUnits("1", 18))).to.be.rejectedWith(
+				await expect(eMP.feeRateGovernanceUpdate(ethers.utils.parseUnits("1", 4))).to.be.rejectedWith(
 					ERROR.EMP.FEE_RATE_GOVERNANCE_GREATER_THAN_100_PERCENT
 				);
 			});

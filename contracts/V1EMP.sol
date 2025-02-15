@@ -220,9 +220,9 @@ contract V1EMP is
 			IERC20(_utilizedERC20[i]).transferFrom(msg.sender, address(this), _utilizedERC20Amount[i]);
 		}
 
-		uint256 mintAmountManager = utilizedERC20AmountTotalETHValue.mul(feeRateManager).div(1e18);
+		uint256 mintAmountManager = utilizedERC20AmountTotalETHValue.mul(feeRateManager).div(1e4);
 
-		uint256 mintAmountGovernancePayTo = utilizedERC20AmountTotalETHValue.mul(feeRateGovernance).div(1e18);
+		uint256 mintAmountGovernancePayTo = utilizedERC20AmountTotalETHValue.mul(feeRateGovernance).div(1e4);
 
 		_mint(manager, mintAmountManager);
 
@@ -280,14 +280,14 @@ contract V1EMP is
 
 			uint256[] memory v1EMPStrategyERC20Amount = new uint256[](_utilizedV1EMPStrategy.length);
 
-			uint256 _eRC20AmountPercentOfTotalSupply = _eRC20Amount.mul(1e18).div(totalSupply());
+			uint256 _eRC20AmountPercentOfTotalSupply = _eRC20Amount.mul(1e4).div(totalSupply());
 
 			for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
 			{
 				v1EMPStrategyERC20Amount[i] = _eRC20AmountPercentOfTotalSupply.mul(
 					IV1EMPStrategy(_utilizedV1EMPStrategy[i]).eMP_shares(address(this))
 				).div(
-					1e18
+					1e4
 				);
 			}
 

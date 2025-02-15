@@ -90,7 +90,7 @@ contract V1EMPStrategyUtility is
 				}
 			}
 
-			uint256 utilizedERC20AmountAllocationActual = utilizedERC20AmountETHValue_[i].mul(1e18).div(
+			uint256 utilizedERC20AmountAllocationActual = utilizedERC20AmountETHValue_[i].mul(1e4).div(
 				utilizedERC20AmountETHValueTotal_,
 				"!computed"
 			);

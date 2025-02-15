@@ -117,7 +117,7 @@ contract V1EMPUtility is
 
 		for (uint256 i = 0; i < _v1EMP_utilizedERC20[_v1EMP].length; i++)
 		{
-			uint256 utilizedERC20AllocationActual = eRC20AmountETHValue[i].mul(1e18).div(
+			uint256 utilizedERC20AllocationActual = eRC20AmountETHValue[i].mul(1e4).div(
 				utilizedERC20AmountTotalETHValue_,
 				"!computed"
 			);
@@ -223,7 +223,7 @@ contract V1EMPUtility is
 
 		for (uint256 i = 0; i < utilizedV1EMPStrategy.length; i++)
 		{
-			uint256 utilizedERC20AmountAllocationActual = utilizedV1EMPStrategyERC20AmountETHValue[i].mul(1e18).div(
+			uint256 utilizedERC20AmountAllocationActual = utilizedV1EMPStrategyERC20AmountETHValue[i].mul(1e4).div(
 				utilizedV1EMPStrategyERC20AmountETHValueTotal_,
 				"!computed"
 			);
@@ -312,7 +312,7 @@ contract V1EMPUtility is
 					utilizationERC20[ii].allocation += uERC20.allocation.mul(
 						iV1EMP.utilizedV1EMPStrategy_allocation(_utilizedV1EMPStrategy[i])
 					).div(
-						1e18
+						1e4
 					);
 
 					utilizedERC20AllocationTotal += utilizationERC20[ii].allocation;
