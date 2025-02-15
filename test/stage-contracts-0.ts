@@ -14,6 +14,7 @@ export type StageContracts0 = {
 	eRC20D: Contract,
 	governance: Contract,
 	addressArrayUtility: Contract,
+	percentUtility: Contract,
 };
 
 
@@ -30,6 +31,7 @@ export default async (): Promise<StageContracts0> => {
 		eRC20D,
 		governance,
 		addressArrayUtility,
+		percentUtility,
 	] = await Promise.all([
 		deployContract("MockERC20", ["ERC A", "A", 18]),
 		deployContract("MockERC20", ["ERC B", "B", 18]),
@@ -37,6 +39,7 @@ export default async (): Promise<StageContracts0> => {
 		deployContract("MockERC20", ["ERC D", "D", 18]),
 		deployContract("YieldSyncGovernance"),
 		deployContract("AddressArrayUtility"),
+		deployContract("PercentUtility"),
 	]);
 
 	await governance.payToUpdate(treasury.address);
@@ -52,5 +55,6 @@ export default async (): Promise<StageContracts0> => {
 		eRC20D,
 		governance,
 		addressArrayUtility,
+		percentUtility
 	};
 };

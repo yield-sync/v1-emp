@@ -8,6 +8,8 @@ export const ERROR = {
 	REGISTRY: {
 		ARRAY_UTILITY_NOT_SET: "_addressArrayUtility == address(0)",
 		ARRAY_UTILITY_IS_ADDRESS_ZERO: "__addressArrayUtility == address(0)",
+		PERCENT_UTILITY_NOT_SET: "_percentUtility == address(0)",
+		PERCENT_UTILITY_IS_ADDRESS_ZERO: "__percentUtility == address(0)",
 		EMP_UTILITY_NOT_SET: "_v1EMPUtility == address(0)",
 		NOT_EMP_DEPLOYER: "_v1EMPDeployer != msg.sender",
 		NOT_STRATEGY_DEPLOYER: "_v1EMPStrategyDeployer != msg.sender",

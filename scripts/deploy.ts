@@ -129,6 +129,8 @@ async function main()
 
 
 	// Register the contract on the register contract
+	/// TODO: await registry.percentUtilityUpdate(percentUtilityContract);
+
 	await registry.addressArrayUtilityUpdate(addressArrayUtilityContract);
 
 	await registry.v1EMPStrategyUtilityUpdate(eMPStrategyUtility.address);

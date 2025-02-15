@@ -127,6 +127,16 @@ interface IV1EMPRegistry
 		returns (address)
 	;
 
+	/**
+	* @dev [view-address]
+	* @return {address}
+	*/
+	function percentUtility()
+		external
+		view
+		returns (address)
+	;
+
 
 	/**
 	* @dev [view-address]
@@ -193,6 +203,14 @@ interface IV1EMPRegistry
 	* @param __governance {address}
 	*/
 	function governanceUpdate(address __governance)
+		external
+	;
+
+	/**
+	* @notice PercentUtility Update
+	* @param __percentUtility {address}
+	*/
+	function percentUtilityUpdate(address __percentUtility)
 		external
 	;
 

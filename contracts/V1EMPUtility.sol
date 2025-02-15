@@ -8,6 +8,7 @@ import {
 	IERC20ETHValueProvider
 } from "@yield-sync/erc20-eth-value-provider/contracts/interface/IERC20ETHValueProvider.sol";
 import { IAddressArrayUtility } from "@yield-sync/utility/contracts/interface/IAddressArrayUtility.sol";
+import { IPercentUtility } from "@yield-sync/utility/contracts/interface/IPercentUtility.sol";
 
 import { IV1EMP } from "./interface/IV1EMP.sol";
 import { IV1EMPRegistry } from "./interface/IV1EMPRegistry.sol";
@@ -55,15 +56,6 @@ contract V1EMPUtility is
 
 
 	/// @notice internal
-
-
-	function _percentOf(uint256 _a, uint256 _b)
-		internal
-		view
-		returns (uint256)
-	{
-		return _a.mul(_PERCENT_ONE_HUNDRED).div(_b, "!computed");
-	}
 
 
 	function _requireExistantV1EMP(address _v1EMP)
@@ -131,7 +123,9 @@ contract V1EMPUtility is
 		for (uint256 i = 0; i < _v1EMP_utilizedERC20[_v1EMP].length; i++)
 		{
 			if (
-				_v1EMP_utilizedERC20_utilizationERC20[_v1EMP][_v1EMP_utilizedERC20[_v1EMP][i]].allocation != _percentOf(
+				_v1EMP_utilizedERC20_utilizationERC20[_v1EMP][_v1EMP_utilizedERC20[_v1EMP][i]].allocation != IPercentUtility(
+					_I_V1_EMP_REGISTRY.percentUtility()
+				).percentOf(
 					eRC20AmountETHValue[i],
 					utilizedERC20AmountTotalETHValue_
 				)
@@ -229,7 +223,7 @@ contract V1EMPUtility is
 
 		for (uint256 i = 0; i < utilizedV1EMPStrategy.length; i++)
 		{
-			uint256 utilizedERC20AmountAllocationActual = _percentOf(
+			uint256 utilizedERC20AmountAllocationActual = IPercentUtility(_I_V1_EMP_REGISTRY.percentUtility()).percentOf(
 				utilizedV1EMPStrategyERC20AmountETHValue[i],
 				utilizedV1EMPStrategyERC20AmountETHValueTotal_
 			);

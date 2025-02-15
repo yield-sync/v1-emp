@@ -11,6 +11,7 @@ contract V1EMPRegistry is
 	IV1EMPRegistry
 {
 	address internal _addressArrayUtility;
+	address internal _percentUtility;
 	address internal _governance;
 	address internal _v1EMPUtility;
 	address internal _v1EMPDeployer;
@@ -69,6 +70,16 @@ contract V1EMPRegistry is
 		returns(address)
 	{
 		return _addressArrayUtility;
+	}
+
+	/// @inheritdoc IV1EMPRegistry
+	function percentUtility()
+		public
+		view
+		override
+		returns(address)
+	{
+		return _percentUtility;
 	}
 
 	/// @inheritdoc IV1EMPRegistry
@@ -173,6 +184,19 @@ contract V1EMPRegistry is
 	}
 
 	/// @inheritdoc IV1EMPRegistry
+	function percentUtilityUpdate(address __percentUtility)
+		public
+		override
+		authGovernance()
+	{
+		require(__percentUtility != address(0), "__percentUtility == address(0)");
+
+		require(_percentUtility == address(0), "_percentUtility != address(0)");
+
+		_percentUtility = __percentUtility;
+	}
+
+	/// @inheritdoc IV1EMPRegistry
 	function v1EMPDeployerUpdate(address __v1EMPDeployer)
 		public
 		override
@@ -236,6 +260,8 @@ contract V1EMPRegistry is
 
 		require(_addressArrayUtility != address(0), "_addressArrayUtility == address(0)");
 
+		require(_percentUtility != address(0), "_percentUtility == address(0)");
+
 		require(_v1EMPStrategyUtility == address(0), "_v1EMPStrategyUtility != address(0)");
 
 		_v1EMPStrategyUtility = __v1EMPStrategyUtility;
@@ -250,6 +276,8 @@ contract V1EMPRegistry is
 		require(__v1EMPUtility != address(0), "__v1EMPUtility == address(0)");
 
 		require(_addressArrayUtility != address(0), "_addressArrayUtility == address(0)");
+
+		require(_percentUtility != address(0), "_percentUtility == address(0)");
 
 		require(_v1EMPUtility == address(0), "_v1EMPUtility != address(0)");
 

@@ -10,6 +10,7 @@ const { ethers } = require("hardhat");
 
 describe("[1.0] V1EMPRegistry.sol", async () => {
 	let addressArrayUtility: Contract;
+	let percentUtility: Contract;
 	let registry: Contract;
 
 	let owner: VoidSigner;
@@ -25,7 +26,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
-		({ owner, badActor, addressArrayUtility, registry, } = await stageContracts());
+		({ owner, badActor, addressArrayUtility, percentUtility, registry, } = await stageContracts());
 
 		(
 			{
@@ -65,9 +66,32 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 			});
 		});
 
+		describe("function percentUtilityUpdate()", () => {
+			it("[auth] Should revert if an unauthorized sender calls..", async () => {
+				await expect(
+					registry.connect(badActor).percentUtilityUpdate(percentUtility.address)
+				).to.be.rejectedWith(
+					ERROR.NOT_AUTHORIZED
+				);
+			});
+
+			it("Should not allow __percentUtility to be address(0)..", async () => {
+				await expect(registry.percentUtilityUpdate(ethers.constants.AddressZero)).to.be.rejectedWith(
+					ERROR.REGISTRY.PERCENT_UTILITY_IS_ADDRESS_ZERO
+				);
+			});
+
+			it("Should update _percentUtility with valid params..", async () => {
+				await expect(registry.percentUtilityUpdate(percentUtility.address)).to.be.not.rejected;
+
+				expect(await registry.percentUtility()).to.be.equal(percentUtility.address);
+			});
+		});
+
 		describe("function v1EMPDeployerUpdate()", () => {
 			beforeEach(async () => {
 				await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
+				await registry.percentUtilityUpdate(percentUtility.address);
 			});
 
 
@@ -119,6 +143,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 		describe("function v1EMPStrategyDeployerUpdate()", () => {
 			beforeEach(async () => {
 				await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
+				await registry.percentUtilityUpdate(percentUtility.address);
 			});
 
 
@@ -159,6 +184,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 		describe("function eRC20_eRC20ETHValueProviderUpdate()", () => {
 			beforeEach(async () => {
 				await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
+				await registry.percentUtilityUpdate(percentUtility.address);
 				await registry.v1EMPStrategyDeployerUpdate(fakeStrategyDeployer.address);
 			});
 
@@ -233,6 +259,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 		describe("function v1EMPRegister()", () => {
 			beforeEach(async () => {
 				await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
+				await registry.percentUtilityUpdate(percentUtility.address);
 				await registry.v1EMPUtilityUpdate(owner.address);
 				await registry.v1EMPDeployerUpdate(owner.address);
 			});
@@ -257,6 +284,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 		describe("function v1EMPStrategyRegister()", () => {
 			beforeEach(async () => {
 				await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
+				await registry.percentUtilityUpdate(percentUtility.address);
 				await registry.v1EMPStrategyDeployerUpdate(fakeStrategyDeployer.address);
 				expect(await registry.v1EMPStrategyDeployer()).to.be.equal(fakeStrategyDeployer.address);
 			});
@@ -289,8 +317,23 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 				);
 			});
 
+			it("Should revert if _addressArrayUtility is address(0)..", async () => {
+				await expect(registry.v1EMPStrategyUtilityUpdate(fakeStrategyUtility.address)).to.be.rejectedWith(
+					ERROR.REGISTRY.ARRAY_UTILITY_NOT_SET
+				);
+			});
+
+			it("Should revert if _percentUtility is address(0)..", async () => {
+				await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
+
+				await expect(registry.v1EMPStrategyUtilityUpdate(fakeStrategyUtility.address)).to.be.rejectedWith(
+					ERROR.REGISTRY.PERCENT_UTILITY_NOT_SET
+				);
+			});
+
 			it("Should not allow __v1EMPStrategyUtility to be address(0)..", async () => {
 				await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
+				await registry.percentUtilityUpdate(percentUtility.address);
 
 				await expect(registry.v1EMPStrategyUtilityUpdate(ethers.constants.AddressZero)).to.be.rejectedWith(
 					ERROR.REGISTRY.STRATEGY_UTILITY_IS_ADDRESS_ZERO
@@ -305,6 +348,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 
 			it("Should update _v1EMPStrategyUtility with valid params..", async () => {
 				await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
+				await registry.percentUtilityUpdate(percentUtility.address);
 
 				await expect(registry.v1EMPStrategyUtilityUpdate(fakeStrategyUtility.address)).to.be.not.rejected;
 
@@ -321,6 +365,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 
 			it("Should not allow __v1EMPUtility to be address(0)..", async () => {
 				await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
+				await registry.percentUtilityUpdate(percentUtility.address);
 
 				await expect(registry.v1EMPUtilityUpdate(ethers.constants.AddressZero)).to.be.rejectedWith(
 					ERROR.REGISTRY.EMP_UTILITY_IS_ADDRESS_ZERO
@@ -335,6 +380,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 
 			it("Should update _v1EMPUtility with valid params..", async () => {
 				await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
+				await registry.percentUtilityUpdate(percentUtility.address);
 
 				await expect(registry.v1EMPUtilityUpdate(fakeEMPUtility.address)).to.be.not.rejected;
 
