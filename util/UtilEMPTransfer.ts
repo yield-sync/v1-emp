@@ -140,7 +140,7 @@ export default class UtilEMPTransfer
 				const EMP_STRATEGY_ALLOC: BigNumber = await this._eMP.utilizedV1EMPStrategy_allocation(STRATEGIES[i]);
 
 				// Calculate EMP's ERC20 allocation
-				const EMP_ERC20_ALLOC: BigNumber = STRATEGY_ERC20_ALLOC.mul(EMP_STRATEGY_ALLOC).div(PERCENT.DIVISOR);
+				const EMP_ERC20_ALLOC: BigNumber = STRATEGY_ERC20_ALLOC.mul(EMP_STRATEGY_ALLOC).div(PERCENT.PERCENT_DIVISOR);
 
 				if (!UTILIZED_ERC20[ERC20])
 				{

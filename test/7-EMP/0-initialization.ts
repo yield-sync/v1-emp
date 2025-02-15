@@ -56,10 +56,10 @@ describe("[7.0] V1EMP.sol - Initialization", async () => {
 			});
 
 			it("Should NOT allow greater than 100% fee rate..", async () => {
-				const ONE_HUNDRED_PERCENT = await registry.ONE_HUNDRED_PERCENT();
+				const PERCENT_ONE_HUNDRED = await registry.PERCENT_ONE_HUNDRED();
 
 				await expect(
-					eMP.feeRateManagerUpdate(ONE_HUNDRED_PERCENT + 1)
+					eMP.feeRateManagerUpdate(PERCENT_ONE_HUNDRED + 1)
 				).to.be.rejectedWith(
 					ERROR.EMP.FEE_RATE_MANAGER_GREATER_THAN_100_PERCENT
 				);
@@ -84,10 +84,10 @@ describe("[7.0] V1EMP.sol - Initialization", async () => {
 			});
 
 			it("Should NOT allow greater than 100% fee rate..", async () => {
-				const ONE_HUNDRED_PERCENT = await registry.ONE_HUNDRED_PERCENT();
+				const PERCENT_ONE_HUNDRED = await registry.PERCENT_ONE_HUNDRED();
 
 				await expect(
-					eMP.feeRateGovernanceUpdate(ONE_HUNDRED_PERCENT + 1)
+					eMP.feeRateGovernanceUpdate(PERCENT_ONE_HUNDRED + 1)
 				).to.be.rejectedWith(
 					ERROR.EMP.FEE_RATE_GOVERNANCE_GREATER_THAN_100_PERCENT
 				);

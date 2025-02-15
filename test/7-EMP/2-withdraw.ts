@@ -107,11 +107,11 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 			let depositAmount: UtilizedERC20Amount = [];
 
 			depositAmount[0] = await strategies[0].UtilStrategyTransfer.calculateERC20Required(
-				eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.DIVISOR)
+				eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.PERCENT_DIVISOR)
 			);
 
 			depositAmount[1] = await strategies[1].UtilStrategyTransfer.calculateERC20Required(
-				eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.DIVISOR)
+				eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.PERCENT_DIVISOR)
 			);
 
 			await eMP.utilizedV1EMPStrategyDeposit([depositAmount[0], depositAmount[1]]);

@@ -156,11 +156,11 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 			await _eMPs[0].contract.utilizedERC20Deposit(eMPDepositAmounts);
 
 			depositAmount[0] = await _strategies[0].UtilStrategyTransfer.calculateERC20Required(
-				eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.DIVISOR)
+				eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.PERCENT_DIVISOR)
 			);
 
 			depositAmount[1] = await _strategies[1].UtilStrategyTransfer.calculateERC20Required(
-				eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.DIVISOR)
+				eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.PERCENT_DIVISOR)
 			);
 
 			// Expect that the owner address received something
@@ -240,11 +240,11 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 
 				beforeEach(async () => {
 					beforeUtilizedERC20UpdateDepositAmount[0] = await strategies[0].UtilStrategyTransfer.calculateERC20Required(
-						eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.DIVISOR)
+						eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.PERCENT_DIVISOR)
 					);
 
 					beforeUtilizedERC20UpdateDepositAmount[1] = await strategies[1].UtilStrategyTransfer.calculateERC20Required(
-						eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.DIVISOR)
+						eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.PERCENT_DIVISOR)
 					);
 
 					await strategies[0].contract.utilizedERC20DepositOpenUpdate(false);
@@ -554,11 +554,11 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 				let depositAmount: BigNumber[][] = [];
 
 				depositAmount[0] = await strategies[0].UtilStrategyTransfer.calculateERC20Required(
-					eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.DIVISOR)
+					eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.PERCENT_DIVISOR)
 				);
 
 				depositAmount[1] = await strategies[1].UtilStrategyTransfer.calculateERC20Required(
-					eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.DIVISOR)
+					eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.PERCENT_DIVISOR)
 				);
 
 				// Make value invalid
@@ -577,11 +577,11 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 
 				beforeEach(async () => {
 					beforeUtilizedERC20UpdateDepositAmount[0] = await strategies[0].UtilStrategyTransfer.calculateERC20Required(
-						eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.DIVISOR)
+						eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.PERCENT_DIVISOR)
 					);
 
 					beforeUtilizedERC20UpdateDepositAmount[1] = await strategies[1].UtilStrategyTransfer.calculateERC20Required(
-						eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.DIVISOR)
+						eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.PERCENT_DIVISOR)
 					);
 
 					let utilized_erc20 = await strategies[0].contract.utilizedERC20();
@@ -625,11 +625,11 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 				*/
 
 				depositAmount[0] = await strategies[0].UtilStrategyTransfer.calculateERC20Required(
-					eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.DIVISOR)
+					eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.PERCENT_DIVISOR)
 				);
 
 				depositAmount[1] = await strategies[1].UtilStrategyTransfer.calculateERC20Required(
-					eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.DIVISOR)
+					eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.PERCENT_DIVISOR)
 				);
 
 				await eMP.utilizedV1EMPStrategyDeposit([depositAmount[0], depositAmount[1]]);
@@ -642,7 +642,7 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 					const strategy = strategies[i].contract;
 
 					expect(await strategy.eMP_shares(eMP.address)).to.be.equal(
-						eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.DIVISOR)
+						eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.PERCENT_DIVISOR)
 					);
 				}
 			});
@@ -705,11 +705,11 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 			await eMP.utilizedERC20Deposit(eMPDepositAmounts);
 
 			depositAmount[0] = await strategies[0].UtilStrategyTransfer.calculateERC20Required(
-				eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.DIVISOR)
+				eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.PERCENT_DIVISOR)
 			);
 
 			depositAmount[1] = await strategies[1].UtilStrategyTransfer.calculateERC20Required(
-				eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.DIVISOR)
+				eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.PERCENT_DIVISOR)
 			);
 
 			await eMP.utilizedV1EMPStrategyDeposit([depositAmount[0], depositAmount[1]]);
@@ -753,19 +753,19 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 				await eMPs[1].contract.utilizedERC20Deposit(eMP2DepositAmounts);
 
 				depositAmountEMP[0] = await strategies[0].UtilStrategyTransfer.calculateERC20Required(
-					eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.DIVISOR)
+					eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.PERCENT_DIVISOR)
 				);
 
 				depositAmountEMP[1] = await strategies[1].UtilStrategyTransfer.calculateERC20Required(
-					eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.DIVISOR)
+					eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.PERCENT_DIVISOR)
 				);
 
 				depositAmounteMP2[0] = await strategies[0].UtilStrategyTransfer.calculateERC20Required(
-					eTHValueEMPDepositAmount.mul(PERCENT.SEVENTY_FIVE).div(PERCENT.DIVISOR)
+					eTHValueEMPDepositAmount.mul(PERCENT.SEVENTY_FIVE).div(PERCENT.PERCENT_DIVISOR)
 				);
 
 				depositAmounteMP2[1] = await strategies[1].UtilStrategyTransfer.calculateERC20Required(
-					eTHValueEMPDepositAmount.mul(PERCENT.TWENTY_FIVE).div(PERCENT.DIVISOR)
+					eTHValueEMPDepositAmount.mul(PERCENT.TWENTY_FIVE).div(PERCENT.PERCENT_DIVISOR)
 				);
 
 				await eMP.utilizedV1EMPStrategyDeposit([depositAmountEMP[0], depositAmountEMP[1]]);
@@ -775,15 +775,15 @@ describe("[7.1] V1EMP.sol - Depositing Tokens", async () => {
 
 			it("Expect strategy token supply to add up to what was deposited..", async () => {
 				const STRATEGY_1_DEPOSIT_AMOUNT: BigNumber = eTHValueEMPDepositAmount.mul(PERCENT.SEVENTY_FIVE).div(
-					PERCENT.DIVISOR
+					PERCENT.PERCENT_DIVISOR
 				).add(
-					eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.DIVISOR)
+					eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.PERCENT_DIVISOR)
 				);
 
 				const STRATEGY_2_DEPOSIT_AMOUNT: BigNumber = eTHValueEMPDepositAmount.mul(PERCENT.TWENTY_FIVE).div(
-					PERCENT.DIVISOR
+					PERCENT.PERCENT_DIVISOR
 				).add(
-					eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.DIVISOR)
+					eTHValueEMPDepositAmount.mul(PERCENT.FIFTY).div(PERCENT.PERCENT_DIVISOR)
 				);
 
 				expect(await strategies[0].contract.sharesTotal()).to.be.equal(STRATEGY_1_DEPOSIT_AMOUNT);

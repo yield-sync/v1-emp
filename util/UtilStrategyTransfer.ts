@@ -45,7 +45,7 @@ export default class UtilStrategyTransfer
 				const ALLOCATION: BigNumber = UTILIZATION.allocation.mul(
 					ethers.utils.parseUnits("1", await MockERC20.decimals())
 				).div(
-					await this._registry.ONE_HUNDRED_PERCENT()
+					await this._registry.PERCENT_ONE_HUNDRED()
 				);
 
 				tokenAmount = ETHValue.mul(ALLOCATION).div(D_18);

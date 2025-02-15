@@ -90,7 +90,9 @@ contract V1EMPStrategyUtility is
 				}
 			}
 
-			uint256 utilizedERC20AmountAllocationActual = utilizedERC20AmountETHValue_[i].mul(1e4).div(
+			uint256 utilizedERC20AmountAllocationActual = utilizedERC20AmountETHValue_[i].mul(
+				_I_V1_EMP_REGISTRY.PERCENT_DIVISOR()
+			).div(
 				utilizedERC20AmountETHValueTotal_,
 				"!computed"
 			);
@@ -199,9 +201,9 @@ contract V1EMPStrategyUtility is
 			}
 		}
 
-		if (utilizedERC20AllocationTotal != _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT())
+		if (utilizedERC20AllocationTotal != _I_V1_EMP_REGISTRY.PERCENT_ONE_HUNDRED())
 		{
-			return (false, "utilizedERC20AllocationTotal != _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT()");
+			return (false, "utilizedERC20AllocationTotal != _I_V1_EMP_REGISTRY.PERCENT_ONE_HUNDRED()");
 		}
 	}
 }

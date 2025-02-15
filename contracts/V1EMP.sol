@@ -168,7 +168,7 @@ contract V1EMP is
 		public
 		authGovernanceOrManager()
 	{
-		require(feeRateGovernance.add(_feeRateManager) <= _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT(), "!_feeRateManager");
+		require(feeRateGovernance.add(_feeRateManager) <= _I_V1_EMP_REGISTRY.PERCENT_ONE_HUNDRED(), "!_feeRateManager");
 
 		feeRateManager = _feeRateManager;
 	}
@@ -180,7 +180,7 @@ contract V1EMP is
 	{
 		require(IAccessControl(_I_V1_EMP_REGISTRY.governance()).hasRole(bytes32(0), msg.sender), "!authorized");
 
-		require(_feeRateGovernance.add(feeRateManager) <= _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT(), "!_feeRateGovernance");
+		require(_feeRateGovernance.add(feeRateManager) <= _I_V1_EMP_REGISTRY.PERCENT_ONE_HUNDRED(), "!_feeRateGovernance");
 
 		feeRateGovernance = _feeRateGovernance;
 	}
@@ -220,9 +220,11 @@ contract V1EMP is
 			IERC20(_utilizedERC20[i]).transferFrom(msg.sender, address(this), _utilizedERC20Amount[i]);
 		}
 
-		uint256 mintAmountManager = utilizedERC20AmountTotalETHValue.mul(feeRateManager).div(1e4);
+		uint256 PERCENT_DIVISOR = _I_V1_EMP_REGISTRY.PERCENT_DIVISOR();
 
-		uint256 mintAmountGovernancePayTo = utilizedERC20AmountTotalETHValue.mul(feeRateGovernance).div(1e4);
+		uint256 mintAmountManager = utilizedERC20AmountTotalETHValue.mul(feeRateManager).div(PERCENT_DIVISOR);
+
+		uint256 mintAmountGovernancePayTo = utilizedERC20AmountTotalETHValue.mul(feeRateGovernance).div(PERCENT_DIVISOR);
 
 		_mint(manager, mintAmountManager);
 
@@ -280,14 +282,16 @@ contract V1EMP is
 
 			uint256[] memory v1EMPStrategyERC20Amount = new uint256[](_utilizedV1EMPStrategy.length);
 
-			uint256 _eRC20AmountPercentOfTotalSupply = _eRC20Amount.mul(1e4).div(totalSupply());
+			uint256 PERCENT_DIVISOR = _I_V1_EMP_REGISTRY.PERCENT_DIVISOR();
+
+			uint256 _eRC20AmountPercentOfTotalSupply = _eRC20Amount.mul(PERCENT_DIVISOR).div(totalSupply());
 
 			for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
 			{
 				v1EMPStrategyERC20Amount[i] = _eRC20AmountPercentOfTotalSupply.mul(
 					IV1EMPStrategy(_utilizedV1EMPStrategy[i]).eMP_shares(address(this))
 				).div(
-					1e4
+					PERCENT_DIVISOR
 				);
 			}
 

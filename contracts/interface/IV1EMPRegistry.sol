@@ -6,10 +6,21 @@ interface IV1EMPRegistry
 {
 	/**
 	* @dev [view-uint256]
+	* @notice Divisor
+	* @return {uint256}
+	*/
+	function PERCENT_DIVISOR()
+		external
+		view
+		returns (uint256)
+	;
+
+	/**
+	* @dev [view-uint256]
 	* @notice One Hundred Percent
 	* @return {uint256}
 	*/
-	function ONE_HUNDRED_PERCENT()
+	function PERCENT_ONE_HUNDRED()
 		external
 		view
 		returns (uint256)

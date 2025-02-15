@@ -53,6 +53,15 @@ contract V1EMPUtility is
 	/// @notice internal
 
 
+	function _percentOf(uint256 _a, uint256 _b)
+		internal
+		view
+		returns (uint256)
+	{
+		return _a.mul(_I_V1_EMP_REGISTRY.PERCENT_DIVISOR()).div(_b, "!computed");
+	}
+
+
 	function _requireExistantV1EMP(address _v1EMP)
 		internal
 		view
@@ -117,10 +126,7 @@ contract V1EMPUtility is
 
 		for (uint256 i = 0; i < _v1EMP_utilizedERC20[_v1EMP].length; i++)
 		{
-			uint256 utilizedERC20AllocationActual = eRC20AmountETHValue[i].mul(1e4).div(
-				utilizedERC20AmountTotalETHValue_,
-				"!computed"
-			);
+			uint256 utilizedERC20AllocationActual = _percentOf(eRC20AmountETHValue[i], utilizedERC20AmountTotalETHValue_);
 
 			if (
 				_v1EMP_utilizedERC20_utilizationERC20[_v1EMP][
@@ -162,9 +168,9 @@ contract V1EMPUtility is
 
 		if (_v1EMPStrategy.length != 0)
 		{
-			if (utilizedV1EMPStrategyAllocationTotal != _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT())
+			if (utilizedV1EMPStrategyAllocationTotal != _I_V1_EMP_REGISTRY.PERCENT_ONE_HUNDRED())
 			{
-				return (false, "utilizedV1EMPStrategyAllocationTotal != _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT()");
+				return (false, "utilizedV1EMPStrategyAllocationTotal != _I_V1_EMP_REGISTRY.PERCENT_ONE_HUNDRED()");
 			}
 		}
 	}
@@ -223,9 +229,9 @@ contract V1EMPUtility is
 
 		for (uint256 i = 0; i < utilizedV1EMPStrategy.length; i++)
 		{
-			uint256 utilizedERC20AmountAllocationActual = utilizedV1EMPStrategyERC20AmountETHValue[i].mul(1e4).div(
-				utilizedV1EMPStrategyERC20AmountETHValueTotal_,
-				"!computed"
+			uint256 utilizedERC20AmountAllocationActual = _percentOf(
+				utilizedV1EMPStrategyERC20AmountETHValue[i],
+				utilizedV1EMPStrategyERC20AmountETHValueTotal_
 			);
 
 			if (utilizedERC20AmountAllocationActual != iV1EMP.utilizedV1EMPStrategy_allocation(utilizedV1EMPStrategy[i]))
@@ -312,7 +318,7 @@ contract V1EMPUtility is
 					utilizationERC20[ii].allocation += uERC20.allocation.mul(
 						iV1EMP.utilizedV1EMPStrategy_allocation(_utilizedV1EMPStrategy[i])
 					).div(
-						1e4
+						_I_V1_EMP_REGISTRY.PERCENT_DIVISOR()
 					);
 
 					utilizedERC20AllocationTotal += utilizationERC20[ii].allocation;
@@ -326,8 +332,8 @@ contract V1EMPUtility is
 		}
 
 		require(
-			utilizedERC20AllocationTotal == _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT(),
-			"utilizedERC20AllocationTotal != _I_V1_EMP_REGISTRY.ONE_HUNDRED_PERCENT()"
+			utilizedERC20AllocationTotal == _I_V1_EMP_REGISTRY.PERCENT_ONE_HUNDRED(),
+			"utilizedERC20AllocationTotal != _I_V1_EMP_REGISTRY.PERCENT_ONE_HUNDRED()"
 		);
 
 		_v1EMP_utilizedERC20[msg.sender] = utilizedERC20;

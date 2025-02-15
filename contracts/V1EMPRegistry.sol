@@ -17,7 +17,8 @@ contract V1EMPRegistry is
 	address internal _v1EMPStrategyDeployer;
 	address internal _v1EMPStrategyUtility;
 
-	uint256 public constant override ONE_HUNDRED_PERCENT = 1e4;
+	uint256 public constant override PERCENT_DIVISOR = 1e4;
+	uint256 public constant override PERCENT_ONE_HUNDRED = 1e4;
 
 	uint256 public override v1EMPIdTracker;
 	uint256 public override v1EMPStrategyIdTracker;
