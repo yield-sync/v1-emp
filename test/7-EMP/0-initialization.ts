@@ -59,7 +59,7 @@ describe("[7.0] V1EMP.sol - Initialization", async () => {
 				const ONE_HUNDRED_PERCENT = await registry.ONE_HUNDRED_PERCENT();
 
 				await expect(
-					eMP.feeRateManagerUpdate(ONE_HUNDRED_PERCENT.add(1))
+					eMP.feeRateManagerUpdate(ONE_HUNDRED_PERCENT + 1)
 				).to.be.rejectedWith(
 					ERROR.EMP.FEE_RATE_MANAGER_GREATER_THAN_100_PERCENT
 				);
@@ -87,7 +87,7 @@ describe("[7.0] V1EMP.sol - Initialization", async () => {
 				const ONE_HUNDRED_PERCENT = await registry.ONE_HUNDRED_PERCENT();
 
 				await expect(
-					eMP.feeRateGovernanceUpdate(ONE_HUNDRED_PERCENT.add(1))
+					eMP.feeRateGovernanceUpdate(ONE_HUNDRED_PERCENT + 1)
 				).to.be.rejectedWith(
 					ERROR.EMP.FEE_RATE_GOVERNANCE_GREATER_THAN_100_PERCENT
 				);

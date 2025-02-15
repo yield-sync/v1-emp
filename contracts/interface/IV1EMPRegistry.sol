@@ -5,14 +5,14 @@ pragma solidity ^0.8.18;
 interface IV1EMPRegistry
 {
 	/**
-	* @dev [view-uint256]
+	* @dev [view-uint16]
 	* @notice One Hundred Percent
-	* @return {uint256}
+	* @return {uint16}
 	*/
 	function ONE_HUNDRED_PERCENT()
 		external
 		view
-		returns (uint256)
+		returns (uint16)
 	;
 
 	/**
