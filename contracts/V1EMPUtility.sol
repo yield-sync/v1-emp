@@ -130,15 +130,14 @@ contract V1EMPUtility is
 
 		for (uint256 i = 0; i < _v1EMP_utilizedERC20[_v1EMP].length; i++)
 		{
-			uint256 utilizedERC20AllocationActual = _percentOf(eRC20AmountETHValue[i], utilizedERC20AmountTotalETHValue_);
-
 			if (
-				_v1EMP_utilizedERC20_utilizationERC20[_v1EMP][
-					_v1EMP_utilizedERC20[_v1EMP][i]
-				].allocation != utilizedERC20AllocationActual
+				_v1EMP_utilizedERC20_utilizationERC20[_v1EMP][_v1EMP_utilizedERC20[_v1EMP][i]].allocation != _percentOf(
+					eRC20AmountETHValue[i],
+					utilizedERC20AmountTotalETHValue_
+				)
 			)
 			{
-				return (false, utilizedERC20AmountTotalETHValue_, "!utilizedERC20AllocationActual");
+				return (false, utilizedERC20AmountTotalETHValue_, "!allocation");
 			}
 		}
 	}
@@ -170,12 +169,9 @@ contract V1EMPUtility is
 			utilizedV1EMPStrategyAllocationTotal += _allocation[i];
 		}
 
-		if (_v1EMPStrategy.length != 0)
+		if (_v1EMPStrategy.length != 0 && utilizedV1EMPStrategyAllocationTotal != _PERCENT_ONE_HUNDRED)
 		{
-			if (utilizedV1EMPStrategyAllocationTotal != _PERCENT_ONE_HUNDRED)
-			{
-				return (false, "utilizedV1EMPStrategyAllocationTotal != _PERCENT_ONE_HUNDRED");
-			}
+			return (false, "!_allocation");
 		}
 	}
 

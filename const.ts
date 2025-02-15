@@ -36,8 +36,8 @@ export const ERROR = {
 	},
 	EMP_UTILITY: {
 		ADDRESS_NOT_EMP: "_I_V1_EMP_REGISTRY.v1EMP_v1EMPId(_v1EMP) == 0",
-		INVALID_ALLOCATION: "!utilizedERC20AllocationActual",
-		UTILIZED_V1_EMP_STRATEGY_INVALID_ALLOCATION: "utilizedV1EMPStrategyAllocationTotal != _PERCENT_ONE_HUNDRED",
+		INVALID_ALLOCATION: "!allocation",
+		UTILIZED_V1_EMP_STRATEGY_INVALID_ALLOCATION: "!_allocation",
 		INVALID_V1_EMP_STRATEGY: "_I_V1_EMP_REGISTRY.v1EMPStrategy_v1EMPStrategyId(_v1EMPStrategy[i]) == 0",
 		INVALID_UTILIZED_ERC20_LENGTH: "_utilizedERC20Amount.length != _v1EMP_utilizedERC20[_v1EMP].length",
 		INVALID_STRATEGY_LENTH: "_v1EMPStrategy.length != _allocation.length",
