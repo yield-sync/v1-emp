@@ -57,10 +57,8 @@ describe("[7.0] V1EMP.sol - Initialization", async () => {
 			});
 
 			it("Should NOT allow greater than 100% fee rate..", async () => {
-				const PERCENT_ONE_HUNDRED = await percentUtility.PERCENT_ONE_HUNDRED();
-
 				await expect(
-					eMP.feeRateManagerUpdate(PERCENT_ONE_HUNDRED + 1)
+					eMP.feeRateManagerUpdate(await percentUtility.PERCENT_ONE_HUNDRED() + 1)
 				).to.be.rejectedWith(
 					ERROR.EMP.FEE_RATE_MANAGER_GREATER_THAN_100_PERCENT
 				);
@@ -85,10 +83,8 @@ describe("[7.0] V1EMP.sol - Initialization", async () => {
 			});
 
 			it("Should NOT allow greater than 100% fee rate..", async () => {
-				const PERCENT_ONE_HUNDRED = await percentUtility.PERCENT_ONE_HUNDRED();
-
 				await expect(
-					eMP.feeRateGovernanceUpdate(PERCENT_ONE_HUNDRED + 1)
+					eMP.feeRateGovernanceUpdate(await percentUtility.PERCENT_ONE_HUNDRED() + 1)
 				).to.be.rejectedWith(
 					ERROR.EMP.FEE_RATE_GOVERNANCE_GREATER_THAN_100_PERCENT
 				);
@@ -147,7 +143,7 @@ describe("[7.0] V1EMP.sol - Initialization", async () => {
 						[invalidStrategy.address] as UtilizedEMPStrategyUpdate,
 						[PERCENT.HUNDRED] as UtilizedEMPStrategyAllocationUpdate
 					)
-				).to.be.rejectedWith(ERROR.EMP_UTILITY.INVALID_V1_EMP_STRATEGY);
+				).to.be.rejectedWith(ERROR.EMP_UTILITY.INVALID_PARAM_STRATEGY);
 			});
 
 			it("Should NOT allow strategies that add up to more than 100% to EMP..", async () => {

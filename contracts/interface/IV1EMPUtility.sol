@@ -49,6 +49,16 @@ interface IV1EMPUtility
 	;
 
 	/**
+	* @notice Percent One Hundred
+	* @return percentOneHundred_ {uint256}
+	*/
+	function percentOneHundred()
+		external
+		view
+		returns (uint256 percentOneHundred_)
+	;
+
+	/**
 	* @notice Utilized ERC20 Amount Valid
 	* @param _v1EMP {address}
 	* @param _utilizedERC20Amount {uint256}

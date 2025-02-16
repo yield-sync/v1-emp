@@ -6,7 +6,6 @@ import { IAccessControl } from "@openzeppelin/contracts/access/IAccessControl.so
 import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import { IPercentUtility } from "@yield-sync/utility/contracts/interface/IPercentUtility.sol";
 
 import { IERC20, IV1EMP } from "./interface/IV1EMP.sol";
 import { IV1EMPRegistry } from "./interface/IV1EMPRegistry.sol";
@@ -30,8 +29,6 @@ contract V1EMP is
 	bool public override utilizedERC20WithdrawFull;
 	bool public override utilizedERC20WithdrawOpen;
 
-	uint256 internal immutable _PERCENT_ONE_HUNDRED;
-
 	uint256 public override feeRateGovernance;
 	uint256 public override feeRateManager;
 
@@ -53,8 +50,6 @@ contract V1EMP is
 		utilizedERC20WithdrawFull = _utilizedERC20WithdrawFull;
 
 		_I_V1_EMP_REGISTRY = IV1EMPRegistry(_v1EMPRegistry);
-
-		_PERCENT_ONE_HUNDRED = IPercentUtility(_I_V1_EMP_REGISTRY.percentUtility()).PERCENT_ONE_HUNDRED();
 	}
 
 
@@ -173,7 +168,7 @@ contract V1EMP is
 		public
 		authGovernanceOrManager()
 	{
-		require(feeRateGovernance.add(_feeRateManager) <= _PERCENT_ONE_HUNDRED, "!_feeRateManager");
+		require(feeRateGovernance.add(_feeRateManager) <= _I_V1_EMP_UTILITY().percentOneHundred(), "!_feeRateManager");
 
 		feeRateManager = _feeRateManager;
 	}
@@ -185,7 +180,7 @@ contract V1EMP is
 	{
 		require(IAccessControl(_I_V1_EMP_REGISTRY.governance()).hasRole(bytes32(0), msg.sender), "!authorized");
 
-		require(_feeRateGovernance.add(feeRateManager) <= _PERCENT_ONE_HUNDRED, "!_feeRateGovernance");
+		require(_feeRateGovernance.add(feeRateManager) <= _I_V1_EMP_UTILITY().percentOneHundred(), "!_feeRateGovernance");
 
 		feeRateGovernance = _feeRateGovernance;
 	}
@@ -225,9 +220,11 @@ contract V1EMP is
 			IERC20(_utilizedERC20[i]).transferFrom(msg.sender, address(this), _utilizedERC20Amount[i]);
 		}
 
-		uint256 mintAmountManager = utilizedERC20AmountTotalETHValue.mul(feeRateManager).div(_PERCENT_ONE_HUNDRED);
+		uint256 percentOneHundred = _I_V1_EMP_UTILITY().percentOneHundred();
 
-		uint256 mintAmountGovernancePayTo = utilizedERC20AmountTotalETHValue.mul(feeRateGovernance).div(_PERCENT_ONE_HUNDRED);
+		uint256 mintAmountManager = utilizedERC20AmountTotalETHValue.mul(feeRateManager).div(percentOneHundred);
+
+		uint256 mintAmountGovernancePayTo = utilizedERC20AmountTotalETHValue.mul(feeRateGovernance).div(percentOneHundred);
 
 		_mint(manager, mintAmountManager);
 
@@ -284,10 +281,14 @@ contract V1EMP is
 
 			for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
 			{
-				v1EMPStrategyERC20Amount[i] = _eRC20Amount.mul(_PERCENT_ONE_HUNDRED).div(totalSupply()).mul(
+				uint256 percentOneHundred = _I_V1_EMP_UTILITY().percentOneHundred();
+
+				uint256 _eRC20AmountPercentOfTotalSupply = _eRC20Amount.mul(percentOneHundred).div(totalSupply());
+
+				v1EMPStrategyERC20Amount[i] = _eRC20AmountPercentOfTotalSupply.mul(
 					IV1EMPStrategy(_utilizedV1EMPStrategy[i]).eMP_shares(address(this))
 				).div(
-					_PERCENT_ONE_HUNDRED
+					percentOneHundred
 				);
 			}
 
