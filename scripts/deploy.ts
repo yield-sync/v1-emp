@@ -18,48 +18,51 @@ async function main()
 
 	let governanceContract: string;
 	let addressArrayUtilityContract: string;
+	let percentUtilityContract: string;
 
 	switch (network.name)
 	{
 		case "sepolia":
-			if (!process.env.YIELD_SYNC_GOVERNANCE_ADDRESS_SEPOLIA)
+			if (!process.env.GOVERNANCE_ADDRESS_SEPOLIA)
 			{
-				console.error("Error: No Yield Sync Governance contract set for Sepolia.");
+				console.error("Error: No Governance contract set for Sepolia.");
 
 				process.exit(2);
 			}
 
-			governanceContract = process.env.YIELD_SYNC_GOVERNANCE_ADDRESS_SEPOLIA;
+			governanceContract = process.env.GOVERNANCE_ADDRESS_SEPOLIA;
 
-			if (!process.env.YIELD_SYNC_UTILITY_ARRAY_UTILITY_SEPOLIA)
+			if (!process.env.UTILITY_ARRAY_UTILITY_SEPOLIA)
 			{
-				console.error("Error: No Yield Sync addressArrayUtility contract set for Sepolia.");
+				console.error("Error: No addressArrayUtility contract set for Sepolia.");
 
 				process.exit(2);
 			}
 
-			addressArrayUtilityContract = process.env.YIELD_SYNC_UTILITY_ARRAY_UTILITY_SEPOLIA;
+			addressArrayUtilityContract = process.env.ARRAY_UTILITY_SEPOLIA;
+			percentUtilityContract = process.env.PERCENT_UTILITY_SEPOLIA;
 
 			break;
 
 		case "base-sepolia":
-			if (!process.env.YIELD_SYNC_GOVERNANCE_ADDRESS_BASE_SEPOLIA)
+			if (!process.env.GOVERNANCE_ADDRESS_BASE_SEPOLIA)
 			{
-				console.error("Error: No Yield Sync Governance contract set for Base Sepolia.");
+				console.error("Error: No Governance contract set for Base Sepolia.");
 
 				process.exit(2);
 			}
 
-			governanceContract = process.env.YIELD_SYNC_GOVERNANCE_ADDRESS_BASE_SEPOLIA;
+			governanceContract = process.env.GOVERNANCE_ADDRESS_BASE_SEPOLIA;
 
-			if (!process.env.YIELD_SYNC_UTILITY_ARRAY_UTILITY_BASE_SEPOLIA)
+			if (!process.env.ARRAY_UTILITY_BASE_SEPOLIA)
 			{
-				console.error("Error: No Yield Sync addressArrayUtility contract set for Base Sepolia.");
+				console.error("Error: No addressArrayUtility contract set for Base Sepolia.");
 
 				process.exit(2);
 			}
 
-			addressArrayUtilityContract = process.env.YIELD_SYNC_UTILITY_ARRAY_UTILITY_BASE_SEPOLIA;
+			addressArrayUtilityContract = process.env.ARRAY_UTILITY_BASE_SEPOLIA;
+			percentUtilityContract = process.env.PERCENT_UTILITY_BASE_SEPOLIA;
 
 			break;
 
@@ -129,9 +132,9 @@ async function main()
 
 
 	// Register the contract on the register contract
-	/// TODO: await registry.percentUtilityUpdate(percentUtilityContract);
-
 	await registry.addressArrayUtilityUpdate(addressArrayUtilityContract);
+
+	await registry.percentUtilityUpdate(percentUtilityContract);
 
 	await registry.v1EMPStrategyUtilityUpdate(eMPStrategyUtility.address);
 
