@@ -15,7 +15,6 @@ export const ERROR = {
 		INVALID_PARAM_EMP_STRATEGY_DEPLOYER: "!__v1EMPStrategyDeployer",
 		INVALID_PARAM_EMP_DEPLOYER: "!__v1EMPDeployer",
 		INVALID_PARAM_EMP_UTILITY: "!__v1EMPUtility",
-
 		ARRAY_UTILITY_NOT_SET: "_addressArrayUtility == address(0)",
 		PERCENT_UTILITY_NOT_SET: "_percentUtility == address(0)",
 		EMP_UTILITY_NOT_SET: "_v1EMPUtility == address(0)",
