@@ -2,7 +2,7 @@ const { ethers } = require("hardhat");
 
 import { BigNumber, Contract } from "ethers";
 
-import { D_18 } from "../const"
+import { D_18, D_4 } from "../const"
 
 
 const LOCATION_IERC20: string = "contracts/test-contracts/MockERC20.sol:MockERC20";
@@ -44,9 +44,7 @@ export default class UtilStrategyTransfer
 			{
 				const ALLOCATION: BigNumber = UTILIZATION.allocation.mul(
 					ethers.utils.parseUnits("1", await MockERC20.decimals())
-				).div(
-					await this._registry.PERCENT_ONE_HUNDRED()
-				);
+				).div(D_4);
 
 				tokenAmount = ETHValue.mul(ALLOCATION).div(D_18);
 			}

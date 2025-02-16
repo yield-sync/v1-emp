@@ -43,7 +43,7 @@ contract V1EMPUtility is
 	{
 		_I_V1_EMP_REGISTRY = IV1EMPRegistry(_v1EMPRegistry);
 
-		_PERCENT_ONE_HUNDRED = _I_V1_EMP_REGISTRY.PERCENT_ONE_HUNDRED();
+		_PERCENT_ONE_HUNDRED = IPercentUtility(_I_V1_EMP_REGISTRY.percentUtility()).PERCENT_ONE_HUNDRED();
 	}
 
 

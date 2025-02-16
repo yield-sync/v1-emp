@@ -6,6 +6,7 @@ import { IAccessControl } from "@openzeppelin/contracts/access/IAccessControl.so
 import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import { IPercentUtility } from "@yield-sync/utility/contracts/interface/IPercentUtility.sol";
 
 import { IERC20, IV1EMP } from "./interface/IV1EMP.sol";
 import { IV1EMPRegistry } from "./interface/IV1EMPRegistry.sol";
@@ -53,7 +54,7 @@ contract V1EMP is
 
 		_I_V1_EMP_REGISTRY = IV1EMPRegistry(_v1EMPRegistry);
 
-		_PERCENT_ONE_HUNDRED = _I_V1_EMP_REGISTRY.PERCENT_ONE_HUNDRED();
+		_PERCENT_ONE_HUNDRED = IPercentUtility(_I_V1_EMP_REGISTRY.percentUtility()).PERCENT_ONE_HUNDRED();
 	}
 
 

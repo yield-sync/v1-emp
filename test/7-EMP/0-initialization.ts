@@ -12,6 +12,7 @@ describe("[7.0] V1EMP.sol - Initialization", async () => {
 	let eMP: Contract;
 	let eMPUtility: Contract;
 	let registry: Contract;
+	let percentUtility: Contract;
 	let eRC20A: Contract;
 	let eRC20C: Contract;
 
@@ -22,7 +23,7 @@ describe("[7.0] V1EMP.sol - Initialization", async () => {
 
 
 	beforeEach("[beforeEach] Set up contracts..", async () => {
-		({ eMPs, eMPUtility, eRC20A, eRC20C, badActor, registry, strategies, } = await stageContracts());
+		({ eMPs, eMPUtility, eRC20A, eRC20C, badActor, registry, percentUtility, strategies, } = await stageContracts());
 
 		eMP = eMPs[2].contract;
 
@@ -56,7 +57,7 @@ describe("[7.0] V1EMP.sol - Initialization", async () => {
 			});
 
 			it("Should NOT allow greater than 100% fee rate..", async () => {
-				const PERCENT_ONE_HUNDRED = await registry.PERCENT_ONE_HUNDRED();
+				const PERCENT_ONE_HUNDRED = await percentUtility.PERCENT_ONE_HUNDRED();
 
 				await expect(
 					eMP.feeRateManagerUpdate(PERCENT_ONE_HUNDRED + 1)
@@ -84,7 +85,7 @@ describe("[7.0] V1EMP.sol - Initialization", async () => {
 			});
 
 			it("Should NOT allow greater than 100% fee rate..", async () => {
-				const PERCENT_ONE_HUNDRED = await registry.PERCENT_ONE_HUNDRED();
+				const PERCENT_ONE_HUNDRED = await percentUtility.PERCENT_ONE_HUNDRED();
 
 				await expect(
 					eMP.feeRateGovernanceUpdate(PERCENT_ONE_HUNDRED + 1)

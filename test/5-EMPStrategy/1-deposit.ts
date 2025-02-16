@@ -304,7 +304,7 @@ describe("[5.1] V1EMPStrategy.sol - Depositing Tokens", async () => {
 					}
 
 					// [main-test] Deposit ERC20 tokens into the strategy
-					await expect(strategy.utilizedERC20Deposit(depositAmounts)).to.be.not.rejected;
+					await strategy.utilizedERC20Deposit(depositAmounts);
 				});
 
 

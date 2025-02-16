@@ -8,6 +8,7 @@ import {
 	IERC20ETHValueProvider
 } from "@yield-sync/erc20-eth-value-provider/contracts/interface/IERC20ETHValueProvider.sol";
 import { IAddressArrayUtility } from "@yield-sync/utility/contracts/interface/IAddressArrayUtility.sol";
+import { IPercentUtility } from "@yield-sync/utility/contracts/interface/IPercentUtility.sol";
 
 import { IV1EMPRegistry } from "./interface/IV1EMPRegistry.sol";
 import { IV1EMPStrategy } from "./interface/IV1EMPStrategy.sol";
@@ -20,16 +21,12 @@ contract V1EMPStrategyUtility is
 	using SafeMath for uint256;
 
 
-	uint256 internal immutable _PERCENT_ONE_HUNDRED;
-
 	IV1EMPRegistry internal immutable _I_V1_EMP_REGISTRY;
 
 
 	constructor (address _v1EMPRegistry)
 	{
 		_I_V1_EMP_REGISTRY = IV1EMPRegistry(_v1EMPRegistry);
-
-		_PERCENT_ONE_HUNDRED = _I_V1_EMP_REGISTRY.PERCENT_ONE_HUNDRED();
 	}
 
 
@@ -94,9 +91,9 @@ contract V1EMPStrategyUtility is
 				}
 			}
 
-			uint256 utilizedERC20AmountAllocationActual = utilizedERC20AmountETHValue_[i].mul(_PERCENT_ONE_HUNDRED).div(
-				utilizedERC20AmountETHValueTotal_,
-				"!computed"
+			uint256 utilizedERC20AmountAllocationActual = IPercentUtility(_I_V1_EMP_REGISTRY.percentUtility()).percentOf(
+				utilizedERC20AmountETHValue_[i],
+				utilizedERC20AmountETHValueTotal_
 			);
 
 			if (iV1EMPStrategy.utilizedERC20_utilizationERC20(utilizedERC20[i]).allocation != utilizedERC20AmountAllocationActual)
@@ -203,9 +200,9 @@ contract V1EMPStrategyUtility is
 			}
 		}
 
-		if (utilizedERC20AllocationTotal != _PERCENT_ONE_HUNDRED)
+		if (utilizedERC20AllocationTotal != IPercentUtility(_I_V1_EMP_REGISTRY.percentUtility()).PERCENT_ONE_HUNDRED())
 		{
-			return (false, "utilizedERC20AllocationTotal != _PERCENT_ONE_HUNDRED");
+			return (false, "!_utilizationERC20");
 		}
 	}
 }

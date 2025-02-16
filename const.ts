@@ -2,7 +2,7 @@ const { ethers } = require("hardhat");
 
 
 export const D_18 = ethers.utils.parseUnits("1", 18);
-export const D_4 = ethers.utils.parseUnits("4", 18);
+export const D_4 = ethers.utils.parseUnits("1", 4);
 
 export const ERROR = {
 	REGISTRY: {
@@ -59,7 +59,7 @@ export const ERROR = {
 	STRATEGY_UTILITY: {
 		ADDRESS_NOT_STRATEGY: "_I_V1_EMP_REGISTRY.v1EMPStrategy_v1EMPStrategyId(_v1EMPStrategy) == 0",
 		ERC20_NO_ETH_VALUE_PROVIDER_AVAILABLE: "_I_V1_EMP_REGISTRY.eRC20_eRC20ETHValueProvider(_utilizedERC20[i]) == address(0)",
-		INVALID_ERC20_ALLOCATION_TOTAL: "utilizedERC20AllocationTotal != _PERCENT_ONE_HUNDRED",
+		INVALID_ERC20_ALLOCATION_TOTAL: "!_utilizationERC20",
 		INVALID_PARAMS_UPDATE_CONTAINS_DUPLICATES: "!IAddressArrayUtility(_I_V1_EMP_REGISTRY.addressArrayUtility()).isUnique(_utilizedERC20)",
 		INVALID_UTILIZED_ERC20_AMOUNT: "iV1EMPStrategy.utilizedERC20_utilizationERC20(utilizedERC20[i]).allocation != utilizedERC20AmountAllocationActual",
 	},
