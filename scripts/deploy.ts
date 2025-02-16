@@ -25,20 +25,20 @@ async function main()
 		case "sepolia":
 			if (!process.env.GOVERNANCE_ADDRESS_SEPOLIA)
 			{
-				console.error("Error: No Governance contract set for Sepolia.");
+				throw new Error("Error: No Governance contract set for Sepolia.");
+			}
 
-				process.exit(2);
+			if (!process.env.ARRAY_UTILITY_SEPOLIA)
+			{
+				throw new Error("Error: No addressArrayUtility contract set for Sepolia.");
+			}
+
+			if (!process.env.PERCENT_UTILITY_SEPOLIA)
+			{
+				throw new Error("Error: No percentUtility contract set for Sepolia.");
 			}
 
 			governanceContract = process.env.GOVERNANCE_ADDRESS_SEPOLIA;
-
-			if (!process.env.UTILITY_ARRAY_UTILITY_SEPOLIA)
-			{
-				console.error("Error: No addressArrayUtility contract set for Sepolia.");
-
-				process.exit(2);
-			}
-
 			addressArrayUtilityContract = process.env.ARRAY_UTILITY_SEPOLIA;
 			percentUtilityContract = process.env.PERCENT_UTILITY_SEPOLIA;
 
@@ -47,28 +47,27 @@ async function main()
 		case "base-sepolia":
 			if (!process.env.GOVERNANCE_ADDRESS_BASE_SEPOLIA)
 			{
-				console.error("Error: No Governance contract set for Base Sepolia.");
-
-				process.exit(2);
+				throw new Error("Error: No Governance contract set for Base Sepolia.");
 			}
-
-			governanceContract = process.env.GOVERNANCE_ADDRESS_BASE_SEPOLIA;
 
 			if (!process.env.ARRAY_UTILITY_BASE_SEPOLIA)
 			{
-				console.error("Error: No addressArrayUtility contract set for Base Sepolia.");
-
-				process.exit(2);
+				throw new Error("Error: No addressArrayUtility contract set for Base Sepolia.");
 			}
 
+			if (!process.env.PERCENT_UTILITY_BASE_SEPOLIA)
+			{
+				throw new Error("Error: No percentUtility contract set for Base Sepolia.");
+			}
+
+			governanceContract = process.env.GOVERNANCE_ADDRESS_BASE_SEPOLIA;
 			addressArrayUtilityContract = process.env.ARRAY_UTILITY_BASE_SEPOLIA;
 			percentUtilityContract = process.env.PERCENT_UTILITY_BASE_SEPOLIA;
 
 			break;
 
 		default:
-			console.error("Error: Unknown network");
-			process.exit(999);
+			throw new Error("Error: Unknown network");
 	}
 
 	const [DEPLOYER] = await ethers.getSigners();
@@ -211,7 +210,7 @@ async function main()
 		}
 		else
 		{
-			console.error(e);
+			throw new Error(e);
 		}
 	}
 
@@ -232,6 +231,5 @@ async function main()
 main().then(() => {
 	process.exit(0);
 }).catch((error) => {
-	console.error(error);
-	process.exit(1);
+	throw new Error(error);
 });
