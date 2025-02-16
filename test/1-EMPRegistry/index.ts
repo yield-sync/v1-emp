@@ -364,9 +364,6 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 			});
 
 			it("Should not allow __v1EMPUtility to be address(0)..", async () => {
-				await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
-				await registry.percentUtilityUpdate(percentUtility.address);
-
 				await expect(registry.v1EMPUtilityUpdate(ethers.constants.AddressZero)).to.be.rejectedWith(
 					ERROR.REGISTRY.INVALID_PARAM_EMP_UTILITY
 				);
@@ -375,6 +372,14 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 			it("Should not allow to set v1EMPUtility until _addressArrayUtility is set..", async () => {
 				await expect(registry.v1EMPUtilityUpdate(owner.address)).to.be.rejectedWith(
 					ERROR.REGISTRY.ARRAY_UTILITY_NOT_SET
+				);
+			});
+
+			it("Should not allow to set v1EMPUtility until _percentUtility is set..", async () => {
+				await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
+
+				await expect(registry.v1EMPUtilityUpdate(owner.address)).to.be.rejectedWith(
+					ERROR.REGISTRY.PERCENT_UTILITY_NOT_SET
 				);
 			});
 
