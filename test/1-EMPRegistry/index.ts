@@ -44,143 +44,6 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 
 
 	describe("mutative", () => {
-		describe("function addressArrayUtilityUpdate()", () => {
-			it("[auth] Should revert if an unauthorized sender calls..", async () => {
-				await expect(
-					registry.connect(badActor).addressArrayUtilityUpdate(addressArrayUtility.address)
-				).to.be.rejectedWith(
-					ERROR.NOT_AUTHORIZED
-				);
-			});
-
-			it("Should not allow __addressArrayUtility to be address(0)..", async () => {
-				await expect(registry.addressArrayUtilityUpdate(ethers.constants.AddressZero)).to.be.rejectedWith(
-					ERROR.REGISTRY.INVALID_PARAM_ARRAY_UTILITY
-				);
-			});
-
-			it("Should update _addressArrayUtility with valid params..", async () => {
-				await expect(registry.addressArrayUtilityUpdate(addressArrayUtility.address)).to.be.not.rejected;
-
-				expect(await registry.addressArrayUtility()).to.be.equal(addressArrayUtility.address);
-			});
-		});
-
-		describe("function percentUtilityUpdate()", () => {
-			it("[auth] Should revert if an unauthorized sender calls..", async () => {
-				await expect(
-					registry.connect(badActor).percentUtilityUpdate(percentUtility.address)
-				).to.be.rejectedWith(
-					ERROR.NOT_AUTHORIZED
-				);
-			});
-
-			it("Should not allow __percentUtility to be address(0)..", async () => {
-				await expect(registry.percentUtilityUpdate(ethers.constants.AddressZero)).to.be.rejectedWith(
-					ERROR.REGISTRY.INVALID_PARAM_PERCENT_UTILITY
-				);
-			});
-
-			it("Should update _percentUtility with valid params..", async () => {
-				await expect(registry.percentUtilityUpdate(percentUtility.address)).to.be.not.rejected;
-
-				expect(await registry.percentUtility()).to.be.equal(percentUtility.address);
-			});
-		});
-
-		describe("function v1EMPDeployerUpdate()", () => {
-			beforeEach(async () => {
-				await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
-				await registry.percentUtilityUpdate(percentUtility.address);
-			});
-
-
-			it("[auth] Should revert if an unauthorized sender calls..", async () => {
-				await registry.v1EMPUtilityUpdate(fakeEMPUtility.address);
-
-				await expect(registry.connect(badActor).v1EMPDeployerUpdate(owner.address)).to.be.rejectedWith(
-					ERROR.NOT_AUTHORIZED
-				);
-			});
-
-			it("Should not allow __v1EMPDeployer to be address(0)..", async () => {
-				await registry.v1EMPUtilityUpdate(fakeEMPUtility.address);
-
-				await expect(registry.v1EMPDeployerUpdate(ethers.constants.AddressZero)).to.be.rejectedWith(
-					ERROR.REGISTRY.INVALID_PARAM_EMP_DEPLOYER
-				);
-			});
-
-			it("Should not allow to set _v1EMPDeployer until _v1EMPUtility is set..", async () => {
-				await expect(registry.v1EMPDeployerUpdate(fakeEMPDeployer.address)).to.be.rejectedWith(
-					ERROR.REGISTRY.EMP_UTILITY_NOT_SET
-				);
-			});
-
-			it("Should allow authorized caller to update EMP Deployer..", async () => {
-				await registry.v1EMPUtilityUpdate(fakeEMPUtility.address);
-
-				await expect(registry.v1EMPDeployerUpdate(fakeEMPDeployer.address)).to.be.not.rejected;
-
-				expect(await registry.v1EMPDeployer()).to.be.equal(fakeEMPDeployer.address);
-			});
-
-			it("Should NOT allow EMP Deployer to updated again after being set..", async () => {
-				await registry.v1EMPUtilityUpdate(fakeEMPUtility.address);
-
-				await registry.v1EMPDeployerUpdate(fakeEMPDeployer.address);
-
-				expect(await registry.v1EMPDeployer()).to.be.equal(fakeEMPDeployer.address);
-
-				await expect(registry.v1EMPDeployerUpdate(badActor.address)).to.be.rejectedWith(
-					ERROR.REGISTRY.EMP_DEPLOYER_ALREADY_SET
-				);
-
-				expect(await registry.v1EMPDeployer()).to.be.equal(fakeEMPDeployer.address);
-			});
-		});
-
-		describe("function v1EMPStrategyDeployerUpdate()", () => {
-			beforeEach(async () => {
-				await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
-				await registry.percentUtilityUpdate(percentUtility.address);
-			});
-
-
-			it("[auth] Should revert if an unauthorized sender calls..", async () => {
-				await expect(
-					registry.connect(badActor).v1EMPStrategyDeployerUpdate(badActor.address)
-				).to.be.rejectedWith(
-					ERROR.NOT_AUTHORIZED
-				);
-			});
-
-			it("Should not allow EMPStrategyDeployer to be address(0)..", async () => {
-				await expect(registry.v1EMPStrategyDeployerUpdate(ethers.constants.AddressZero)).to.be.rejectedWith(
-					ERROR.REGISTRY.INVALID_PARAM_EMP_STRATEGY_DEPLOYER
-				);
-			});
-
-			it("Should update _v1EMPStrategyDeployer with valid params..", async () => {
-				await expect(registry.v1EMPStrategyDeployerUpdate(fakeStrategyDeployer.address)).to.be.not.rejected;
-
-				expect(await registry.v1EMPStrategyDeployer()).to.be.equal(fakeStrategyDeployer.address);
-			});
-
-			it("Should NOT allow _v1EMPStrategyDeployer to updated again after being set..", async () => {
-				await registry.v1EMPStrategyDeployerUpdate(fakeStrategyDeployer.address);
-
-				expect(await registry.v1EMPStrategyDeployer()).to.be.equal(fakeStrategyDeployer.address);
-
-				await expect(registry.v1EMPStrategyDeployerUpdate(badActor.address)).to.be.rejectedWith(
-					ERROR.REGISTRY.EMP_STRATEGY_DEPLOYER_ALREADY_SET
-				);
-
-				expect(await registry.v1EMPStrategyDeployer()).to.be.equal(fakeStrategyDeployer.address);
-			})
-
-		});
-
 		describe("function eRC20_eRC20ETHValueProviderUpdate()", () => {
 			beforeEach(async () => {
 				await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
@@ -256,57 +119,47 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 			});
 		});
 
-		describe("function v1EMPRegister()", () => {
-			beforeEach(async () => {
-				await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
-				await registry.percentUtilityUpdate(percentUtility.address);
-				await registry.v1EMPUtilityUpdate(owner.address);
-				await registry.v1EMPDeployerUpdate(owner.address);
-			});
-
+		describe("function addressArrayUtilityUpdate()", () => {
 			it("[auth] Should revert if an unauthorized sender calls..", async () => {
-				await expect(registry.connect(badActor).v1EMPRegister(badActor.address)).to.be.rejectedWith(
-					ERROR.REGISTRY.NOT_EMP_DEPLOYER
+				await expect(
+					registry.connect(badActor).addressArrayUtilityUpdate(addressArrayUtility.address)
+				).to.be.rejectedWith(
+					ERROR.NOT_AUTHORIZED
 				);
 			});
 
-			it("Should allow mock StrategyDeployer to register an EMP..", async () => {
-				await expect(registry.v1EMPRegister(fakeEMP.address)).to.be.not.rejected;
+			it("Should not allow __addressArrayUtility to be address(0)..", async () => {
+				await expect(registry.addressArrayUtilityUpdate(ethers.constants.AddressZero)).to.be.rejectedWith(
+					ERROR.REGISTRY.INVALID_PARAM_ARRAY_UTILITY
+				);
+			});
 
-				const v1EMPStrategyId = await registry.v1EMP_v1EMPId(fakeEMP.address);
+			it("Should update _addressArrayUtility with valid params..", async () => {
+				await expect(registry.addressArrayUtilityUpdate(addressArrayUtility.address)).to.be.not.rejected;
 
-				expect(v1EMPStrategyId).to.be.greaterThan(0);
-
-				expect(await registry.v1EMPId_v1EMP(v1EMPStrategyId)).to.be.equal(fakeEMP.address);
+				expect(await registry.addressArrayUtility()).to.be.equal(addressArrayUtility.address);
 			});
 		});
 
-		describe("function v1EMPStrategyRegister()", () => {
-			beforeEach(async () => {
-				await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
-				await registry.percentUtilityUpdate(percentUtility.address);
-				await registry.v1EMPStrategyDeployerUpdate(fakeStrategyDeployer.address);
-				expect(await registry.v1EMPStrategyDeployer()).to.be.equal(fakeStrategyDeployer.address);
-			});
-
+		describe("function percentUtilityUpdate()", () => {
 			it("[auth] Should revert if an unauthorized sender calls..", async () => {
-				await expect(registry.connect(badActor).v1EMPStrategyRegister(badActor.address)).to.be.rejectedWith(
-					ERROR.REGISTRY.NOT_STRATEGY_DEPLOYER
+				await expect(
+					registry.connect(badActor).percentUtilityUpdate(percentUtility.address)
+				).to.be.rejectedWith(
+					ERROR.NOT_AUTHORIZED
 				);
 			});
 
-			it("Should allow mock StrategyDeployer caller to register an EMP strategy..", async () => {
-				await expect(
-					registry.connect(fakeStrategyDeployer).v1EMPStrategyRegister(fakeEMPStrategy.address)
-				).to.be.not.rejected;
+			it("Should not allow __percentUtility to be address(0)..", async () => {
+				await expect(registry.percentUtilityUpdate(ethers.constants.AddressZero)).to.be.rejectedWith(
+					ERROR.REGISTRY.INVALID_PARAM_PERCENT_UTILITY
+				);
+			});
 
-				const v1EMPStrategyId = await registry.v1EMPStrategy_v1EMPStrategyId(fakeEMPStrategy.address);
+			it("Should update _percentUtility with valid params..", async () => {
+				await expect(registry.percentUtilityUpdate(percentUtility.address)).to.be.not.rejected;
 
-				expect(v1EMPStrategyId).to.be.greaterThan(0);
-
-				const registedStrategyAddress = await registry.v1EMPStrategyId_v1EMPStrategy(v1EMPStrategyId);
-
-				expect(registedStrategyAddress).to.be.equal(fakeEMPStrategy.address);
+				expect(await registry.percentUtility()).to.be.equal(percentUtility.address);
 			});
 		});
 
@@ -390,6 +243,151 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 				await expect(registry.v1EMPUtilityUpdate(fakeEMPUtility.address)).to.be.not.rejected;
 
 				expect(await registry.v1EMPUtility()).to.be.equal(fakeEMPUtility.address);
+			});
+		});
+
+		describe("function v1EMPDeployerUpdate()", () => {
+			beforeEach(async () => {
+				await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
+				await registry.percentUtilityUpdate(percentUtility.address);
+			});
+
+
+			it("[auth] Should revert if an unauthorized sender calls..", async () => {
+				await registry.v1EMPUtilityUpdate(fakeEMPUtility.address);
+
+				await expect(registry.connect(badActor).v1EMPDeployerUpdate(owner.address)).to.be.rejectedWith(
+					ERROR.NOT_AUTHORIZED
+				);
+			});
+
+			it("Should not allow __v1EMPDeployer to be address(0)..", async () => {
+				await expect(registry.v1EMPDeployerUpdate(ethers.constants.AddressZero)).to.be.rejectedWith(
+					ERROR.REGISTRY.INVALID_PARAM_EMP_DEPLOYER
+				);
+			});
+
+			it("Should not allow to set _v1EMPDeployer until _v1EMPUtility is set..", async () => {
+				await expect(registry.v1EMPDeployerUpdate(fakeEMPDeployer.address)).to.be.rejectedWith(
+					ERROR.REGISTRY.EMP_UTILITY_NOT_SET
+				);
+			});
+
+			it("Should allow authorized caller to update EMP Deployer..", async () => {
+				await registry.v1EMPUtilityUpdate(fakeEMPUtility.address);
+
+				await expect(registry.v1EMPDeployerUpdate(fakeEMPDeployer.address)).to.be.not.rejected;
+
+				expect(await registry.v1EMPDeployer()).to.be.equal(fakeEMPDeployer.address);
+			});
+
+			it("Should NOT allow EMP Deployer to updated again after being set..", async () => {
+				await registry.v1EMPUtilityUpdate(fakeEMPUtility.address);
+
+				await registry.v1EMPDeployerUpdate(fakeEMPDeployer.address);
+
+				expect(await registry.v1EMPDeployer()).to.be.equal(fakeEMPDeployer.address);
+
+				await expect(registry.v1EMPDeployerUpdate(badActor.address)).to.be.rejectedWith(
+					ERROR.REGISTRY.EMP_DEPLOYER_ALREADY_SET
+				);
+
+				expect(await registry.v1EMPDeployer()).to.be.equal(fakeEMPDeployer.address);
+			});
+		});
+
+		describe("function v1EMPStrategyDeployerUpdate()", () => {
+			beforeEach(async () => {
+				await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
+				await registry.percentUtilityUpdate(percentUtility.address);
+			});
+
+
+			it("[auth] Should revert if an unauthorized sender calls..", async () => {
+				await expect(
+					registry.connect(badActor).v1EMPStrategyDeployerUpdate(badActor.address)
+				).to.be.rejectedWith(
+					ERROR.NOT_AUTHORIZED
+				);
+			});
+
+			it("Should not allow EMPStrategyDeployer to be address(0)..", async () => {
+				await expect(registry.v1EMPStrategyDeployerUpdate(ethers.constants.AddressZero)).to.be.rejectedWith(
+					ERROR.REGISTRY.INVALID_PARAM_EMP_STRATEGY_DEPLOYER
+				);
+			});
+
+			it("Should update _v1EMPStrategyDeployer with valid params..", async () => {
+				await expect(registry.v1EMPStrategyDeployerUpdate(fakeStrategyDeployer.address)).to.be.not.rejected;
+
+				expect(await registry.v1EMPStrategyDeployer()).to.be.equal(fakeStrategyDeployer.address);
+			});
+
+			it("Should NOT allow _v1EMPStrategyDeployer to updated again after being set..", async () => {
+				await registry.v1EMPStrategyDeployerUpdate(fakeStrategyDeployer.address);
+
+				expect(await registry.v1EMPStrategyDeployer()).to.be.equal(fakeStrategyDeployer.address);
+
+				await expect(registry.v1EMPStrategyDeployerUpdate(badActor.address)).to.be.rejectedWith(
+					ERROR.REGISTRY.EMP_STRATEGY_DEPLOYER_ALREADY_SET
+				);
+
+				expect(await registry.v1EMPStrategyDeployer()).to.be.equal(fakeStrategyDeployer.address);
+			})
+
+		});
+
+		describe("function v1EMPRegister()", () => {
+			beforeEach(async () => {
+				await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
+				await registry.percentUtilityUpdate(percentUtility.address);
+				await registry.v1EMPUtilityUpdate(owner.address);
+				await registry.v1EMPDeployerUpdate(owner.address);
+			});
+
+			it("[auth] Should revert if an unauthorized sender calls..", async () => {
+				await expect(registry.connect(badActor).v1EMPRegister(badActor.address)).to.be.rejectedWith(
+					ERROR.REGISTRY.NOT_EMP_DEPLOYER
+				);
+			});
+
+			it("Should allow mock StrategyDeployer to register an EMP..", async () => {
+				await expect(registry.v1EMPRegister(fakeEMP.address)).to.be.not.rejected;
+
+				const v1EMPStrategyId = await registry.v1EMP_v1EMPId(fakeEMP.address);
+
+				expect(v1EMPStrategyId).to.be.greaterThan(0);
+
+				expect(await registry.v1EMPId_v1EMP(v1EMPStrategyId)).to.be.equal(fakeEMP.address);
+			});
+		});
+
+		describe("function v1EMPStrategyRegister()", () => {
+			beforeEach(async () => {
+				await registry.addressArrayUtilityUpdate(addressArrayUtility.address);
+				await registry.percentUtilityUpdate(percentUtility.address);
+				await registry.v1EMPStrategyDeployerUpdate(fakeStrategyDeployer.address);
+				expect(await registry.v1EMPStrategyDeployer()).to.be.equal(fakeStrategyDeployer.address);
+			});
+
+			it("[auth] Should revert if an unauthorized sender calls..", async () => {
+				await expect(registry.connect(badActor).v1EMPStrategyRegister(badActor.address)).to.be.rejectedWith(
+					ERROR.REGISTRY.NOT_STRATEGY_DEPLOYER
+				);
+			});
+
+			it("Should allow mock StrategyDeployer caller to register an EMP strategy..", async () => {
+				await expect(
+					registry.connect(fakeStrategyDeployer).v1EMPStrategyRegister(fakeEMPStrategy.address)
+				).to.be.not.rejected;
+
+				const v1EMPStrategyId = await registry.v1EMPStrategy_v1EMPStrategyId(fakeEMPStrategy.address);
+
+				expect(v1EMPStrategyId).to.be.greaterThan(0);
+
+				const registedStrategyAddress = await registry.v1EMPStrategyId_v1EMPStrategy(v1EMPStrategyId);
+
+				expect(registedStrategyAddress).to.be.equal(fakeEMPStrategy.address);
 			});
 		});
 	});
