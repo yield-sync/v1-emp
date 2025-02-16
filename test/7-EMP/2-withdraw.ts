@@ -375,6 +375,8 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 						const s1Balance = await strategies[0].contract.eMP_shares(eMP.address);
 						const s2Balance = await strategies[1].contract.eMP_shares(eMP.address);
 
+						const TOLERANCE = 10;
+
 						// Withdraw only partial balanceOf EMP
 						await eMP.utilizedV1EMPStrategyWithdraw([s1Balance.div(23), s2Balance.div(35)]);
 
@@ -393,7 +395,7 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 
 						expect(EMP_BALANCE_A).to.be.equal(BeforeBalanceAEMP);
 						expect(EMP_BALANCE_B).to.be.equal(BeforeBalanceBEMP);
-						expect(EMP_BALANCE_C).to.be.equal(BeforeBalanceCEMP.add(await eMPUtility.TOLERANCE()).sub(1));
+						expect(EMP_BALANCE_C).to.be.equal(BeforeBalanceCEMP.add(TOLERANCE).sub(1));
 
 
 						const OWNER_BALANCE_A = await eRC20A.balanceOf(owner.address);
@@ -402,7 +404,7 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 
 						expect(OWNER_BALANCE_A).to.be.equal(BeforeBalanceAOwner);
 						expect(OWNER_BALANCE_B).to.be.equal(BeforeBalanceBOwner);
-						expect(OWNER_BALANCE_C).to.be.equal(BeforeBalanceCOwner.sub(await eMPUtility.TOLERANCE()));
+						expect(OWNER_BALANCE_C).to.be.equal(BeforeBalanceCOwner.sub(TOLERANCE));
 
 
 						const EMP_SHARE_STRATEGY_0_BALANCE = await strategies[0].contract.eMP_shares(eMP.address);

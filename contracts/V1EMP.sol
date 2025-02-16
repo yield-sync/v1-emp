@@ -21,15 +21,21 @@ contract V1EMP is
 	using SafeMath for uint256;
 
 
+	/// @inheritdoc IV1EMP
 	address public override manager;
 
 	address[] internal _utilizedV1EMPStrategy;
 
+	/// @inheritdoc IV1EMP
 	bool public override utilizedERC20DepositOpen;
+	/// @inheritdoc IV1EMP
 	bool public override utilizedERC20WithdrawFull;
+	/// @inheritdoc IV1EMP
 	bool public override utilizedERC20WithdrawOpen;
 
+	/// @inheritdoc IV1EMP
 	uint256 public override feeRateGovernance;
+	/// @inheritdoc IV1EMP
 	uint256 public override feeRateManager;
 
 	IV1EMPRegistry internal immutable _I_V1_EMP_REGISTRY;

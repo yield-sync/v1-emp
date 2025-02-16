@@ -35,6 +35,7 @@ describe("[3.0] V1EMPUtility.sol", async () => {
 
 			it("Should return TOLERATED transferAmount if EMP balance less than transferAmount..", async () => {
 				const AMOUNT = 100;
+				const TOLERANCE = 10;
 
 				const toleratedAmount = await eMPUtility.optimizedTransferAmount(
 					fakeEMP.address,
@@ -42,7 +43,7 @@ describe("[3.0] V1EMPUtility.sol", async () => {
 					AMOUNT
 				);
 
-				expect(toleratedAmount).to.be.equal(AMOUNT - await eMPUtility.TOLERANCE());
+				expect(toleratedAmount).to.be.equal(AMOUNT - TOLERANCE);
 			});
 		});
 

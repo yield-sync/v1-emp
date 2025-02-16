@@ -22,7 +22,7 @@ contract V1EMPUtility is
 	using SafeMath for uint256;
 
 
-	uint8 public constant TOLERANCE = 10;
+	uint8 internal constant _TOLERANCE = 10;
 
 	IV1EMPRegistry internal immutable _I_V1_EMP_REGISTRY;
 
@@ -75,7 +75,7 @@ contract V1EMPUtility is
 	{
 		if (IERC20(utilizedERC20).balanceOf(_v1EMP) < transferAmount)
 		{
-			return transferAmount -= TOLERANCE;
+			return transferAmount -= _TOLERANCE;
 		}
 
 		return transferAmount;

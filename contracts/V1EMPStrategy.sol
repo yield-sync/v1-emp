@@ -17,18 +17,24 @@ contract V1EMPStrategy is
 	using SafeMath for uint256;
 
 
+	/// @inheritdoc IV1EMPStrategy
 	address public override manager;
 
 	address[] internal _utilizedERC20;
 
+	/// @inheritdoc IV1EMPStrategy
 	bool public override utilizedERC20DepositOpen;
+	/// @inheritdoc IV1EMPStrategy
 	bool public override utilizedERC20WithdrawOpen;
 
+	/// @inheritdoc IV1EMPStrategy
 	uint256 public override sharesTotal;
+	/// @inheritdoc IV1EMPStrategy
 	uint256 public override utilizedERC20UpdateTracker;
 
 	IV1EMPRegistry internal immutable _I_V1_EMP_REGISTRY;
 
+	/// @inheritdoc IV1EMPStrategy
 	IERC20Handler public override iERC20Handler;
 
 	mapping (address utilizedERC20 => UtilizationERC20 utilizationERC20) internal _utilizedERC20_utilizationERC20;

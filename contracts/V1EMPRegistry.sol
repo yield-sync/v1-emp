@@ -18,7 +18,9 @@ contract V1EMPRegistry is
 	address internal _v1EMPStrategyDeployer;
 	address internal _v1EMPStrategyUtility;
 
+	/// @inheritdoc IV1EMPRegistry
 	uint256 public override v1EMPIdTracker;
+	/// @inheritdoc IV1EMPRegistry
 	uint256 public override v1EMPStrategyIdTracker;
 
 	mapping (address eRC20 => address eRC20ETHValueProvider) public override eRC20_eRC20ETHValueProvider;
