@@ -19,9 +19,7 @@ async function main()
 		case "sepolia":
 			if (!process.env.V1_EMP_DEPLOYER_SEPOLIA || !process.env.V1_EMP_REGISTER_SEPOLIA)
 			{
-				console.error("Error: V1EMPDeployer or v1EMPRegistry set for Sepolia.");
-
-				process.exit(2)
+				throw new Error("Error: V1EMPDeployer or v1EMPRegistry set for Sepolia.");
 			}
 
 			v1EMPRegistry = process.env.V1_EMP_REGISTER_SEPOLIA;
@@ -33,9 +31,7 @@ async function main()
 		case "base-sepolia":
 			if (!process.env.V1_EMP_DEPLOYER_BASE_SEPOLIA || !process.env.V1_EMP_REGISTER_BASE_SEPOLIA)
 			{
-				console.error("Error: No V1EMPDeployer or v1EMPRegistry set for Base Sepolia.");
-
-				process.exit(2)
+				throw new Error("Error: No V1EMPDeployer or v1EMPRegistry set for Base Sepolia.");
 			}
 
 			v1EMPRegistry = process.env.V1_EMP_REGISTER_BASE_SEPOLIA;
@@ -85,7 +81,7 @@ async function main()
 		}
 		else
 		{
-			console.error(e);
+			throw new Error(e);
 		}
 	}
 
@@ -94,12 +90,6 @@ async function main()
 }
 
 
-main()
-	.then(() => {
-		process.exit(0);
-	})
-	.catch((error) => {
-		console.error(error);
-		process.exit(1);
-	})
-;
+main().then().catch((error) => {
+	throw new Error(error);
+});
