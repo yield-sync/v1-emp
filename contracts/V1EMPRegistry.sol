@@ -150,7 +150,7 @@ contract V1EMPRegistry is
 		override
 		authGovernance()
 	{
-		require(__addressArrayUtility != address(0), "__addressArrayUtility == address(0)");
+		require(__addressArrayUtility != address(0), "!__addressArrayUtility");
 
 		require(_addressArrayUtility == address(0), "_addressArrayUtility != address(0)");
 
@@ -163,9 +163,9 @@ contract V1EMPRegistry is
 		override
 		authGovernance()
 	{
-		require(_eRC20 != address(0), "_eRC20 == address(0)");
+		require(_eRC20 != address(0), "!_eRC20");
 
-		require(_eRC20ETHValueProvider != address(0), "_eRC20ETHValueProvider == address(0)");
+		require(_eRC20ETHValueProvider != address(0), "!_eRC20ETHValueProvider");
 
 		eRC20_eRC20ETHValueProvider[_eRC20] = _eRC20ETHValueProvider;
 	}
@@ -176,7 +176,7 @@ contract V1EMPRegistry is
 		override
 		authGovernance()
 	{
-		require(__governance != address(0), "__governance == address(0)");
+		require(__governance != address(0), "!__governance");
 
 		_governance = __governance;
 	}
@@ -187,7 +187,7 @@ contract V1EMPRegistry is
 		override
 		authGovernance()
 	{
-		require(__percentUtility != address(0), "__percentUtility == address(0)");
+		require(__percentUtility != address(0), "!__percentUtility");
 
 		require(_percentUtility == address(0), "_percentUtility != address(0)");
 
@@ -200,7 +200,7 @@ contract V1EMPRegistry is
 		override
 		authGovernance()
 	{
-		require(__v1EMPDeployer != address(0), "__v1EMPDeployer == address(0)");
+		require(__v1EMPDeployer != address(0), "!__v1EMPDeployer");
 
 		require(_v1EMPUtility != address(0), "_v1EMPUtility == address(0)");
 
@@ -228,7 +228,7 @@ contract V1EMPRegistry is
 		override
 		authGovernance()
 	{
-		require(__v1EMPStrategyDeployer != address(0), "__v1EMPStrategyDeployer == address(0)");
+		require(__v1EMPStrategyDeployer != address(0), "!__v1EMPStrategyDeployer");
 
 		require(_v1EMPStrategyDeployer == address(0), "_v1EMPStrategyDeployer != address(0)");
 
@@ -254,7 +254,7 @@ contract V1EMPRegistry is
 		override
 		authGovernance()
 	{
-		require(__v1EMPStrategyUtility != address(0), "__v1EMPStrategyUtility == address(0)");
+		require(__v1EMPStrategyUtility != address(0), "!__v1EMPStrategyUtility");
 
 		require(_addressArrayUtility != address(0), "_addressArrayUtility == address(0)");
 
@@ -271,7 +271,7 @@ contract V1EMPRegistry is
 		override
 		authGovernance()
 	{
-		require(__v1EMPUtility != address(0), "__v1EMPUtility == address(0)");
+		require(__v1EMPUtility != address(0), "!__v1EMPUtility");
 
 		require(_addressArrayUtility != address(0), "_addressArrayUtility == address(0)");
 

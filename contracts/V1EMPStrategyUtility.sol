@@ -45,10 +45,7 @@ contract V1EMPStrategyUtility is
 		internal
 		view
 	{
-		require(
-			_I_V1_EMP_REGISTRY.v1EMPStrategy_v1EMPStrategyId(_v1EMPStrategy) > 0,
-			"_I_V1_EMP_REGISTRY.v1EMPStrategy_v1EMPStrategyId(_v1EMPStrategy) == 0"
-		);
+		require(_I_V1_EMP_REGISTRY.v1EMPStrategy_v1EMPStrategyId(_v1EMPStrategy) > 0, "!_v1EMPStrategy");
 	}
 
 
@@ -69,9 +66,9 @@ contract V1EMPStrategyUtility is
 
 		address[] memory utilizedERC20 = iV1EMPStrategy.utilizedERC20();
 
-		if (utilizedERC20.length != _utilizedERC20Amount.length)
+		if (_utilizedERC20Amount.length != utilizedERC20.length)
 		{
-			return (false, "utilizedERC20.length != _utilizedERC20Amount.length", utilizedERC20AmountETHValueTotal_);
+			return (false, "!_utilizedERC20Amount", utilizedERC20AmountETHValueTotal_);
 		}
 
 		uint256[] memory utilizedERC20AmountETHValue_;
@@ -119,7 +116,7 @@ contract V1EMPStrategyUtility is
 
 		address[] memory utilizedERC20 = iV1EMPStrategy.utilizedERC20();
 
-		require(utilizedERC20.length == _utilizedERC20Amount.length, "utilizedERC20.length != _utilizedERC20Amount.length");
+		require(_utilizedERC20Amount.length == utilizedERC20.length, "!_utilizedERC20Amount");
 
 		utilizedERC20AmountETHValue_ = new uint256[](_utilizedERC20Amount.length);
 

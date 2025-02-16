@@ -175,7 +175,7 @@ describe("[5.2] V1EMPStrategy.sol - Withdrawing Tokens", async () => {
 
 					// [main-test] WITHDRAW - Fail to withdraw ERC20 tokens
 					await expect(strategy.utilizedERC20Withdraw(INVALID_BALANCE)).to.be.rejectedWith(
-						ERROR.STRATEGY.INVALID_BALANCE
+						ERROR.STRATEGY.INVALID_SHARES_AMOUNT
 					);
 				});
 

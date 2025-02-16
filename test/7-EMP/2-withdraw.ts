@@ -80,7 +80,7 @@ describe("[7.2] V1EMP.sol - Withdrawing Tokens", async () => {
 				const INVALID_BALANCE = (await eMP.balanceOf(owner.address)).add(1);
 
 				await expect(eMP.utilizedERC20Withdraw(INVALID_BALANCE)).to.be.rejectedWith(
-					ERROR.EMP.INVALID_BALANCE
+					ERROR.EMP.INVALID_ERC20_AMOUNT
 				);
 			});
 		});

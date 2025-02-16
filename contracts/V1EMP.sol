@@ -106,7 +106,7 @@ contract V1EMP is
 	{
 		require(
 			_v1EMPStrategyERC20Amount.length == _utilizedV1EMPStrategy.length,
-			"_v1EMPStrategyERC20Amount.length != _utilizedV1EMPStrategy.length"
+			"!_v1EMPStrategyERC20Amount"
 		);
 
 		for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
@@ -254,7 +254,7 @@ contract V1EMP is
 	{
 		require(utilizedERC20WithdrawOpen, "!utilizedERC20WithdrawOpen");
 
-		require(balanceOf(msg.sender) >= _eRC20Amount, "balanceOf(msg.sender) < _eRC20Amount");
+		require(balanceOf(msg.sender) >= _eRC20Amount, "!_eRC20Amount");
 
 		address[] memory _utilizedERC20 = _I_V1_EMP_UTILITY().v1EMP_utilizedERC20(address(this));
 
@@ -282,11 +282,9 @@ contract V1EMP is
 
 			uint256[] memory v1EMPStrategyERC20Amount = new uint256[](_utilizedV1EMPStrategy.length);
 
-			uint256 _eRC20AmountPercentOfTotalSupply = _eRC20Amount.mul(_PERCENT_ONE_HUNDRED).div(totalSupply());
-
 			for (uint256 i = 0; i < _utilizedV1EMPStrategy.length; i++)
 			{
-				v1EMPStrategyERC20Amount[i] = _eRC20AmountPercentOfTotalSupply.mul(
+				v1EMPStrategyERC20Amount[i] = _eRC20Amount.mul(_PERCENT_ONE_HUNDRED).div(totalSupply()).mul(
 					IV1EMPStrategy(_utilizedV1EMPStrategy[i]).eMP_shares(address(this))
 				).div(
 					_PERCENT_ONE_HUNDRED

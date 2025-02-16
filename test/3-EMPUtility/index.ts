@@ -55,7 +55,7 @@ describe("[3.0] V1EMPUtility.sol", async () => {
 
 			it("Should not allow passing _utilizedERC20Amount with invalid length..", async () => {
 				await expect(eMPUtility.utilizedERC20AmountValid(fakeEMP.address, [1])).to.be.rejectedWith(
-					ERROR.EMP_UTILITY.INVALID_UTILIZED_ERC20_LENGTH
+					ERROR.EMP_UTILITY.INVALID_PARAM_UTILIZED_ERC20_AMOUNT
 				);
 			});
 		});
@@ -78,7 +78,7 @@ describe("[3.0] V1EMPUtility.sol", async () => {
 
 				expect(payload.valid_).to.be.false;
 
-				expect(payload.message_).to.be.equal(ERROR.EMP_UTILITY.INVALID_STRATEGY_LENTH);
+				expect(payload.message_).to.be.equal(ERROR.EMP_UTILITY.INVALID_PARAM_STRATEGY);
 			});
 
 			it("Should catch invalid _v1EMPStrategy..", async () => {
@@ -90,7 +90,7 @@ describe("[3.0] V1EMPUtility.sol", async () => {
 
 				expect(payload.valid_).to.be.false;
 
-				expect(payload.message_).to.be.equal(ERROR.EMP_UTILITY.INVALID_V1_EMP_STRATEGY);
+				expect(payload.message_).to.be.equal(ERROR.EMP_UTILITY.INVALID_PARAM_STRATEGY);
 			});
 		});
 

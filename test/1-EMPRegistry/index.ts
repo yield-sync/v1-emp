@@ -55,7 +55,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 
 			it("Should not allow __addressArrayUtility to be address(0)..", async () => {
 				await expect(registry.addressArrayUtilityUpdate(ethers.constants.AddressZero)).to.be.rejectedWith(
-					ERROR.REGISTRY.ARRAY_UTILITY_IS_ADDRESS_ZERO
+					ERROR.REGISTRY.INVALID_PARAM_ARRAY_UTILITY
 				);
 			});
 
@@ -77,7 +77,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 
 			it("Should not allow __percentUtility to be address(0)..", async () => {
 				await expect(registry.percentUtilityUpdate(ethers.constants.AddressZero)).to.be.rejectedWith(
-					ERROR.REGISTRY.PERCENT_UTILITY_IS_ADDRESS_ZERO
+					ERROR.REGISTRY.INVALID_PARAM_PERCENT_UTILITY
 				);
 			});
 
@@ -107,7 +107,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 				await registry.v1EMPUtilityUpdate(fakeEMPUtility.address);
 
 				await expect(registry.v1EMPDeployerUpdate(ethers.constants.AddressZero)).to.be.rejectedWith(
-					ERROR.REGISTRY.EMP_DEPLOYER_IS_ADDRESS_ZERO
+					ERROR.REGISTRY.INVALID_PARAM_EMP_DEPLOYER
 				);
 			});
 
@@ -157,7 +157,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 
 			it("Should not allow EMPStrategyDeployer to be address(0)..", async () => {
 				await expect(registry.v1EMPStrategyDeployerUpdate(ethers.constants.AddressZero)).to.be.rejectedWith(
-					ERROR.REGISTRY.EMP_STRATEGY_DEPLOYER_IS_ADDRESS_ZERO
+					ERROR.REGISTRY.INVALID_PARAM_EMP_STRATEGY_DEPLOYER
 				);
 			});
 
@@ -207,7 +207,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 						fakeEthValueProvider.address
 					)
 				).to.be.rejectedWith(
-					ERROR.REGISTRY.ERC20_ADDRESS_ZERO
+					ERROR.REGISTRY.INVALID_PARAM_ERC20
 				);
 			});
 
@@ -218,7 +218,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 						ethers.constants.AddressZero
 					)
 				).to.be.rejectedWith(
-					ERROR.REGISTRY.ETH_VALUE_PROVIDER_ADDRESS_ZERO
+					ERROR.REGISTRY.INVALID_PARAM_ETH_VALUE_PROVIDER
 				);
 			});
 
@@ -245,7 +245,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 
 			it("Should not allow __governance to be address(0)..", async () => {
 				await expect(registry.governanceUpdate(ethers.constants.AddressZero)).to.be.rejectedWith(
-					ERROR.REGISTRY.GOVERNANCE_IS_ADDRESS_ZERO
+					ERROR.REGISTRY.INVALID_PARAM_GOVERNANCE
 				);
 			});
 
@@ -336,7 +336,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 				await registry.percentUtilityUpdate(percentUtility.address);
 
 				await expect(registry.v1EMPStrategyUtilityUpdate(ethers.constants.AddressZero)).to.be.rejectedWith(
-					ERROR.REGISTRY.STRATEGY_UTILITY_IS_ADDRESS_ZERO
+					ERROR.REGISTRY.INVALID_PARAM_STRATEGY_UTILITY
 				);
 			});
 
@@ -368,7 +368,7 @@ describe("[1.0] V1EMPRegistry.sol", async () => {
 				await registry.percentUtilityUpdate(percentUtility.address);
 
 				await expect(registry.v1EMPUtilityUpdate(ethers.constants.AddressZero)).to.be.rejectedWith(
-					ERROR.REGISTRY.EMP_UTILITY_IS_ADDRESS_ZERO
+					ERROR.REGISTRY.INVALID_PARAM_EMP_UTILITY
 				);
 			});
 

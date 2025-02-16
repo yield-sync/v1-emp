@@ -62,7 +62,7 @@ contract V1EMPUtility is
 		internal
 		view
 	{
-		require(_I_V1_EMP_REGISTRY.v1EMP_v1EMPId(_v1EMP) > 0, "_I_V1_EMP_REGISTRY.v1EMP_v1EMPId(_v1EMP) == 0");
+		require(_I_V1_EMP_REGISTRY.v1EMP_v1EMPId(_v1EMP) > 0, "!_v1EMP");
 	}
 
 
@@ -95,7 +95,7 @@ contract V1EMPUtility is
 	{
 		require(
 			_utilizedERC20Amount.length == _v1EMP_utilizedERC20[_v1EMP].length,
-			"_utilizedERC20Amount.length != _v1EMP_utilizedERC20[_v1EMP].length"
+			"!_utilizedERC20Amount"
 		);
 
 		valid_ = true;
@@ -148,7 +148,7 @@ contract V1EMPUtility is
 
 		if (_v1EMPStrategy.length != _allocation.length)
 		{
-			return (false, "_v1EMPStrategy.length != _allocation.length");
+			return (false, "!_v1EMPStrategy");
 		}
 
 		uint256 utilizedV1EMPStrategyAllocationTotal;
@@ -157,7 +157,7 @@ contract V1EMPUtility is
 		{
 			if (_I_V1_EMP_REGISTRY.v1EMPStrategy_v1EMPStrategyId(_v1EMPStrategy[i]) == 0)
 			{
-				return (false, "_I_V1_EMP_REGISTRY.v1EMPStrategy_v1EMPStrategyId(_v1EMPStrategy[i]) == 0");
+				return (false, "!_v1EMPStrategy");
 			}
 
 			utilizedV1EMPStrategyAllocationTotal += _allocation[i];
