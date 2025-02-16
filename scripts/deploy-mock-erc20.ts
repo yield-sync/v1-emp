@@ -61,7 +61,7 @@ async function main() {
 		}
 		else
 		{
-			console.error(e);
+			throw new Error(e);
 		}
 	}
 
@@ -71,12 +71,6 @@ async function main() {
 }
 
 
-main()
-	.then(() => {
-		process.exit(0);
-	})
-	.catch((error) => {
-		console.error(error);
-		process.exit(1);
-	})
-;
+main().then().catch((error) => {
+	throw new Error(error);
+});
