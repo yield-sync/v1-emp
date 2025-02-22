@@ -10,11 +10,9 @@
 	"files": ["./hardhat.config.ts"],
 	"include": [
 		"./src",
-		"util",
-		"util/*",
 		"./test/*",
-		"global.d.ts",
 		"const.ts",
+		"global.d.ts",
 		"scripts",
 		"scripts/*",
 		"test/1-EMPRegistry/*",
@@ -23,6 +21,8 @@
 		"test/4-EMPStrategyDeployer/*",
 		"test/5-EMPStrategy/*",
 		"test/6-EMPDeployer/*",
-		"test/7-EMP/*"
+		"test/7-EMP/*",
+		"util",
+		"util/*",
 	],
 }
